@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cramming Mode - Phoenix</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    body {
+      background: #030308 !important;
+      color: #fff !important;
+    }
+
+    .cramming-container {
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 0 16px;
+      text-align: center;
+    }
+
+    /* Flashcard Flip Animation */
+    .flashcard {
+      width: 100%;
+      height: 320px;
+      perspective: 1000px;
+      cursor: pointer;
+      margin-bottom: 24px;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .flashcard.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-front, .flashcard-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--cyan);
+      box-shadow: var(--shadow-glow-cyan);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .flashcard-front {
+      background: rgba(0, 245, 255, 0.03);
+      color: #fff;
+    }
+
+    .flashcard-back {
+      background: rgba(123, 47, 247, 0.05);
+      color: var(--cyan);
+      transform: rotateY(180deg);
+      border-color: var(--purple);
+      box-shadow: var(--shadow-glow-purple);
+      overflow-y: auto;
+    }
+
+    .swipe-btn {
+      flex: 1;
+      padding: 14px;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">PHOENIX</div>
+    <ul class="nav-links">
+      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
+      <li><a href="./roadmap.html">Roadmap</a></li>
+      <li><a href="#" id="logoutBtn" style="color: var(--coral);">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="cramming-container">
+    <div style="margin-bottom: 24px; text-align: left;">
+      <h1 class="font-space" style="font-size: 1.5rem; color: var(--coral); display: inline-flex; align-items: center; gap: 8px;">
+        ⚡ Cramming Mode
+      </h1>
+      <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">
+        Rapid-fire technical question grills. Tap card to flip and check details.
+      </p>
+    </div>
+
+    <!-- Flashcard -->
+    <div class="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner" id="cardInner">
+        <div class="flashcard-front">
+          <span id="cardCategory" class="badge badge-cyan" style="margin-bottom: 16px;">DSA</span>
+          <h2 id="cardTitle" class="font-space" style="font-size: 1.35rem; line-height: 1.4;">Loading question...</h2>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 30px;">👉 Tap to reveal details</p>
+        </div>
+        <div class="flashcard-back">
+          <h3 class="font-space" style="font-size: 1rem; margin-bottom: 12px; color: #fff;">Answer & Description</h3>
+          <p id="cardDescription" style="font-size: 0.85rem; line-height: 1.6; text-align: left;"></p>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 20px;">👉 Tap to flip back</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Swipe Actions -->
+    <div style="display: flex; gap: 12px;">
+      <button class="btn btn-secondary swipe-btn" onclick="nextCard(false)">❌ Don't Know</button>
+      <button class="btn btn-success swipe-btn" onclick="nextCard(true)">✅ Got It!</button>
+    </div>
+
+    <div style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted);">
+      Score: <strong id="scoreVal" style="color: var(--green);">0</strong> | Progress: <span id="progressVal">0/0</span>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:5000/api';
+    let questions = [];
+    let currentIdx = 0;
+    let score = 0;
+    let userToken = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      userToken = localStorage.getItem('token');
+      if (!userToken) {
+        window.location.href = '../auth/login.html';
+        return;
+      }
+      loadQuestions();
+    });
+
+    async function loadQuestions() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/prep/questions`, {
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        if (res.ok) {
+          questions = await res.json();
+          renderCard();
+        }
+      } catch (err) {
+        console.error('Error fetching questions:', err);
+      }
+    }
+
+    function renderCard() {
+      if (questions.length === 0) return;
+      const q = questions[currentIdx];
+      
+      document.getElementById('cardInner').parentElement.classList.remove('flipped');
+      document.getElementById('cardCategory').textContent = q.category || 'DSA';
+      document.getElementById('cardTitle').textContent = q.title;
+      document.getElementById('cardDescription').textContent = q.description;
+      document.getElementById('progressVal').textContent = `${currentIdx + 1}/${questions.length}`;
+    }
+
+    function flipCard() {
+      document.getElementById('cardInner').parentElement.classList.toggle('flipped');
+    }
+
+    async function nextCard(knewIt) {
+      if (questions.length === 0) return;
+
+      if (knewIt) {
+        score++;
+        document.getElementById('scoreVal').textContent = score;
+
+        // Award dynamic XP on backend
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const userId = user._id || user.id;
+        try {
+          await fetch(`${API_BASE_URL}/gamification/award-xp`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${userToken}`
+            },
+            body: JSON.stringify({
+              userId,
+              amount: 10,
+              actionType: 'flashcard',
+              skillCategory: questions[currentIdx].category
+            })
+          });
+        } catch (e) {
+          console.warn('Award XP failed:', e);
+        }
+      }
+
+      currentIdx = (currentIdx + 1) % questions.length;
+      renderCard();
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '../auth/login.html';
+    });
+  </script>
+</body>
+</html>

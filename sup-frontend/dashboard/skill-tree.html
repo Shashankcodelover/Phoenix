@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RPG Skill Tree - Phoenix</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    .tree-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      padding: 30px 0;
+      position: relative;
+    }
+    .tree-row {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .skill-node {
+      width: 130px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+    }
+    .node-circle {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      transition: all 0.4s ease;
+      position: relative;
+      z-index: 2;
+    }
+    .node-circle.locked {
+      background: rgba(255,255,255,0.03);
+      border: 2px dashed rgba(255,255,255,0.1);
+      opacity: 0.4;
+    }
+    .node-circle.unlocked {
+      background: rgba(0, 245, 255, 0.08);
+      border: 2px solid rgba(0, 245, 255, 0.4);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.15);
+    }
+    .node-circle.mastered {
+      background: linear-gradient(135deg, rgba(123,47,247,0.2), rgba(0,245,255,0.2));
+      border: 2px solid var(--purple);
+      box-shadow: 0 0 25px rgba(123, 47, 247, 0.3);
+    }
+    .skill-node:hover .node-circle.unlocked,
+    .skill-node:hover .node-circle.mastered {
+      transform: scale(1.15);
+      box-shadow: 0 0 30px rgba(0, 245, 255, 0.4);
+    }
+    .node-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .node-label.mastered { color: var(--purple); }
+    .node-label.unlocked { color: var(--cyan); }
+    .node-xp {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .tier-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-bottom: -14px;
+    }
+    .connector {
+      width: 2px;
+      height: 30px;
+      background: rgba(0, 245, 255, 0.15);
+      margin: 0 auto;
+    }
+    .legend { display: flex; gap: 20px; justify-content: center; margin-bottom: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-secondary); }
+    .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="window.location.href='./dashboard.html'">PHOENIX</div>
+    <ul class="nav-links">
+      <li><a href="./dashboard.html">Dashboard</a></li>
+      <li><a href="./leaderboard.html">🏆 Leaderboard</a></li>
+      <li><a href="./skill-tree.html" class="active">🌳 Skill Tree</a></li>
+      <li><a href="../profile/profile.html">👤 Profile</a></li>
+      <li><a href="#" id="logoutBtn" style="color: var(--coral);">Logout</a></li>
+    </ul>
+  </nav>
+
+  <canvas id="particles"></canvas>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>🌳 RPG Skill Tree</h1>
+      <p>Unlock skills by earning XP through DSA practice, mock interviews, system design, and hackathon wins. Master all branches to reach Phoenix rank!</p>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background: rgba(255,255,255,0.08); border: 1px dashed rgba(255,255,255,0.2);"></div> Locked</div>
+      <div class="legend-item"><div class="legend-dot" style="background: rgba(0,245,255,0.15); border: 1px solid var(--cyan);"></div> Unlocked</div>
+      <div class="legend-item"><div class="legend-dot" style="background: linear-gradient(135deg, rgba(123,47,247,0.3), rgba(0,245,255,0.3)); border: 1px solid var(--purple);"></div> Mastered</div>
+    </div>
+
+    <div class="glass-card" style="overflow-x: auto;">
+      <div class="tree-container" id="skillTree"></div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:5000/api';
+    let userToken = null;
+    let userXp = 0;
+
+    // Skill tree data — each tier unlocks at a certain XP threshold
+    const tiers = [
+      {
+        name: 'Tier 1 — Foundations',
+        xpRequired: 0,
+        skills: [
+          { icon: '🔢', name: 'Arrays & Strings', xp: 0 },
+          { icon: '🔗', name: 'Linked Lists', xp: 20 },
+          { icon: '📚', name: 'Stacks & Queues', xp: 40 },
+          { icon: '💬', name: 'Communication', xp: 30 }
+        ]
+      },
+      {
+        name: 'Tier 2 — Core Algorithms',
+        xpRequired: 100,
+        skills: [
+          { icon: '🌳', name: 'Trees & BST', xp: 100 },
+          { icon: '📊', name: 'Sorting', xp: 80 },
+          { icon: '🔍', name: 'Binary Search', xp: 90 },
+          { icon: '🧩', name: 'Recursion', xp: 110 }
+        ]
+      },
+      {
+        name: 'Tier 3 — Advanced Patterns',
+        xpRequired: 250,
+        skills: [
+          { icon: '🪟', name: 'Sliding Window', xp: 250 },
+          { icon: '👆', name: 'Two Pointers', xp: 220 },
+          { icon: '📈', name: 'Dynamic Prog.', xp: 300 },
+          { icon: '🕸️', name: 'Graphs & BFS', xp: 280 }
+        ]
+      },
+      {
+        name: 'Tier 4 — System Design',
+        xpRequired: 500,
+        skills: [
+          { icon: '⚖️', name: 'Load Balancers', xp: 500 },
+          { icon: '🗄️', name: 'Database Design', xp: 450 },
+          { icon: '📡', name: 'API Architecture', xp: 480 },
+          { icon: '🛡️', name: 'Security Patterns', xp: 550 }
+        ]
+      },
+      {
+        name: 'Tier 5 — Phoenix Mastery',
+        xpRequired: 800,
+        skills: [
+          { icon: '🤖', name: 'AI/ML Integration', xp: 800 },
+          { icon: '☁️', name: 'Cloud Deploy', xp: 750 },
+          { icon: '🎤', name: 'Mock Interviews', xp: 700 },
+          { icon: '🔥', name: 'Phoenix Rising', xp: 1000 }
+        ]
+      }
+    ];
+
+    // Particles
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    let particles = [];
+    for (let i = 0; i < 35; i++) { particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*1.1, dx: (Math.random()-0.5)*0.12, dy: (Math.random()-0.5)*0.12 }); }
+    function animP() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(0,245,255,0.2)"; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.dx; p.y+=p.dy; if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1; }); requestAnimationFrame(animP); }
+    animP();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      userToken = localStorage.getItem('token');
+      if (!userToken) { window.location.href = '../auth/login.html'; return; }
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      loadUserXp(user._id || user.id);
+    });
+
+    async function loadUserXp(userId) {
+      try {
+        const res = await fetch(`${API}/gamification/stats/${userId}`, {
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          userXp = data.xp || 0;
+        }
+      } catch (e) {
+        userXp = 150; // Fallback for demo
+      }
+      renderTree();
+    }
+
+    function renderTree() {
+      const container = document.getElementById('skillTree');
+      container.innerHTML = '';
+
+      tiers.forEach((tier, tIdx) => {
+        // Tier label
+        const label = document.createElement('div');
+        label.className = 'tier-label';
+        label.textContent = tier.name;
+        container.appendChild(label);
+
+        // Connector
+        if (tIdx > 0) {
+          const conn = document.createElement('div');
+          conn.className = 'connector';
+          container.appendChild(conn);
+        }
+
+        // Row of skill nodes
+        const row = document.createElement('div');
+        row.className = 'tree-row';
+
+        tier.skills.forEach(skill => {
+          let status = 'locked';
+          if (userXp >= skill.xp * 1.5) status = 'mastered';
+          else if (userXp >= skill.xp) status = 'unlocked';
+
+          const node = document.createElement('div');
+          node.className = 'skill-node';
+          node.innerHTML = `
+            <div class="node-circle ${status}">${skill.icon}</div>
+            <div class="node-label ${status}">${skill.name}</div>
+            <div class="node-xp">${status === 'mastered' ? '⭐ Mastered' : status === 'unlocked' ? `✅ ${skill.xp} XP` : `🔒 ${skill.xp} XP`}</div>
+          `;
+
+          node.addEventListener('click', () => {
+            if (status === 'locked') {
+              alert(`🔒 "${skill.name}" requires ${skill.xp} XP. You have ${userXp} XP. Keep practicing!`);
+            } else if (status === 'unlocked') {
+              alert(`✅ "${skill.name}" is unlocked! Practice more to master it (need ${Math.round(skill.xp * 1.5)} XP).`);
+            } else {
+              alert(`⭐ "${skill.name}" is mastered! You're a legend.`);
+            }
+          });
+
+          row.appendChild(node);
+        });
+
+        container.appendChild(row);
+      });
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault(); localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '../auth/login.html';
+    });
+  </script>
+</body>
+</html>

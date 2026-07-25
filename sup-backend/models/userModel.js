@@ -66,6 +66,45 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  streakFreezeTokens: {
+    type: Number,
+    default: 2
+  },
+  rank: {
+    type: String,
+    enum: ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Phoenix'],
+    default: 'Iron'
+  },
+  trophies: {
+    type: [{
+      name: { type: String, required: true },
+      icon: { type: String, default: '🏆' },
+      earnedAt: { type: Date, default: Date.now }
+    }],
+    default: []
+  },
+  dailyActivity: {
+    type: [{
+      date: { type: String, required: true }, // Format: YYYY-MM-DD
+      xpEarned: { type: Number, default: 0 }
+    }],
+    default: []
+  },
+  skillRadar: {
+    dsa: { type: Number, default: 10 },
+    os: { type: Number, default: 10 },
+    dbms: { type: Number, default: 10 },
+    cn: { type: Number, default: 10 },
+    systemDesign: { type: Number, default: 10 }
+  },
+  badges: {
+    type: [String],
+    default: []
+  },
+  burnoutRisk: {
+    type: Number,
+    default: 0 // percentage 0-100
+  },
   lastActiveDate: {
     type: Date,
     default: null

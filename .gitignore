@@ -1,7 +1,18 @@
+# Dependencies & Build Output
 node_modules/
-.env
 dist/
 build/
-.DS_Store
-*.log
 uploads/
+*.log
+.DS_Store
+
+# Local Environment Variables & Secrets
+.env
+.env.local
+
+# Internal Scratch & Evaluation Checklists
+CEO_EVALUATION_CHECKLIST.md
+JIRA_TRACKER.md
+EXPLAINER.md
+scratch/
+*.tmp

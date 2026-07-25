@@ -135,9 +135,26 @@ const generateRoadmap = async (req, res) => {
 // @access  Public
 const mockInterview = async (req, res) => {
   try {
-    const { message, history, targetRole } = req.body;
+    const { message, history = [], targetRole } = req.body;
 
     const role = targetRole || "Software Engineer";
+
+    // 1. Programmatic Filler Word Detection
+    const fillers = ['um', 'like', 'actually', 'basically', 'you know', 'uh', 'so'];
+    let fillerCount = 0;
+    if (message) {
+      const tokens = message.toLowerCase().split(/[^a-zA-Z]+/);
+      tokens.forEach(t => {
+        if (fillers.includes(t)) fillerCount++;
+      });
+    }
+
+    // 2. Bar Raiser Difficulty Scaling based on history length
+    const turns = history.length;
+    let difficulty = 'Foundational';
+    if (turns > 8) difficulty = 'Expert (Bar Raiser)';
+    else if (turns > 4) difficulty = 'Advanced';
+    else if (turns > 2) difficulty = 'Intermediate';
 
     const prompt = `
       Current user message: "${message}"
@@ -145,14 +162,24 @@ const mockInterview = async (req, res) => {
       Conversation History:
       ${JSON.stringify(history)}
 
-      Act as a technical interviewer conducting a mock interview for the role: "${role}".
-      Ask one question at a time. If the user answers a question, provide a brief critique (e.g., clarity, correctness, structure) and then ask the next question.
-      Analyze their pace and tone if applicable, and point out any filler words (like "um", "like", "actually") in their responses.
-      Keep your responses professional, encouraging, and focused on helping them improve their communication and technical skills.
+      Act as a senior technical interviewer conducting a mock interview for the role of "${role}" at a top-tier tech firm.
+      You are running in "${difficulty}" difficulty mode.
+      
+      Ask one question at a time. If the user answers, critique their response (correctness, clarity) and then ask the next question.
+      Highlight where they used filler words (such as "um", "like", "actually") to help them reduce communication friction.
+      Keep the response encouraging yet technically rigorous.
     `;
 
-    const responseText = await callGemini(prompt, "You are a helpful and experienced technical interviewer. Keep responses concise and focused.");
-    res.json({ reply: responseText });
+    const responseText = await callGemini(
+      prompt,
+      `You are a professional technical interviewer operating in ${difficulty} mode. Keep responses concise and focused.`
+    );
+
+    res.json({
+      reply: responseText,
+      fillerCount,
+      difficulty
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -414,6 +441,91 @@ const generateRevisionSheet = async (req, res) => {
   }
 };
 
+// @desc    Analyze audio transcript for pacing, fillers, and confidence
+// @route   POST /api/prep/analyze-audio
+const analyzeAudio = async (req, res) => {
+  try {
+    const { transcript = '' } = req.body;
+    const fillers = ['um', 'like', 'actually', 'basically', 'you know', 'uh', 'so'];
+    let fillerCount = 0;
+    
+    const words = transcript.toLowerCase().split(/[^a-zA-Z]+/);
+    words.forEach(w => {
+      if (fillers.includes(w)) fillerCount++;
+    });
+
+    const totalWords = words.length;
+    // Calculate a mock pacing score (e.g. 130 words per minute average)
+    let pacing = 'Normal';
+    if (totalWords > 160) pacing = 'Fast';
+    if (totalWords < 90) pacing = 'Slow';
+
+    // Confidence drops with high fillers ratio
+    const ratio = totalWords > 0 ? (fillerCount / totalWords) : 0;
+    let confidence = Math.max(30, Math.floor(100 - (ratio * 300)));
+
+    res.json({
+      fillerCount,
+      pacing,
+      confidenceScore: confidence,
+      wordCount: totalWords
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Get user's past interview session metrics for charts
+// @route   GET /api/prep/performance-trend/:userId
+const getPerformanceTrend = async (req, res) => {
+  try {
+    // Return sample timeline trend data for user statistics
+    const trends = [
+      { date: 'Mon', communication: 65, technical: 60, fillers: 12 },
+      { date: 'Tue', communication: 70, technical: 62, fillers: 8 },
+      { date: 'Wed', communication: 75, technical: 68, fillers: 5 },
+      { date: 'Thu', communication: 82, technical: 75, fillers: 3 },
+      { date: 'Fri', communication: 88, technical: 80, fillers: 1 }
+    ];
+    res.json(trends);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    System Design Whiteboard question generator
+// @route   POST /api/prep/system-design
+const generateSystemDesignQuestion = async (req, res) => {
+  try {
+    const { topic = 'Uber' } = req.body;
+    const prompt = `
+      You are an elite system architect interviewer. 
+      Generate a System Design question scenario for: "Design ${topic}".
+      Provide:
+      1. Functional requirements (Top 3)
+      2. Non-functional requirements (Availability, Scale, Latency limits)
+      3. System design constraints (e.g., QPS, Storage estimates)
+      
+      Output in strict JSON format containing fields: "title", "requirements", "nonFunctional", "constraints".
+      Do not include markdown tags.
+    `;
+
+    let responseText = await callGemini(prompt, "You are a professional system design interviewer. Return raw JSON only.", true);
+    
+    let parsed;
+    try {
+      parsed = JSON.parse(responseText);
+    } catch (e) {
+      responseText = responseText.replace(/```json/i, '').replace(/```/g, '').trim();
+      parsed = JSON.parse(responseText);
+    }
+
+    res.json(parsed);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   generateRoadmap,
   mockInterview,
@@ -422,5 +534,8 @@ module.exports = {
   getQuestions,
   getPeerMatches,
   allocatePlanner,
-  generateRevisionSheet
+  generateRevisionSheet,
+  analyzeAudio,
+  getPerformanceTrend,
+  generateSystemDesignQuestion
 };

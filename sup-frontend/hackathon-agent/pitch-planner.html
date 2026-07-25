@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pitch Deck Planner - Phoenix</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    .slide-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+    .slide-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: var(--gradient-brand);
+    }
+    .slide-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--cyan);
+      box-shadow: var(--shadow-glow-cyan);
+    }
+    .slide-num {
+      position: absolute;
+      top: 12px; right: 16px;
+      font-size: 2.5rem; font-weight: 900;
+      color: rgba(0, 245, 255, 0.06);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .script-bubble {
+      background: rgba(123, 47, 247, 0.06);
+      border: 1px solid rgba(123, 47, 247, 0.2);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.85rem;
+    }
+    .checklist-item:last-child { border-bottom: none; }
+    .check-icon {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--cyan);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      cursor: pointer;
+      font-size: 0.7rem;
+      transition: var(--transition-smooth);
+    }
+    .check-icon.done {
+      background: var(--cyan);
+      color: var(--bg-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">PHOENIX</div>
+    <ul class="nav-links">
+      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
+      <li class="nav-dropdown">
+        <a href="#" class="active">Hackathons ▾</a>
+        <div class="nav-dropdown-content">
+          <a href="./command-center.html">🎯 Command Center</a>
+          <a href="./idea-generator.html">💡 Idea Generator</a>
+          <a href="./github-miner.html">🔗 GitHub Miner</a>
+          <a href="./pitch-planner.html">🎤 Pitch Planner</a>
+          <a href="./team.html">👥 Team Roster</a>
+        </div>
+      </li>
+      <li><a href="../profile/profile.html">👤 Profile</a></li>
+      <li><a href="#" id="logoutBtn" style="color: var(--coral);">Logout</a></li>
+    </ul>
+  </nav>
+
+  <canvas id="particles"></canvas>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>🎤 Pitch Deck & Demo Planner</h1>
+      <p>Auto-generate a winning 5-slide pitch structure, presenter scripts per teammate, and a fallback demo video recording checklist.</p>
+    </div>
+
+    <div class="flex-row" style="gap: 24px; align-items: flex-start;">
+
+      <!-- LEFT: Input -->
+      <div class="col-sidebar" style="flex: 0 0 380px;">
+        <div class="glass-card">
+          <h3 class="font-space mb-2" style="font-size: 1.15rem;">Project Details</h3>
+          <form id="pitchForm" style="margin-top: 14px;">
+            <div class="form-group">
+              <label>Project Title</label>
+              <input type="text" id="projTitle" placeholder="e.g. EcoTrack AI" required>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="projDesc" rows="3" placeholder="Brief project description..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Tech Stack (comma-separated)</label>
+              <input type="text" id="projTech" placeholder="React, Node.js, TensorFlow">
+            </div>
+            <div class="form-group">
+              <label>Team Members (name:role, comma-separated)</label>
+              <textarea id="projTeam" rows="3" placeholder="Alice:Frontend, Bob:Backend, Carol:ML Engineer"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">🎯 Generate Pitch Plan</button>
+          </form>
+        </div>
+
+        <!-- Video Checklist -->
+        <div class="glass-card">
+          <h3 class="font-space mb-2" style="font-size: 1.1rem;">📹 Demo Video Checklist</h3>
+          <div id="checklistContainer">
+            <p style="color: var(--text-muted); font-size: 0.8rem;">Generate a pitch to see the video recording checklist.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Output -->
+      <div class="col-main">
+        <!-- Slides -->
+        <h2 class="font-space mb-2" style="font-size: 1.25rem;">📊 Slide Structure</h2>
+        <div id="slidesContainer" style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="slide-card" style="text-align: center; padding: 40px;">
+            <p style="color: var(--text-muted);">Fill in project details and generate your pitch plan.</p>
+          </div>
+        </div>
+
+        <!-- Scripts -->
+        <h2 class="font-space mb-2" style="font-size: 1.25rem; margin-top: 28px;">🎙️ Presenter Scripts</h2>
+        <div id="scriptsContainer">
+          <div class="script-bubble" style="text-align: center;">
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Scripts will appear here after generation.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:5000/api';
+    let userToken = null;
+
+    // Particles
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    let particles = [];
+    for (let i = 0; i < 35; i++) { particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*1.1, dx: (Math.random()-0.5)*0.12, dy: (Math.random()-0.5)*0.12 }); }
+    function animP() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(0,245,255,0.2)"; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.dx; p.y+=p.dy; if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1; }); requestAnimationFrame(animP); }
+    animP();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      userToken = localStorage.getItem('token');
+      if (!userToken) { window.location.href = '../auth/login.html'; return; }
+    });
+
+    document.getElementById('pitchForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const projectTitle = document.getElementById('projTitle').value;
+      const projectDescription = document.getElementById('projDesc').value;
+      const techStack = document.getElementById('projTech').value.split(',').map(s => s.trim()).filter(Boolean);
+      const teamRaw = document.getElementById('projTeam').value.split(',').map(s => s.trim()).filter(Boolean);
+      const teamMembers = teamRaw.map(t => {
+        const [name, role] = t.split(':').map(s => s.trim());
+        return { name: name || 'Developer', role: role || 'Engineer' };
+      });
+
+      document.getElementById('slidesContainer').innerHTML = '<div class="slide-card" style="text-align:center;padding:30px;"><p style="color:var(--cyan);">🎯 Generating pitch plan with AI...</p></div>';
+
+      try {
+        const res = await fetch(`${API}/agent/pitch-planner`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` },
+          body: JSON.stringify({ projectTitle, projectDescription, techStack, teamMembers })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          renderSlides(data.slides || []);
+          renderScripts(data.scripts || []);
+          renderChecklist(data.videoChecklist || []);
+        } else {
+          document.getElementById('slidesContainer').innerHTML = `<div class="slide-card"><p style="color:var(--coral);">❌ ${data.message}</p></div>`;
+        }
+      } catch (err) {
+        document.getElementById('slidesContainer').innerHTML = '<div class="slide-card"><p style="color:var(--coral);">❌ Connection error.</p></div>';
+      }
+    });
+
+    function renderSlides(slides) {
+      const c = document.getElementById('slidesContainer');
+      c.innerHTML = slides.map((s, i) => `
+        <div class="slide-card">
+          <span class="slide-num">${i + 1}</span>
+          <h3 class="font-space" style="color: var(--cyan); font-size: 1.1rem; margin-bottom: 6px;">${s.title}</h3>
+          <span class="badge badge-purple" style="font-size: 0.7rem; margin-bottom: 10px; display: inline-block;">${s.focus}</span>
+          <ul style="padding-left: 18px; margin: 0;">
+            ${(s.points || []).map(p => `<li style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 4px;">${p}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
+    }
+
+    function renderScripts(scripts) {
+      const c = document.getElementById('scriptsContainer');
+      c.innerHTML = scripts.map(s => `
+        <div class="script-bubble">
+          <strong style="color: var(--purple); font-size: 0.9rem;">🎙️ ${s.speaker}</strong>
+          <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px; line-height: 1.6;">"${s.lines}"</p>
+        </div>
+      `).join('');
+    }
+
+    function renderChecklist(items) {
+      const c = document.getElementById('checklistContainer');
+      c.innerHTML = items.map((item, i) => `
+        <div class="checklist-item">
+          <div class="check-icon" id="chk-${i}" onclick="toggleCheck(${i})"></div>
+          <span style="color: var(--text-primary);">${item}</span>
+        </div>
+      `).join('');
+    }
+
+    function toggleCheck(i) {
+      const el = document.getElementById(`chk-${i}`);
+      el.classList.toggle('done');
+      el.textContent = el.classList.contains('done') ? '✓' : '';
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault(); localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '../auth/login.html';
+    });
+  </script>
+</body>
+</html>

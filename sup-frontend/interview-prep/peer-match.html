@@ -65,7 +65,7 @@
     
     <div class="page-header">
       <h1>Peer Mock-Interview Matching</h1>
-      <p>Coordinate live behavioral and coding interviews with classmates or system peers. Share constructive feedback directly.</p>
+      <p>Coordinate live behavioral and coding interviews with classmates. If your partner doesn't show up, activate the <strong style="color:var(--cyan);">AI Safety-Net</strong> — an instant AI interviewer takes over!</p>
     </div>
 
     <div class="flex-row">
@@ -86,6 +86,20 @@
             <p style="color: var(--text-secondary); font-size: 0.85rem; text-align: center; padding: 20px 0;">
               No sessions scheduled. Book a slot with an available peer on the left.
             </p>
+          </div>
+        </div>
+
+        <!-- AI SAFETY-NET -->
+        <div class="glass-card" style="border-color: rgba(0,245,255,0.15);">
+          <h3 class="font-space mb-2" style="font-size: 1.15rem;">🛡️ AI Safety-Net</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 14px;">Peer didn't show up? Activate the AI interviewer to take over your session instantly.</p>
+          <button class="btn btn-primary" style="width: 100%;" onclick="activateSafetyNet()">⚡ Engage AI Interviewer</button>
+          <div id="safetyNetChat" style="display: none; margin-top: 16px;">
+            <div id="aiChatLog" style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; max-height: 300px; overflow-y: auto; font-size: 0.82rem; margin-bottom: 10px;"></div>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="aiChatInput" placeholder="Type your answer..." style="flex: 1;" onkeydown="if(event.key==='Enter') sendAiAnswer()">
+              <button class="btn btn-secondary" onclick="sendAiAnswer()" style="padding: 8px 14px;">Send</button>
+            </div>
           </div>
         </div>
       </div>
@@ -238,6 +252,88 @@
         schedContainer.appendChild(card);
 
         alert(`Invitation request dispatched to ${peerName} for ${chosenTime}!`);
+    }
+
+    // AI Safety-Net
+    let aiHistory = [];
+    const aiQuestions = [
+      "Tell me about yourself and your background in software development.",
+      "Can you walk me through a challenging project you worked on recently?",
+      "How do you handle disagreements within a team during a hackathon?",
+      "Describe a time you had to learn a new technology under a tight deadline.",
+      "What is your approach to debugging a production issue at 2 AM?",
+      "How would you design a URL shortener system? Walk me through the architecture.",
+      "What questions do you have for the interviewer?"
+    ];
+    let aiQuestionIndex = 0;
+
+    function activateSafetyNet() {
+      const chatSection = document.getElementById('safetyNetChat');
+      chatSection.style.display = 'block';
+      aiHistory = [];
+      aiQuestionIndex = 0;
+      const log = document.getElementById('aiChatLog');
+      log.innerHTML = '';
+      appendAiMessage('interviewer', '👋 Hello! Your peer couldn\'t make it, so I\'m your AI Safety-Net interviewer. Let\'s begin!');
+      setTimeout(() => {
+        appendAiMessage('interviewer', '❓ ' + aiQuestions[aiQuestionIndex]);
+      }, 800);
+    }
+
+    function appendAiMessage(role, text) {
+      const log = document.getElementById('aiChatLog');
+      const bubble = document.createElement('div');
+      bubble.style.marginBottom = '10px';
+      bubble.style.padding = '8px 12px';
+      bubble.style.borderRadius = '8px';
+      if (role === 'interviewer') {
+        bubble.style.background = 'rgba(0,245,255,0.06)';
+        bubble.style.borderLeft = '3px solid var(--cyan)';
+        bubble.innerHTML = `<strong style="color:var(--cyan); font-size:0.75rem;">🤖 AI Interviewer</strong><p style="margin:4px 0 0; color:var(--text-primary);">${text}</p>`;
+      } else {
+        bubble.style.background = 'rgba(123,47,247,0.06)';
+        bubble.style.borderLeft = '3px solid var(--purple)';
+        bubble.innerHTML = `<strong style="color:var(--purple); font-size:0.75rem;">🧑 You</strong><p style="margin:4px 0 0; color:var(--text-primary);">${text}</p>`;
+      }
+      log.appendChild(bubble);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function sendAiAnswer() {
+      const input = document.getElementById('aiChatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      appendAiMessage('user', text);
+
+      // Simulate AI feedback and next question
+      setTimeout(() => {
+        const feedback = generateFeedback(text);
+        appendAiMessage('interviewer', feedback);
+
+        aiQuestionIndex++;
+        if (aiQuestionIndex < aiQuestions.length) {
+          setTimeout(() => {
+            appendAiMessage('interviewer', '❓ ' + aiQuestions[aiQuestionIndex]);
+          }, 600);
+        } else {
+          setTimeout(() => {
+            appendAiMessage('interviewer', '🏁 Great job! That concludes our mock interview. You handled ' + aiQuestions.length + ' questions. Keep practicing!');
+          }, 600);
+        }
+      }, 500);
+    }
+
+    function generateFeedback(answer) {
+      const wordCount = answer.split(/\s+/).length;
+      const fillers = (answer.match(/\b(um|uh|like|basically|actually|you know)\b/gi) || []).length;
+      let fb = '✅ ';
+      if (wordCount < 10) fb += 'Your answer was quite brief. Try to elaborate more with examples. ';
+      else if (wordCount > 80) fb += 'Good detail! Consider being slightly more concise for real interviews. ';
+      else fb += 'Nice length. ';
+      if (fillers > 0) fb += `⚠️ I detected ${fillers} filler word(s). Try to reduce those. `;
+      else fb += '💎 No filler words detected — excellent communication! ';
+      return fb;
     }
 
     // Logout
