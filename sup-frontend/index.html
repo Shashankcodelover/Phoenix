@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Project Phoenix — Luminous Enterprise Gateway & Career Accelerator</title>
   <link rel="stylesheet" href="./phoenix.css">
+  <script src="./dashboard/ux-effects.js"></script>
   <script src="./dashboard/ux-tour.js"></script>
   <style>
     body {
@@ -380,6 +381,7 @@
     animP();
 
     function switchTab(num) {
+      if (window.phoenixAudio) window.phoenixAudio.playPop();
       for (let i = 1; i <= 6; i++) {
         document.getElementById(`tc-${i}`).classList.remove('active');
         document.getElementById(`tb-${i}`).classList.remove('active');
@@ -388,6 +390,8 @@
       document.getElementById(`tb-${num}`).classList.add('active');
 
       if (num === 6) {
+        if (window.phoenixAudio) window.phoenixAudio.playSuccess();
+        triggerConfettiExplosion(window.innerWidth / 2, window.innerHeight / 2);
         const name = document.getElementById('uName').value;
         const email = document.getElementById('uEmail').value;
         const github = document.getElementById('uGithub').value;
@@ -406,6 +410,7 @@
     }
 
     function chooseWorld(world) {
+      if (window.phoenixAudio) window.phoenixAudio.playPop();
       currentChosenWorld = world;
       document.getElementById('wcInterview').style.borderColor = world === 'interview' ? 'var(--cyan)' : 'var(--border-subtle)';
       document.getElementById('wcHackathon').style.borderColor = world === 'hackathon' ? 'var(--coral)' : 'var(--border-subtle)';
@@ -415,6 +420,8 @@
     }
 
     function launchWorldPortal() {
+      if (window.phoenixAudio) window.phoenixAudio.playSuccess();
+      triggerConfettiExplosion(window.innerWidth / 2, window.innerHeight / 2);
       const profile = {
         name: document.getElementById('uName').value,
         email: document.getElementById('uEmail').value,
@@ -430,11 +437,13 @@
       localStorage.setItem('userProfile', JSON.stringify(profile));
       localStorage.setItem('onboardingCompleted', 'true');
 
-      if (currentChosenWorld === 'interview') {
-        window.location.href = './interview-prep/roadmap.html';
-      } else {
-        window.location.href = './hackathon-agent/command-center.html';
-      }
+      setTimeout(() => {
+        if (currentChosenWorld === 'interview') {
+          window.location.href = './interview-prep/roadmap.html';
+        } else {
+          window.location.href = './hackathon-agent/command-center.html';
+        }
+      }, 400);
     }
 
     // GLOBAL THEME TOGGLE HANDLER (LIGHT CYAN <-> DARK OBSIDIAN)
