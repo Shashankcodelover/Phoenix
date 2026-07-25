@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Code Review Agent - Phoenix 100X</title>
+  <link rel="stylesheet" href="../phoenix.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">PHOENIX</div>
+    <ul class="nav-links">
+      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
+      <li><a href="./command-center.html">Command Center</a></li>
+      <li><a href="./simulator.html">🎮 Simulator</a></li>
+      <li><a href="./code-review.html" class="active">🔍 Code Review</a></li>
+      <li><a href="../profile/profile.html">👤 Profile</a></li>
+    </ul>
+  </nav>
+
+  <canvas id="particles"></canvas>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>🔍 AI Code Review Agent</h1>
+      <p>Audit your hackathon code snippets for OWASP security vulnerabilities, memory leaks, and performance bottlenecks before submitting to judges.</p>
+    </div>
+
+    <div class="flex-row">
+      <div class="col-main">
+        <div class="glass-card">
+          <form id="reviewForm">
+            <div class="form-group">
+              <label>Language</label>
+              <select id="codeLang">
+                <option value="javascript">JavaScript / Node.js</option>
+                <option value="typescript">TypeScript</option>
+                <option value="python">Python</option>
+                <option value="java">Java</option>
+                <option value="cpp">C++</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Paste Code Snippet</label>
+              <textarea id="codeBody" rows="12" placeholder="// Paste your function or API route here..." required style="font-family: monospace; font-size: 0.85rem;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">⚡ Run Security & Performance Audit</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-sidebar">
+        <div class="glass-card">
+          <h3 class="font-space mb-2" style="font-size: 1.1rem;">📋 Audit Findings</h3>
+          <div id="reviewOutput" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; white-space: pre-line;">
+            Paste code on the left and dispatch the AI auditor to inspect findings.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:5000/api/v1/code-review';
+
+    // Particles
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    let particles = [];
+    for (let i = 0; i < 35; i++) { particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*1.1, dx: (Math.random()-0.5)*0.12, dy: (Math.random()-0.5)*0.12 }); }
+    function animP() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(0,245,255,0.2)"; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.dx; p.y+=p.dy; if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1; }); requestAnimationFrame(animP); }
+    animP();
+
+    document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = document.getElementById('codeBody').value;
+      const language = document.getElementById('codeLang').value;
+
+      document.getElementById('reviewOutput').innerHTML = '<p style="color:var(--cyan);">🔍 AI Senior Engineer is reviewing your code...</p>';
+
+      try {
+        const res = await fetch(`${API}/audit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, language })
+        });
+        const data = await res.json();
+        document.getElementById('reviewOutput').innerText = data.review;
+      } catch (err) {
+        document.getElementById('reviewOutput').innerText = 'Error conducting code audit.';
+      }
+    });
+  </script>
+</body>
+</html>

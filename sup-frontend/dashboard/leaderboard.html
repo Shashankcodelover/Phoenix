@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Leaderboard - Phoenix</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .leaderboard-table th, .leaderboard-table td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .leaderboard-table th {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .leaderboard-table tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .rank-cell {
+      font-weight: 700;
+      color: var(--cyan);
+      font-size: 1.1rem;
+    }
+
+    .top-three {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .podium-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      text-align: center;
+      width: 220px;
+      position: relative;
+      transition: var(--transition-smooth);
+    }
+
+    .podium-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--cyan);
+      box-shadow: var(--shadow-glow-cyan);
+    }
+
+    .podium-rank {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2rem;
+    }
+
+    .podium-card.first {
+      border-color: #ffd700;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
+      transform: scale(1.05);
+    }
+    .podium-card.first:hover {
+      box-shadow: 0 0 35px rgba(255, 215, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="window.location.href='./dashboard.html'">PHOENIX</div>
+    <ul class="nav-links">
+      <li><a href="./dashboard.html">Dashboard</a></li>
+      <li class="nav-dropdown">
+        <a href="#">Prep Roadmap ▾</a>
+        <div class="nav-dropdown-content">
+          <a href="../interview-prep/roadmap.html">🗺️ Adaptive Syllabus</a>
+          <a href="../interview-prep/practice.html">💬 Mock Interview</a>
+          <a href="../interview-prep/resume.html">📝 Resume Optimizer</a>
+          <a href="../interview-prep/questions.html">🏷️ Company Questions</a>
+          <a href="../interview-prep/peer-match.html">👥 Peer Mock Matching</a>
+        </div>
+      </li>
+      <li class="nav-dropdown">
+        <a href="#">Hackathons ▾</a>
+        <div class="nav-dropdown-content">
+          <a href="../hackathon-agent/agent.html">🤖 Hack-Auto Agent</a>
+          <a href="../hackathon-agent/view.html">📋 Discovery Feed</a>
+          <a href="../hackathon-agent/team.html">👥 Team Roster</a>
+          <a href="../hackathon-agent/chat.html">💬 Discord War Room</a>
+          <a href="../hackathon-agent/portfolio.html">🏆 Portfolio Capture</a>
+        </div>
+      </li>
+      <li><a href="../interview-prep/planner.html">Planner</a></li>
+      <li><a href="../profile/profile.html">👤 Profile</a></li>
+      <li><a href="#" id="logoutBtn" style="color: var(--coral);">Logout</a></li>
+    </ul>
+  </nav>
+
+  <canvas id="particles"></canvas>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>🏆 Global Leaderboard</h1>
+      <p>Compete with top students across universities. Build projects, answer quizzes, and level up!</p>
+    </div>
+
+    <!-- Podium Top 3 -->
+    <div class="top-three" id="podiumContainer">
+      <!-- Generated dynamically -->
+    </div>
+
+    <!-- Filters Section -->
+    <div class="glass-card mb-4" style="padding: 20px;">
+      <div class="flex-row" style="gap: 16px; align-items: flex-end;">
+        <div style="flex: 1; min-width: 200px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Filter by Target Role</label>
+            <input type="text" id="roleFilter" placeholder="e.g. Frontend, Machine Learning" oninput="loadLeaderboardData()">
+          </div>
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Filter by Experience</label>
+            <select id="experienceFilter" onchange="loadLeaderboardData()">
+              <option value="">All Experience Levels</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Table -->
+    <div class="glass-card">
+      <div style="overflow-x: auto;">
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Student</th>
+              <th>Target Role</th>
+              <th>Badge Rank</th>
+              <th>Streak</th>
+              <th>Total XP</th>
+              <th>Level</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardBody">
+            <!-- Dynamic data -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:5000/api';
+
+    // Particle Background
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
+    for (let i = 0; i < 45; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: Math.random() * 1.3,
+            dx: (Math.random() - 0.5) * 0.15,
+            dy: (Math.random() - 0.5) * 0.15
+        });
+    }
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(0, 245, 255, 0.25)";
+        particles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+            p.x += p.dx;
+            p.y += p.dy;
+            if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+        });
+        requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '../auth/login.html';
+            return;
+        }
+        loadLeaderboardData();
+    });
+
+    async function loadLeaderboardData() {
+        const token = localStorage.getItem('token');
+        const role = document.getElementById('roleFilter').value;
+        const experience = document.getElementById('experienceFilter').value;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/gamification/leaderboard?role=${encodeURIComponent(role)}&experience=${encodeURIComponent(experience)}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const users = await res.json();
+                renderPodium(users.slice(0, 3));
+                renderTable(users);
+            }
+        } catch (e) {
+            console.error('Error fetching leaderboard:', e);
+        }
+    }
+
+    function renderPodium(topThree) {
+        const container = document.getElementById('podiumContainer');
+        container.innerHTML = '';
+        if (topThree.length === 0) return;
+
+        // Order as 2nd, 1st, 3rd for visual podium layout
+        const order = [];
+        if (topThree[1]) order.push({ ...topThree[1], pos: 2, badge: '🥈' });
+        if (topThree[0]) order.push({ ...topThree[0], pos: 1, badge: '🥇', class: 'first' });
+        if (topThree[2]) order.push({ ...topThree[2], pos: 3, badge: '🥉' });
+
+        order.forEach(u => {
+            container.innerHTML += `
+              <div class="podium-card ${u.class || ''}">
+                <span class="podium-rank">${u.badge}</span>
+                <h3 class="font-space" style="font-size: 1.15rem; margin-top: 10px;">${u.name}</h3>
+                <span class="badge badge-cyan mt-1" style="font-size: 0.7rem;">${u.rank} Rank</span>
+                <div style="margin-top: 12px; font-size: 0.85rem; color: var(--text-secondary);">
+                  <div>Level ${u.level || 1}</div>
+                  <strong style="color: var(--cyan);">${u.xp || 0} XP</strong>
+                </div>
+              </div>
+            `;
+        });
+    }
+
+    function renderTable(users) {
+        const body = document.getElementById('leaderboardBody');
+        body.innerHTML = '';
+
+        if (users.length === 0) {
+            body.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No students found matching filters.</td></tr>';
+            return;
+        }
+
+        users.forEach((u, i) => {
+            body.innerHTML += `
+              <tr>
+                <td class="rank-cell">#${i + 1}</td>
+                <td>
+                  <strong style="color: var(--text-primary);">${u.name}</strong>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">${u.email}</div>
+                </td>
+                <td style="font-size: 0.85rem;">${u.targetRole || 'Not Set'}</td>
+                <td><span class="badge badge-cyan">${u.rank || 'Iron'}</span></td>
+                <td style="font-size: 0.85rem;">🔥 ${u.streak || 0}d</td>
+                <td><strong style="color: var(--cyan);">${u.xp || 0}</strong></td>
+                <td><span style="font-family: 'Space Grotesk', sans-serif; font-weight: bold; color: var(--purple);">Lvl ${u.level || 1}</span></td>
+              </tr>
+            `;
+        });
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '../auth/login.html';
+    });
+  </script>
+</body>
+</html>

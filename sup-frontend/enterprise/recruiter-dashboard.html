@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recruiter Dashboard - Phoenix Enterprise</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    .candidate-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .candidate-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      transition: var(--transition-smooth);
+      position: relative;
+    }
+    .candidate-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--purple);
+      box-shadow: var(--shadow-glow-purple);
+    }
+    .candidate-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+    .mini-radar {
+      display: flex;
+      justify-content: center;
+      margin: 12px 0;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 0.8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .ghost-panel {
+      background: rgba(244, 63, 94, 0.03);
+      border: 1px solid rgba(244, 63, 94, 0.15);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+    .similarity-bar {
+      height: 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .similarity-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.8s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">PHOENIX</div>
+    <ul class="nav-links">
+      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
+      <li><a href="../dashboard/leaderboard.html">🏆 Leaderboard</a></li>
+      <li><a href="#" class="active">Enterprise</a></li>
+      <li><a href="../profile/profile.html">👤 Profile</a></li>
+      <li><a href="#" id="logoutBtn" style="color: var(--coral);">Logout</a></li>
+    </ul>
+  </nav>
+
+  <canvas id="particles"></canvas>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>🏢 Recruiter Talent Dashboard</h1>
+      <p>Browse anonymized candidate skill profiles. Request access to connect with top-performing students.</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="glass-card" style="padding: 16px; margin-bottom: 20px;">
+      <div class="flex-row" style="gap: 16px; align-items: flex-end;">
+        <div style="flex: 1;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Target Role</label>
+            <input type="text" id="filterRole" placeholder="e.g. Frontend Developer" oninput="loadCandidates()">
+          </div>
+        </div>
+        <div style="flex: 1;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Minimum Level</label>
+            <input type="number" id="filterLevel" placeholder="e.g. 5" min="1" oninput="loadCandidates()">
+          </div>
+        </div>
+        <div style="flex: 1;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Experience</label>
+            <select id="filterExp" onchange="loadCandidates()">
+              <option value="">All</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Candidate Grid -->
+    <div class="candidate-grid" id="candidateGrid">
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">Loading candidates...</div>
+    </div>
+
+    <!-- Ghost Code Detector Section -->
+    <div style="margin-top: 40px;">
+      <h2 class="font-space" style="font-size: 1.4rem; margin-bottom: 16px;">👻 Ghost Code Plagiarism Detector</h2>
+      <div class="ghost-panel">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="form-group">
+            <label style="color: var(--coral);">Code Snippet A</label>
+            <textarea id="codeA" rows="10" placeholder="Paste first code snippet here..." style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;"></textarea>
+          </div>
+          <div class="form-group">
+            <label style="color: var(--coral);">Code Snippet B</label>
+            <textarea id="codeB" rows="10" placeholder="Paste second code snippet here..." style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;"></textarea>
+          </div>
+        </div>
+        <button class="btn btn-danger" style="width: 100%; margin-top: 10px;" onclick="runGhostCode()">🔍 Analyze Similarity</button>
+
+        <div id="ghostResult" style="margin-top: 16px; display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="ghostVerdict" class="font-space" style="font-size: 1.1rem;"></span>
+            <span id="ghostPercent" class="font-space" style="font-size: 1.5rem; font-weight: 900;"></span>
+          </div>
+          <div class="similarity-bar">
+            <div class="similarity-fill" id="ghostBar" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:5000/api';
+    let userToken = null;
+
+    // Particles
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    let particles = [];
+    for (let i = 0; i < 35; i++) { particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*1.1, dx: (Math.random()-0.5)*0.12, dy: (Math.random()-0.5)*0.12 }); }
+    function animateParticles() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(0,245,255,0.2)"; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.dx; p.y+=p.dy; if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1; }); requestAnimationFrame(animateParticles); }
+    animateParticles();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      userToken = localStorage.getItem('token');
+      if (!userToken) { window.location.href = '../auth/login.html'; return; }
+      loadCandidates();
+    });
+
+    async function loadCandidates() {
+      const role = document.getElementById('filterRole').value;
+      const minLevel = document.getElementById('filterLevel').value;
+      const experience = document.getElementById('filterExp').value;
+
+      try {
+        const params = new URLSearchParams();
+        if (role) params.set('role', role);
+        if (minLevel) params.set('minLevel', minLevel);
+        if (experience) params.set('experience', experience);
+
+        const res = await fetch(`${API_BASE_URL}/enterprise/candidates?${params}`, {
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        if (res.ok) {
+          const candidates = await res.json();
+          renderCandidates(candidates);
+        }
+      } catch (e) { console.error('Error loading candidates:', e); }
+    }
+
+    function renderCandidates(candidates) {
+      const grid = document.getElementById('candidateGrid');
+      if (candidates.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No candidates match your filters.</div>';
+        return;
+      }
+
+      grid.innerHTML = candidates.map(c => {
+        const radar = c.skillRadar || {};
+        return `
+          <div class="candidate-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span class="candidate-id">${c.candidateId}</span>
+              <span class="badge badge-${getBadgeClass(c.rank)}" style="font-size: 0.7rem;">${c.rank || 'Iron'}</span>
+            </div>
+            <div class="stat-row"><span style="color:var(--text-secondary);">Target Role</span><strong style="color:var(--cyan);">${c.targetRole || 'Not Set'}</strong></div>
+            <div class="stat-row"><span style="color:var(--text-secondary);">Level / XP</span><strong>Lvl ${c.level || 1} · ${c.xp || 0} XP</strong></div>
+            <div class="stat-row"><span style="color:var(--text-secondary);">Streak</span><strong>🔥 ${c.streak || 0}d</strong></div>
+            <div class="stat-row"><span style="color:var(--text-secondary);">Projects</span><strong>${c.projectCount || 0}</strong></div>
+            <div class="stat-row"><span style="color:var(--text-secondary);">Trophies</span><strong>🏆 ${c.trophyCount || 0}</strong></div>
+            <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px;">
+              ${(c.skills || []).slice(0, 5).map(s => `<span class="badge badge-purple" style="font-size:0.65rem; padding: 2px 8px;">${s}</span>`).join('')}
+            </div>
+            <button class="btn btn-secondary" style="width:100%; margin-top:14px; font-size:0.8rem;" onclick="requestAccess('${c.candidateId}')">📩 Request Full Profile</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getBadgeClass(rank) {
+      const r = (rank || '').toLowerCase();
+      if (r === 'phoenix') return 'coral';
+      if (r === 'platinum') return 'purple';
+      if (r === 'gold') return 'orange';
+      if (r === 'silver') return 'cyan';
+      if (r === 'bronze') return 'green';
+      return 'cyan';
+    }
+
+    async function requestAccess(candidateId) {
+      const email = prompt('Enter your recruiter email:');
+      const company = prompt('Enter your company name:');
+      if (!email) return;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/enterprise/request-access`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` },
+          body: JSON.stringify({ candidateId, recruiterEmail: email, companyName: company || '' })
+        });
+        const data = await res.json();
+        alert(data.message);
+      } catch (e) { alert('Request failed.'); }
+    }
+
+    async function runGhostCode() {
+      const codeA = document.getElementById('codeA').value;
+      const codeB = document.getElementById('codeB').value;
+      if (!codeA || !codeB) { alert('Paste code in both fields!'); return; }
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/enterprise/ghost-code`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` },
+          body: JSON.stringify({ codeA, codeB })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          const result = document.getElementById('ghostResult');
+          result.style.display = 'block';
+          document.getElementById('ghostVerdict').textContent = data.verdict;
+          document.getElementById('ghostPercent').textContent = `${data.similarityPercent}%`;
+
+          const bar = document.getElementById('ghostBar');
+          bar.style.width = `${data.similarityPercent}%`;
+          if (data.similarityPercent > 80) bar.style.background = 'var(--coral)';
+          else if (data.similarityPercent > 50) bar.style.background = 'var(--orange)';
+          else if (data.similarityPercent > 25) bar.style.background = '#eab308';
+          else bar.style.background = 'var(--green)';
+        }
+      } catch (e) { alert('Ghost code analysis failed.'); }
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault(); localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '../auth/login.html';
+    });
+  </script>
+</body>
+</html>

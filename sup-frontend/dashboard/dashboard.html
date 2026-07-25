@@ -164,11 +164,17 @@
 </head>
 <body>
 
+  <!-- Persistent Top XP Bar -->
+  <div id="topXpContainer" style="width: 100%; height: 5px; background: rgba(255,255,255,0.05); position: fixed; top: 64px; left: 0; z-index: 999; overflow: hidden;">
+    <div id="topXpFill" style="width: 0%; height: 100%; background: var(--gradient-brand); transition: width 0.8s ease-out; box-shadow: 0 0 10px var(--cyan);"></div>
+  </div>
+
   <!-- Navigation Bar -->
   <nav class="navbar">
     <div class="navbar-brand" onclick="window.location.href='./dashboard.html'">PHOENIX</div>
     <ul class="nav-links">
       <li><a href="./dashboard.html" class="active">Dashboard</a></li>
+      <li><a href="./leaderboard.html">🏆 Leaderboard</a></li>
       <li class="nav-dropdown">
         <a href="#">Prep Roadmap ▾</a>
         <div class="nav-dropdown-content">
@@ -189,6 +195,15 @@
           <a href="../hackathon-agent/portfolio.html">🏆 Portfolio Capture</a>
         </div>
       </li>
+      <li class="nav-dropdown">
+        <a href="#">🎨 Theme ▾</a>
+        <div class="nav-dropdown-content">
+          <a href="#" onclick="toggleThemeAccent('cyan'); return false;">💎 Cyber Blue</a>
+          <a href="#" onclick="toggleThemeAccent('purple'); return false;">🔮 Purple</a>
+          <a href="#" onclick="toggleThemeAccent('emerald'); return false;">🌲 Emerald</a>
+          <a href="#" onclick="toggleThemeAccent('coral'); return false;">🌸 Coral</a>
+        </div>
+      </li>
       <li><a href="../interview-prep/planner.html">Planner</a></li>
       <li><a href="../profile/profile.html">👤 Profile</a></li>
       <li><a href="#" id="logoutBtn" style="color: var(--coral);">Logout</a></li>
@@ -201,9 +216,12 @@
   <div class="container">
     
     <!-- Hero Header -->
-    <div class="page-header" style="text-align: left; margin-bottom: 30px;">
-      <h1 style="font-size: 2.5rem; letter-spacing: 0.5px;">Phoenix Command Center</h1>
-      <p style="margin: 5px 0 0 0;" id="userGreeting">Analyzing profile and loading career track stats...</p>
+    <div class="page-header" style="text-align: left; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <h1 style="font-size: 2.5rem; letter-spacing: 0.5px;">Phoenix Command Center</h1>
+        <p style="margin: 5px 0 0 0;" id="userGreeting">Analyzing profile and loading career track stats...</p>
+      </div>
+      <button class="btn btn-secondary" onclick="startOnboardingTour()" style="font-size: 0.8rem; padding: 8px 16px;">💡 Take Tour</button>
     </div>
 
     <!-- Main Command Center Layout -->
@@ -228,7 +246,6 @@
         <div class="glass-card">
           <h3 class="font-space mb-2" style="font-size: 1.15rem;">Upcoming Dates</h3>
           <div id="sidebarDeadlinesContainer" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
-            <!-- Seed / Scraped deadlines populate here -->
             <div class="log-row">
               <div>
                 <strong style="color: var(--cyan); display: block; font-size: 0.85rem;">Phoenix Rebuild Hack</strong>
@@ -253,7 +270,6 @@
         <h2 class="font-space mb-2" style="font-size: 1.3rem;">Core Operations Matrix</h2>
         <div class="cards-grid">
           
-          <!-- Card 1: Adaptive Roadmap -->
           <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/roadmap.html'">
             <div class="card-top">
               <span class="icon">🗺️</span>
@@ -265,7 +281,6 @@
             </div>
           </div>
 
-          <!-- Card 2: AI Mock Interview -->
           <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/practice.html'">
             <div class="card-top">
               <span class="icon">💬</span>
@@ -277,7 +292,6 @@
             </div>
           </div>
 
-          <!-- Card 3: Company Question Bank -->
           <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/questions.html'">
             <div class="card-top">
               <span class="icon">🏷️</span>
@@ -289,7 +303,6 @@
             </div>
           </div>
 
-          <!-- Card 4: Aegis Scraper Agent -->
           <div class="glass-card dashboard-card" onclick="window.location.href='../hackathon-agent/agent.html'">
             <div class="card-top">
               <span class="icon">🤖</span>
@@ -301,7 +314,6 @@
             </div>
           </div>
 
-          <!-- Card 5: Team War Room -->
           <div class="glass-card dashboard-card" onclick="window.location.href='../hackathon-agent/chat.html'">
             <div class="card-top">
               <span class="icon">🔊</span>
@@ -313,7 +325,6 @@
             </div>
           </div>
 
-          <!-- Card 6: Time Allocator -->
           <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/planner.html'">
             <div class="card-top">
               <span class="icon">📅</span>
@@ -326,12 +337,20 @@
           </div>
 
         </div>
+
+        <div class="glass-card" style="margin-top: 20px;">
+          <h3 class="font-space mb-2" style="font-size: 1.15rem; display: flex; justify-content: space-between; align-items: center;">
+            📊 Learning Activity Heatmap
+            <span style="font-size: 0.75rem; color: var(--text-secondary);">Last 24 Weeks</span>
+          </h3>
+          <div id="heatmapContainer" style="display: grid; grid-template-rows: repeat(7, 10px); grid-auto-flow: column; grid-auto-columns: 10px; gap: 4px; overflow-x: auto; padding: 10px 0;">
+          </div>
+        </div>
       </div>
 
       <!-- RIGHT COLUMN: Career Momentum HUD -->
       <div class="col-sidebar">
         
-        <!-- Momentum HUD Card -->
         <div class="glass-card" style="text-align: center;">
           <h3 class="font-space mb-2" style="font-size: 1.15rem; text-align: left;">Career Momentum</h3>
           
@@ -352,7 +371,11 @@
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px;">
+          <div style="margin-bottom: 12px;">
+            <span class="badge badge-cyan" id="badgeRankVal" style="font-size: 0.8rem; padding: 6px 14px; text-transform: uppercase;">Iron Rank</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
             <div style="background: rgba(255, 255, 255, 0.02); padding: 10px 6px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
               <span style="font-size: 0.68rem; color: var(--text-secondary); display: block; text-transform: uppercase;">Total XP</span>
               <strong id="hudTotalXpVal" style="font-size: 1.05rem; color: var(--cyan);">0 XP</strong>
@@ -365,10 +388,29 @@
               <span style="font-size: 0.68rem; color: var(--text-secondary); display: block; text-transform: uppercase;">Streak</span>
               <strong id="hudStreakVal" style="font-size: 1.05rem; color: var(--orange);">🔥 0d</strong>
             </div>
+            <div style="background: rgba(255, 255, 255, 0.02); padding: 10px 6px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 0.6rem; color: var(--text-secondary); display: block; text-transform: uppercase;">Streak Freeze</span>
+              <div style="display: flex; align-items: center; gap: 4px; margin-top: 2px;">
+                <strong id="hudFreezeVal" style="font-size: 0.85rem; color: var(--cyan);">❄️ 0</strong>
+                <button onclick="useStreakFreezeToken()" class="btn btn-secondary" style="padding: 2px 4px; font-size: 0.55rem; border-radius: 4px; height: 16px;">Use</button>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- System Activity logs -->
+        <div class="glass-card" style="text-align: center;">
+          <h3 class="font-space mb-2" style="font-size: 1.15rem; text-align: left;">Skill Radar</h3>
+          <div id="radarContainer" style="display: flex; justify-content: center; align-items: center; height: 180px; position: relative;">
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <h3 class="font-space mb-2" style="font-size: 1.15rem;">🏆 Trophy Cabinet</h3>
+          <div id="trophyContainer" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+            <span style="color: var(--text-muted); font-size: 0.8rem;">No trophies earned yet. Join a hackathon!</span>
+          </div>
+        </div>
+
         <div class="glass-card">
           <h3 class="font-space mb-2" style="font-size: 1.15rem;">Active Scraper Stream</h3>
           <div class="console-box" id="hudSystemLogs" style="font-size: 0.75rem; height: 180px;">
@@ -382,7 +424,6 @@
 
     </div>
 
-    <!-- Active Scraper Result Ticker -->
     <div class="ticker-bar">
       <div class="ticker-title">
         <span class="notif-dot"></span>
@@ -395,7 +436,6 @@
 
   </div>
 
-  <!-- Notification Message HUD -->
   <div class="message-hud">
     <div class="message-indicator">
       <span class="message-icon">💬</span>
@@ -411,7 +451,8 @@
       </div>
     </div>
   </div>
-
+ 
+  <script src="./ux-polish.js"></script>
   <script>
     const API_BASE_URL = 'http://localhost:5000/api';
 
@@ -464,6 +505,14 @@
         loadUserProfileStats(userId, token);
         loadUpcomingEvents(token);
         loadUserNotifications(userId, token);
+
+        // Auto onboarding trigger
+        if (!localStorage.getItem('onboardingCompleted')) {
+            setTimeout(() => {
+                startOnboardingTour();
+                localStorage.setItem('onboardingCompleted', 'true');
+            }, 1200);
+        }
     });
 
     // Logout
@@ -491,6 +540,33 @@
         }
     });
 
+    // Use Streak Freeze Token
+    async function useStreakFreezeToken() {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const userId = user._id || user.id;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/gamification/use-streak-freeze`, {
+                method: 'POST',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({ userId })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message);
+                loadUserProfileStats(userId, token);
+            } else {
+                alert(data.message || 'Could not use token');
+            }
+        } catch (e) {
+            console.error('Streak freeze error:', e);
+        }
+    }
+
     // Fetch and display user profile stats (Level, XP, Streak)
     async function loadUserProfileStats(userId, token) {
         try {
@@ -508,8 +584,12 @@
                 const xp = data.xp || 0;
                 const streak = data.streak || 0;
                 const projectsCount = data.portfolioProjects ? data.portfolioProjects.length : 0;
+                const streakFreezes = data.streakFreezeTokens !== undefined ? data.streakFreezeTokens : 2;
+                const badgeRank = data.rank || 'Iron';
                 
                 document.getElementById('hudLevelVal').textContent = `Lvl ${level}`;
+                document.getElementById('badgeRankVal').textContent = `${badgeRank} Rank`;
+                document.getElementById('badgeRankVal').className = `badge badge-${getBadgeClass(badgeRank)}`;
                 
                 // 100 XP per level, calculate relative progress
                 const relativeXp = xp % 100;
@@ -517,11 +597,23 @@
                 document.getElementById('hudTotalXpVal').textContent = `${xp} XP`;
                 document.getElementById('hudStreakVal').textContent = `🔥 ${streak}d`;
                 document.getElementById('hudPortfolioVal').textContent = `📦 ${projectsCount}`;
+                document.getElementById('hudFreezeVal').textContent = `❄️ ${streakFreezes}`;
+
+                // Top Persistent XP Bar
+                document.getElementById('topXpFill').style.width = `${relativeXp}%`;
 
                 // Render ring SVG animation
-                // Circle perimeter is 2 * Math.PI * r = 2 * 3.14159 * 60 = 377
                 const strokeOffset = 377 - (relativeXp / 100) * 377;
                 document.getElementById('xpProgressCircle').style.strokeDashoffset = strokeOffset;
+
+                // Render Radar Chart
+                renderRadarChart(data.skillRadar || { dsa: 10, os: 10, dbms: 10, cn: 10, systemDesign: 10 });
+
+                // Render Trophy Cabinet
+                renderTrophies(data.trophies || []);
+
+                // Render Activity Heatmap
+                renderHeatmap(data.dailyActivity || []);
 
                 // Load active roadmap info
                 const roadmapStatus = document.getElementById('roadmapStatusBadge');
@@ -549,6 +641,127 @@
         } catch (e) {
             console.error('Error loading profile stats:', e);
         }
+    }
+
+    function getBadgeClass(rank) {
+      const r = rank.toLowerCase();
+      if (r === 'phoenix') return 'coral';
+      if (r === 'platinum') return 'purple';
+      if (r === 'gold') return 'orange';
+      if (r === 'silver') return 'cyan';
+      if (r === 'bronze') return 'green';
+      return 'cyan';
+    }
+
+    function renderRadarChart(skills) {
+      const container = document.getElementById('radarContainer');
+      const r = 70; // radius
+      const cx = 90;
+      const cy = 90;
+
+      // 5 points of the spider web (Angles in radians)
+      const angles = [
+        -Math.PI / 2, // Top (DSA)
+        -Math.PI / 2 + (2 * Math.PI / 5), // Top-Right (OS)
+        -Math.PI / 2 + (4 * Math.PI / 5), // Bottom-Right (DBMS)
+        -Math.PI / 2 + (6 * Math.PI / 5), // Bottom-Left (CN)
+        -Math.PI / 2 + (8 * Math.PI / 5)  // Top-Left (System Design)
+      ];
+
+      const dsaVal = skills.dsa || 20;
+      const osVal = skills.os || 20;
+      const dbmsVal = skills.dbms || 20;
+      const cnVal = skills.cn || 20;
+      const sdVal = skills.systemDesign || 20;
+
+      const vals = [dsaVal, osVal, dbmsVal, cnVal, sdVal];
+      const points = angles.map((angle, i) => {
+        const dist = (vals[i] / 100) * r;
+        const x = cx + dist * Math.cos(angle);
+        const y = cy + dist * Math.sin(angle);
+        return `${x},${y}`;
+      }).join(' ');
+
+      // Base grids
+      let grids = '';
+      [0.2, 0.4, 0.6, 0.8, 1].forEach(scale => {
+        const gridPoints = angles.map(angle => {
+          const x = cx + (r * scale) * Math.cos(angle);
+          const y = cy + (r * scale) * Math.sin(angle);
+          return `${x},${y}`;
+        }).join(' ');
+        grids += `<polygon points="${gridPoints}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" />`;
+      });
+
+      // Label coords
+      const labelDists = [85, 95, 100, 100, 105];
+      const labels = ['DSA', 'OS', 'DBMS', 'CN', 'Design'].map((txt, i) => {
+        const x = cx + labelDists[i] * Math.cos(angles[i]);
+        const y = cy + labelDists[i] * Math.sin(angles[i]);
+        let anchor = 'middle';
+        if (i === 1 || i === 2) anchor = 'start';
+        if (i === 3 || i === 4) anchor = 'end';
+        return `<text x="${x}" y="${y + 4}" fill="var(--text-secondary)" font-size="9" text-anchor="${anchor}">${txt}</text>`;
+      }).join('');
+
+      container.innerHTML = `
+        <svg width="200" height="200" style="overflow: visible;">
+          ${grids}
+          <!-- Filled Radar Poly -->
+          <polygon points="${points}" fill="rgba(0, 245, 255, 0.15)" stroke="var(--cyan)" stroke-width="2" />
+          <!-- Vertices points -->
+          ${angles.map((angle, i) => {
+            const dist = (vals[i] / 100) * r;
+            const x = cx + dist * Math.cos(angle);
+            const y = cy + dist * Math.sin(angle);
+            return `<circle cx="${x}" cy="${y}" r="3" fill="var(--purple)" />`;
+          }).join('')}
+          ${labels}
+        </svg>
+      `;
+    }
+
+    function renderTrophies(trophies) {
+      const container = document.getElementById('trophyContainer');
+      if (trophies.length === 0) {
+        container.innerHTML = '<span style="color: var(--text-muted); font-size: 0.8rem;">No trophies earned yet. Join a hackathon!</span>';
+        return;
+      }
+      container.innerHTML = trophies.map(t => `
+        <div class="badge badge-purple" style="display: flex; align-items: center; gap: 4px; padding: 6px 12px;" title="Earned on ${new Date(t.earnedAt).toDateString()}">
+          <span>${t.icon}</span>
+          <span>${t.name}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderHeatmap(activities) {
+      const container = document.getElementById('heatmapContainer');
+      container.innerHTML = '';
+      
+      // We will generate the last 24 weeks (168 days)
+      const now = new Date();
+      const activityMap = {};
+      activities.forEach(a => {
+        activityMap[a.date] = a.xpEarned;
+      });
+
+      const dayCells = [];
+      for (let i = 168; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(now.getDate() - i);
+        const yyyymmdd = d.toISOString().split('T')[0];
+        const xp = activityMap[yyyymmdd] || 0;
+        
+        let opacity = 0.05;
+        if (xp > 50) opacity = 0.8;
+        else if (xp > 30) opacity = 0.5;
+        else if (xp > 10) opacity = 0.25;
+        else if (xp > 0) opacity = 0.12;
+
+        dayCells.push(`<div style="width: 10px; height: 10px; background: rgba(0, 245, 255, ${opacity}); border-radius: 2px;" title="${d.toDateString()}: ${xp} XP earned"></div>`);
+      }
+      container.innerHTML = dayCells.join('');
     }
 
     // Fetch and display upcoming scraped/added hackathons

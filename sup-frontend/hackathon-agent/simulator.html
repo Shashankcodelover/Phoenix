@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hackathon Simulator - Phoenix 100X</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    .sim-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .crew-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .teammate-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+      transition: var(--transition-smooth);
+    }
+    .teammate-card.yes { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
+    .teammate-card.no { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
+    .chaos-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: var(--bg-card);
+      border: 2px solid var(--coral);
+      border-radius: var(--radius-lg);
+      max-width: 520px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+    }
+    .judge-avatar {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: rgba(0, 245, 255, 0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">PHOENIX</div>
+    <ul class="nav-links">
+      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
+      <li><a href="./command-center.html">Command Center</a></li>
+      <li><a href="./simulator.html" class="active">🎮 Simulator Engine</a></li>
+      <li><a href="./pitch-planner.html">🎤 Pitch Planner</a></li>
+      <li><a href="../profile/profile.html">👤 Profile</a></li>
+    </ul>
+  </nav>
+
+  <canvas id="particles"></canvas>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>🎮 Hackathon Simulation Engine</h1>
+      <p>Test your hackathon decision-making in a 10-stage turn-based strategy game. Manage your AI crew, handle chaos incidents, and face the jury!</p>
+    </div>
+
+    <!-- MAIN SIMULATOR INTERFACE -->
+    <div class="flex-row">
+      <!-- LEFT: Game Machine -->
+      <div class="col-main">
+        <div class="sim-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 class="font-space" style="font-size: 1.25rem;">Stage 1: Assembly & Tech Choice</h2>
+            <span class="badge badge-purple" id="timerBadge">⏰ 48:00 Hours Remaining</span>
+          </div>
+
+          <form id="simForm" style="margin-top: 18px;">
+            <div class="form-group">
+              <label>Project Title</label>
+              <input type="text" id="simTitle" value="EcoTrack Autonomous Agent" required>
+            </div>
+            <div class="form-group">
+              <label>Tech Stack (Comma-separated)</label>
+              <input type="text" id="simTech" value="React, Node.js, PostgreSQL, TensorFlow" required>
+            </div>
+            <div class="form-group">
+              <label>Unique Selling Proposition (USP)</label>
+              <input type="text" id="simUsp" value="Autonomous AI agent for enterprise carbon credit calculation" required>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="runCrewVote()" style="width: 100%;">🗳️ Initiate Crew Vote</button>
+          </form>
+        </div>
+
+        <!-- AI TEAMMATES REACTION PANEL -->
+        <div class="sim-card">
+          <h3 class="font-space mb-2" style="font-size: 1.1rem;">👥 AI Teammates Reaction</h3>
+          <div class="crew-row" id="crewContainer">
+            <p style="color:var(--text-muted); text-align:center; width:100%;">Initiate a vote above to see how your AI crew reacts to your strategy.</p>
+          </div>
+          <button class="btn btn-secondary" onclick="triggerChaosEvent()" style="width:100%; margin-top:10px;">🎲 Simulate Random Chaos Incident</button>
+        </div>
+
+        <!-- JUDGE EVALUATION PANEL -->
+        <div class="sim-card">
+          <h3 class="font-space mb-2" style="font-size: 1.1rem;">⚖️ Jury Evaluation & Roast</h3>
+          <div class="form-group">
+            <label>Select Judge Persona</label>
+            <select id="judgeSelect">
+              <option value="vc_investor">💼 Victoria Vance (VC Investor)</option>
+              <option value="tech_architect">🛠️ Dr. Marcus Vance (Senior Architect)</option>
+              <option value="design_lead">✨ Sarah Lin (Chief Product Designer)</option>
+              <option value="ai_researcher">🧠 Dr. Aris Thorne (AI Specialist)</option>
+              <option value="brutal_roaster">🔥 Gordon Techsy (The Brutal Tech Roaster)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="submitToJury()" style="width:100%;">🏆 Submit to Jury & Get Roast</button>
+          <div id="roastResult" style="margin-top:16px;"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Multi-Axis Score Metrics -->
+      <div class="col-sidebar">
+        <div class="glass-card">
+          <h3 class="font-space mb-2" style="font-size: 1.1rem;">📊 Multi-Axis Score Matrix</h3>
+          <div style="display:flex; flex-direction:column; gap:14px; margin-top:14px;">
+            <div>
+              <div style="display:flex; justify-size:space-between; font-size:0.85rem;"><span>🚀 Innovation</span><strong id="scoreInno">60/100</strong></div>
+              <div class="progress-bar"><div class="progress-fill" id="fillInno" style="width:60%;"></div></div>
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:0.85rem;"><span>🛠️ Execution</span><strong id="scoreExec">65/100</strong></div>
+              <div class="progress-bar"><div class="progress-fill" id="fillExec" style="width:65%;"></div></div>
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:0.85rem;"><span>✨ Design & UX</span><strong id="scoreDes">60/100</strong></div>
+              <div class="progress-bar"><div class="progress-fill" id="fillDes" style="width:60%;"></div></div>
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:0.85rem;"><span>🎙️ Pitch Deck</span><strong id="scorePitch">70/100</strong></div>
+              <div class="progress-bar"><div class="progress-fill" id="fillPitch" style="width:70%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAOS MODAL -->
+  <div class="chaos-modal" id="chaosModal">
+    <div class="modal-content">
+      <h2 id="chaosTitle" style="color:var(--coral);">🚨 Chaos Incident!</h2>
+      <p id="chaosDesc" style="color:var(--text-secondary); margin:14px 0; font-size:0.9rem;"></p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button class="btn btn-primary" id="btnOptA" onclick="resolveChaos('A')"></button>
+        <button class="btn btn-secondary" id="btnOptB" onclick="resolveChaos('B')"></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:5000/api/v1/simulator';
+    let currentTeamBonus = 0;
+    let currentChaos = null;
+
+    // Particles
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    let particles = [];
+    for (let i = 0; i < 35; i++) { particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*1.1, dx: (Math.random()-0.5)*0.12, dy: (Math.random()-0.5)*0.12 }); }
+    function animP() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(0,245,255,0.2)"; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.dx; p.y+=p.dy; if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1; }); requestAnimationFrame(animP); }
+    animP();
+
+    async function runCrewVote() {
+      const techStack = document.getElementById('simTech').value.split(',').map(s=>s.trim());
+      const usp = document.getElementById('simUsp').value;
+
+      try {
+        const res = await fetch(`${API}/vote`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ techStack, usp })
+        });
+        const data = await res.json();
+
+        currentTeamBonus = data.alignmentBonus || 0;
+
+        const container = document.getElementById('crewContainer');
+        container.innerHTML = (data.votes || []).map(v => `
+          <div class="teammate-card ${v.vote.toLowerCase()}">
+            <div style="font-size:1.5rem;">${v.avatar}</div>
+            <strong style="font-size:0.85rem; display:block; margin:4px 0;">${v.name}</strong>
+            <span class="badge ${v.vote==='YES'?'badge-green':'badge-coral'}" style="font-size:0.7rem;">Vote: ${v.vote}</span>
+            <p style="font-size:0.75rem; color:var(--text-secondary); margin-top:6px; line-height:1.4;">"${v.comment}"</p>
+          </div>
+        `).join('');
+      } catch (err) {
+        alert('Error connecting to simulator engine.');
+      }
+    }
+
+    async function triggerChaosEvent() {
+      try {
+        const res = await fetch(`${API}/chaos`);
+        const data = await res.json();
+        currentChaos = data;
+
+        document.getElementById('chaosTitle').innerText = data.title;
+        document.getElementById('chaosDesc').innerText = data.description;
+        document.getElementById('btnOptA').innerText = data.optionA.label;
+        document.getElementById('btnOptB').innerText = data.optionB.label;
+        document.getElementById('chaosModal').style.display = 'flex';
+      } catch (err) {
+        alert('Could not trigger chaos event.');
+      }
+    }
+
+    function resolveChaos(option) {
+      document.getElementById('chaosModal').style.display = 'none';
+      alert(`Choice ${option} applied to simulation run!`);
+    }
+
+    async function submitToJury() {
+      const title = document.getElementById('simTitle').value;
+      const techStack = document.getElementById('simTech').value.split(',').map(s=>s.trim());
+      const usp = document.getElementById('simUsp').value;
+      const judgeId = document.getElementById('judgeSelect').value;
+
+      document.getElementById('roastResult').innerHTML = '<p style="color:var(--cyan);">⚖️ Jury is evaluating your submission...</p>';
+
+      try {
+        const res = await fetch(`${API}/evaluate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, techStack, usp, teamBonus: currentTeamBonus, judgeId })
+        });
+        const data = await res.json();
+
+        // Update score indicators
+        document.getElementById('scoreInno').innerText = `${data.scores.innovation}/100`;
+        document.getElementById('scoreExec').innerText = `${data.scores.execution}/100`;
+        document.getElementById('scoreDes').innerText = `${data.scores.design}/100`;
+        document.getElementById('scorePitch').innerText = `${data.scores.pitch}/100`;
+
+        document.getElementById('fillInno').style.width = `${data.scores.innovation}%`;
+        document.getElementById('fillExec').style.width = `${data.scores.execution}%`;
+        document.getElementById('fillDes').style.width = `${data.scores.design}%`;
+        document.getElementById('fillPitch').style.width = `${data.scores.pitch}%`;
+
+        document.getElementById('roastResult').innerHTML = `
+          <div style="background:rgba(0,245,255,0.05); border:1px solid var(--cyan); border-radius:var(--radius-md); padding:16px;">
+            <h4 style="color:var(--cyan); font-size:1rem; margin-bottom:8px;">Verdict: ${data.scores.grade} (Total: ${data.scores.total}/100)</h4>
+            <p style="font-size:0.85rem; color:var(--text-primary); line-height:1.6; white-space:pre-line;">${data.judgeRoast}</p>
+          </div>
+        `;
+      } catch (err) {
+        document.getElementById('roastResult').innerHTML = '<p style="color:var(--coral);">Error generating judge evaluation.</p>';
+      }
+    }
+  </script>
+</body>
+</html>

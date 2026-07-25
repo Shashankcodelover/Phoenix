@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hackathon Idea Generator - Phoenix</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    .idea-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+    .idea-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--gradient-brand);
+    }
+    .idea-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--cyan);
+      box-shadow: var(--shadow-glow-cyan);
+    }
+    .idea-number {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: rgba(0, 245, 255, 0.08);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .tech-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      background: rgba(123, 47, 247, 0.12);
+      border: 1px solid rgba(123, 47, 247, 0.25);
+      color: var(--purple);
+      margin: 2px;
+    }
+    .winner-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .winner-row:last-child { border-bottom: none; }
+    .placement-badge {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .placement-badge.gold { background: rgba(255, 215, 0, 0.15); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.3); }
+    .placement-badge.silver { background: rgba(192, 192, 192, 0.15); color: #c0c0c0; border: 1px solid rgba(192, 192, 192, 0.3); }
+    .placement-badge.bronze { background: rgba(205, 127, 50, 0.15); color: #cd7f32; border: 1px solid rgba(205, 127, 50, 0.3); }
+    .placement-badge.other { background: rgba(0, 245, 255, 0.1); color: var(--cyan); border: 1px solid rgba(0, 245, 255, 0.2); }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">PHOENIX</div>
+    <ul class="nav-links">
+      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
+      <li><a href="../dashboard/leaderboard.html">🏆 Leaderboard</a></li>
+      <li class="nav-dropdown">
+        <a href="#">Prep Roadmap ▾</a>
+        <div class="nav-dropdown-content">
+          <a href="../interview-prep/roadmap.html">🗺️ Adaptive Syllabus</a>
+          <a href="../interview-prep/practice.html">💬 Mock Interview</a>
+          <a href="../interview-prep/resume.html">📝 Resume Optimizer</a>
+          <a href="../interview-prep/cramming.html">⚡ Cramming Mode</a>
+          <a href="../interview-prep/system-design.html">🛠️ System Design</a>
+        </div>
+      </li>
+      <li class="nav-dropdown">
+        <a href="#" class="active">Hackathons ▾</a>
+        <div class="nav-dropdown-content">
+          <a href="./agent.html">🤖 Hack-Auto Agent</a>
+          <a href="./idea-generator.html">💡 Idea Generator</a>
+          <a href="./github-miner.html">🔗 GitHub Miner</a>
+          <a href="./view.html">📋 Discovery Feed</a>
+          <a href="./team.html">👥 Team Roster</a>
+          <a href="./chat.html">💬 Discord War Room</a>
+          <a href="./portfolio.html">🏆 Portfolio Capture</a>
+        </div>
+      </li>
+      <li><a href="../profile/profile.html">👤 Profile</a></li>
+      <li><a href="#" id="logoutBtn" style="color: var(--coral);">Logout</a></li>
+    </ul>
+  </nav>
+
+  <canvas id="particles"></canvas>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>💡 Hackathon Idea Generator</h1>
+      <p>RAG-powered brainstorming engine. Combines past hackathon winners with current tech trends to generate unique, high-impact project ideas for your team.</p>
+    </div>
+
+    <div class="flex-row" style="gap: 24px; align-items: flex-start;">
+
+      <!-- LEFT: Input + Past Winners -->
+      <div class="col-sidebar" style="flex: 0 0 380px;">
+        <div class="glass-card">
+          <h3 class="font-space mb-2" style="font-size: 1.15rem;">Brainstorm Parameters</h3>
+          <form id="ideaForm" style="margin-top: 15px;">
+            <div class="form-group">
+              <label>Hackathon Theme / Problem Statement</label>
+              <input type="text" id="hackTheme" placeholder="e.g. Smart India, Healthcare AI, Sustainability" required>
+            </div>
+            <div class="form-group">
+              <label>Team Skills (comma-separated)</label>
+              <input type="text" id="teamSkills" placeholder="e.g. React, Python, TensorFlow, Flutter">
+            </div>
+            <div class="form-group">
+              <label>Constraints (optional)</label>
+              <textarea id="constraints" placeholder="e.g. Must use open-source only, max 4 team members, 24hr sprint..." rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">🧠 Generate Ideas</button>
+          </form>
+        </div>
+
+        <!-- Past Winners Catalog -->
+        <div class="glass-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 class="font-space" style="font-size: 1.1rem;">🏆 Past Winners Catalog</h3>
+            <button class="btn btn-secondary" onclick="seedCatalog()" style="padding: 4px 10px; font-size: 0.7rem;">Seed Data</button>
+          </div>
+          <div id="winnersContainer" style="max-height: 350px; overflow-y: auto;">
+            <p style="color: var(--text-muted); font-size: 0.8rem;">Click "Seed Data" to load sample winning projects.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Generated Ideas -->
+      <div class="col-main">
+        <h2 class="font-space mb-2" style="font-size: 1.3rem;">✨ Generated Ideas</h2>
+        <div id="ideasContainer" style="display: flex; flex-direction: column; gap: 20px;">
+          <div class="idea-card" style="text-align: center; padding: 50px;">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Fill in the brainstorm parameters and click "Generate Ideas" to get 3 unique project suggestions.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:5000/api';
+    let userToken = null;
+
+    // Particle Background
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
+    for (let i = 0; i < 40; i++) {
+        particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 1.2, dx: (Math.random() - 0.5) * 0.15, dy: (Math.random() - 0.5) * 0.15 });
+    }
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(0, 245, 255, 0.25)";
+        particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill(); p.x += p.dx; p.y += p.dy; if (p.x < 0 || p.x > canvas.width) p.dx *= -1; if (p.y < 0 || p.y > canvas.height) p.dy *= -1; });
+        requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      userToken = localStorage.getItem('token');
+      if (!userToken) { window.location.href = '../auth/login.html'; return; }
+      loadWinners();
+    });
+
+    // Generate Ideas
+    document.getElementById('ideaForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const hackathonTheme = document.getElementById('hackTheme').value;
+      const teamSkills = document.getElementById('teamSkills').value.split(',').map(s => s.trim()).filter(Boolean);
+      const constraints = document.getElementById('constraints').value;
+
+      const container = document.getElementById('ideasContainer');
+      container.innerHTML = '<div class="idea-card" style="text-align:center; padding:40px;"><p style="color:var(--cyan);">🧠 Analyzing past winners and current trends...</p></div>';
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/idea-gen/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` },
+          body: JSON.stringify({ hackathonTheme, teamSkills, constraints })
+        });
+        const data = await res.json();
+        if (res.ok && data.ideas) {
+          renderIdeas(data.ideas, data.pastWinnersUsed);
+        } else {
+          container.innerHTML = `<div class="idea-card"><p style="color:var(--coral);">❌ ${data.message || 'Failed to generate ideas.'}</p></div>`;
+        }
+      } catch (err) {
+        container.innerHTML = '<div class="idea-card"><p style="color:var(--coral);">❌ Connection error. Is the server running?</p></div>';
+      }
+    });
+
+    function renderIdeas(ideas, winnersUsed) {
+      const container = document.getElementById('ideasContainer');
+      container.innerHTML = '';
+
+      if (winnersUsed > 0) {
+        container.innerHTML += `<div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom: 4px;">📚 Referenced ${winnersUsed} past winning projects from RAG catalog.</div>`;
+      }
+
+      ideas.forEach((idea, i) => {
+        const techPills = (idea.techStack || []).map(t => `<span class="tech-pill">${t}</span>`).join('');
+        container.innerHTML += `
+          <div class="idea-card">
+            <span class="idea-number">#${i + 1}</span>
+            <h3 class="font-space" style="font-size: 1.2rem; color: var(--cyan); margin-bottom: 8px;">${idea.title}</h3>
+            <p style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.6; margin-bottom: 14px;">${idea.pitch}</p>
+            <div style="margin-bottom: 10px;">${techPills}</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.8rem;">
+              <div style="background: rgba(0,245,255,0.04); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <strong style="color: var(--cyan); display: block; margin-bottom: 4px;">🎯 Unique Angle</strong>
+                <span style="color: var(--text-secondary);">${idea.uniqueAngle}</span>
+              </div>
+              <div style="background: rgba(123,47,247,0.04); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <strong style="color: var(--purple); display: block; margin-bottom: 4px;">⏱️ MVP Scope (6hrs)</strong>
+                <span style="color: var(--text-secondary);">${idea.mvpScope}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    async function loadWinners() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/idea-gen/winners`, { headers: { 'Authorization': `Bearer ${userToken}` } });
+        if (res.ok) {
+          const winners = await res.json();
+          renderWinners(winners);
+        }
+      } catch (e) { console.warn('Could not load winners:', e); }
+    }
+
+    function renderWinners(winners) {
+      const container = document.getElementById('winnersContainer');
+      if (winners.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.8rem;">No winners in catalog. Click "Seed Data" to populate.</p>';
+        return;
+      }
+      container.innerHTML = winners.map(w => {
+        let badgeClass = 'other';
+        if (w.placement === '1st') badgeClass = 'gold';
+        else if (w.placement === '2nd') badgeClass = 'silver';
+        else if (w.placement === '3rd') badgeClass = 'bronze';
+
+        return `
+          <div class="winner-row">
+            <div class="placement-badge ${badgeClass}">${w.placement === '1st' ? '🥇' : w.placement === '2nd' ? '🥈' : w.placement === '3rd' ? '🥉' : '🏅'}</div>
+            <div style="flex: 1; min-width: 0;">
+              <strong style="color: var(--text-primary); font-size: 0.85rem; display: block;">${w.projectTitle}</strong>
+              <span style="font-size: 0.7rem; color: var(--text-muted);">${w.hackathonName} (${w.year})</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function seedCatalog() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/idea-gen/seed`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` }
+        });
+        if (res.ok) {
+          alert('Catalog seeded successfully!');
+          loadWinners();
+        }
+      } catch (e) { alert('Seed failed.'); }
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault(); localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '../auth/login.html';
+    });
+  </script>
+</body>
+</html>

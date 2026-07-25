@@ -91,15 +91,25 @@
       <!-- OUTPUT PREVIEW CARD -->
       <div class="col-main">
         <div class="glass-card">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2 class="font-space" style="font-size: 1.25rem;">Tailored Markdown Output</h2>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 class="font-space" style="font-size: 1.25rem;">📝 Resume Diff Visualizer</h2>
             <div style="display: flex; gap: 8px;">
-              <button class="btn btn-secondary" onclick="copyResume()" style="padding: 6px 12px; font-size: 0.8rem;">📋 Copy</button>
+              <button class="btn btn-secondary" onclick="copyResume()" style="padding: 6px 12px; font-size: 0.8rem;">📋 Copy Optimized</button>
               <button class="btn btn-secondary" onclick="downloadResume()" style="padding: 6px 12px; font-size: 0.8rem;">💾 Download</button>
             </div>
           </div>
           
-          <div class="output-box" id="outputContainer">Resume text will populate here in raw Markdown after analysis...</div>
+          <!-- Side-by-Side Diff Container -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div>
+              <h4 style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 6px;">Original Resume Details</h4>
+              <div class="output-box" id="originalContainer" style="min-height: 400px; background: rgba(244, 63, 94, 0.03); border-color: rgba(244, 63, 94, 0.15);">Original text will be preserved here...</div>
+            </div>
+            <div>
+              <h4 style="font-size: 0.85rem; color: var(--cyan); margin-bottom: 6px;">Tailored AI Output (Diff Highlighted)</h4>
+              <div class="output-box" id="outputContainer" style="min-height: 400px; background: rgba(0, 245, 255, 0.03); border-color: rgba(0, 245, 255, 0.15);">Optimizer output will populate here...</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -169,8 +179,9 @@
         e.preventDefault();
         const text = document.getElementById('resumeText').value;
         const jd = document.getElementById('jobDescription').value;
+        
+        document.getElementById('originalContainer').textContent = text;
         const out = document.getElementById('outputContainer');
-
         out.textContent = "⚡ Analysing resume alignment constraints...\n⚡ Injecting keywords and formatting to custom Markdown profile structure...";
 
         try {

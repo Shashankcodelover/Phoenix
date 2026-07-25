@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub STAR Story Miner - Phoenix</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    .commit-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .commit-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .commit-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--cyan);
+      margin-top: 5px;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px rgba(0, 245, 255, 0.4);
+    }
+    .commit-line {
+      border-left: 2px solid var(--border-subtle);
+      padding-left: 14px;
+    }
+    .star-output {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      min-height: 300px;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      overflow-y: auto;
+      margin-top: 12px;
+    }
+    .verify-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .verify-badge.success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: var(--green);
+    }
+    .verify-badge.pending {
+      background: rgba(255, 165, 0, 0.1);
+      border: 1px solid rgba(255, 165, 0, 0.3);
+      color: var(--orange);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">PHOENIX</div>
+    <ul class="nav-links">
+      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
+      <li><a href="../dashboard/leaderboard.html">🏆 Leaderboard</a></li>
+      <li class="nav-dropdown">
+        <a href="#">Prep Roadmap ▾</a>
+        <div class="nav-dropdown-content">
+          <a href="../interview-prep/roadmap.html">🗺️ Adaptive Syllabus</a>
+          <a href="../interview-prep/practice.html">💬 Mock Interview</a>
+          <a href="../interview-prep/resume.html">📝 Resume Optimizer</a>
+          <a href="../interview-prep/questions.html">🏷️ Company Questions</a>
+          <a href="../interview-prep/cramming.html">⚡ Cramming Mode</a>
+          <a href="../interview-prep/system-design.html">🛠️ System Design</a>
+        </div>
+      </li>
+      <li class="nav-dropdown">
+        <a href="#" class="active">Hackathons ▾</a>
+        <div class="nav-dropdown-content">
+          <a href="../hackathon-agent/agent.html">🤖 Hack-Auto Agent</a>
+          <a href="../hackathon-agent/view.html">📋 Discovery Feed</a>
+          <a href="../hackathon-agent/team.html">👥 Team Roster</a>
+          <a href="../hackathon-agent/chat.html">💬 Discord War Room</a>
+          <a href="../hackathon-agent/portfolio.html">🏆 Portfolio Capture</a>
+        </div>
+      </li>
+      <li><a href="../profile/profile.html">👤 Profile</a></li>
+      <li><a href="#" id="logoutBtn" style="color: var(--coral);">Logout</a></li>
+    </ul>
+  </nav>
+
+  <canvas id="particles"></canvas>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>🔗 GitHub STAR Story Miner</h1>
+      <p>Link your project repositories, verify code ownership, and auto-generate recruiter-ready STAR interview stories from your commit history.</p>
+    </div>
+
+    <div class="flex-row" style="gap: 24px; align-items: flex-start;">
+
+      <!-- LEFT: Input Panel -->
+      <div class="col-sidebar" style="flex: 0 0 400px;">
+        <div class="glass-card">
+          <h3 class="font-space mb-2" style="font-size: 1.15rem;">Repository Details</h3>
+          <form id="githubForm" style="margin-top: 15px;">
+            <div class="form-group">
+              <label>GitHub Repository URL</label>
+              <input type="url" id="repoUrl" placeholder="https://github.com/username/project" required>
+            </div>
+            <div class="form-group">
+              <label>README Excerpt (optional)</label>
+              <textarea id="readmeText" placeholder="Paste a snippet of your project's README for better story quality..." rows="5"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Key Commit Messages (optional, comma-separated)</label>
+              <textarea id="commitMessages" placeholder="feat: added real-time alerts, fix: resolved race condition in queue..." rows="3"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 5px;">
+              <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="verifyRepo()">🔍 Verify Ownership</button>
+              <button type="submit" class="btn btn-primary" style="flex: 1;">⚡ Mine STAR Story</button>
+            </div>
+          </form>
+
+          <div style="margin-top: 16px; text-align: center;">
+            <span class="verify-badge pending" id="verifyBadge">⏳ Not yet verified</span>
+          </div>
+        </div>
+
+        <!-- Commit Timeline -->
+        <div class="glass-card">
+          <h3 class="font-space mb-2" style="font-size: 1.1rem;">📜 Recent Commits</h3>
+          <div class="commit-timeline" id="commitTimeline">
+            <p style="color: var(--text-muted); font-size: 0.8rem;">Link a repository to load commit history.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Output Panel -->
+      <div class="col-main">
+        <div class="glass-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="font-space" style="font-size: 1.25rem;">📖 Generated STAR Story</h2>
+            <button class="btn btn-secondary" onclick="copyStory()" style="padding: 6px 12px; font-size: 0.8rem;">📋 Copy</button>
+          </div>
+          <div class="star-output" id="starOutput">Your AI-generated STAR interview story will appear here after mining...</div>
+        </div>
+
+        <!-- Skills Proven -->
+        <div class="glass-card">
+          <h3 class="font-space mb-2" style="font-size: 1.1rem;">🏷️ Skills Proven by This Project</h3>
+          <div id="skillsContainer" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+            <span style="color: var(--text-muted); font-size: 0.8rem;">Skills will appear after mining a STAR story.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:5000/api';
+    let minedStoryText = '';
+    let userToken = null;
+    let userId = null;
+
+    // Particle Background
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
+    for (let i = 0; i < 40; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: Math.random() * 1.2,
+            dx: (Math.random() - 0.5) * 0.15,
+            dy: (Math.random() - 0.5) * 0.15
+        });
+    }
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(0, 245, 255, 0.25)";
+        particles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+            p.x += p.dx;
+            p.y += p.dy;
+            if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+        });
+        requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      userToken = localStorage.getItem('token');
+      if (!userToken) {
+        window.location.href = '../auth/login.html';
+        return;
+      }
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      userId = user._id || user.id;
+      loadCommitHistory();
+    });
+
+    async function verifyRepo() {
+      const repoUrl = document.getElementById('repoUrl').value;
+      if (!repoUrl) { alert('Enter a repo URL first.'); return; }
+
+      const badge = document.getElementById('verifyBadge');
+      badge.className = 'verify-badge pending';
+      badge.textContent = '⏳ Verifying...';
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/github/verify-ownership`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` },
+          body: JSON.stringify({ userId, repoUrl })
+        });
+        const data = await res.json();
+        if (data.verified) {
+          badge.className = 'verify-badge success';
+          badge.textContent = '✅ ' + data.message;
+        } else {
+          badge.className = 'verify-badge pending';
+          badge.textContent = '⚠️ ' + data.message;
+        }
+      } catch (e) {
+        badge.className = 'verify-badge pending';
+        badge.textContent = '❌ Verification failed';
+      }
+    }
+
+    // Mine STAR Story
+    document.getElementById('githubForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const repoUrl = document.getElementById('repoUrl').value;
+      const readmeText = document.getElementById('readmeText').value;
+      const commitMsgs = document.getElementById('commitMessages').value.split(',').map(s => s.trim()).filter(Boolean);
+
+      const out = document.getElementById('starOutput');
+      out.textContent = '⚡ Mining commits and README for STAR story patterns...\n⚡ Sending to Gemini for narrative extraction...';
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/github/mine-stars`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` },
+          body: JSON.stringify({ userId, repoUrl, readmeText, commitMessages: commitMsgs })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          const project = data.project;
+          minedStoryText = project.starStory || JSON.stringify(project, null, 2);
+          out.textContent = `📖 ${project.title}\n\n${project.starStory}`;
+
+          // Render skills
+          const skillsEl = document.getElementById('skillsContainer');
+          const skills = data.skillsProven || project.techStack || [];
+          skillsEl.innerHTML = skills.map(s => `<span class="badge badge-cyan" style="font-size: 0.75rem;">${s}</span>`).join('');
+        } else {
+          out.textContent = '❌ ' + (data.message || 'Mining failed.');
+        }
+      } catch (err) {
+        out.textContent = '❌ Connection error. Is the server running?';
+      }
+    });
+
+    async function loadCommitHistory() {
+      const container = document.getElementById('commitTimeline');
+      try {
+        const res = await fetch(`${API_BASE_URL}/github/commit-history/${userId}`, {
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        if (res.ok) {
+          const commits = await res.json();
+          if (commits.length > 0) {
+            container.innerHTML = commits.map(c => `
+              <div class="commit-row">
+                <div class="commit-dot"></div>
+                <div class="commit-line">
+                  <strong style="color: var(--text-primary); font-size: 0.85rem;">${c.message}</strong>
+                  <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${c.author} • ${c.date}</div>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+      } catch (e) {
+        console.warn('Could not load commit history:', e);
+      }
+    }
+
+    function copyStory() {
+      if (!minedStoryText) { alert('Mine a story first!'); return; }
+      navigator.clipboard.writeText(minedStoryText).then(() => alert('STAR story copied!'));
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '../auth/login.html';
+    });
+  </script>
+</body>
+</html>
