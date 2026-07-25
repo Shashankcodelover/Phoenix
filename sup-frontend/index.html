@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Phoenix — Luxurious Career & Hackathon Gateway</title>
+  <link rel="stylesheet" href="./phoenix.css">
+  <style>
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-gateway {
+      text-align: center;
+      padding: 60px 20px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .gold-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(184, 134, 11, 0.15));
+      border: 1px solid var(--cyan);
+      color: var(--purple);
+      padding: 6px 18px;
+      border-radius: 30px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #1F1A0E 0%, #B8860B 50%, #D4AF37 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .world-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 30px;
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .world-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 36px;
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .world-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 4px;
+      background: var(--gradient-brand);
+    }
+
+    .world-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--cyan);
+    }
+
+    .world-icon {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+    }
+
+    .world-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+
+    .world-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 24px 0;
+    }
+
+    .feature-list li {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 6-Stage Wizard Modal */
+    .wizard-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(31, 26, 14, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .wizard-box {
+      background: var(--bg-card);
+      border: 2px solid var(--cyan);
+      border-radius: var(--radius-xl);
+      width: 90%;
+      max-width: 600px;
+      padding: 36px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .wizard-step {
+      display: none;
+    }
+
+    .wizard-step.active {
+      display: block;
+    }
+
+    .wizard-progress {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .wizard-dot {
+      flex: 1;
+      height: 4px;
+      background: rgba(212, 175, 55, 0.2);
+      border-radius: 2px;
+      transition: var(--transition-fast);
+    }
+
+    .wizard-dot.active {
+      background: var(--cyan);
+    }
+  </style>
+</head>
+<body class="theme-gold-rich">
+
+  <nav class="navbar">
+    <div class="navbar-brand">👑 PHOENIX GOLD</div>
+    <ul class="nav-links">
+      <li><a href="#" onclick="openWizard('interview')">💼 Placement World</a></li>
+      <li><a href="#" onclick="openWizard('hackathon')">🏆 Hackathon World</a></li>
+      <li><a href="./dashboard/dashboard.html">📊 Central Dashboard</a></li>
+      <li><a href="./dashboard/skill-tree.html">🌳 RPG Skill Tree</a></li>
+    </ul>
+  </nav>
+
+  <canvas id="particles"></canvas>
+
+  <div class="hero-gateway">
+    <div class="gold-badge">👑 Premier Rich Gold Experience</div>
+    <h1 class="hero-title">Welcome to Phoenix Gateway</h1>
+    <p style="font-size: 1.1rem; color: var(--text-secondary); line-height: 1.6;">
+      The ultimate dual-track accelerator for elite students. Select your destination world to complete your profile setup and unlock your personalized A-to-Z series.
+    </p>
+  </div>
+
+  <!-- DUAL WORLD GRID -->
+  <div class="world-grid">
+    <!-- INTERVIEW PREP WORLD -->
+    <div class="world-card">
+      <div>
+        <div class="world-icon">💼</div>
+        <h2 class="world-title">Placement & Interview World</h2>
+        <p class="world-desc">Complete A-to-Z placement preparation series. Target high-tier tech companies like Google, Meta, and Amazon.</p>
+        <ul class="feature-list">
+          <li>✨ <strong>6-Stage Profile Wizard:</strong> Custom job description alignment</li>
+          <li>📝 <strong>ATS Resume Disruptor:</strong> STAR metric bullet rewriter</li>
+          <li>🗺️ <strong>Adaptive Syllabus Roadmap:</strong> Tailored study calendar</li>
+          <li>🤖 <strong>Peer Mock Match w/ AI Safety-Net:</strong> 24/7 mock interviews</li>
+          <li>🏛️ <strong>System Design Whiteboard:</strong> Adversarial AI attack engine</li>
+        </ul>
+      </div>
+      <button class="btn btn-primary" style="width: 100%;" onclick="openWizard('interview')">⚡ Complete Profile & Enter Placement World</button>
+    </div>
+
+    <!-- HACKATHON WINNER WORLD -->
+    <div class="world-card">
+      <div>
+        <div class="world-icon">🏆</div>
+        <h2 class="world-title">Hackathon Champion World</h2>
+        <p class="world-desc">A-to-Z hackathon winning series. Form multi-member teams, simulate 10-stage game pipelines, and generate bulletproof pitch decks.</p>
+        <ul class="feature-list">
+          <li>👥 <strong>Multi-Team Roster:</strong> Belong to multiple teams with role distribution</li>
+          <li>🎮 <strong>Hackathon Simulator:</strong> Turn-based game with AI teammates & chaos events</li>
+          <li>🗣️ <strong>Project Explainer:</strong> Architecture walkthroughs & judge defense Q&A</li>
+          <li>🎤 <strong>Slide Pitch Planner:</strong> Per-speaker scripts & demo video checklists</li>
+          <li>🔍 <strong>AI Code Review Agent:</strong> OWASP security & performance audit</li>
+        </ul>
+      </div>
+      <button class="btn btn-primary" style="width: 100%; background: var(--gradient-warm);" onclick="openWizard('hackathon')">🔥 Complete Profile & Enter Hackathon World</button>
+    </div>
+  </div>
+
+  <!-- 6-STAGE PROFILE WIZARD MODAL -->
+  <div class="wizard-modal" id="wizardModal">
+    <div class="wizard-box">
+      <div class="wizard-progress">
+        <div class="wizard-dot active" id="dot-1"></div>
+        <div class="wizard-dot" id="dot-2"></div>
+        <div class="wizard-dot" id="dot-3"></div>
+        <div class="wizard-dot" id="dot-4"></div>
+        <div class="wizard-dot" id="dot-5"></div>
+        <div class="wizard-dot" id="dot-6"></div>
+      </div>
+
+      <!-- STAGE 1: BASIC DETAILS -->
+      <div class="wizard-step active" id="step-1">
+        <h3 style="font-family:'Space Grotesk'; font-size:1.4rem; color:var(--text-primary); margin-bottom:6px;">Stage 1: Profile Identification</h3>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:18px;">Tell us your basic details to personalize your Phoenix profile.</p>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="wizName" placeholder="e.g. Alex Vance" value="Alex Vance" required>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="wizEmail" placeholder="alex@university.edu" value="alex@university.edu" required>
+        </div>
+        <button class="btn btn-primary" style="width:100%;" onclick="nextStep(2)">Next: Target Aspirations ➔</button>
+      </div>
+
+      <!-- STAGE 2: CAREER AIM -->
+      <div class="wizard-step" id="step-2">
+        <h3 style="font-family:'Space Grotesk'; font-size:1.4rem; color:var(--text-primary); margin-bottom:6px;">Stage 2: Target Role & Dream Companies</h3>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:18px;">Select your primary career role and target tech tier.</p>
+        <div class="form-group">
+          <label>Target Role</label>
+          <select id="wizRole">
+            <option value="Software Development Engineer (SDE)">Software Development Engineer (SDE)</option>
+            <option value="AI & Machine Learning Engineer">AI & Machine Learning Engineer</option>
+            <option value="Fullstack Web Lead">Fullstack Web Lead</option>
+            <option value="System Architect">System Architect</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Dream Target Company</label>
+          <input type="text" id="wizCompany" value="Google, Meta, Amazon" placeholder="e.g. Google, Meta">
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-secondary" style="flex:1;" onclick="nextStep(1)">Back</button>
+          <button class="btn btn-primary" style="flex:2;" onclick="nextStep(3)">Next: Tech Skills ➔</button>
+        </div>
+      </div>
+
+      <!-- STAGE 3: TECH STACK MATRIX -->
+      <div class="wizard-step" id="step-3">
+        <h3 style="font-family:'Space Grotesk'; font-size:1.4rem; color:var(--text-primary); margin-bottom:6px;">Stage 3: Technical Competency Matrix</h3>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:18px;">Enter your core programming languages and frameworks.</p>
+        <div class="form-group">
+          <label>Primary Tech Languages & Frameworks (Comma-separated)</label>
+          <input type="text" id="wizSkills" value="JavaScript, React, Node.js, Python, PostgreSQL" placeholder="e.g. C++, Java, React, Node.js">
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-secondary" style="flex:1;" onclick="nextStep(2)">Back</button>
+          <button class="btn btn-primary" style="flex:2;" onclick="nextStep(4)">Next: Team Role ➔</button>
+        </div>
+      </div>
+
+      <!-- STAGE 4: TEAM ROLE -->
+      <div class="wizard-step" id="step-4">
+        <h3 style="font-family:'Space Grotesk'; font-size:1.4rem; color:var(--text-primary); margin-bottom:6px;">Stage 4: Hackathon Team Role Specialty</h3>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:18px;">What is your primary superpower when working in team hackathons?</p>
+        <div class="form-group">
+          <label>Specialty Specialty</label>
+          <select id="wizTeamRole">
+            <option value="The Builder (Backend / Infra / Systems)">The Builder (Backend / Infra / Systems)</option>
+            <option value="The Designer (UI / UX / Onboarding)">The Designer (UI / UX / Onboarding)</option>
+            <option value="The Strategist (Product / Business / Pitch)">The Strategist (Product / Business / Pitch)</option>
+            <option value="The AI Dreamer (LLM / RAG / Models)">The AI Dreamer (LLM / RAG / Models)</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-secondary" style="flex:1;" onclick="nextStep(3)">Back</button>
+          <button class="btn btn-primary" style="flex:2;" onclick="nextStep(5)">Next: Target Description ➔</button>
+        </div>
+      </div>
+
+      <!-- STAGE 5: TARGET DESCRIPTION -->
+      <div class="wizard-step" id="step-5">
+        <h3 style="font-family:'Space Grotesk'; font-size:1.4rem; color:var(--text-primary); margin-bottom:6px;" id="stage5Title">Stage 5: Target Input Description</h3>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:18px;" id="stage5Subtitle">Paste your Job Description or Hackathon Theme to calibrate your AI guides.</p>
+        <div class="form-group">
+          <label id="stage5Label">Target Description Input</label>
+          <textarea id="wizDescription" rows="4" placeholder="Paste job description or hackathon challenge requirements here...">Building high-throughput scalable web applications, REST APIs, microservices, and AI integrations.</textarea>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-secondary" style="flex:1;" onclick="nextStep(4)">Back</button>
+          <button class="btn btn-primary" style="flex:2;" onclick="nextStep(6)">Next: Finalize Profile ➔</button>
+        </div>
+      </div>
+
+      <!-- STAGE 6: LAUNCH -->
+      <div class="wizard-step" id="step-6">
+        <h3 style="font-family:'Space Grotesk'; font-size:1.4rem; color:var(--cyan); margin-bottom:6px;">Stage 6: Profile Unlocked! 🏆</h3>
+        <p style="font-size:0.85rem; color:var(--text-primary); margin-bottom:18px;">Your profile has been saved. Click launch to enter your selected World!</p>
+        <div id="profileSummary" style="background:rgba(212,175,55,0.06); border:1px solid var(--cyan); border-radius:var(--radius-md); padding:16px; margin-bottom:20px; font-size:0.85rem;"></div>
+        <button class="btn btn-primary" style="width:100%; background:var(--gradient-brand);" onclick="launchWorld()">🚀 Launch World Portal</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let selectedWorld = 'interview';
+
+    // Particles
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    let particles = [];
+    for (let i = 0; i < 35; i++) { particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*1.1, dx: (Math.random()-0.5)*0.12, dy: (Math.random()-0.5)*0.12 }); }
+    function animP() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(212,175,55,0.2)"; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.dx; p.y+=p.dy; if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1; }); requestAnimationFrame(animP); }
+    animP();
+
+    function openWizard(world) {
+      selectedWorld = world;
+      document.getElementById('stage5Title').innerText = world === 'interview' ? 'Stage 5: Target Job Description' : 'Stage 5: Hackathon Event Description';
+      document.getElementById('stage5Subtitle').innerText = world === 'interview' ? 'Paste the Job Description to tailor your ATS resume & roadmap.' : 'Paste the Hackathon theme/challenge to configure your AI team & ideas.';
+      document.getElementById('stage5Label').innerText = world === 'interview' ? 'Job Description (JD)' : 'Hackathon Challenge Statement';
+      
+      document.getElementById('wizardModal').style.display = 'flex';
+      nextStep(1);
+    }
+
+    function nextStep(stepNum) {
+      for (let i = 1; i <= 6; i++) {
+        document.getElementById(`step-${i}`).classList.remove('active');
+        document.getElementById(`dot-${i}`).classList.remove('active');
+      }
+      document.getElementById(`step-${stepNum}`).classList.add('active');
+      for (let i = 1; i <= stepNum; i++) {
+        document.getElementById(`dot-${i}`).classList.add('active');
+      }
+
+      if (stepNum === 6) {
+        const name = document.getElementById('wizName').value;
+        const role = document.getElementById('wizRole').value;
+        const skills = document.getElementById('wizSkills').value;
+        const teamRole = document.getElementById('wizTeamRole').value;
+
+        document.getElementById('profileSummary').innerHTML = `
+          <strong>👤 Candidate:</strong> ${name}<br>
+          <strong>🎯 Target Role:</strong> ${role}<br>
+          <strong>⚡ Tech Stack:</strong> ${skills}<br>
+          <strong>👥 Team Specialty:</strong> ${teamRole}
+        `;
+      }
+    }
+
+    function launchWorld() {
+      const user = {
+        name: document.getElementById('wizName').value,
+        email: document.getElementById('wizEmail').value,
+        targetRole: document.getElementById('wizRole').value,
+        targetCompany: document.getElementById('wizCompany').value,
+        skills: document.getElementById('wizSkills').value.split(',').map(s=>s.trim()),
+        teamRole: document.getElementById('wizTeamRole').value,
+        targetDescription: document.getElementById('wizDescription').value
+      };
+
+      localStorage.setItem('userProfile', JSON.stringify(user));
+      localStorage.setItem('onboardingCompleted', 'true');
+
+      if (selectedWorld === 'interview') {
+        window.location.href = './interview-prep/roadmap.html';
+      } else {
+        window.location.href = './hackathon-agent/command-center.html';
+      }
+    }
+  </script>
+</body>
+</html>
