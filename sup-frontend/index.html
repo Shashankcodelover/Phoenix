@@ -3,75 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Phoenix — Universal Entrance & Career Accelerator Gateway</title>
+  <title>Project Phoenix — Light Gold Rich Gateway & Career Accelerator</title>
   <link rel="stylesheet" href="./phoenix.css">
+  <script src="./dashboard/ux-tour.js"></script>
   <style>
     body {
-      background: #06060E; /* Luxurious Black Screen Entrance */
-      color: #F0F0F5;
+      background: var(--bg-gradient);
+      color: var(--text-primary);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       font-family: 'Inter', sans-serif;
     }
 
+    /* FULL SCREEN UTILIZATION (Max-width 1440px, 96vw) */
     .hero-gateway {
       text-align: center;
-      padding: 50px 20px 30px;
-      max-width: 900px;
+      padding: 40px 20px 20px;
+      width: 96vw;
+      max-width: 1440px;
       margin: 0 auto;
     }
 
     .gold-badge {
       display: inline-block;
-      background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(184, 134, 11, 0.1));
-      border: 1px solid #D4AF37;
-      color: #FFD700;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(184, 134, 11, 0.15));
+      border: 1px solid var(--cyan);
+      color: var(--purple);
       padding: 6px 20px;
       border-radius: 30px;
       font-size: 0.8rem;
       font-weight: 700;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
     }
 
     .hero-title {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 3.4rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #FFFFFF 0%, #FFD700 50%, #D4AF37 100%);
+      font-weight: 900;
+      background: linear-gradient(135deg, #1F1A0E 0%, #B8860B 50%, #D4AF37 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       line-height: 1.15;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
-    .tab-wizard-container {
-      max-width: 800px;
-      margin: 20px auto 50px;
-      background: rgba(18, 18, 32, 0.95);
-      border: 1px solid rgba(212, 175, 55, 0.3);
+    .full-width-container {
+      width: 96vw;
+      max-width: 1440px;
+      margin: 10px auto 40px;
+      padding: 0 10px;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-layout { grid-template-columns: 1fr; }
+    }
+
+    .panel-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-xl);
-      padding: 36px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      padding: 30px;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition-smooth);
       position: relative;
+    }
+
+    .panel-card:hover {
+      border-color: var(--cyan);
+      box-shadow: var(--shadow-lg);
     }
 
     .tab-nav {
       display: flex;
       gap: 8px;
-      margin-bottom: 30px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding-bottom: 12px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 10px;
       overflow-x: auto;
     }
 
     .tab-btn {
       background: transparent;
       border: none;
-      color: rgba(255, 255, 255, 0.5);
+      color: var(--text-muted);
       font-size: 0.85rem;
       font-weight: 600;
       padding: 8px 16px;
@@ -83,8 +107,8 @@
 
     .tab-btn.active {
       background: rgba(212, 175, 55, 0.15);
-      color: #FFD700;
-      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: var(--purple);
+      border: 1px solid var(--cyan);
     }
 
     .tab-content {
@@ -95,162 +119,236 @@
       display: block;
     }
 
-    .social-input-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
+    .devfolio-banner {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(184, 134, 11, 0.06));
+      border: 1px solid var(--cyan);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 20px;
     }
   </style>
 </head>
-<body>
+<body class="theme-gold-rich">
 
   <!-- NAVBAR -->
   <nav class="navbar">
-    <div class="navbar-brand" style="color:#FFD700;">👑 PHOENIX GATEWAY</div>
+    <div class="navbar-brand" style="color:var(--purple); font-weight:800;">👑 PHOENIX GOLD</div>
     <ul class="nav-links">
       <li><a href="./interview-prep/roadmap.html">💼 Placement World</a></li>
       <li><a href="./hackathon-agent/command-center.html">🏆 Hackathon World</a></li>
-      <li><a href="./dashboard/dashboard.html">📊 Dashboard</a></li>
-      <li><a href="./dashboard/skill-tree.html">🌳 Skill Tree</a></li>
+      <li><a href="./dashboard/dashboard.html">📊 Central Dashboard</a></li>
+      <li><a href="./dashboard/skill-tree.html">🌳 RPG Skill Tree</a></li>
+      <li><button class="btn btn-primary" onclick="window.phoenixTour.startTour()" style="padding:4px 12px; font-size:0.78rem;">🎮 Guided Tour</button></li>
     </ul>
   </nav>
 
   <canvas id="particles"></canvas>
 
+  <!-- HERO GATEWAY (FULL SPACE UTILIZATION) -->
   <div class="hero-gateway">
-    <div class="gold-badge">🔥 Universal Profile & Career Accelerator</div>
-    <h1 class="hero-title">Welcome to Phoenix Portal</h1>
-    <p style="font-size: 1.05rem; color: rgba(255,255,255,0.7); line-height: 1.6;">
-      Enter your universal developer details below (GitHub, LinkedIn, Skills). Once your profile is filtered, select your destination world (Placement or Hackathon) and paste your target description to launch your A-to-Z training series!
+    <div class="gold-badge">👑 Premier Rich Gold Experience • Devfolio Live Demo Ready</div>
+    <h1 class="hero-title">Phoenix Universal Career & Hackathon Portal</h1>
+    <p style="font-size: 1.05rem; color: var(--text-secondary); line-height: 1.6; max-width: 1000px; margin: 0 auto;">
+      Complete your universal developer profile below (including GitHub & LinkedIn links) to calibrate your personalized A-to-Z Placement Accelerator or Hackathon Champion series!
     </p>
   </div>
 
-  <!-- UNIVERSAL TAB PROFILE WIZARD -->
-  <div class="tab-wizard-container">
-    <div class="tab-nav">
-      <button class="tab-btn active" id="tbtn-1" onclick="switchTab(1)">1. Profile Details</button>
-      <button class="tab-btn" id="tbtn-2" onclick="switchTab(2)">2. GitHub & LinkedIn</button>
-      <button class="tab-btn" id="tbtn-3" onclick="switchTab(3)">3. Tech Skills</button>
-      <button class="tab-btn" id="tbtn-4" onclick="switchTab(4)">4. Select Destination World</button>
-      <button class="tab-btn" id="tbtn-5" onclick="switchTab(5)">5. Target Description</button>
-      <button class="tab-btn" id="tbtn-6" onclick="switchTab(6)">6. Launch Portal 🚀</button>
-    </div>
+  <!-- MAIN FULL-WIDTH GRID (NO WASTED EMPTY SPACE) -->
+  <div class="full-width-container">
+    <div class="grid-layout">
 
-    <!-- TAB 1: PROFILE DETAILS -->
-    <div class="tab-content active" id="tab-1">
-      <h3 style="color:#FFD700; font-family:'Space Grotesk'; font-size:1.3rem; margin-bottom:6px;">Step 1: Personal Identification</h3>
-      <p style="font-size:0.85rem; color:rgba(255,255,255,0.6); margin-bottom:18px;">Enter your core identification so Phoenix can personalize your experience.</p>
-      <div class="form-group">
-        <label>Full Name *</label>
-        <input type="text" id="uName" placeholder="e.g. Preetham J" value="Preetham J" required>
-      </div>
-      <div class="form-group">
-        <label>Primary Email *</label>
-        <input type="email" id="uEmail" placeholder="preetham@university.edu" value="preetham@university.edu" required>
-      </div>
-      <button class="btn btn-primary" style="width:100%;" onclick="switchTab(2)">Next: GitHub & LinkedIn Profiles ➔</button>
-    </div>
-
-    <!-- TAB 2: GITHUB & LINKEDIN PROFILES -->
-    <div class="tab-content" id="tab-2">
-      <h3 style="color:#FFD700; font-family:'Space Grotesk'; font-size:1.3rem; margin-bottom:6px;">Step 2: Portfolio Links & Verification</h3>
-      <p style="font-size:0.85rem; color:rgba(255,255,255,0.6); margin-bottom:18px;">Providing your GitHub and LinkedIn allows Phoenix AI to extract stories, verify commits, and tune ATS resume scoring.</p>
-      <div class="social-input-row">
-        <div class="form-group">
-          <label>🔗 GitHub Profile URL / Username</label>
-          <input type="text" id="uGithub" placeholder="https://github.com/yourname" value="https://github.com/udaysharmadev">
-        </div>
-        <div class="form-group">
-          <label>💼 LinkedIn Profile URL</label>
-          <input type="text" id="uLinkedin" placeholder="https://linkedin.com/in/yourname" value="https://linkedin.com/in/preetham-j">
-        </div>
-      </div>
-      <div class="form-group">
-        <label>🌐 Portfolio Website (Optional)</label>
-        <input type="text" id="uPortfolio" placeholder="https://yourportfolio.dev">
-      </div>
-      <div style="display:flex; gap:10px;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="switchTab(1)">Back</button>
-        <button class="btn btn-primary" style="flex:2;" onclick="switchTab(3)">Next: Technical Skills Matrix ➔</button>
-      </div>
-    </div>
-
-    <!-- TAB 3: TECH SKILLS -->
-    <div class="tab-content" id="tab-3">
-      <h3 style="color:#FFD700; font-family:'Space Grotesk'; font-size:1.3rem; margin-bottom:6px;">Step 3: Core Technical Competency</h3>
-      <p style="font-size:0.85rem; color:rgba(255,255,255,0.6); margin-bottom:18px;">Enter your core skills and hackathon team specialty.</p>
-      <div class="form-group">
-        <label>Technical Stack (Comma-separated)</label>
-        <input type="text" id="uSkills" placeholder="JavaScript, Python, React, Node.js, C++" value="JavaScript, React, Node.js, Python, PostgreSQL, System Design">
-      </div>
-      <div class="form-group">
-        <label>Hackathon Team Specialty</label>
-        <select id="uTeamSpecialty">
-          <option value="The Builder (Backend / Infra / Scalability)">The Builder (Backend / Infra / Scalability)</option>
-          <option value="The Designer (UI / UX / Onboarding)">The Designer (UI / UX / Onboarding)</option>
-          <option value="The Strategist (Product / Business / Pitch)">The Strategist (Product / Business / Pitch)</option>
-          <option value="The AI Dreamer (LLM / RAG / Vector DB)">The AI Dreamer (LLM / RAG / Vector DB)</option>
-        </select>
-      </div>
-      <div style="display:flex; gap:10px;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="switchTab(2)">Back</button>
-        <button class="btn btn-primary" style="flex:2;" onclick="switchTab(4)">Next: Destination World ➔</button>
-      </div>
-    </div>
-
-    <!-- TAB 4: SELECT DESTINATION WORLD -->
-    <div class="tab-content" id="tab-4">
-      <h3 style="color:#FFD700; font-family:'Space Grotesk'; font-size:1.3rem; margin-bottom:6px;">Step 4: Choose Destination World</h3>
-      <p style="font-size:0.85rem; color:rgba(255,255,255,0.6); margin-bottom:18px;">Which A-to-Z series do you want to unlock today?</p>
-      
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
-        <div style="background:rgba(255,255,255,0.03); border:2px solid rgba(0,245,255,0.3); border-radius:12px; padding:20px; text-align:center; cursor:pointer;" id="wCardInterview" onclick="selectWorld('interview')">
-          <div style="font-size:2.5rem;">💼</div>
-          <h4 style="color:#00f5ff; font-family:'Space Grotesk'; margin:8px 0 4px;">Placement World</h4>
-          <p style="font-size:0.8rem; color:rgba(255,255,255,0.6);">A-to-Z Interview Prep, ATS Resume Disruptor, Peer Mocks & System Design.</p>
+      <!-- LEFT: UNIVERSAL TAB WIZARD -->
+      <div class="panel-card" id="profileWizardCard">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h2 class="font-space" style="font-size: 1.4rem; color:var(--text-primary); margin:0;">📋 Universal Profile Calibrator</h2>
+          <button class="btn btn-secondary" onclick="window.phoenixTour.startTour()" style="font-size:0.75rem; padding:4px 10px;">👉 Interactive Pointer</button>
         </div>
 
-        <div style="background:rgba(255,255,255,0.03); border:2px solid rgba(244,63,94,0.3); border-radius:12px; padding:20px; text-align:center; cursor:pointer;" id="wCardHackathon" onclick="selectWorld('hackathon')">
-          <div style="font-size:2.5rem;">🏆</div>
-          <h4 style="color:#f43f5e; font-family:'Space Grotesk'; margin:8px 0 4px;">Hackathon World</h4>
-          <p style="font-size:0.8rem; color:rgba(255,255,255,0.6);">A-to-Z Hackathon Winning Series, Team Roster, Game Simulator & Pitch Explainer.</p>
+        <div class="tab-nav">
+          <button class="tab-btn active" id="tb-1" onclick="switchTab(1)">1. Identity</button>
+          <button class="tab-btn" id="tb-2" onclick="switchTab(2)">2. GitHub & LinkedIn</button>
+          <button class="tab-btn" id="tb-3" onclick="switchTab(3)">3. Skills Matrix</button>
+          <button class="tab-btn" id="tb-4" onclick="switchTab(4)">4. Select World</button>
+          <button class="tab-btn" id="tb-5" onclick="switchTab(5)">5. Target Input</button>
+          <button class="tab-btn" id="tb-6" onclick="switchTab(6)">6. Launch Portal 🚀</button>
         </div>
+
+        <!-- TAB 1: IDENTITY -->
+        <div class="tab-content active" id="tc-1">
+          <h4 style="color:var(--cyan); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;">Step 1: Developer Identity</h4>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;">Enter your core identification so Phoenix can personalize your experience.</p>
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="uName" value="Preetham J" placeholder="e.g. Preetham J" required>
+          </div>
+          <div class="form-group">
+            <label>Primary Email *</label>
+            <input type="email" id="uEmail" value="preetham@university.edu" placeholder="preetham@university.edu" required>
+          </div>
+          <button class="btn btn-primary" style="width:100%;" onclick="switchTab(2)">Next: GitHub & LinkedIn Profiles ➔</button>
+        </div>
+
+        <!-- TAB 2: GITHUB & LINKEDIN -->
+        <div class="tab-content" id="tc-2">
+          <h4 style="color:var(--cyan); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;">Step 2: Portfolio Links & Verification</h4>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;">Providing your GitHub and LinkedIn allows Phoenix AI to extract STAR stories, verify commits, and tune ATS resume scoring.</p>
+          <div class="form-group">
+            <label>🔗 GitHub Profile URL / Username</label>
+            <input type="text" id="uGithub" value="https://github.com/udaysharmadev/The-Hackathon-Simulator">
+          </div>
+          <div class="form-group">
+            <label>💼 LinkedIn Profile URL</label>
+            <input type="text" id="uLinkedin" value="https://linkedin.com/in/preetham-j">
+          </div>
+          <div class="form-group">
+            <label>🌐 Portfolio Website (Optional)</label>
+            <input type="text" id="uPortfolio" value="https://preetham-portfolio.dev">
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-secondary" style="flex:1;" onclick="switchTab(1)">Back</button>
+            <button class="btn btn-primary" style="flex:2;" onclick="switchTab(3)">Next: Technical Skills Matrix ➔</button>
+          </div>
+        </div>
+
+        <!-- TAB 3: SKILLS -->
+        <div class="tab-content" id="tc-3">
+          <h4 style="color:var(--cyan); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;">Step 3: Core Technical Stack</h4>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;">Enter your core programming languages, frameworks, and hackathon specialty role.</p>
+          <div class="form-group">
+            <label>Technical Stack (Comma-separated)</label>
+            <input type="text" id="uSkills" value="JavaScript, React, Node.js, Python, PostgreSQL, Anthropic Claude API, System Design">
+          </div>
+          <div class="form-group">
+            <label>Hackathon Team Role Specialty</label>
+            <select id="uTeamSpecialty">
+              <option value="The Builder (Backend / Infra / Scalability)">The Builder (Backend / Infra / Scalability)</option>
+              <option value="The Designer (UI / UX / Onboarding)">The Designer (UI / UX / Onboarding)</option>
+              <option value="The Strategist (Product / Business / Pitch)">The Strategist (Product / Business / Pitch)</option>
+              <option value="The AI Dreamer (LLM / RAG / Vector DB)">The AI Dreamer (LLM / RAG / Vector DB)</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-secondary" style="flex:1;" onclick="switchTab(2)">Back</button>
+            <button class="btn btn-primary" style="flex:2;" onclick="switchTab(4)">Next: Destination World ➔</button>
+          </div>
+        </div>
+
+        <!-- TAB 4: SELECT WORLD -->
+        <div class="tab-content" id="tc-4">
+          <h4 style="color:var(--cyan); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;">Step 4: Choose Destination World</h4>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;">Which A-to-Z accelerator series do you want to unlock today?</p>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
+            <div style="background:rgba(255,255,255,0.6); border:2px solid var(--cyan); border-radius:12px; padding:16px; text-align:center; cursor:pointer;" id="wcInterview" onclick="chooseWorld('interview')">
+              <div style="font-size:2.2rem;">💼</div>
+              <h5 style="color:var(--purple); font-family:'Space Grotesk'; margin:6px 0 2px;">Placement World</h5>
+              <p style="font-size:0.75rem; color:var(--text-secondary);">A-to-Z Placement Syllabus, ATS Resume Disruptor & Peer Mocks.</p>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.6); border:2px solid var(--purple); border-radius:12px; padding:16px; text-align:center; cursor:pointer;" id="wcHackathon" onclick="chooseWorld('hackathon')">
+              <div style="font-size:2.2rem;">🏆</div>
+              <h5 style="color:var(--coral); font-family:'Space Grotesk'; margin:6px 0 2px;">Hackathon World</h5>
+              <p style="font-size:0.75rem; color:var(--text-secondary);">A-to-Z Hackathon Series, Multi-Team Roster, Game Simulator & Pitch Explainer.</p>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-secondary" style="flex:1;" onclick="switchTab(3)">Back</button>
+            <button class="btn btn-primary" style="flex:2;" onclick="switchTab(5)">Next: Target Description ➔</button>
+          </div>
+        </div>
+
+        <!-- TAB 5: TARGET INPUT -->
+        <div class="tab-content" id="tc-5">
+          <h4 style="color:var(--cyan); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;" id="descHeaderTitle">Step 5: Target Description Statement</h4>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;" id="descHeaderSub">Paste the target Job Description or Hackathon Challenge Statement.</p>
+          <div class="form-group">
+            <label id="descLabel">Target Input Text</label>
+            <textarea id="uTargetDesc" rows="4" style="font-size:0.85rem;">Push to Prod Hackathon: Building at the Frontier (Anthropic & Elevation Capital). Theme: Build the Next Audacious — frontier capabilities, agentic workflows, and new input/output modalities powered by Claude AI.</textarea>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-secondary" style="flex:1;" onclick="switchTab(4)">Back</button>
+            <button class="btn btn-primary" style="flex:2;" onclick="switchTab(6)">Next: Finalize & Launch ➔</button>
+          </div>
+        </div>
+
+        <!-- TAB 6: LAUNCH PORTAL -->
+        <div class="tab-content" id="tc-6">
+          <h4 style="color:var(--purple); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;">Step 6: Universal Profile Ready! 🏆</h4>
+          <p style="font-size:0.85rem; color:var(--text-primary); margin-bottom:14px;">Your profile details and links have been verified and saved. Click below to launch your selected world!</p>
+          
+          <div id="summaryCard" style="background:rgba(212,175,55,0.08); border:1px solid var(--cyan); border-radius:12px; padding:14px; margin-bottom:16px; font-size:0.82rem; line-height:1.5;"></div>
+
+          <button class="btn btn-primary" style="width:100%; background:var(--gradient-warm); color:#FFF; font-weight:800; font-size:1.05rem;" onclick="launchWorldPortal()">🚀 Launch Selected World Series</button>
+        </div>
+
       </div>
 
-      <div style="display:flex; gap:10px;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="switchTab(3)">Back</button>
-        <button class="btn btn-primary" style="flex:2;" onclick="switchTab(5)">Next: Target Description ➔</button>
+      <!-- RIGHT: LIVE DEVFOLIO DEMO & REAL-TIME ACCELERATOR FEED -->
+      <div style="display:flex; flex-direction:column; gap:24px;">
+
+        <!-- DEVFOLIO LIVE DEMO BANNER -->
+        <div class="panel-card" style="border-color:var(--cyan);">
+          <div class="devfolio-banner">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="badge badge-purple" style="font-size:0.7rem;">🔥 Devfolio Live Demo Match</span>
+              <span style="font-size:0.75rem; color:var(--purple); font-weight:700;">Aug 8, 2026 • Bengaluru</span>
+            </div>
+            <h3 style="font-family:'Space Grotesk'; font-size:1.25rem; color:var(--text-primary); margin:10px 0 6px;">Push to Prod: Building at the Frontier</h3>
+            <p style="font-size:0.82rem; color:var(--text-secondary); line-height:1.5;">
+              Hosted by <strong>Anthropic & Elevation Capital</strong>. Build audacious products, frontier agentic capabilities, and category-redefining interfaces powered by Claude AI.
+            </p>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div style="background:rgba(255,255,255,0.5); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
+              <strong style="color:var(--cyan); font-size:0.8rem; display:block;">🤖 Required AI Tech</strong>
+              <span style="font-size:0.78rem; color:var(--text-secondary);">Anthropic Claude API & LLM Agent Workflows</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.5); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
+              <strong style="color:var(--purple); font-size:0.8rem; display:block;">🎁 Exclusive Reward</strong>
+              <span style="font-size:0.78rem; color:var(--text-secondary);">Elevation Capital Office Hours & $5,000 Prizes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- A-TO-Z SERIES OVERVIEW MODULE -->
+        <div class="panel-card">
+          <h3 class="font-space mb-2" style="font-size: 1.2rem; color:var(--text-primary);">⚡ A-to-Z Accelerator Series Overview</h3>
+          <div style="display:flex; flex-direction:column; gap:12px; margin-top:12px;">
+            <div class="log-row">
+              <div>
+                <strong style="color:var(--cyan); font-size:0.85rem;">💼 A-to-Z Placement Series</strong>
+                <span style="display:block; font-size:0.78rem; color:var(--text-secondary);">ATS Disruptor, 6-Week Roadmap, System Design & Peer Mocks</span>
+              </div>
+              <a href="./interview-prep/roadmap.html" class="btn btn-secondary" style="font-size:0.75rem; padding:4px 10px;">Enter ➔</a>
+            </div>
+
+            <div class="log-row">
+              <div>
+                <strong style="color:var(--coral); font-size:0.85rem;">🏆 A-to-Z Hackathon Series</strong>
+                <span style="display:block; font-size:0.78rem; color:var(--text-secondary);">Multi-Team Roster, Turn-Based Game Simulator & Judge Explainer</span>
+              </div>
+              <a href="./hackathon-agent/command-center.html" class="btn btn-secondary" style="font-size:0.75rem; padding:4px 10px;">Enter ➔</a>
+            </div>
+
+            <div class="log-row">
+              <div>
+                <strong style="color:var(--purple); font-size:0.85rem;">🎮 Hackathon Game Simulator</strong>
+                <span style="display:block; font-size:0.78rem; color:var(--text-secondary);">AI Teammates, Crew Voting, Chaos Events & Judge Roasts</span>
+              </div>
+              <a href="./hackathon-agent/simulator.html" class="btn btn-secondary" style="font-size:0.75rem; padding:4px 10px;">Play ➔</a>
+            </div>
+          </div>
+        </div>
+
       </div>
+
     </div>
-
-    <!-- TAB 5: TARGET DESCRIPTION INPUT -->
-    <div class="tab-content" id="tab-5">
-      <h3 style="color:#FFD700; font-family:'Space Grotesk'; font-size:1.3rem; margin-bottom:6px;" id="descTitle">Step 5: Target Job Description</h3>
-      <p style="font-size:0.85rem; color:rgba(255,255,255,0.6); margin-bottom:18px;" id="descSub">Paste the target Job Description or Hackathon Challenge Statement.</p>
-      <div class="form-group">
-        <label id="descLabel">Target Input Text</label>
-        <textarea id="uTargetDesc" rows="5" placeholder="Paste target description here...">Building high-throughput microservices, REST APIs, asynchronous worker queues, and AI-driven user experiences.</textarea>
-      </div>
-      <div style="display:flex; gap:10px;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="switchTab(4)">Back</button>
-        <button class="btn btn-primary" style="flex:2;" onclick="switchTab(6)">Next: Finalize & Launch ➔</button>
-      </div>
-    </div>
-
-    <!-- TAB 6: LAUNCH PORTAL -->
-    <div class="tab-content" id="tab-6">
-      <h3 style="color:#FFD700; font-family:'Space Grotesk'; font-size:1.3rem; margin-bottom:6px;">Step 6: Universal Profile Ready! 🏆</h3>
-      <p style="font-size:0.85rem; color:rgba(255,255,255,0.8); margin-bottom:18px;">Your profile details and links have been filtered and saved. Click below to launch your selected world!</p>
-      
-      <div id="finalSummary" style="background:rgba(212,175,55,0.08); border:1px solid #D4AF37; border-radius:12px; padding:18px; margin-bottom:20px; font-size:0.85rem; line-height:1.6;"></div>
-
-      <button class="btn btn-primary" style="width:100%; background:linear-gradient(135deg, #D4AF37, #FFD700); color:#1F1A0E; font-weight:800; font-size:1.05rem;" onclick="launchWorldPortal()">🚀 Launch Selected World Series</button>
-    </div>
-
   </div>
 
   <script>
-    let activeWorld = 'interview';
+    let currentChosenWorld = 'interview';
 
     // Particles
     const canvas = document.getElementById("particles");
@@ -263,11 +361,11 @@
 
     function switchTab(num) {
       for (let i = 1; i <= 6; i++) {
-        document.getElementById(`tab-${i}`).classList.remove('active');
-        document.getElementById(`tbtn-${i}`).classList.remove('active');
+        document.getElementById(`tc-${i}`).classList.remove('active');
+        document.getElementById(`tb-${i}`).classList.remove('active');
       }
-      document.getElementById(`tab-${num}`).classList.add('active');
-      document.getElementById(`tbtn-${num}`).classList.add('active');
+      document.getElementById(`tc-${num}`).classList.add('active');
+      document.getElementById(`tb-${num}`).classList.add('active');
 
       if (num === 6) {
         const name = document.getElementById('uName').value;
@@ -276,24 +374,24 @@
         const linkedin = document.getElementById('uLinkedin').value;
         const skills = document.getElementById('uSkills').value;
 
-        document.getElementById('finalSummary').innerHTML = `
+        document.getElementById('summaryCard').innerHTML = `
           <strong>👤 Candidate Name:</strong> ${name}<br>
           <strong>📧 Email:</strong> ${email}<br>
-          <strong>🔗 GitHub Profile:</strong> ${github || 'Not provided'}<br>
-          <strong>💼 LinkedIn Profile:</strong> ${linkedin || 'Not provided'}<br>
+          <strong>🔗 GitHub Profile:</strong> ${github}<br>
+          <strong>💼 LinkedIn Profile:</strong> ${linkedin}<br>
           <strong>⚡ Tech Skills:</strong> ${skills}<br>
-          <strong>🌟 Destination World:</strong> <span style="color:#FFD700; font-weight:700;">${activeWorld === 'interview' ? 'Placement World' : 'Hackathon World'}</span>
+          <strong>🌟 Destination World:</strong> <span style="color:var(--cyan); font-weight:700;">${currentChosenWorld === 'interview' ? 'Placement World' : 'Hackathon World'}</span>
         `;
       }
     }
 
-    function selectWorld(world) {
-      activeWorld = world;
-      document.getElementById('wCardInterview').style.borderColor = world === 'interview' ? '#FFD700' : 'rgba(0,245,255,0.3)';
-      document.getElementById('wCardHackathon').style.borderColor = world === 'hackathon' ? '#FFD700' : 'rgba(244,63,94,0.3)';
+    function chooseWorld(world) {
+      currentChosenWorld = world;
+      document.getElementById('wcInterview').style.borderColor = world === 'interview' ? 'var(--cyan)' : 'var(--border-subtle)';
+      document.getElementById('wcHackathon').style.borderColor = world === 'hackathon' ? 'var(--coral)' : 'var(--border-subtle)';
       
-      document.getElementById('descTitle').innerText = world === 'interview' ? 'Step 5: Target Job Description (JD)' : 'Step 5: Hackathon Challenge Statement';
-      document.getElementById('descSub').innerText = world === 'interview' ? 'Paste the target Job Description to calibrate your ATS resume & roadmap.' : 'Paste the Hackathon theme/challenge to configure your AI team & ideas.';
+      document.getElementById('descHeaderTitle').innerText = world === 'interview' ? 'Step 5: Target Job Description (JD)' : 'Step 5: Hackathon Challenge Statement';
+      document.getElementById('descHeaderSub').innerText = world === 'interview' ? 'Paste the target Job Description to calibrate your ATS resume & roadmap.' : 'Paste the Hackathon theme/challenge to configure your AI team & ideas.';
     }
 
     function launchWorldPortal() {
@@ -306,18 +404,28 @@
         skills: document.getElementById('uSkills').value.split(',').map(s=>s.trim()),
         teamSpecialty: document.getElementById('uTeamSpecialty').value,
         targetDescription: document.getElementById('uTargetDesc').value,
-        destinationWorld: activeWorld
+        destinationWorld: currentChosenWorld
       };
 
       localStorage.setItem('userProfile', JSON.stringify(profile));
       localStorage.setItem('onboardingCompleted', 'true');
 
-      if (activeWorld === 'interview') {
+      if (currentChosenWorld === 'interview') {
         window.location.href = './interview-prep/roadmap.html';
       } else {
         window.location.href = './hackathon-agent/command-center.html';
       }
     }
+
+    // Auto-trigger guided tour on first visit
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!localStorage.getItem('tourShown')) {
+        setTimeout(() => {
+          window.phoenixTour.startTour();
+          localStorage.setItem('tourShown', 'true');
+        }, 800);
+      }
+    });
   </script>
 </body>
 </html>
