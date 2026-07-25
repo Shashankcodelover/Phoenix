@@ -14,15 +14,15 @@
       display: flex;
       flex-direction: column;
       font-family: 'Inter', sans-serif;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
-    /* FULL SCREEN UTILIZATION (Max-width 1440px, 96vw) */
+    /* FULL 100% HORIZONTAL SCREEN OCCUPATION (NO EMPTY LEFT/RIGHT MARGINS) */
     .hero-gateway {
       text-align: center;
-      padding: 40px 20px 20px;
-      width: 96vw;
-      max-width: 1440px;
-      margin: 0 auto;
+      padding: 36px 40px 20px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .gold-badge {
@@ -44,35 +44,34 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 3.4rem;
       font-weight: 900;
-      background: linear-gradient(135deg, #1F1A0E 0%, #B8860B 50%, #D4AF37 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text-primary);
       line-height: 1.15;
       margin-bottom: 12px;
     }
 
     .full-width-container {
-      width: 96vw;
-      max-width: 1440px;
-      margin: 10px auto 40px;
-      padding: 0 10px;
+      width: 100%;
+      padding: 0 40px 40px;
+      box-sizing: border-box;
     }
 
     .grid-layout {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 30px;
+      width: 100%;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1000px) {
       .grid-layout { grid-template-columns: 1fr; }
+      .full-width-container { padding: 0 20px 20px; }
     }
 
     .panel-card {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-xl);
-      padding: 30px;
+      padding: 32px;
       box-shadow: var(--shadow-md);
       transition: var(--transition-smooth);
       position: relative;
@@ -123,37 +122,58 @@
       background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(184, 134, 11, 0.06));
       border: 1px solid var(--cyan);
       border-radius: var(--radius-md);
-      padding: 16px;
+      padding: 18px;
       margin-bottom: 20px;
+    }
+
+    .theme-toggle-btn {
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--cyan);
+      color: var(--text-primary);
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition-fast);
+    }
+
+    .theme-toggle-btn:hover {
+      background: var(--cyan);
+      color: #FFF;
     }
   </style>
 </head>
-<body class="theme-gold-rich">
+<body class="theme-light-gold">
 
-  <!-- NAVBAR -->
+  <!-- NAVBAR WITH THEME TOGGLE -->
   <nav class="navbar">
     <div class="navbar-brand" style="color:var(--purple); font-weight:800;">👑 PHOENIX GOLD</div>
     <ul class="nav-links">
       <li><a href="./interview-prep/roadmap.html">💼 Placement World</a></li>
       <li><a href="./hackathon-agent/command-center.html">🏆 Hackathon World</a></li>
-      <li><a href="./dashboard/dashboard.html">📊 Central Dashboard</a></li>
-      <li><a href="./dashboard/skill-tree.html">🌳 RPG Skill Tree</a></li>
+      <li><a href="./dashboard/dashboard.html">📊 Dashboard</a></li>
+      <li><a href="./dashboard/skill-tree.html">🌳 Skill Tree</a></li>
+      <li><button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleGlobalTheme()">✨ Light Gold</button></li>
       <li><button class="btn btn-primary" onclick="window.phoenixTour.startTour()" style="padding:4px 12px; font-size:0.78rem;">🎮 Guided Tour</button></li>
     </ul>
   </nav>
 
   <canvas id="particles"></canvas>
 
-  <!-- HERO GATEWAY (FULL SPACE UTILIZATION) -->
+  <!-- HERO GATEWAY (100% SCREEN HORIZONTAL OCCUPATION) -->
   <div class="hero-gateway">
-    <div class="gold-badge">👑 Premier Rich Gold Experience • Devfolio Live Demo Ready</div>
+    <div class="gold-badge">👑 Premier Light Gold Rich Experience • Devfolio Live Demo Ready</div>
     <h1 class="hero-title">Phoenix Universal Career & Hackathon Portal</h1>
-    <p style="font-size: 1.05rem; color: var(--text-secondary); line-height: 1.6; max-width: 1000px; margin: 0 auto;">
+    <p style="font-size: 1.05rem; color: var(--text-secondary); line-height: 1.6; margin: 0 auto;">
       Complete your universal developer profile below (including GitHub & LinkedIn links) to calibrate your personalized A-to-Z Placement Accelerator or Hackathon Champion series!
     </p>
   </div>
 
-  <!-- MAIN FULL-WIDTH GRID (NO WASTED EMPTY SPACE) -->
+  <!-- MAIN FULL-WIDTH GRID (100% SCREEN OCCUPATION) -->
   <div class="full-width-container">
     <div class="grid-layout">
 
@@ -161,7 +181,7 @@
       <div class="panel-card" id="profileWizardCard">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
           <h2 class="font-space" style="font-size: 1.4rem; color:var(--text-primary); margin:0;">📋 Universal Profile Calibrator</h2>
-          <button class="btn btn-secondary" onclick="window.phoenixTour.startTour()" style="font-size:0.75rem; padding:4px 10px;">👉 Interactive Pointer</button>
+          <button class="btn btn-secondary" onclick="window.phoenixTour.startTour()" style="font-size:0.78rem; padding:6px 12px;">👉 Launch Guided Tour Spotlight</button>
         </div>
 
         <div class="tab-nav">
@@ -239,13 +259,13 @@
           <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;">Which A-to-Z accelerator series do you want to unlock today?</p>
           
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
-            <div style="background:rgba(255,255,255,0.6); border:2px solid var(--cyan); border-radius:12px; padding:16px; text-align:center; cursor:pointer;" id="wcInterview" onclick="chooseWorld('interview')">
+            <div style="background:var(--bg-secondary); border:2px solid var(--cyan); border-radius:12px; padding:16px; text-align:center; cursor:pointer;" id="wcInterview" onclick="chooseWorld('interview')">
               <div style="font-size:2.2rem;">💼</div>
               <h5 style="color:var(--purple); font-family:'Space Grotesk'; margin:6px 0 2px;">Placement World</h5>
               <p style="font-size:0.75rem; color:var(--text-secondary);">A-to-Z Placement Syllabus, ATS Resume Disruptor & Peer Mocks.</p>
             </div>
 
-            <div style="background:rgba(255,255,255,0.6); border:2px solid var(--purple); border-radius:12px; padding:16px; text-align:center; cursor:pointer;" id="wcHackathon" onclick="chooseWorld('hackathon')">
+            <div style="background:var(--bg-secondary); border:2px solid var(--purple); border-radius:12px; padding:16px; text-align:center; cursor:pointer;" id="wcHackathon" onclick="chooseWorld('hackathon')">
               <div style="font-size:2.2rem;">🏆</div>
               <h5 style="color:var(--coral); font-family:'Space Grotesk'; margin:6px 0 2px;">Hackathon World</h5>
               <p style="font-size:0.75rem; color:var(--text-secondary);">A-to-Z Hackathon Series, Multi-Team Roster, Game Simulator & Pitch Explainer.</p>
@@ -301,11 +321,11 @@
           </div>
 
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-            <div style="background:rgba(255,255,255,0.5); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
               <strong style="color:var(--cyan); font-size:0.8rem; display:block;">🤖 Required AI Tech</strong>
               <span style="font-size:0.78rem; color:var(--text-secondary);">Anthropic Claude API & LLM Agent Workflows</span>
             </div>
-            <div style="background:rgba(255,255,255,0.5); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
               <strong style="color:var(--purple); font-size:0.8rem; display:block;">🎁 Exclusive Reward</strong>
               <span style="font-size:0.78rem; color:var(--text-secondary);">Elevation Capital Office Hours & $5,000 Prizes</span>
             </div>
@@ -417,13 +437,36 @@
       }
     }
 
-    // Auto-trigger guided tour on first visit
+    // GLOBAL THEME TOGGLE HANDLER (LIGHT GOLD <-> DARK OBSIDIAN)
+    function toggleGlobalTheme() {
+      const isDark = document.body.classList.contains('theme-dark-obsidian');
+      if (isDark) {
+        document.body.classList.remove('theme-dark-obsidian');
+        document.body.classList.add('theme-light-gold');
+        document.getElementById('themeToggleBtn').innerText = '✨ Light Gold';
+        localStorage.setItem('phoenixTheme', 'light-gold');
+      } else {
+        document.body.classList.remove('theme-light-gold');
+        document.body.classList.add('theme-dark-obsidian');
+        document.getElementById('themeToggleBtn').innerText = '🌙 Dark Obsidian';
+        localStorage.setItem('phoenixTheme', 'dark-obsidian');
+      }
+    }
+
+    // Apply saved theme on load
     document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('phoenixTheme') || 'light-gold';
+      if (savedTheme === 'dark-obsidian') {
+        document.body.classList.remove('theme-light-gold');
+        document.body.classList.add('theme-dark-obsidian');
+        document.getElementById('themeToggleBtn').innerText = '🌙 Dark Obsidian';
+      }
+
       if (!localStorage.getItem('tourShown')) {
         setTimeout(() => {
           window.phoenixTour.startTour();
           localStorage.setItem('tourShown', 'true');
-        }, 800);
+        }, 600);
       }
     });
   </script>
