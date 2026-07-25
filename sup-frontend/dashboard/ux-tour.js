@@ -1,5 +1,5 @@
 /**
- * Phoenix Interactive Guided Tour Engine v3.1
+ * Phoenix Interactive Guided Tour Engine v3.2
  * Upfront Centered Guided Pointer Spotlight Modal with step-by-step pointers & gamified XP rewards.
  */
 
@@ -19,7 +19,7 @@ class PhoenixGuidedTour {
       },
       {
         title: '👉 Step 3: Technical Skills Matrix',
-        description: 'Specify your core tech stack (React, Node.js, Python) and select your hackathon team specialty role.',
+        description: 'Specify your core tech stack (React, Node.js, Python, Anthropic Claude API) and select your hackathon team specialty role.',
         highlightTarget: 'tb-3'
       },
       {
@@ -53,7 +53,7 @@ class PhoenixGuidedTour {
     overlay.style.cssText = `
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(15, 12, 6, 0.75);
+      background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(6px);
       z-index: 99999;
       display: none;
@@ -66,30 +66,29 @@ class PhoenixGuidedTour {
     card.id = 'tourTooltipCard';
     card.style.cssText = `
       position: relative;
-      background: #FAF9F6;
-      border: 3px solid #D4AF37;
+      background: #FFFFFF;
+      border: 3px solid #0070F3;
       border-radius: 20px;
       padding: 32px;
       width: 90%;
-      max-width: 520px;
-      box-shadow: 0 20px 60px rgba(212, 175, 55, 0.35);
+      max-width: 540px;
+      box-shadow: 0 20px 60px rgba(0, 112, 243, 0.3);
       z-index: 100000;
       font-family: 'Inter', sans-serif;
-      color: #1F1A0E;
+      color: #0F172A;
       text-align: center;
-      animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     `;
 
     card.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <span style="font-size:0.8rem; font-weight:800; color:#B8860B; text-transform:uppercase; letter-spacing:1.5px;" id="tourStepBadge">Step 1 of 6</span>
-        <button onclick="window.phoenixTour.endTour()" style="background:none; border:none; color:#7E7560; cursor:pointer; font-weight:700; font-size:1.1rem;">✕</button>
+        <span style="font-size:0.8rem; font-weight:800; color:#0070F3; text-transform:uppercase; letter-spacing:1.5px;" id="tourStepBadge">Step 1 of 6</span>
+        <button onclick="window.phoenixTour.endTour()" style="background:none; border:none; color:#94A3B8; cursor:pointer; font-weight:700; font-size:1.1rem;">✕</button>
       </div>
-      <h3 id="tourTitle" style="font-family:'Space Grotesk', sans-serif; font-size:1.4rem; font-weight:800; color:#D4AF37; margin-bottom:12px;"></h3>
-      <p id="tourDesc" style="font-size:0.92rem; color:#4A4231; line-height:1.6; margin-bottom:24px;"></p>
+      <h3 id="tourTitle" style="font-family:'Space Grotesk', sans-serif; font-size:1.4rem; font-weight:800; color:#0070F3; margin-bottom:12px;"></h3>
+      <p id="tourDesc" style="font-size:0.92rem; color:#475569; line-height:1.6; margin-bottom:24px;"></p>
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:0.8rem; font-weight:700; color:#2E7D32; background:rgba(46,125,50,0.1); padding:4px 10px; border-radius:12px;">🎮 +100 XP Onboarding Bonus</span>
-        <button class="btn btn-primary" id="tourNextBtn" onclick="window.phoenixTour.nextStep()" style="padding:10px 24px; font-size:0.9rem; font-weight:700; background:linear-gradient(135deg, #D4AF37, #B8860B); color:#FFF; border:none; border-radius:8px; cursor:pointer;">Next Step ➔</button>
+        <span style="font-size:0.8rem; font-weight:700; color:#10B981; background:rgba(16,185,129,0.1); padding:4px 12px; border-radius:12px;">🎮 +100 XP Onboarding Bonus</span>
+        <button class="btn btn-primary" id="tourNextBtn" onclick="window.phoenixTour.nextStep()" style="padding:10px 24px; font-size:0.9rem; font-weight:700; background:linear-gradient(135deg, #0070F3, #38BDF8); color:#FFF; border:none; border-radius:8px; cursor:pointer;">Next Step ➔</button>
       </div>
     `;
 

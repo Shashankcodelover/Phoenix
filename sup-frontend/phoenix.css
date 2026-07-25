@@ -7,45 +7,45 @@
 
 /* ── CSS Custom Properties ── */
 :root,
-body.theme-light-gold,
-.theme-light-gold {
-  /* Light Goldish White Primary Theme */
-  --bg-primary: #FAF9F6;
-  --bg-secondary: #F4F1EA;
-  --bg-gradient: linear-gradient(135deg, #FAF9F6 0%, #F5F0E6 50%, #ECE4D0 100%);
+body.theme-light-cyan,
+.theme-light-cyan {
+  /* Ultra-Clean Luminous Light Blue & Pearl White Theme */
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #F1F5F9;
+  --bg-gradient: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 50%, #E2E8F0 100%);
   --bg-card: #FFFFFF;
   --bg-card-hover: #FFFFFF;
-  --bg-navbar: rgba(250, 249, 246, 0.96);
+  --bg-navbar: rgba(248, 250, 252, 0.96);
 
-  /* Light Gold Accents */
-  --cyan: #D4AF37;       /* Warm Metallic Gold */
-  --purple: #B8860B;     /* Dark Goldenrod */
-  --coral: #C5A059;      /* Champagne Gold */
-  --green: #2E7D32;      /* Emerald Rich */
-  --orange: #DAA520;     /* Goldenrod */
-  --pink: #D4AF37;
-  --indigo: #B8860B;
+  /* Light Blue & Electric Cyan Accents */
+  --cyan: #0070F3;       /* Vercel / Google Tech Blue */
+  --purple: #0284C7;     /* Sky Electric Blue */
+  --coral: #38BDF8;      /* Light Cyan Accent */
+  --green: #10B981;      /* Mint Green */
+  --orange: #F59E0B;     /* Amber */
+  --pink: #EC4899;
+  --indigo: #6366F1;
 
   /* Gradients */
-  --gradient-brand: linear-gradient(135deg, #D4AF37, #B8860B);
-  --gradient-warm: linear-gradient(135deg, #C5A059, #D4AF37);
-  --gradient-cool: linear-gradient(135deg, #B8860B, #D4AF37);
-  --gradient-success: linear-gradient(135deg, #2E7D32, #D4AF37);
-  --gradient-card-border: linear-gradient(135deg, rgba(212, 175, 55, 0.35), rgba(184, 134, 11, 0.15));
+  --gradient-brand: linear-gradient(135deg, #0070F3, #38BDF8);
+  --gradient-warm: linear-gradient(135deg, #0284C7, #0070F3);
+  --gradient-cool: linear-gradient(135deg, #38BDF8, #0070F3);
+  --gradient-success: linear-gradient(135deg, #10B981, #38BDF8);
+  --gradient-card-border: linear-gradient(135deg, rgba(0, 112, 243, 0.25), rgba(56, 189, 248, 0.15));
 
   /* Text */
-  --text-primary: #1F1A0E;     /* Deep Gold-Charcoal */
-  --text-secondary: #4A4231;   /* Soft Sepia */
-  --text-muted: #7E7560;       /* Soft Bronze */
+  --text-primary: #0F172A;     /* Deep Slate / Midnight */
+  --text-secondary: #475569;   /* Slate Gray */
+  --text-muted: #94A3B8;       /* Light Muted Slate */
 
   /* Borders & Shadows */
-  --border-subtle: rgba(212, 175, 55, 0.25);
-  --border-glow: rgba(212, 175, 55, 0.4);
-  --shadow-sm: 0 2px 10px rgba(184, 134, 11, 0.08);
-  --shadow-md: 0 8px 24px rgba(184, 134, 11, 0.12);
-  --shadow-lg: 0 16px 48px rgba(184, 134, 11, 0.16);
-  --shadow-glow-cyan: 0 0 20px rgba(212, 175, 55, 0.25);
-  --shadow-glow-purple: 0 0 20px rgba(184, 134, 11, 0.25);
+  --border-subtle: rgba(0, 112, 243, 0.15);
+  --border-glow: rgba(0, 112, 243, 0.35);
+  --shadow-sm: 0 2px 8px rgba(0, 112, 243, 0.06);
+  --shadow-md: 0 8px 24px rgba(0, 112, 243, 0.1);
+  --shadow-lg: 0 16px 48px rgba(0, 112, 243, 0.14);
+  --shadow-glow-cyan: 0 0 20px rgba(0, 112, 243, 0.2);
+  --shadow-glow-purple: 0 0 20px rgba(2, 132, 199, 0.2);
 
   /* Spacing */
   --radius-sm: 8px;

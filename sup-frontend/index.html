@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Phoenix — Light Gold Rich Gateway & Career Accelerator</title>
+  <title>Project Phoenix — Luminous Enterprise Gateway & Career Accelerator</title>
   <link rel="stylesheet" href="./phoenix.css">
   <script src="./dashboard/ux-tour.js"></script>
   <style>
@@ -17,7 +17,7 @@
       transition: background 0.3s ease, color 0.3s ease;
     }
 
-    /* FULL 100% HORIZONTAL SCREEN OCCUPATION (NO EMPTY LEFT/RIGHT MARGINS) */
+    /* FULL 100% HORIZONTAL SCREEN OCCUPATION (NO EMPTY MARGINS) */
     .hero-gateway {
       text-align: center;
       padding: 36px 40px 20px;
@@ -25,11 +25,11 @@
       box-sizing: border-box;
     }
 
-    .gold-badge {
+    .cyan-badge {
       display: inline-block;
-      background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(184, 134, 11, 0.15));
+      background: linear-gradient(135deg, rgba(0, 112, 243, 0.12), rgba(56, 189, 248, 0.08));
       border: 1px solid var(--cyan);
-      color: var(--purple);
+      color: var(--cyan);
       padding: 6px 20px;
       border-radius: 30px;
       font-size: 0.8rem;
@@ -37,7 +37,7 @@
       letter-spacing: 1.5px;
       text-transform: uppercase;
       margin-bottom: 12px;
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+      box-shadow: 0 0 15px rgba(0, 112, 243, 0.15);
     }
 
     .hero-title {
@@ -57,7 +57,7 @@
 
     .grid-layout {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1.15fr 0.85fr;
       gap: 30px;
       width: 100%;
     }
@@ -105,8 +105,8 @@
     }
 
     .tab-btn.active {
-      background: rgba(212, 175, 55, 0.15);
-      color: var(--purple);
+      background: rgba(0, 112, 243, 0.12);
+      color: var(--cyan);
       border: 1px solid var(--cyan);
     }
 
@@ -119,15 +119,15 @@
     }
 
     .devfolio-banner {
-      background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(184, 134, 11, 0.06));
+      background: linear-gradient(135deg, rgba(0, 112, 243, 0.08), rgba(56, 189, 248, 0.04));
       border: 1px solid var(--cyan);
       border-radius: var(--radius-md);
-      padding: 18px;
+      padding: 20px;
       margin-bottom: 20px;
     }
 
     .theme-toggle-btn {
-      background: rgba(212, 175, 55, 0.15);
+      background: rgba(0, 112, 243, 0.1);
       border: 1px solid var(--cyan);
       color: var(--text-primary);
       padding: 6px 14px;
@@ -147,17 +147,17 @@
     }
   </style>
 </head>
-<body class="theme-light-gold">
+<body class="theme-light-cyan">
 
   <!-- NAVBAR WITH THEME TOGGLE -->
   <nav class="navbar">
-    <div class="navbar-brand" style="color:var(--purple); font-weight:800;">👑 PHOENIX GOLD</div>
+    <div class="navbar-brand" style="color:var(--cyan); font-weight:800;">⚡ PHOENIX PRO</div>
     <ul class="nav-links">
       <li><a href="./interview-prep/roadmap.html">💼 Placement World</a></li>
       <li><a href="./hackathon-agent/command-center.html">🏆 Hackathon World</a></li>
       <li><a href="./dashboard/dashboard.html">📊 Dashboard</a></li>
       <li><a href="./dashboard/skill-tree.html">🌳 Skill Tree</a></li>
-      <li><button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleGlobalTheme()">✨ Light Gold</button></li>
+      <li><button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleGlobalTheme()">✨ Light Cyan</button></li>
       <li><button class="btn btn-primary" onclick="window.phoenixTour.startTour()" style="padding:4px 12px; font-size:0.78rem;">🎮 Guided Tour</button></li>
     </ul>
   </nav>
@@ -166,7 +166,7 @@
 
   <!-- HERO GATEWAY (100% SCREEN HORIZONTAL OCCUPATION) -->
   <div class="hero-gateway">
-    <div class="gold-badge">👑 Premier Light Gold Rich Experience • Devfolio Live Demo Ready</div>
+    <div class="cyan-badge">⚡ Luminous Enterprise Experience • PushToProd Devfolio Demo</div>
     <h1 class="hero-title">Phoenix Universal Career & Hackathon Portal</h1>
     <p style="font-size: 1.05rem; color: var(--text-secondary); line-height: 1.6; margin: 0 auto;">
       Complete your universal developer profile below (including GitHub & LinkedIn links) to calibrate your personalized A-to-Z Placement Accelerator or Hackathon Champion series!
@@ -181,7 +181,7 @@
       <div class="panel-card" id="profileWizardCard">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
           <h2 class="font-space" style="font-size: 1.4rem; color:var(--text-primary); margin:0;">📋 Universal Profile Calibrator</h2>
-          <button class="btn btn-secondary" onclick="window.phoenixTour.startTour()" style="font-size:0.78rem; padding:6px 12px;">👉 Launch Guided Tour Spotlight</button>
+          <button class="btn btn-secondary" onclick="window.phoenixTour.startTour()" style="font-size:0.78rem; padding:6px 12px;">👉 Upfront Tour Spotlight</button>
         </div>
 
         <div class="tab-nav">
@@ -261,11 +261,11 @@
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
             <div style="background:var(--bg-secondary); border:2px solid var(--cyan); border-radius:12px; padding:16px; text-align:center; cursor:pointer;" id="wcInterview" onclick="chooseWorld('interview')">
               <div style="font-size:2.2rem;">💼</div>
-              <h5 style="color:var(--purple); font-family:'Space Grotesk'; margin:6px 0 2px;">Placement World</h5>
+              <h5 style="color:var(--cyan); font-family:'Space Grotesk'; margin:6px 0 2px;">Placement World</h5>
               <p style="font-size:0.75rem; color:var(--text-secondary);">A-to-Z Placement Syllabus, ATS Resume Disruptor & Peer Mocks.</p>
             </div>
 
-            <div style="background:var(--bg-secondary); border:2px solid var(--purple); border-radius:12px; padding:16px; text-align:center; cursor:pointer;" id="wcHackathon" onclick="chooseWorld('hackathon')">
+            <div style="background:var(--bg-secondary); border:2px solid var(--coral); border-radius:12px; padding:16px; text-align:center; cursor:pointer;" id="wcHackathon" onclick="chooseWorld('hackathon')">
               <div style="font-size:2.2rem;">🏆</div>
               <h5 style="color:var(--coral); font-family:'Space Grotesk'; margin:6px 0 2px;">Hackathon World</h5>
               <p style="font-size:0.75rem; color:var(--text-secondary);">A-to-Z Hackathon Series, Multi-Team Roster, Game Simulator & Pitch Explainer.</p>
@@ -294,12 +294,12 @@
 
         <!-- TAB 6: LAUNCH PORTAL -->
         <div class="tab-content" id="tc-6">
-          <h4 style="color:var(--purple); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;">Step 6: Universal Profile Ready! 🏆</h4>
+          <h4 style="color:var(--cyan); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;">Step 6: Universal Profile Ready! 🏆</h4>
           <p style="font-size:0.85rem; color:var(--text-primary); margin-bottom:14px;">Your profile details and links have been verified and saved. Click below to launch your selected world!</p>
           
-          <div id="summaryCard" style="background:rgba(212,175,55,0.08); border:1px solid var(--cyan); border-radius:12px; padding:14px; margin-bottom:16px; font-size:0.82rem; line-height:1.5;"></div>
+          <div id="summaryCard" style="background:rgba(0,112,243,0.06); border:1px solid var(--cyan); border-radius:12px; padding:14px; margin-bottom:16px; font-size:0.82rem; line-height:1.5;"></div>
 
-          <button class="btn btn-primary" style="width:100%; background:var(--gradient-warm); color:#FFF; font-weight:800; font-size:1.05rem;" onclick="launchWorldPortal()">🚀 Launch Selected World Series</button>
+          <button class="btn btn-primary" style="width:100%; background:var(--gradient-brand); color:#FFF; font-weight:800; font-size:1.05rem;" onclick="launchWorldPortal()">🚀 Launch Selected World Series</button>
         </div>
 
       </div>
@@ -311,8 +311,8 @@
         <div class="panel-card" style="border-color:var(--cyan);">
           <div class="devfolio-banner">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span class="badge badge-purple" style="font-size:0.7rem;">🔥 Devfolio Live Demo Match</span>
-              <span style="font-size:0.75rem; color:var(--purple); font-weight:700;">Aug 8, 2026 • Bengaluru</span>
+              <span class="badge badge-purple" style="font-size:0.7rem; background:rgba(0,112,243,0.1); color:var(--cyan);">🔥 Devfolio Live Match</span>
+              <span style="font-size:0.75rem; color:var(--cyan); font-weight:700;">Aug 8, 2026 • Bengaluru</span>
             </div>
             <h3 style="font-family:'Space Grotesk'; font-size:1.25rem; color:var(--text-primary); margin:10px 0 6px;">Push to Prod: Building at the Frontier</h3>
             <p style="font-size:0.82rem; color:var(--text-secondary); line-height:1.5;">
@@ -326,7 +326,7 @@
               <span style="font-size:0.78rem; color:var(--text-secondary);">Anthropic Claude API & LLM Agent Workflows</span>
             </div>
             <div style="background:var(--bg-secondary); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
-              <strong style="color:var(--purple); font-size:0.8rem; display:block;">🎁 Exclusive Reward</strong>
+              <strong style="color:var(--coral); font-size:0.8rem; display:block;">🎁 Exclusive Reward</strong>
               <span style="font-size:0.78rem; color:var(--text-secondary);">Elevation Capital Office Hours & $5,000 Prizes</span>
             </div>
           </div>
@@ -376,7 +376,7 @@
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
     let particles = [];
     for (let i = 0; i < 40; i++) { particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*1.1, dx: (Math.random()-0.5)*0.12, dy: (Math.random()-0.5)*0.12 }); }
-    function animP() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(212,175,55,0.3)"; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.dx; p.y+=p.dy; if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1; }); requestAnimationFrame(animP); }
+    function animP() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(0,112,243,0.25)"; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.dx; p.y+=p.dy; if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1; }); requestAnimationFrame(animP); }
     animP();
 
     function switchTab(num) {
@@ -437,16 +437,16 @@
       }
     }
 
-    // GLOBAL THEME TOGGLE HANDLER (LIGHT GOLD <-> DARK OBSIDIAN)
+    // GLOBAL THEME TOGGLE HANDLER (LIGHT CYAN <-> DARK OBSIDIAN)
     function toggleGlobalTheme() {
       const isDark = document.body.classList.contains('theme-dark-obsidian');
       if (isDark) {
         document.body.classList.remove('theme-dark-obsidian');
-        document.body.classList.add('theme-light-gold');
-        document.getElementById('themeToggleBtn').innerText = '✨ Light Gold';
-        localStorage.setItem('phoenixTheme', 'light-gold');
+        document.body.classList.add('theme-light-cyan');
+        document.getElementById('themeToggleBtn').innerText = '✨ Light Cyan';
+        localStorage.setItem('phoenixTheme', 'light-cyan');
       } else {
-        document.body.classList.remove('theme-light-gold');
+        document.body.classList.remove('theme-light-cyan');
         document.body.classList.add('theme-dark-obsidian');
         document.getElementById('themeToggleBtn').innerText = '🌙 Dark Obsidian';
         localStorage.setItem('phoenixTheme', 'dark-obsidian');
@@ -455,9 +455,9 @@
 
     // Apply saved theme on load
     document.addEventListener('DOMContentLoaded', () => {
-      const savedTheme = localStorage.getItem('phoenixTheme') || 'light-gold';
+      const savedTheme = localStorage.getItem('phoenixTheme') || 'light-cyan';
       if (savedTheme === 'dark-obsidian') {
-        document.body.classList.remove('theme-light-gold');
+        document.body.classList.remove('theme-light-cyan');
         document.body.classList.add('theme-dark-obsidian');
         document.getElementById('themeToggleBtn').innerText = '🌙 Dark Obsidian';
       }
