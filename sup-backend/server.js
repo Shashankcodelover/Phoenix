@@ -95,6 +95,33 @@ const generalRateLimiter = createRateLimiter({ windowMs: 60000, maxRequests: 60 
 app.use('/uploads', express.static('uploads'));
 app.use(inputSecurityMiddleware);
 
+// Health & Telemetry Status Endpoint
+const getHealthStatus = (req, res) => {
+  res.json({
+    status: 'ONLINE',
+    system: 'Project Phoenix 10000X Career Accelerator',
+    version: '3.1.0',
+    timestamp: new Date().toISOString(),
+    uptimeSeconds: Math.round(process.uptime()),
+    aiEngineStatus: 'Multi-Provider Cascade Router (Gemini -> OpenAI -> OpenRouter -> Local Engine)',
+    securityShieldStatus: 'ACTIVE (Prompt Injection Shield + XSS Sanitizer + Payload Ceiling Guard)',
+    availableModules: [
+      'Hackathon Simulator Game Engine (/api/v1/simulator)',
+      'AI Teammate Personality Engine (/api/v1/simulator/vote)',
+      'Chaos Incident Engine (/api/v1/simulator/chaos)',
+      'Jury Roast Engine (/api/v1/simulator/evaluate)',
+      'ATS Resume Disruptor (/api/v1/prep/resume-disrupt)',
+      'Project Judge Explainer (/api/v1/agent/judge-explainer)',
+      'AI Code Review Agent (/api/v1/code-review/audit)',
+      'Cybersecurity Shield (/api/v1/enterprise/security-audit)',
+      'Peer-to-Peer AI Safety-Net (/api/v1/prep/peer-match)'
+    ]
+  });
+};
+
+app.get('/api/v1/health', getHealthStatus);
+app.get('/api/health', getHealthStatus);
+
 // API Versioning
 app.use('/api/v1/hackathons', hackathonRoutes);
 app.use('/api/v1/auth', authRoutes);
