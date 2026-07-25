@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Explainer & Judge Defense Engine - Phoenix 10000X</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    .explainer-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .flow-step {
+      background: rgba(0, 245, 255, 0.04);
+      border-left: 3px solid var(--cyan);
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      font-size: 0.88rem;
+    }
+    .qa-box {
+      background: rgba(123, 47, 247, 0.05);
+      border: 1px solid rgba(123, 47, 247, 0.2);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">PHOENIX</div>
+    <ul class="nav-links">
+      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
+      <li><a href="./command-center.html">Command Center</a></li>
+      <li><a href="./simulator.html">🎮 Simulator</a></li>
+      <li><a href="./project-explainer.html" class="active">🗣️ Judge Explainer</a></li>
+      <li><a href="../profile/profile.html">👤 Profile</a></li>
+    </ul>
+  </nav>
+
+  <canvas id="particles"></canvas>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>🗣️ Hackathon Project Explainer Engine</h1>
+      <p>Generate bulletproof architecture walkthroughs, presenter scripts, and exact Q&A defense strategies to conquer judge presentations!</p>
+    </div>
+
+    <div class="flex-row">
+      <!-- LEFT: Form -->
+      <div class="col-sidebar" style="flex: 0 0 380px;">
+        <div class="glass-card">
+          <h3 class="font-space mb-2" style="font-size: 1.1rem;">Project Input</h3>
+          <form id="explainerForm">
+            <div class="form-group">
+              <label>Project Title</label>
+              <input type="text" id="pTitle" value="Phoenix Career Engine" required>
+            </div>
+            <div class="form-group">
+              <label>Tech Stack (Comma-separated)</label>
+              <input type="text" id="pTech" value="React, Node.js, MongoDB, Multi-Provider AI" required>
+            </div>
+            <div class="form-group">
+              <label>Project Description</label>
+              <textarea id="pDesc" rows="3" required>Turn-based hackathon simulator and adaptive placement prep engine.</textarea>
+            </div>
+            <div class="form-group">
+              <label>Target Track</label>
+              <select id="pTrack">
+                <option value="AI/ML">AI / Machine Learning</option>
+                <option value="Web3/Fintech">Fintech & Web3</option>
+                <option value="Enterprise">Enterprise SaaS</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">🚀 Generate Judge Explainer Package</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- RIGHT: Output -->
+      <div class="col-main">
+        <!-- ELEVATOR PITCH -->
+        <div class="explainer-card">
+          <h3 class="font-space mb-2" style="font-size: 1.15rem; color:var(--cyan);">📢 30-Second Elevator Pitch Hook</h3>
+          <p id="elevatorPitchBox" style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.6;">Fill out your project details on the left to generate your pitch package.</p>
+        </div>
+
+        <!-- ARCHITECTURE FLOW -->
+        <div class="explainer-card">
+          <h3 class="font-space mb-2" style="font-size: 1.15rem; color:var(--purple);">⚙️ Architecture & Data Flow Walkthrough</h3>
+          <div id="flowBox">
+            <p style="color:var(--text-muted); font-size:0.85rem;">Step-by-step flow will appear here.</p>
+          </div>
+        </div>
+
+        <!-- JUDGE Q&A DEFENSE BLUEPRINT -->
+        <div class="explainer-card">
+          <h3 class="font-space mb-2" style="font-size: 1.15rem; color:var(--coral);">🛡️ Judge Q&A Defense Blueprint</h3>
+          <div id="qaBox">
+            <p style="color:var(--text-muted); font-size:0.85rem;">Defense Q&A answers will appear here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:5000/api/v1/agent/judge-explainer';
+
+    // Particles
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    let particles = [];
+    for (let i = 0; i < 35; i++) { particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*1.1, dx: (Math.random()-0.5)*0.12, dy: (Math.random()-0.5)*0.12 }); }
+    function animP() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(0,245,255,0.2)"; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.dx; p.y+=p.dy; if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1; }); requestAnimationFrame(animP); }
+    animP();
+
+    document.getElementById('explainerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const projectTitle = document.getElementById('pTitle').value;
+      const techStack = document.getElementById('pTech').value.split(',').map(s=>s.trim());
+      const projectDescription = document.getElementById('pDesc').value;
+      const targetTrack = document.getElementById('pTrack').value;
+
+      document.getElementById('elevatorPitchBox').innerHTML = '<span style="color:var(--cyan);">Generating Explainer Package...</span>';
+
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ projectTitle, techStack, projectDescription, targetTrack })
+        });
+        const data = await res.json();
+
+        document.getElementById('elevatorPitchBox').innerText = data.elevatorPitch || '';
+
+        const flowBox = document.getElementById('flowBox');
+        flowBox.innerHTML = (data.architectureFlow || []).map(f => `
+          <div class="flow-step">${f}</div>
+        `).join('');
+
+        const qaBox = document.getElementById('qaBox');
+        qaBox.innerHTML = (data.judgeDefenseQa || []).map(q => `
+          <div class="qa-box">
+            <strong style="color:var(--coral); font-size:0.88rem; display:block;">❓ ${q.question}</strong>
+            <p style="color:var(--text-primary); font-size:0.85rem; margin-top:6px; line-height:1.5;">💡 <strong>Bulletproof Answer:</strong> "${q.answer}"</p>
+          </div>
+        `).join('');
+      } catch (err) {
+        document.getElementById('elevatorPitchBox').innerText = 'Error generating explainer package.';
+      }
+    });
+  </script>
+</body>
+</html>

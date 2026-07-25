@@ -3,6 +3,7 @@ const {
   generateRoadmap,
   mockInterview,
   tailorResume,
+  disruptResume,
   submitQuiz,
   getQuestions,
   getPeerMatches,
@@ -18,6 +19,7 @@ const router = express.Router();
 router.post('/generate-roadmap', generateRoadmap);
 router.post('/mock-interview', mockInterview);
 router.post('/tailor-resume', tailorResume);
+router.post('/resume-disrupt', disruptResume);
 router.post('/quiz-submit', submitQuiz);
 router.get('/questions', getQuestions);
 router.post('/peer-match', getPeerMatches);

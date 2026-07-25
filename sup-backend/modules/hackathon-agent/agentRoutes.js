@@ -13,6 +13,7 @@ const {
 // V20: Hackathon Command Center controllers
 const { generateIdeas, refineIdeas } = require('./ideaGeneratorController');
 const { generateProjectRoadmap, generateMemberGuide, memberGuideChat, generatePitchPlan } = require('./roadmapController');
+const { generateProjectExplainer } = require('./explainerEngine');
 
 const router = express.Router();
 
@@ -34,6 +35,17 @@ router.post('/member-guide', generateMemberGuide);
 router.post('/member-guide-chat', memberGuideChat);
 router.post('/pitch-planner', generatePitchPlan);
 
+// V22: Project Explainer & Judge Defense Blueprint
+router.post('/judge-explainer', async (req, res) => {
+  try {
+    const { projectTitle, techStack = [], projectDescription, targetTrack } = req.body;
+    const explainer = await generateProjectExplainer({ projectTitle, techStack, projectDescription, targetTrack });
+    res.json(explainer);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // V21: RAG & Deadline Notification routes
 const ragService = require('./rag_service');
 const notificationService = require('./notification_service');
@@ -50,4 +62,3 @@ router.get('/deadlines', (req, res) => {
 });
 
 module.exports = router;
-

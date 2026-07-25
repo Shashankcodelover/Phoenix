@@ -1,52 +1,34 @@
 const User = require('../../models/userModel');
 
-// Helper to make calls to Gemini API
+const { callAI } = require('../../utils/aiRouter');
+const { analyzeAndDisruptResume } = require('./resumeDisruptor');
+
+// Robust helper using Multi-Provider AI Fallback Router
 const callGemini = async (prompt, systemInstruction = '', jsonMode = false) => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'your-gemini-api-key-here') {
-    throw new Error('GEMINI_API_KEY environment variable is not configured.');
-  }
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-  
-  const requestBody = {
-    contents: [
-      {
-        parts: [{ text: prompt }]
-      }
-    ]
-  };
-
-  if (systemInstruction) {
-    requestBody.systemInstruction = {
-      parts: [{ text: systemInstruction }]
-    };
-  }
-
-  if (jsonMode) {
-    requestBody.generationConfig = {
-      responseMimeType: "application/json"
-    };
-  }
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestBody)
+  const fallbackGen = () => JSON.stringify({
+    title: "System Design & Coding Practice",
+    requirements: ["High Scalability", "Low Latency", "Fault Tolerance"],
+    nonFunctional: ["99.99% Availability", "Sub-100ms Latency"],
+    constraints: ["10k QPS", "100TB Storage"]
   });
 
-  if (!response.ok) {
-    const errText = await response.text();
-    console.error('Gemini API Error details:', errText);
-    throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
-  }
+  return await callAI({
+    prompt,
+    systemPrompt: systemInstruction,
+    timeoutMs: 5000,
+    fallbackGenerator: fallbackGen
+  });
+};
 
-  const data = await response.json();
+// @desc    Disrupt & Optimize Resume for Target Role
+// @route   POST /api/v1/prep/resume-disrupt
+const disruptResume = async (req, res) => {
   try {
-    return data.candidates[0].content.parts[0].text;
-  } catch (err) {
-    console.error('Failed to extract text from Gemini response:', data);
-    throw new Error('Invalid response structure from Gemini API');
+    const { resumeText = '', targetRole = 'google_sde' } = req.body;
+    const analysis = await analyzeAndDisruptResume(resumeText, targetRole);
+    res.json(analysis);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -530,6 +512,7 @@ module.exports = {
   generateRoadmap,
   mockInterview,
   tailorResume,
+  disruptResume,
   submitQuiz,
   getQuestions,
   getPeerMatches,
