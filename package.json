@@ -1,0 +1,10 @@
+{
+  "name": "phoenix-interview-prep-root",
+  "version": "3.5.0",
+  "description": "Project Phoenix - Ultimate Career & Hackathon Engine",
+  "scripts": {
+    "test": "npm --prefix sup-backend test",
+    "start": "npm --prefix sup-backend start"
+  },
+  "private": true
+}

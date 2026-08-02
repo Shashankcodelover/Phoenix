@@ -211,6 +211,35 @@ const schemas = {
     ideaTitle: { type: 'string', required: true, maxLength: 300 },
     ideaDescription: { type: 'string', required: true, maxLength: 5000 },
     techStack: { type: 'array', required: false, maxItems: 30 }
+  },
+
+  signup: {
+    name: { type: 'string', required: true, maxLength: 100 },
+    email: { type: 'string', required: true, maxLength: 200 },
+    password: { type: 'string', required: true, minLength: 6, maxLength: 100 }
+  },
+
+  login: {
+    email: { type: 'string', required: true, maxLength: 200 },
+    password: { type: 'string', required: true, maxLength: 100 }
+  },
+
+  disruptResume: {
+    resumeText: { type: 'string', required: true, maxLength: 10000 },
+    targetRole: { type: 'string', required: false, maxLength: 200 }
+  },
+
+  judgeExplainer: {
+    projectTitle: { type: 'string', required: true, maxLength: 300 },
+    techStack: { type: 'array', required: false, maxItems: 30 },
+    projectDescription: { type: 'string', required: false, maxLength: 5000 },
+    targetTrack: { type: 'string', required: false, maxLength: 200 }
+  },
+
+  mineStory: {
+    projectTitle: { type: 'string', required: true, maxLength: 300 },
+    hackathonName: { type: 'string', required: false, maxLength: 200 },
+    techStack: { type: 'array', required: false, maxItems: 30 }
   }
 };
 

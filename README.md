@@ -122,7 +122,7 @@ $$\text{Primary Model} \xrightarrow{\text{fallback}} \text{Gemini Flash} \xright
    ```bash
    npm test
    ```
-   *Runs Node.js native unit & integration tests covering `/health`, Prompt Shield, and AI Fallback Engine.*
+   *Runs 18 Node.js native unit & integration tests across 5 test suites covering `/health`, Prompt Shield, Input Schema Validation, and AI Fallback Engine.*
 
 5. **Start the backend server:**
    ```bash

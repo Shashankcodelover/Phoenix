@@ -21,7 +21,7 @@ const router = express.Router();
 router.post('/generate-roadmap', validate(schemas.generateRoadmap), generateRoadmap);
 router.post('/mock-interview', validate(schemas.mockInterview), mockInterview);
 router.post('/tailor-resume', validate(schemas.tailorResume), tailorResume);
-router.post('/resume-disrupt', disruptResume);
+router.post('/resume-disrupt', validate(schemas.disruptResume), disruptResume);
 router.post('/quiz-submit', validate(schemas.quizSubmit), submitQuiz);
 router.get('/questions', getQuestions);
 router.post('/peer-match', getPeerMatches);

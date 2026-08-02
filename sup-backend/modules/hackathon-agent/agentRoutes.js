@@ -23,7 +23,7 @@ const { validate, schemas } = require('../../middleware/inputValidator');
 router.post('/scrape', getScrapedEvents);
 router.post('/save-team', saveTeam);
 router.post('/auto-fill', triggerAutoFill);
-router.post('/mine-story', mineStory);
+router.post('/mine-story', validate(schemas.mineStory), mineStory);
 router.post('/skill-gap', runSkillGapAnalysis);
 router.post('/novelty-check', validate(schemas.noveltyCheck), checkIdeaNovelty);
 router.post('/portfolio', addPortfolioProject);
@@ -38,7 +38,7 @@ router.post('/member-guide-chat', memberGuideChat);
 router.post('/pitch-planner', generatePitchPlan);
 
 // V22: Project Explainer & Judge Defense Blueprint
-router.post('/judge-explainer', async (req, res) => {
+router.post('/judge-explainer', validate(schemas.judgeExplainer), async (req, res) => {
   try {
     const { projectTitle, techStack = [], projectDescription, targetTrack } = req.body;
     const explainer = await generateProjectExplainer({ projectTitle, techStack, projectDescription, targetTrack });

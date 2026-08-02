@@ -1,36 +1,22 @@
-# Daily Changelog — Project Phoenix Interview Prep
+# 📅 Daily Improvement Log — Project Phoenix
 
-## Date: 2026-08-02
-**Branch**: `improve/2026-08-02`
+## [2026-08-02] — Focused Improvement Cycle (v3.5.1)
 
-### 1. 🔍 What We Found (Initial Assessment)
-- `npm test` was failing with exit code 1 (`"echo \"Error: no test specified\" && exit 1"`).
-- Zero automated unit or integration tests existed in `sup-backend`.
-- `parseAIJson` in `config/aiProvider.js` threw an unhandled `SyntaxError` when processing non-JSON static fallback strings when AI API keys were missing/offline.
-- Version numbers across `README.md`, `EXPLAINER.md`, and `server.js` were inconsistent.
+### 🔍 What Was Found (Audit & Weaknesses)
+1. **Missing Root Test Command**: Running `npm test` from the repository root failed because no root `package.json` was present.
+2. **Schema Validation Gaps**: Several core endpoints (`/resume-disrupt`, `/signup`, `/login`, `/judge-explainer`, `/mine-story`) lacked automated input schema validation guards, leaving them vulnerable to malformed payloads.
+3. **Limited Test Coverage**: Automated test suites only covered basic AI fallback, system uptime, and security shields — missing API request input validation and schema boundary tests.
 
----
+### 🛠️ What Was Changed
+- **Root `package.json`**: Created a root `package.json` with a single unified `npm test` script routing directly to `sup-backend`.
+- **Validation Schemas Extended**: Added strict schemas in `sup-backend/middleware/inputValidator.js` for `signup`, `login`, `disruptResume`, `judgeExplainer`, and `mineStory`.
+- **Route Validation Hardening**: Enforced validation middleware across `authRoutes.js`, `prepRoutes.js`, and `agentRoutes.js`.
+- **Expanded Test Suite**: Added `sup-backend/test/routes.test.js` covering `validateField`, payload security, schema checks, and middleware execution. Total tests increased from 10 to 18 (100% passing).
 
-### 2. 🚀 What We Changed (Improvements Delivered)
-- **Built-in Automated Test Suite (`node --test`)**:
-  - Configured `npm test` script in `sup-backend/package.json` to execute `node --test test/*.test.js`.
-  - Added `test/health.test.js`: Validates `/health`, process uptime, and system status structure.
-  - Added `test/security.test.js`: Validates HTML tag stripping, recursive object sanitization, and Prompt Shield injection blocking.
-  - Added `test/aiProvider.test.js`: Validates `parseAIJson`, AI model dispatch fallback cascade, and markdown code block cleanup.
-- **Crash-Proof AI Fallback Engine**:
-  - Hardened `parseAIJson` in `sup-backend/config/aiProvider.js` to extract JSON substrings or return safe structured object fallbacks `{ isFallback: true, text: ... }` when AI providers are offline.
-  - Prevented process hanging in automated tests by adding `.unref()` to the cleanup timer in `middleware/promptShield.js`.
-- **Documentation & Setup Updates**:
-  - Updated `README.md` and `EXPLAINER.md` to document `npm test` usage and native test runner architecture.
+### ⚠️ What Is Still Weak
+- Frontend static pages are not yet integrated into an automated E2E browser test runner (e.g. Playwright or Cypress).
+- Webhook routes (`/api/v1/webhooks`) require additional integration test mocks for external services.
 
----
-
-### 3. ⚠️ What's Still Weak
-- Frontend API base URL in `phoenix-core.js` is hardcoded to `http://localhost:5000/api` instead of dynamic relative origin.
-- Database models lack automated schema integration tests using an in-memory MongoDB runner.
-
----
-
-### 4. 🔮 What We'd Tackle Next Session
-1. **Dynamic Frontend API Endpoint Discovery**: Update `phoenix-core.js` to automatically fall back to current `window.location.origin` when deployed to production.
-2. **MongoDB Integration Test Suite**: Add mock/in-memory database tests for user registration, portfolio updates, and leaderboard scoring.
+### 🎯 What To Tackle Next Session
+- Add automated frontend UI component / DOM integrity tests for `dashboard.html`, `practice.html`, and `command-center.html`.
+- Expand AI model rate limiter fallback telemetry logging for production monitoring dashboards.
