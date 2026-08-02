@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Signup - Phoenix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up — Phoenix</title>
+  <meta name="description" content="Create your Phoenix account and start your career acceleration journey.">
   <link rel="stylesheet" href="../phoenix.css">
   <style>
     body {
@@ -15,78 +17,124 @@
 
     .auth-card {
       width: 100%;
-      max-width: 400px;
-      padding: 35px;
+      max-width: 420px;
+      padding: clamp(28px, 4vw, 40px);
       text-align: center;
+      margin: 16px;
+      animation: modalPop 0.5s ease forwards;
+    }
+
+    .auth-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 5vw, 2.6rem);
+      font-weight: 700;
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      margin-bottom: 28px;
+    }
+
+    .password-toggle {
+      position: relative;
+    }
+
+    .password-toggle input {
+      padding-right: 48px;
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 4px;
+      transition: color var(--transition-fast);
+    }
+
+    .password-toggle-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .auth-footer {
+      margin-top: 24px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .auth-footer a {
+      font-weight: 600;
+    }
+
+    #message {
+      color: var(--red);
+      font-size: 0.85rem;
+      margin-top: 14px;
+      min-height: 1.2em;
     }
   </style>
 </head>
-<body>
+<body class="theme-light-cyan">
 
-  <!-- Particle Canvas -->
   <canvas id="particles"></canvas>
 
-  <!-- Signup Card -->
   <div class="glass-card auth-card">
-    <h1 class="font-space" style="font-size: 2.2rem; background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;">SIGNUP</h1>
-    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 25px;">Create Your Phoenix Workspace Profile</p>
+    <h1 class="auth-logo">SIGN UP</h1>
+    <p class="auth-subtitle">Create Your Phoenix Workspace</p>
 
     <form id="signupForm">
       <div class="form-group">
-        <input type="text" id="name" placeholder="Full Name" required />
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="e.g. Preetham J" required autocomplete="name">
       </div>
       <div class="form-group">
-        <input type="email" id="email" placeholder="Email Address" required />
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="your@email.com" required autocomplete="email">
       </div>
       <div class="form-group">
-        <input type="password" id="password" placeholder="Password" required />
+        <label for="password">Password</label>
+        <div class="password-toggle">
+          <input type="password" id="password" placeholder="Create a strong password" required autocomplete="new-password">
+          <button type="button" class="password-toggle-btn" onclick="togglePassword()" aria-label="Toggle password visibility">👁️</button>
+        </div>
       </div>
-      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Signup 🚀</button>
+      <button type="submit" class="btn btn-primary btn-full btn-lg mt-1">Create Account</button>
     </form>
 
-    <p id="message" style="color: var(--coral); font-size: 0.85rem; margin-top: 15px;"></p>
-    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 20px;">
-      Already have an account? <a href="login.html" style="color: var(--cyan); font-weight: 600;">Login</a>
+    <p id="message"></p>
+
+    <p class="auth-footer">
+      Already have an account? <a href="login.html">Login</a>
     </p>
   </div>
 
+  <script src="../phoenix-core.js"></script>
   <script>
-    // Particle Background
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    let particles = [];
-    for (let i = 0; i < 40; i++) {
-        particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            radius: Math.random() * 1.2,
-            dx: (Math.random() - 0.5) * 0.15,
-            dy: (Math.random() - 0.5) * 0.15
-        });
-    }
-    function animateParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "rgba(0, 245, 255, 0.25)";
-        particles.forEach(p => {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fill();
-            p.x += p.dx;
-            p.y += p.dy;
-            if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-            if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-        });
-        requestAnimationFrame(animateParticles);
-    }
-    animateParticles();
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-  </script>
+    Phoenix.init({ particles: true, particleCount: 60, auth: false, nav: false, theme: true, transitions: false });
 
+    function togglePassword() {
+      const input = document.getElementById('password');
+      const btn = input.nextElementSibling;
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁️';
+      }
+    }
+  </script>
   <script src="auth.js"></script>
 </body>
 </html>

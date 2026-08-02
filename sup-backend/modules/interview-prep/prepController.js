@@ -1,24 +1,7 @@
 const User = require('../../models/userModel');
-
-const { callAI } = require('../../utils/aiRouter');
+const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
 const { analyzeAndDisruptResume } = require('./resumeDisruptor');
 
-// Robust helper using Multi-Provider AI Fallback Router
-const callGemini = async (prompt, systemInstruction = '', jsonMode = false) => {
-  const fallbackGen = () => JSON.stringify({
-    title: "System Design & Coding Practice",
-    requirements: ["High Scalability", "Low Latency", "Fault Tolerance"],
-    nonFunctional: ["99.99% Availability", "Sub-100ms Latency"],
-    constraints: ["10k QPS", "100TB Storage"]
-  });
-
-  return await callAI({
-    prompt,
-    systemPrompt: systemInstruction,
-    timeoutMs: 5000,
-    fallbackGenerator: fallbackGen
-  });
-};
 
 // @desc    Disrupt & Optimize Resume for Target Role
 // @route   POST /api/v1/prep/resume-disrupt
@@ -90,17 +73,14 @@ const generateRoadmap = async (req, res) => {
 
     const systemInstruction = "You are a professional roadmap generator. Return strict raw JSON format only.";
     
-    let resultText = await callGemini(prompt, systemInstruction, true);
-    // Parse to ensure it is valid JSON
-    let roadmapData;
-    try {
-      roadmapData = JSON.parse(resultText);
-    } catch (e) {
-      console.warn("JSON parsing failed, attempting to clean markdown code blocks...", e);
-      // fallback cleanup if Gemini outputs markdown wrappers anyway
-      resultText = resultText.replace(/```json/i, '').replace(/```/g, '').trim();
-      roadmapData = JSON.parse(resultText);
-    }
+    const result = await callAIForFeature(
+      'structured',
+      prompt,
+      systemInstruction,
+      true
+    );
+
+    const roadmapData = parseAIJson(result.text);
 
     res.json({
       message: "Roadmap generated successfully",
@@ -152,13 +132,14 @@ const mockInterview = async (req, res) => {
       Keep the response encouraging yet technically rigorous.
     `;
 
-    const responseText = await callGemini(
+    const result = await callAIForFeature(
+      'conversational',
       prompt,
       `You are a professional technical interviewer operating in ${difficulty} mode. Keep responses concise and focused.`
     );
 
     res.json({
-      reply: responseText,
+      reply: result.text,
       fillerCount,
       difficulty
     });
@@ -190,8 +171,12 @@ const tailorResume = async (req, res) => {
       Provide the output in clean, formatted Markdown that the student can copy and download directly. Do not include any meta comments. Focus on producing a clean resume layout.
     `;
 
-    const responseText = await callGemini(prompt, "You are a professional resume writer. Return a beautifully formatted Markdown resume.");
-    res.json({ resume: responseText });
+    const result = await callAIForFeature(
+      'document',
+      prompt,
+      "You are a professional resume writer. Return a beautifully formatted Markdown resume."
+    );
+    res.json({ resume: result.text });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -343,11 +328,17 @@ const allocatePlanner = async (req, res) => {
       Ensure the JSON is strictly valid. Do not wrap in markdown block.
     `;
 
-    let resultText;
+    let parsed;
     try {
-      resultText = await callGemini(prompt, "You are a professional academic time budget planner. Return strict raw JSON format only.", true);
+      const result = await callAIForFeature(
+        'structured',
+        prompt,
+        "You are a professional academic time budget planner. Return strict raw JSON format only.",
+        true
+      );
+      parsed = parseAIJson(result.text);
     } catch (apiErr) {
-      console.warn("Gemini call failed in planner, using fallback static schedule", apiErr);
+      console.warn("AI call failed in planner, using fallback static schedule", apiErr);
       return res.json({
         schedule: [
           { title: "Solve 2 LeetCode Medium Hashmap Problems", duration: `${prepHours} hrs`, type: "prep" },
@@ -356,14 +347,6 @@ const allocatePlanner = async (req, res) => {
           { title: "Configure Geofenced Instagram scraper APIs", duration: `${hackHours} hrs`, type: "hackathon" }
         ]
       });
-    }
-
-    let parsed;
-    try {
-      parsed = JSON.parse(resultText);
-    } catch (e) {
-      resultText = resultText.replace(/```json/i, '').replace(/```/g, '').trim();
-      parsed = JSON.parse(resultText);
     }
 
     res.json({ schedule: parsed.schedule });
@@ -400,7 +383,12 @@ const generateRevisionSheet = async (req, res) => {
 
     let sheetContent;
     try {
-      sheetContent = await callGemini(prompt, "You are a senior technical interview coach. Return response in Markdown only.");
+      const result = await callAIForFeature(
+        'document',
+        prompt,
+        "You are a senior technical interview coach. Return response in Markdown only."
+      );
+      sheetContent = result.text;
     } catch (apiErr) {
       console.warn("Gemini call failed in revision generator, using static fallback", apiErr);
       sheetContent = `### Revision Sheet: ${topic} (Fallback Mode)
@@ -492,16 +480,14 @@ const generateSystemDesignQuestion = async (req, res) => {
       Do not include markdown tags.
     `;
 
-    let responseText = await callGemini(prompt, "You are a professional system design interviewer. Return raw JSON only.", true);
+    const result = await callAIForFeature(
+      'structured',
+      prompt,
+      "You are a professional system design interviewer. Return raw JSON only.",
+      true
+    );
     
-    let parsed;
-    try {
-      parsed = JSON.parse(responseText);
-    } catch (e) {
-      responseText = responseText.replace(/```json/i, '').replace(/```/g, '').trim();
-      parsed = JSON.parse(responseText);
-    }
-
+    const parsed = parseAIJson(result.text);
     res.json(parsed);
   } catch (error) {
     res.status(500).json({ message: error.message });

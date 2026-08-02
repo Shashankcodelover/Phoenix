@@ -184,6 +184,33 @@ const schemas = {
     difficulty: { type: 'string', required: false, enum: ['easy', 'medium', 'hard', 'bar-raiser'] },
     stage: { type: 'string', required: false, maxLength: 100 },
     response: { type: 'string', required: false, maxLength: 10000 }
+  },
+
+  generateIdeas: {
+    hackathonName: { type: 'string', required: false, maxLength: 200 },
+    hackathonDescription: { type: 'string', required: false, maxLength: 3000 },
+    rules: { type: 'string', required: false, maxLength: 3000 },
+    constraints: { type: 'string', required: false, maxLength: 2000 },
+    teamSkills: { type: 'array', required: false, maxItems: 30 },
+    teamSize: { type: 'number', required: false, min: 1, max: 10 }
+  },
+
+  projectRoadmap: {
+    projectTitle: { type: 'string', required: false, maxLength: 300 },
+    projectDescription: { type: 'string', required: false, maxLength: 5000 },
+    techStack: { type: 'array', required: false, maxItems: 30 },
+    durationHours: { type: 'number', required: false, min: 1, max: 168 }
+  },
+
+  codeReview: {
+    code: { type: 'string', required: true, maxLength: 20000 },
+    language: { type: 'string', required: false, maxLength: 50 }
+  },
+
+  noveltyCheck: {
+    ideaTitle: { type: 'string', required: true, maxLength: 300 },
+    ideaDescription: { type: 'string', required: true, maxLength: 5000 },
+    techStack: { type: 'array', required: false, maxItems: 30 }
   }
 };
 

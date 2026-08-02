@@ -3,7 +3,7 @@
  * Analyzes raw code snippets or repository files for security, performance, and readability.
  */
 
-const { callAI } = require('../../utils/aiRouter');
+const { callAIForFeature } = require('../../config/aiProvider');
 
 const reviewCode = async (req, res) => {
   try {
@@ -19,17 +19,18 @@ const reviewCode = async (req, res) => {
       return `### 🔍 AI Code Review Audit\n\n- **Quality Score:** 88/100\n- **Lines Analyzed:** ${lineCount}\n- **Security:** No major SQLi/XSS vulnerabilities detected.\n- **Performance:** Consider caching repetitive array loops.\n- **Architecture:** Clean modular layout. Consider adding TypeScript types for enhanced safety.`;
     };
 
-    const reviewResult = await callAI({
-      prompt: `Code Snippet:\n\`\`\`${language}\n${code}\n\`\`\``,
+    const reviewResult = await callAIForFeature(
+      'analytical',
+      `Code Snippet:\n\`\`\`${language}\n${code}\n\`\`\``,
       systemPrompt,
-      timeoutMs: 5000,
+      false,
       fallbackGenerator
-    });
+    );
 
     res.json({
       language,
       codeLength: code.length,
-      review: reviewResult
+      review: reviewResult.text
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

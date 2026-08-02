@@ -4,7 +4,8 @@
  * Generates: ATS score, missing keywords, STAR impact bullets, and optimized markdown.
  */
 
-const { callAI } = require('../../utils/aiRouter');
+const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
+
 
 const ROLE_KEYWORDS = {
   'google_sde': ['Data Structures', 'System Architecture', 'Distributed Systems', 'Java', 'C++', 'Go', 'Microservices', 'Latency', 'Multithreading'],
@@ -50,15 +51,16 @@ async function analyzeAndDisruptResume(resumeText, targetRole = 'google_sde') {
     });
   };
 
-  const aiResultText = await callAI({
-    prompt: `Target Role: ${targetRole}\nResume Text:\n${resumeText}`,
+  const aiResult = await callAIForFeature(
+    'analytical',
+    `Target Role: ${targetRole}\nResume Text:\n${resumeText}`,
     systemPrompt,
-    timeoutMs: 5000,
+    true,
     fallbackGenerator
-  });
+  );
 
   try {
-    const parsed = JSON.parse(aiResultText);
+    const parsed = parseAIJson(aiResult.text);
     return parsed;
   } catch (e) {
     return {

@@ -17,20 +17,22 @@ const { generateProjectExplainer } = require('./explainerEngine');
 
 const router = express.Router();
 
+const { validate, schemas } = require('../../middleware/inputValidator');
+
 // Existing routes
 router.post('/scrape', getScrapedEvents);
 router.post('/save-team', saveTeam);
 router.post('/auto-fill', triggerAutoFill);
 router.post('/mine-story', mineStory);
 router.post('/skill-gap', runSkillGapAnalysis);
-router.post('/novelty-check', checkIdeaNovelty);
+router.post('/novelty-check', validate(schemas.noveltyCheck), checkIdeaNovelty);
 router.post('/portfolio', addPortfolioProject);
 router.get('/portfolio/:userId', getPortfolioProjects);
 
 // V20: Hackathon Command Center routes
-router.post('/generate-ideas', generateIdeas);
+router.post('/generate-ideas', validate(schemas.generateIdeas), generateIdeas);
 router.post('/refine-ideas', refineIdeas);
-router.post('/project-roadmap', generateProjectRoadmap);
+router.post('/project-roadmap', validate(schemas.projectRoadmap), generateProjectRoadmap);
 router.post('/member-guide', generateMemberGuide);
 router.post('/member-guide-chat', memberGuideChat);
 router.post('/pitch-planner', generatePitchPlan);

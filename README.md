@@ -1,44 +1,94 @@
-# 🔥 Project Phoenix V3: Ultimate Hackathon & Interview Prep Engine
+# 🔥 Project Phoenix v3.5 — Ultimate Career & Hackathon Engine
 
-Project Phoenix is a next-generation platform designed to accelerate student careers through **turn-based hackathon simulations** and **adaptive AI-powered placement preparation**. 
-
-Engineered with Google Senior Engineering standards, Phoenix bridges the gap between theoretical algorithm practice and real-world project building.
-
----
-
-## 🌟 Key Architectural Capabilities
-
-### 1. 🎮 10-Stage Hackathon Simulator Engine (`/hackathon-agent/simulator.html`)
-- **Turn-Based Pipeline:** Guides users through assembly, stack choice, USP definition, slide deck structure, and judge evaluation.
-- **🤖 4 AI Teammate Personas:** Alex (The Builder), Maya (The Designer), Rohan (The Founder), and Elena (The AI Dreamer). Teammates react dynamically to your decisions, offering domain feedback and casting crew votes.
-- **🎲 Chaos Incident Engine:** Triggers unexpected real-world challenges (API rate limits, Wi-Fi outages, coffee spills, sponsor bounties) with binary trade-offs.
-- **⚖️ 5 Specialized AI Judges:** Victoria Vance (VC Investor), Dr. Marcus Vance (Architect), Sarah Lin (Design Lead), Dr. Aris Thorne (AI Specialist), and Gordon Techsy (The Brutal Roaster).
-- **📊 Multi-Axis Scoring Matrix:** Calculates scores across Innovation, Execution, Design, and Pitch with judge-specific weighting.
-
-### 2. 🛡️ Hardened Security & Multi-Provider AI Architecture
-- **Multi-Provider AI Fallback Router:** Automatically cascades requests across `Gemini-1.5-Flash` → `OpenAI gpt-4o-mini` → `OpenRouter` → `Local Procedural Engine`. Guarantees 100% uptime with 0 application crashes even if API keys are missing or blank.
-- **Prompt Injection Shield:** Detects and blocks jailbreak attempts (`ignore previous instructions`, `system override`) before reaching LLMs.
-- **XSS & Payload Sanitization:** Recursive HTML stripping and a strict 50KB payload ceiling.
-- **Anti-AI Language Filter:** Strips generic AI copywriter jargon ("delve", "realm", "robust", "seamless") for natural, humanized feedback.
-
-### 3. 🔍 AI Code Review Agent (`/hackathon-agent/code-review.html`)
-- Audits hackathon code snippets for OWASP security flaws, performance bottlenecks, readability, and modular architecture.
-
-### 4. 💼 Placement & Interview Prep Track
-- **Peer-to-Peer Mock Match w/ AI Safety-Net:** Instant AI interviewer takeover if a peer fails to join within 3 minutes.
-- **RPG-Style Skill Tree:** 5-tier visual progression system (Foundations → Phoenix Mastery).
-- **System Design Whiteboard w/ AI Red Team:** Interactive architectural canvas tested by adversarial AI attacks.
-- **Enterprise Recruiter Talent Board:** Anonymized student talent profiles with consent-gated access workflows and FERPA/GDPR DSAR compliance.
+> **Google Senior Engineering Standards Compliance**  
+> A Next-Generation Platform for **Placement Interview Preparation**, **Turn-Based Hackathon Simulations**, and **Modular AI-Powered Career Acceleration**.
 
 ---
 
-## 🚀 Getting Started
+## 🌟 Architectural Architecture & Dual-World Design
+
+Project Phoenix bridges the gap between theoretical algorithm practice and real-world project building. The platform is architected into **two distinct, high-fidelity feature ecosystems**:
+
+```
+                                🏰 PHOENIX COMMAND PORTAL
+                                      (dashboard.html)
+                                              │
+            ┌─────────────────────────────────┴─────────────────────────────────┐
+            ▼                                                                   ▼
+┌───────────────────────────────────────┐               ┌───────────────────────────────────────┐
+│ ⚔️ PLACEMENT & INTERVIEW WORLD        │               │ 🚀 HACKATHON & BUILDER WORLD          │
+├───────────────────────────────────────┤               ├───────────────────────────────────────┤
+│ • 🗺️ Adaptive Syllabus Roadmap        │               │ • 💡 AI Idea Generator (RAG)          │
+│ • 🎙️ Bar-Raiser AI Mock Simulator     │               │ • 🎮 10-Stage Hackathon Simulator     │
+│ • 📄 ATS Resume Disruptor             │               │ • 📊 Hackathon Command Center         │
+│ • 🤝 Peer Match w/ AI Safety-Net      │               │ • 🎤 Judge Explainer & Pitch Deck     │
+│ • 🏗️ System Design Whiteboard         │               │ • 🔍 AI Code Review Audit Agent       │
+│ • 📖 High-Yield Revision Sheets       │               │ • 🏆 Portfolio Project Capture        │
+└───────────────────────────────────────┘               └───────────────────────────────────────┘
+```
+
+---
+
+## 🧠 Centralized Modular AI Dispatch Core ("Right Model for the Right Job")
+
+Phoenix replaces monolithic LLM calls with a **Modular AI Dispatch Engine**. Each feature slot is routed to the specialized AI model best suited for its cognitive task:
+
+$$\text{Primary Model} \xrightarrow{\text{fallback}} \text{Gemini Flash} \xrightarrow{\text{fallback}} \text{Groq 70B} \xrightarrow{\text{fallback}} \text{OpenAI} \xrightarrow{\text{fallback}} \text{OpenRouter} \xrightarrow{\text{fallback}} \text{Local Engine}$$
+
+| Feature Slot | Assigned Task | Primary Model | Why Selected |
+|---|---|---|---|
+| 💡 `creative` | Hackathon Ideas, STAR Stories, Pitches | **Gemini 2.5 Flash** | Top creative reasoning, aware of 2026 tech trends |
+| 🧠 `analytical` | Code Reviews, Stage Eval, ATS Disruptor | **Groq Llama 3.3 70B** | Ultra-fast inference (500 tokens/sec), strict JSON |
+| 💬 `conversational` | Mock Interviews, Mentor Panels, Guide Chat | **Gemini 2.5 Flash** | High conversational fluency, natural coaching |
+| 📋 `structured` | Roadmaps, Schedules, System Design | **Groq Llama 3.3 70B** | Precise structured data generation |
+| 📝 `document` | Resume Tailoring, Revision Sheets | **Gemini 2.5 Flash** | Deep document understanding & Markdown formatting |
+| ⚡ `quick` | Phoenix Copilot Bot Assistant | **Groq Llama 3.1 8B** | Sub-second response time for UI navigation |
+
+---
+
+## 🛡️ Google-Grade Security & Zero-Trust Hardening
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                 GOOGLE-GRADE SECURITY & ARCHITECTURE HARDENING               │
+├───────────────────────┬────────────────────────────┬────────────────────────┤
+│ 🛡️ Zero-Trust Auth    │ 🚫 Prompt Injection Shield │ 🔒 Security Headers    │
+│ Bearer JWT Protection │ Blocks jailbreaks & XSS    │ HSTS, X-Frame-Options  │
+│ Env Secret Binding    │ Payload ceiling < 50KB     │ X-Content-Type Guard   │
+└───────────────────────┴────────────────────────────┴────────────────────────┘
+```
+
+1. **Zero-Trust JWT Auth Middleware (`authMiddleware.js`)**: All private endpoints enforce `Authorization: Bearer <token>` verification against `process.env.JWT_SECRET`.
+2. **Prompt Injection Shield (`promptShield.js`)**: Scans all incoming AI payloads and blocks prompt injection/jailbreak attempts (`ignore previous instructions`, `system override`, `DAN mode`).
+3. **XSS & Payload Ceiling Guard**: Strips dangerous HTML/script tags recursively and enforces a **50KB maximum payload ceiling** to protect server memory.
+4. **Security Headers**: Injects `Strict-Transport-Security`, `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, and `X-XSS-Protection: 1; mode=block`.
+
+---
+
+## 🚀 Key Feature Ecosystems
+
+### 1. ⚔️ Placement & Interview World (`/interview-prep/`)
+- **Adaptive Syllabus Roadmap**: Custom day-by-day learning tasks generated by AI based on target role, time frame, and resume context.
+- **Bar-Raiser AI Mock Simulator**: Interactive mock interviews with difficulty scaling (Foundational → Bar Raiser) and filler word frequency tracking.
+- **ATS Resume Disruptor**: Scores resumes against Google/Amazon job descriptions and converts bullet points into high-impact STAR metrics.
+- **Peer Mock Match w/ AI Safety-Net**: Instant peer matching with automated AI interviewer takeover if a peer drops off.
+- **System Design Whiteboard**: Scenario generator with non-functional constraints (QPS, latency limits).
+
+### 2. 🚀 Hackathon & Builder World (`/hackathon-agent/`)
+- **AI Idea Generator (RAG)**: RAG search over past winning projects to generate unique, achievable ideas for active hackathons.
+- **10-Stage Hackathon Game Engine**: Turn-based game loop with 4 AI teammate personas (Alex, Maya, Rohan, Elena), real-world Chaos Events, and 5 specialized AI judges.
+- **Judge Explainer & Pitch Deck Planner**: Generates 5-slide presenter scripts, architecture walkthroughs, and Q&A defense answers for judge rounds.
+- **AI Code Review Audit Agent**: Analyzes code snippets for OWASP security flaws, performance bottlenecks, and architectural clarity.
+
+---
+
+## 💻 Installation & Quick Start
 
 ### Prerequisites
-- Node.js (v18+)
-- MongoDB (running locally or URI)
+- **Node.js**: v18.0.0 or higher
+- **MongoDB**: Local MongoDB instance or MongoDB Atlas URI
 
-### Quick Start Setup
+### Setup Steps
 
 1. **Clone the repository:**
    ```bash
@@ -57,18 +107,33 @@ Engineered with Google Senior Engineering standards, Phoenix bridges the gap bet
    ```bash
    cp .env.example .env
    ```
-   *Optionally add your `GEMINI_API_KEY`. If left blank, the system automatically uses the local procedural AI engine!*
+   Configure your keys in `.env`:
+   ```env
+   PORT=5000
+   MONGO_URI=mongodb://localhost:27017/phoenix-prep
+   JWT_SECRET=phoenix_super_secret_jwt_key_2026
 
-4. **Run the server:**
+   # AI Provider Keys (Leave blank for procedural local fallbacks)
+   GEMINI_API_KEY=your_gemini_api_key_here
+   GROQ_API_KEY=your_groq_api_key_here
+   ```
+
+4. **Run Automated Test Suite:**
+   ```bash
+   npm test
+   ```
+   *Runs Node.js native unit & integration tests covering `/health`, Prompt Shield, and AI Fallback Engine.*
+
+5. **Start the backend server:**
    ```bash
    node server.js
    ```
-   *Server will run at `http://localhost:5000`.*
 
-5. **Open Frontend:**
-   Open `sup-frontend/dashboard/dashboard.html` or `sup-frontend/hackathon-agent/simulator.html` in your browser.
+6. **Open Frontend:**
+   Open `sup-frontend/splash/splash.html` or `sup-frontend/dashboard/dashboard.html` in your browser.
 
 ---
 
-## 📜 License & Compliance
-Licensed under the MIT License. Fully compliant with GDPR and FERPA data privacy directives.
+## 📜 License & Security Standards
+Licensed under the **MIT License**. Built in compliance with **GDPR**, **FERPA**, and **Google Enterprise Security Guidelines**.
+

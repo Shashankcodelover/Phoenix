@@ -85,15 +85,28 @@ const enterpriseRoutes = require('./modules/enterprise/enterpriseRoutes');
 const webhookRoutes = require('./modules/webhooks/webhookRoutes');
 const simulatorRoutes = require('./modules/simulator/simulatorRoutes');
 const codeReviewRoutes = require('./modules/code-review/codeReviewRoutes');
+const botRoutes = require('./modules/bot/botRoutes');
 const { inputSecurityMiddleware } = require('./middleware/inputSanitizer');
+const { createPromptShield } = require('./middleware/promptShield');
 const { createRateLimiter } = require('./middleware/rateLimiter');
 
 // Rate limiters
 const aiRateLimiter = createRateLimiter({ windowMs: 60000, maxRequests: 15, message: 'AI endpoint rate limit exceeded. Max 15 requests per minute.' });
 const generalRateLimiter = createRateLimiter({ windowMs: 60000, maxRequests: 60 });
 
+// Google-Standard Security Headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  next();
+});
+
 app.use('/uploads', express.static('uploads'));
 app.use(inputSecurityMiddleware);
+app.use('/api', createPromptShield({ maxPayloadBytes: 50 * 1024, sanitize: true, blockOnInjection: true }));
+
 
 // Health & Telemetry Status Endpoint
 const getHealthStatus = (req, res) => {
@@ -114,7 +127,8 @@ const getHealthStatus = (req, res) => {
       'Project Judge Explainer (/api/v1/agent/judge-explainer)',
       'AI Code Review Agent (/api/v1/code-review/audit)',
       'Cybersecurity Shield (/api/v1/enterprise/security-audit)',
-      'Peer-to-Peer AI Safety-Net (/api/v1/prep/peer-match)'
+      'Peer-to-Peer AI Safety-Net (/api/v1/prep/peer-match)',
+      'Universal AI Copilot Assistant (/api/v1/bot/assistant)'
     ]
   });
 };
@@ -138,6 +152,7 @@ app.use('/api/v1/enterprise', enterpriseRoutes);
 app.use('/api/v1/webhooks', webhookRoutes);
 app.use('/api/v1/simulator', simulatorRoutes);
 app.use('/api/v1/code-review', codeReviewRoutes);
+app.use('/api/v1/bot', aiRateLimiter, botRoutes);
 
 // Fallback compatibility
 app.use('/api/hackathons', hackathonRoutes);
@@ -155,6 +170,7 @@ app.use('/api/enterprise', enterpriseRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/simulator', simulatorRoutes);
 app.use('/api/code-review', codeReviewRoutes);
+app.use('/api/bot', botRoutes);
 
 // --- GLOBAL ERROR BOUNDARY ---
 app.use((err, req, res, next) => {

@@ -6,40 +6,8 @@
  *   POST /api/agent/member-guide     — Generate individual A-to-Z build guide for one member
  */
 
-// Helper to call Gemini API
-const callGemini = async (prompt, systemInstruction = '', jsonMode = false) => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'your-gemini-api-key-here') {
-    throw new Error('NO_API_KEY');
-  }
+const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-
-  const requestBody = {
-    contents: [{ parts: [{ text: prompt }] }]
-  };
-
-  if (systemInstruction) {
-    requestBody.systemInstruction = { parts: [{ text: systemInstruction }] };
-  }
-
-  if (jsonMode) {
-    requestBody.generationConfig = { responseMimeType: "application/json" };
-  }
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestBody)
-  });
-
-  if (!response.ok) {
-    throw new Error(`Gemini API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data.candidates[0].content.parts[0].text;
-};
 
 // ──────────────────────────────────────────────
 // FALLBACK DATA
@@ -277,20 +245,16 @@ RULES:
 - Return strict JSON only
 `;
 
-      const resultText = await callGemini(
+      const result = await callAIForFeature(
+        'structured',
         prompt,
         'You are a Google engineering manager. Return strict raw JSON only.',
         true
       );
 
-      try {
-        roadmap = JSON.parse(resultText);
-      } catch (e) {
-        const cleaned = resultText.replace(/```json/gi, '').replace(/```/g, '').trim();
-        roadmap = JSON.parse(cleaned);
-      }
+      roadmap = parseAIJson(result.text);
     } catch (apiErr) {
-      console.warn('Gemini unavailable for roadmap, using fallback:', apiErr.message);
+      console.warn('AI provider unavailable for roadmap, using fallback:', apiErr.message);
       roadmap = generateFallbackRoadmap(projectTitle, teamMembers, durationHours);
     }
 
@@ -362,20 +326,16 @@ RULES:
 - Return strict JSON only
 `;
 
-      const resultText = await callGemini(
+      const result = await callAIForFeature(
+        'structured',
         prompt,
         'You are a hackathon mentor. Return strict raw JSON only.',
         true
       );
 
-      try {
-        guide = JSON.parse(resultText);
-      } catch (e) {
-        const cleaned = resultText.replace(/```json/gi, '').replace(/```/g, '').trim();
-        guide = JSON.parse(cleaned);
-      }
+      guide = parseAIJson(result.text);
     } catch (apiErr) {
-      console.warn('Gemini unavailable for member guide, using fallback:', apiErr.message);
+      console.warn('AI provider unavailable for member guide, using fallback:', apiErr.message);
       guide = generateFallbackMemberGuide(memberName, memberRole, projectTitle);
     }
 
@@ -432,13 +392,15 @@ ${chatContext}
 Student: ${userMessage}
 Mentor:`;
 
-      reply = await callGemini(
+      const result = await callAIForFeature(
+        'conversational',
         prompt,
         'You are a supportive, technically expert hackathon mentor who explains things clearly (like to a 12-year-old) and gives code pointers.',
         false
       );
+      reply = result.text;
     } catch (apiErr) {
-      console.warn('Gemini unavailable for guide chat, using fallback:', apiErr.message);
+      console.warn('AI provider unavailable for guide chat, using fallback:', apiErr.message);
       // fallback reply
       reply = `Hey ${memberName}! As a ${memberRole} working on "${projectTitle}", it's crucial to focus on the core demo flow (a key Notion hackathon strategy). Since your tasks are: "${assignedTasks.join(', ')}", here is a quick tip: write modular functions and set up sample mockup JSON data first so your teammates aren't blocked. Let me know if you need specific template codes or schema ideas!`;
     }
@@ -474,7 +436,13 @@ const generatePitchPlan = async (req, res) => {
 
     let reply;
     try {
-      reply = await callGemini(prompt, 'You are a presentation pitch coach. Return raw JSON format only.');
+      const result = await callAIForFeature(
+        'creative',
+        prompt,
+        'You are a presentation pitch coach. Return raw JSON format only.',
+        true
+      );
+      reply = result.text;
     } catch (err) {
       // Fallback
       reply = JSON.stringify({
@@ -498,14 +466,7 @@ const generatePitchPlan = async (req, res) => {
       });
     }
 
-    let parsed;
-    try {
-      parsed = JSON.parse(reply);
-    } catch (e) {
-      reply = reply.replace(/```json/i, '').replace(/```/g, '').trim();
-      parsed = JSON.parse(reply);
-    }
-
+    const parsed = parseAIJson(reply);
     res.json(parsed);
   } catch (error) {
     res.status(500).json({ message: error.message });

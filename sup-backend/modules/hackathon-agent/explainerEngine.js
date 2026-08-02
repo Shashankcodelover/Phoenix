@@ -3,7 +3,7 @@
  * Generates slide scripts, architecture flow walkthroughs, and Q&A defense answers for judges.
  */
 
-const { callAI } = require('../../utils/aiRouter');
+const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
 
 async function generateProjectExplainer({ projectTitle, techStack, projectDescription, targetTrack = 'AI/ML' }) {
   const systemPrompt = `You are a World-Champion Hackathon Pitch Coach. Produce a complete "Explainer Package" for the project. Include:
@@ -51,17 +51,18 @@ async function generateProjectExplainer({ projectTitle, techStack, projectDescri
 
   const userPrompt = `Project: ${projectTitle}\nTech Stack: ${techStack.join(', ')}\nDescription: ${projectDescription}\nTrack: ${targetTrack}`;
 
-  const aiText = await callAI({
-    prompt: userPrompt,
+  const aiResult = await callAIForFeature(
+    'document',
+    userPrompt,
     systemPrompt,
-    timeoutMs: 5000,
+    true,
     fallbackGenerator
-  });
+  );
 
   try {
-    return JSON.parse(aiText);
+    return parseAIJson(aiResult.text);
   } catch (e) {
-    return JSON.parse(fallbackGenerator());
+    return parseAIJson(fallbackGenerator());
   }
 }
 

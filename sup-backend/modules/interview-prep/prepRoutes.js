@@ -14,19 +14,21 @@ const {
   generateSystemDesignQuestion
 } = require('./prepController');
 
+const { validate, schemas } = require('../../middleware/inputValidator');
+
 const router = express.Router();
 
-router.post('/generate-roadmap', generateRoadmap);
-router.post('/mock-interview', mockInterview);
-router.post('/tailor-resume', tailorResume);
+router.post('/generate-roadmap', validate(schemas.generateRoadmap), generateRoadmap);
+router.post('/mock-interview', validate(schemas.mockInterview), mockInterview);
+router.post('/tailor-resume', validate(schemas.tailorResume), tailorResume);
 router.post('/resume-disrupt', disruptResume);
-router.post('/quiz-submit', submitQuiz);
+router.post('/quiz-submit', validate(schemas.quizSubmit), submitQuiz);
 router.get('/questions', getQuestions);
 router.post('/peer-match', getPeerMatches);
-router.post('/planner/allocate', allocatePlanner);
-router.post('/revision', generateRevisionSheet);
+router.post('/planner/allocate', validate(schemas.planner), allocatePlanner);
+router.post('/revision', validate(schemas.revision), generateRevisionSheet);
 router.post('/analyze-audio', analyzeAudio);
 router.get('/performance-trend/:userId', getPerformanceTrend);
-router.post('/system-design', generateSystemDesignQuestion);
+router.post('/system-design', validate(schemas.systemDesign), generateSystemDesignQuestion);
 
 module.exports = router;

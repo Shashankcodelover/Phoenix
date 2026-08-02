@@ -3,385 +3,358 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Phoenix — Luminous Enterprise Gateway & Career Accelerator</title>
+  <title>Phoenix — Career Accelerator & Hackathon Platform</title>
+  <meta name="description" content="Phoenix is the unified AI-powered platform for interview preparation, hackathon discovery, and career acceleration.">
   <link rel="stylesheet" href="./phoenix.css">
-  <script src="./dashboard/ux-effects.js"></script>
-  <script src="./dashboard/ux-tour.js"></script>
   <style>
-    body {
-      background: var(--bg-gradient);
-      color: var(--text-primary);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      font-family: 'Inter', sans-serif;
-      transition: background 0.3s ease, color 0.3s ease;
+    .hero-subtitle {
+      font-size: clamp(0.92rem, 1.5vw, 1.05rem);
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin: 0 auto;
+      max-width: 640px;
     }
 
-    /* FULL 100% HORIZONTAL SCREEN OCCUPATION (NO EMPTY MARGINS) */
-    .hero-gateway {
+    .world-card {
+      background: var(--bg-secondary);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: clamp(14px, 2vw, 20px);
       text-align: center;
-      padding: 36px 40px 20px;
-      width: 100%;
-      box-sizing: border-box;
+      cursor: pointer;
+      transition: all var(--transition-smooth);
     }
 
-    .cyan-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, rgba(0, 112, 243, 0.12), rgba(56, 189, 248, 0.08));
-      border: 1px solid var(--cyan);
-      color: var(--cyan);
-      padding: 6px 20px;
-      border-radius: 30px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      box-shadow: 0 0 15px rgba(0, 112, 243, 0.15);
-    }
-
-    .hero-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 3.4rem;
-      font-weight: 900;
-      color: var(--text-primary);
-      line-height: 1.15;
-      margin-bottom: 12px;
-    }
-
-    .full-width-container {
-      width: 100%;
-      padding: 0 40px 40px;
-      box-sizing: border-box;
-    }
-
-    .grid-layout {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 30px;
-      width: 100%;
-    }
-
-    @media (max-width: 1000px) {
-      .grid-layout { grid-template-columns: 1fr; }
-      .full-width-container { padding: 0 20px 20px; }
-    }
-
-    .panel-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      padding: 32px;
+    .world-card:hover {
+      transform: translateY(-3px);
       box-shadow: var(--shadow-md);
-      transition: var(--transition-smooth);
-      position: relative;
     }
 
-    .panel-card:hover {
+    .world-card.selected {
       border-color: var(--cyan);
-      box-shadow: var(--shadow-lg);
+      box-shadow: 0 0 20px rgba(0, 112, 243, 0.15);
     }
 
-    .tab-nav {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 10px;
-      overflow-x: auto;
+    .world-card.selected-hackathon {
+      border-color: var(--coral);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
     }
 
-    .tab-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 0.85rem;
+    .world-card-icon {
+      font-size: 2.2rem;
+      margin-bottom: 4px;
+    }
+
+    .world-card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
       font-weight: 600;
-      padding: 8px 16px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: var(--transition-fast);
+      margin: 6px 0 4px;
     }
 
-    .tab-btn.active {
-      background: rgba(0, 112, 243, 0.12);
+    .world-card-desc {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .step-title {
       color: var(--cyan);
-      border: 1px solid var(--cyan);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      margin-bottom: 6px;
     }
 
-    .tab-content {
-      display: none;
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
     }
 
-    .tab-content.active {
-      display: block;
-    }
-
-    .devfolio-banner {
-      background: linear-gradient(135deg, rgba(0, 112, 243, 0.08), rgba(56, 189, 248, 0.04));
-      border: 1px solid var(--cyan);
+    .summary-box {
+      background: rgba(0, 112, 243, 0.04);
+      border: 1px solid rgba(0, 112, 243, 0.15);
       border-radius: var(--radius-md);
-      padding: 20px;
-      margin-bottom: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+      font-size: 0.84rem;
+      line-height: 1.6;
     }
 
-    .theme-toggle-btn {
-      background: rgba(0, 112, 243, 0.1);
-      border: 1px solid var(--cyan);
-      color: var(--text-primary);
-      padding: 6px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 700;
+    .info-stat {
+      background: var(--bg-secondary);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .info-stat-label {
+      color: var(--cyan);
       font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: var(--transition-fast);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 4px;
     }
 
-    .theme-toggle-btn:hover {
-      background: var(--cyan);
-      color: #FFF;
+    .info-stat-value {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .nav-btn-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-btn-row .btn:first-child { flex: 1; }
+    .nav-btn-row .btn:last-child { flex: 2; }
+
+    .accelerator-item {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .accelerator-item:last-child { border-bottom: none; }
+
+    .accelerator-item-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .accelerator-item-desc {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
     }
   </style>
 </head>
 <body class="theme-light-cyan">
 
-  <!-- NAVBAR WITH THEME TOGGLE -->
-  <nav class="navbar">
-    <div class="navbar-brand" style="color:var(--cyan); font-weight:800;">⚡ PHOENIX PRO</div>
-    <ul class="nav-links">
+  <!-- NAVBAR -->
+  <nav class="navbar" id="mainNavbar">
+    <div class="navbar-brand" onclick="window.location.href='./'">⚡ PHOENIX</div>
+    <ul class="nav-links" id="mainNavLinks">
       <li><a href="./interview-prep/roadmap.html">💼 Placement World</a></li>
       <li><a href="./hackathon-agent/command-center.html">🏆 Hackathon World</a></li>
       <li><a href="./dashboard/dashboard.html">📊 Dashboard</a></li>
       <li><a href="./dashboard/skill-tree.html">🌳 Skill Tree</a></li>
-      <li><button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleGlobalTheme()">✨ Light Cyan</button></li>
-      <li><button class="btn btn-primary" onclick="window.phoenixTour.startTour()" style="padding:4px 12px; font-size:0.78rem;">🎮 Guided Tour</button></li>
+      <li><button class="theme-toggle-btn" id="themeToggleBtn" onclick="Phoenix.Theme.cycle()">☀️ Light</button></li>
     </ul>
   </nav>
 
   <canvas id="particles"></canvas>
 
-  <!-- HERO GATEWAY (100% SCREEN HORIZONTAL OCCUPATION) -->
+  <!-- HERO -->
   <div class="hero-gateway">
-    <div class="cyan-badge">⚡ Luminous Enterprise Experience • PushToProd Devfolio Demo</div>
-    <h1 class="hero-title">Phoenix Universal Career & Hackathon Portal</h1>
-    <p style="font-size: 1.05rem; color: var(--text-secondary); line-height: 1.6; margin: 0 auto;">
-      Complete your universal developer profile below (including GitHub & LinkedIn links) to calibrate your personalized A-to-Z Placement Accelerator or Hackathon Champion series!
+    <div class="cyan-badge">⚡ Unified Career Platform • AI-Powered</div>
+    <h1 class="hero-title">Phoenix Career & Hackathon Portal</h1>
+    <p class="hero-subtitle">
+      Complete your developer profile below to calibrate your personalized Placement Accelerator or Hackathon Champion series.
     </p>
   </div>
 
-  <!-- MAIN FULL-WIDTH GRID (100% SCREEN OCCUPATION) -->
+  <!-- MAIN CONTENT -->
   <div class="full-width-container">
     <div class="grid-layout">
 
-      <!-- LEFT: UNIVERSAL TAB WIZARD -->
+      <!-- LEFT: PROFILE WIZARD -->
       <div class="panel-card" id="profileWizardCard">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-          <h2 class="font-space" style="font-size: 1.4rem; color:var(--text-primary); margin:0;">📋 Universal Profile Calibrator</h2>
-          <button class="btn btn-secondary" onclick="window.phoenixTour.startTour()" style="font-size:0.78rem; padding:6px 12px;">👉 Upfront Tour Spotlight</button>
+        <div class="d-flex justify-between align-center mb-2" style="flex-wrap:wrap; gap:8px;">
+          <h2 class="font-space" style="font-size:1.3rem;">📋 Profile Calibrator</h2>
         </div>
 
-        <div class="tab-nav">
+        <div class="tab-nav" id="wizardTabNav">
           <button class="tab-btn active" id="tb-1" onclick="switchTab(1)">1. Identity</button>
-          <button class="tab-btn" id="tb-2" onclick="switchTab(2)">2. GitHub & LinkedIn</button>
-          <button class="tab-btn" id="tb-3" onclick="switchTab(3)">3. Skills Matrix</button>
-          <button class="tab-btn" id="tb-4" onclick="switchTab(4)">4. Select World</button>
-          <button class="tab-btn" id="tb-5" onclick="switchTab(5)">5. Target Input</button>
-          <button class="tab-btn" id="tb-6" onclick="switchTab(6)">6. Launch Portal 🚀</button>
+          <button class="tab-btn" id="tb-2" onclick="switchTab(2)">2. Links</button>
+          <button class="tab-btn" id="tb-3" onclick="switchTab(3)">3. Skills</button>
+          <button class="tab-btn" id="tb-4" onclick="switchTab(4)">4. World</button>
+          <button class="tab-btn" id="tb-5" onclick="switchTab(5)">5. Target</button>
+          <button class="tab-btn" id="tb-6" onclick="switchTab(6)">6. Launch 🚀</button>
         </div>
 
         <!-- TAB 1: IDENTITY -->
         <div class="tab-content active" id="tc-1">
-          <h4 style="color:var(--cyan); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;">Step 1: Developer Identity</h4>
-          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;">Enter your core identification so Phoenix can personalize your experience.</p>
+          <h4 class="step-title">Step 1: Developer Identity</h4>
+          <p class="step-desc">Enter your core identification so Phoenix can personalize your experience.</p>
           <div class="form-group">
-            <label>Full Name *</label>
+            <label for="uName">Full Name *</label>
             <input type="text" id="uName" value="Preetham J" placeholder="e.g. Preetham J" required>
           </div>
           <div class="form-group">
-            <label>Primary Email *</label>
+            <label for="uEmail">Primary Email *</label>
             <input type="email" id="uEmail" value="preetham@university.edu" placeholder="preetham@university.edu" required>
           </div>
-          <button class="btn btn-primary" style="width:100%;" onclick="switchTab(2)">Next: GitHub & LinkedIn Profiles ➔</button>
+          <button class="btn btn-primary btn-full" onclick="switchTab(2)">Next: Portfolio Links ➔</button>
         </div>
 
         <!-- TAB 2: GITHUB & LINKEDIN -->
         <div class="tab-content" id="tc-2">
-          <h4 style="color:var(--cyan); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;">Step 2: Portfolio Links & Verification</h4>
-          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;">Providing your GitHub and LinkedIn allows Phoenix AI to extract STAR stories, verify commits, and tune ATS resume scoring.</p>
+          <h4 class="step-title">Step 2: Portfolio Links & Verification</h4>
+          <p class="step-desc">Providing your GitHub and LinkedIn allows Phoenix AI to extract STAR stories and tune ATS resume scoring.</p>
           <div class="form-group">
-            <label>🔗 GitHub Profile URL / Username</label>
-            <input type="text" id="uGithub" value="https://github.com/udaysharmadev/The-Hackathon-Simulator">
+            <label for="uGithub">🔗 GitHub Profile URL</label>
+            <input type="text" id="uGithub" value="https://github.com/Shashankcodelover" placeholder="https://github.com/username">
           </div>
           <div class="form-group">
-            <label>💼 LinkedIn Profile URL</label>
-            <input type="text" id="uLinkedin" value="https://linkedin.com/in/preetham-j">
+            <label for="uLinkedin">💼 LinkedIn Profile URL</label>
+            <input type="text" id="uLinkedin" value="https://linkedin.com/in/preetham-j" placeholder="https://linkedin.com/in/username">
           </div>
           <div class="form-group">
-            <label>🌐 Portfolio Website (Optional)</label>
-            <input type="text" id="uPortfolio" value="https://preetham-portfolio.dev">
+            <label for="uPortfolio">🌐 Portfolio Website (Optional)</label>
+            <input type="text" id="uPortfolio" value="https://preetham-portfolio.dev" placeholder="https://yoursite.dev">
           </div>
-          <div style="display:flex; gap:10px;">
-            <button class="btn btn-secondary" style="flex:1;" onclick="switchTab(1)">Back</button>
-            <button class="btn btn-primary" style="flex:2;" onclick="switchTab(3)">Next: Technical Skills Matrix ➔</button>
+          <div class="nav-btn-row">
+            <button class="btn btn-secondary" onclick="switchTab(1)">Back</button>
+            <button class="btn btn-primary" onclick="switchTab(3)">Next: Skills Matrix ➔</button>
           </div>
         </div>
 
         <!-- TAB 3: SKILLS -->
         <div class="tab-content" id="tc-3">
-          <h4 style="color:var(--cyan); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;">Step 3: Core Technical Stack</h4>
-          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;">Enter your core programming languages, frameworks, and hackathon specialty role.</p>
+          <h4 class="step-title">Step 3: Core Technical Stack</h4>
+          <p class="step-desc">Enter your programming languages, frameworks, and hackathon specialty.</p>
           <div class="form-group">
-            <label>Technical Stack (Comma-separated)</label>
-            <input type="text" id="uSkills" value="JavaScript, React, Node.js, Python, PostgreSQL, Anthropic Claude API, System Design">
+            <label for="uSkills">Technical Stack (Comma-separated)</label>
+            <input type="text" id="uSkills" value="JavaScript, React, Node.js, Python, PostgreSQL, System Design">
           </div>
           <div class="form-group">
-            <label>Hackathon Team Role Specialty</label>
+            <label for="uTeamSpecialty">Hackathon Team Role</label>
             <select id="uTeamSpecialty">
-              <option value="The Builder (Backend / Infra / Scalability)">The Builder (Backend / Infra / Scalability)</option>
-              <option value="The Designer (UI / UX / Onboarding)">The Designer (UI / UX / Onboarding)</option>
-              <option value="The Strategist (Product / Business / Pitch)">The Strategist (Product / Business / Pitch)</option>
-              <option value="The AI Dreamer (LLM / RAG / Vector DB)">The AI Dreamer (LLM / RAG / Vector DB)</option>
+              <option value="The Builder (Backend / Infra / Scalability)">The Builder (Backend / Infra)</option>
+              <option value="The Designer (UI / UX / Onboarding)">The Designer (UI / UX)</option>
+              <option value="The Strategist (Product / Business / Pitch)">The Strategist (Product / Pitch)</option>
+              <option value="The AI Dreamer (LLM / RAG / Vector DB)">The AI Dreamer (LLM / RAG)</option>
             </select>
           </div>
-          <div style="display:flex; gap:10px;">
-            <button class="btn btn-secondary" style="flex:1;" onclick="switchTab(2)">Back</button>
-            <button class="btn btn-primary" style="flex:2;" onclick="switchTab(4)">Next: Destination World ➔</button>
+          <div class="nav-btn-row">
+            <button class="btn btn-secondary" onclick="switchTab(2)">Back</button>
+            <button class="btn btn-primary" onclick="switchTab(4)">Next: Choose World ➔</button>
           </div>
         </div>
 
         <!-- TAB 4: SELECT WORLD -->
         <div class="tab-content" id="tc-4">
-          <h4 style="color:var(--cyan); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;">Step 4: Choose Destination World</h4>
-          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;">Which A-to-Z accelerator series do you want to unlock today?</p>
-          
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
-            <div style="background:var(--bg-secondary); border:2px solid var(--cyan); border-radius:12px; padding:16px; text-align:center; cursor:pointer;" id="wcInterview" onclick="chooseWorld('interview')">
-              <div style="font-size:2.2rem;">💼</div>
-              <h5 style="color:var(--cyan); font-family:'Space Grotesk'; margin:6px 0 2px;">Placement World</h5>
-              <p style="font-size:0.75rem; color:var(--text-secondary);">A-to-Z Placement Syllabus, ATS Resume Disruptor & Peer Mocks.</p>
+          <h4 class="step-title">Step 4: Choose Destination World</h4>
+          <p class="step-desc">Which accelerator series do you want to unlock?</p>
+          <div class="grid-2 mb-2">
+            <div class="world-card selected" id="wcInterview" onclick="chooseWorld('interview')">
+              <div class="world-card-icon">💼</div>
+              <h5 class="world-card-title text-cyan">Placement World</h5>
+              <p class="world-card-desc">A-to-Z Placement Syllabus, ATS Resume Disruptor & Peer Mocks.</p>
             </div>
-
-            <div style="background:var(--bg-secondary); border:2px solid var(--coral); border-radius:12px; padding:16px; text-align:center; cursor:pointer;" id="wcHackathon" onclick="chooseWorld('hackathon')">
-              <div style="font-size:2.2rem;">🏆</div>
-              <h5 style="color:var(--coral); font-family:'Space Grotesk'; margin:6px 0 2px;">Hackathon World</h5>
-              <p style="font-size:0.75rem; color:var(--text-secondary);">A-to-Z Hackathon Series, Multi-Team Roster, Game Simulator & Pitch Explainer.</p>
+            <div class="world-card" id="wcHackathon" onclick="chooseWorld('hackathon')">
+              <div class="world-card-icon">🏆</div>
+              <h5 class="world-card-title text-coral">Hackathon World</h5>
+              <p class="world-card-desc">Hackathon Series, Multi-Team Roster, Simulator & Pitch Explainer.</p>
             </div>
           </div>
-
-          <div style="display:flex; gap:10px;">
-            <button class="btn btn-secondary" style="flex:1;" onclick="switchTab(3)">Back</button>
-            <button class="btn btn-primary" style="flex:2;" onclick="switchTab(5)">Next: Target Description ➔</button>
+          <div class="nav-btn-row">
+            <button class="btn btn-secondary" onclick="switchTab(3)">Back</button>
+            <button class="btn btn-primary" onclick="switchTab(5)">Next: Target Input ➔</button>
           </div>
         </div>
 
         <!-- TAB 5: TARGET INPUT -->
         <div class="tab-content" id="tc-5">
-          <h4 style="color:var(--cyan); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;" id="descHeaderTitle">Step 5: Target Description Statement</h4>
-          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;" id="descHeaderSub">Paste the target Job Description or Hackathon Challenge Statement.</p>
+          <h4 class="step-title" id="descHeaderTitle">Step 5: Target Description</h4>
+          <p class="step-desc" id="descHeaderSub">Paste the target Job Description or Hackathon Challenge Statement.</p>
           <div class="form-group">
-            <label id="descLabel">Target Input Text</label>
-            <textarea id="uTargetDesc" rows="4" style="font-size:0.85rem;">Push to Prod Hackathon: Building at the Frontier (Anthropic & Elevation Capital). Theme: Build the Next Audacious — frontier capabilities, agentic workflows, and new input/output modalities powered by Claude AI.</textarea>
+            <label for="uTargetDesc" id="descLabel">Target Input Text</label>
+            <textarea id="uTargetDesc" rows="4">Push to Prod Hackathon: Building at the Frontier (Anthropic & Elevation Capital). Theme: Build the Next Audacious — frontier capabilities, agentic workflows, and new input/output modalities powered by Claude AI.</textarea>
           </div>
-          <div style="display:flex; gap:10px;">
-            <button class="btn btn-secondary" style="flex:1;" onclick="switchTab(4)">Back</button>
-            <button class="btn btn-primary" style="flex:2;" onclick="switchTab(6)">Next: Finalize & Launch ➔</button>
+          <div class="nav-btn-row">
+            <button class="btn btn-secondary" onclick="switchTab(4)">Back</button>
+            <button class="btn btn-primary" onclick="switchTab(6)">Next: Launch ➔</button>
           </div>
         </div>
 
-        <!-- TAB 6: LAUNCH PORTAL -->
+        <!-- TAB 6: LAUNCH -->
         <div class="tab-content" id="tc-6">
-          <h4 style="color:var(--cyan); font-family:'Space Grotesk'; font-size:1.1rem; margin-bottom:6px;">Step 6: Universal Profile Ready! 🏆</h4>
-          <p style="font-size:0.85rem; color:var(--text-primary); margin-bottom:14px;">Your profile details and links have been verified and saved. Click below to launch your selected world!</p>
-          
-          <div id="summaryCard" style="background:rgba(0,112,243,0.06); border:1px solid var(--cyan); border-radius:12px; padding:14px; margin-bottom:16px; font-size:0.82rem; line-height:1.5;"></div>
-
-          <button class="btn btn-primary" style="width:100%; background:var(--gradient-brand); color:#FFF; font-weight:800; font-size:1.05rem;" onclick="launchWorldPortal()">🚀 Launch Selected World Series</button>
+          <h4 class="step-title">Step 6: Profile Ready! 🏆</h4>
+          <p class="step-desc">Your profile has been verified. Click below to launch your selected world!</p>
+          <div class="summary-box" id="summaryCard"></div>
+          <button class="btn btn-primary btn-lg btn-full" onclick="launchWorldPortal()">🚀 Launch Selected World</button>
         </div>
-
       </div>
 
-      <!-- RIGHT: LIVE DEVFOLIO DEMO & REAL-TIME ACCELERATOR FEED -->
-      <div style="display:flex; flex-direction:column; gap:24px;">
+      <!-- RIGHT PANEL -->
+      <div class="d-flex flex-col gap-lg">
 
-        <!-- DEVFOLIO LIVE DEMO BANNER -->
-        <div class="panel-card" style="border-color:var(--cyan);">
+        <!-- DEVFOLIO BANNER -->
+        <div class="panel-card">
           <div class="devfolio-banner">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span class="badge badge-purple" style="font-size:0.7rem; background:rgba(0,112,243,0.1); color:var(--cyan);">🔥 Devfolio Live Match</span>
-              <span style="font-size:0.75rem; color:var(--cyan); font-weight:700;">Aug 8, 2026 • Bengaluru</span>
+            <div class="d-flex justify-between align-center flex-wrap gap-sm">
+              <span class="badge badge-cyan">🔥 Featured Event</span>
+              <span class="text-cyan" style="font-size:0.75rem; font-weight:700;">Aug 8, 2026 • Bengaluru</span>
             </div>
-            <h3 style="font-family:'Space Grotesk'; font-size:1.25rem; color:var(--text-primary); margin:10px 0 6px;">Push to Prod: Building at the Frontier</h3>
-            <p style="font-size:0.82rem; color:var(--text-secondary); line-height:1.5;">
-              Hosted by <strong>Anthropic & Elevation Capital</strong>. Build audacious products, frontier agentic capabilities, and category-redefining interfaces powered by Claude AI.
+            <h3 class="font-space mt-1" style="font-size:1.2rem;">Push to Prod: Building at the Frontier</h3>
+            <p class="text-secondary mt-1" style="font-size:0.82rem; line-height:1.55;">
+              Hosted by <strong>Anthropic & Elevation Capital</strong>. Build audacious products, frontier agentic capabilities powered by Claude AI.
             </p>
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
-              <strong style="color:var(--cyan); font-size:0.8rem; display:block;">🤖 Required AI Tech</strong>
-              <span style="font-size:0.78rem; color:var(--text-secondary);">Anthropic Claude API & LLM Agent Workflows</span>
+          <div class="grid-2">
+            <div class="info-stat">
+              <span class="info-stat-label">🤖 Required Tech</span>
+              <span class="info-stat-value">Claude API & LLM Agents</span>
             </div>
-            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
-              <strong style="color:var(--coral); font-size:0.8rem; display:block;">🎁 Exclusive Reward</strong>
-              <span style="font-size:0.78rem; color:var(--text-secondary);">Elevation Capital Office Hours & $5,000 Prizes</span>
+            <div class="info-stat">
+              <span class="info-stat-label" style="color:var(--coral);">🎁 Rewards</span>
+              <span class="info-stat-value">Office Hours & $5K Prizes</span>
             </div>
           </div>
         </div>
 
-        <!-- A-TO-Z SERIES OVERVIEW MODULE -->
+        <!-- ACCELERATOR OVERVIEW -->
         <div class="panel-card">
-          <h3 class="font-space mb-2" style="font-size: 1.2rem; color:var(--text-primary);">⚡ A-to-Z Accelerator Series Overview</h3>
-          <div style="display:flex; flex-direction:column; gap:12px; margin-top:12px;">
-            <div class="log-row">
+          <h3 class="font-space mb-2" style="font-size:1.15rem;">⚡ Accelerator Overview</h3>
+          <div class="accelerator-item">
+            <div class="d-flex justify-between align-center flex-wrap gap-sm">
               <div>
-                <strong style="color:var(--cyan); font-size:0.85rem;">💼 A-to-Z Placement Series</strong>
-                <span style="display:block; font-size:0.78rem; color:var(--text-secondary);">ATS Disruptor, 6-Week Roadmap, System Design & Peer Mocks</span>
+                <div class="accelerator-item-title text-cyan">💼 Placement Series</div>
+                <div class="accelerator-item-desc">ATS Disruptor, 6-Week Roadmap, System Design & Peer Mocks</div>
               </div>
-              <a href="./interview-prep/roadmap.html" class="btn btn-secondary" style="font-size:0.75rem; padding:4px 10px;">Enter ➔</a>
+              <a href="./interview-prep/roadmap.html" class="btn btn-secondary btn-sm">Enter ➔</a>
             </div>
-
-            <div class="log-row">
+          </div>
+          <div class="accelerator-item">
+            <div class="d-flex justify-between align-center flex-wrap gap-sm">
               <div>
-                <strong style="color:var(--coral); font-size:0.85rem;">🏆 A-to-Z Hackathon Series</strong>
-                <span style="display:block; font-size:0.78rem; color:var(--text-secondary);">Multi-Team Roster, Turn-Based Game Simulator & Judge Explainer</span>
+                <div class="accelerator-item-title text-coral">🏆 Hackathon Series</div>
+                <div class="accelerator-item-desc">Team Roster, Turn-Based Simulator & Judge Explainer</div>
               </div>
-              <a href="./hackathon-agent/command-center.html" class="btn btn-secondary" style="font-size:0.75rem; padding:4px 10px;">Enter ➔</a>
+              <a href="./hackathon-agent/command-center.html" class="btn btn-secondary btn-sm">Enter ➔</a>
             </div>
-
-            <div class="log-row">
+          </div>
+          <div class="accelerator-item">
+            <div class="d-flex justify-between align-center flex-wrap gap-sm">
               <div>
-                <strong style="color:var(--purple); font-size:0.85rem;">🎮 Hackathon Game Simulator</strong>
-                <span style="display:block; font-size:0.78rem; color:var(--text-secondary);">AI Teammates, Crew Voting, Chaos Events & Judge Roasts</span>
+                <div class="accelerator-item-title text-purple">🎮 Interview Simulator</div>
+                <div class="accelerator-item-desc">AI Mentors, Chaos Events & Company Interviews</div>
               </div>
-              <a href="./hackathon-agent/simulator.html" class="btn btn-secondary" style="font-size:0.75rem; padding:4px 10px;">Play ➔</a>
+              <a href="./hackathon-agent/simulator.html" class="btn btn-secondary btn-sm">Play ➔</a>
             </div>
           </div>
         </div>
-
       </div>
 
     </div>
   </div>
 
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    Phoenix v2.0 — Built for Builders • <a href="https://github.com/Shashankcodelover/phoenix-interview-prep">GitHub</a>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="./phoenix-core.js"></script>
   <script>
+    // Initialize Phoenix Core
+    Phoenix.init({ particles: true, particleCount: 45, auth: false, theme: true, nav: true });
+
     let currentChosenWorld = 'interview';
 
-    // Particles
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    let particles = [];
-    for (let i = 0; i < 40; i++) { particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*1.1, dx: (Math.random()-0.5)*0.12, dy: (Math.random()-0.5)*0.12 }); }
-    function animP() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(0,112,243,0.25)"; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.dx; p.y+=p.dy; if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1; }); requestAnimationFrame(animP); }
-    animP();
-
     function switchTab(num) {
-      if (window.phoenixAudio) window.phoenixAudio.playPop();
       for (let i = 1; i <= 6; i++) {
         document.getElementById(`tc-${i}`).classList.remove('active');
         document.getElementById(`tb-${i}`).classList.remove('active');
@@ -390,8 +363,6 @@
       document.getElementById(`tb-${num}`).classList.add('active');
 
       if (num === 6) {
-        if (window.phoenixAudio) window.phoenixAudio.playSuccess();
-        triggerConfettiExplosion(window.innerWidth / 2, window.innerHeight / 2);
         const name = document.getElementById('uName').value;
         const email = document.getElementById('uEmail').value;
         const github = document.getElementById('uGithub').value;
@@ -399,36 +370,40 @@
         const skills = document.getElementById('uSkills').value;
 
         document.getElementById('summaryCard').innerHTML = `
-          <strong>👤 Candidate Name:</strong> ${name}<br>
+          <strong>👤 Name:</strong> ${name}<br>
           <strong>📧 Email:</strong> ${email}<br>
-          <strong>🔗 GitHub Profile:</strong> ${github}<br>
-          <strong>💼 LinkedIn Profile:</strong> ${linkedin}<br>
-          <strong>⚡ Tech Skills:</strong> ${skills}<br>
-          <strong>🌟 Destination World:</strong> <span style="color:var(--cyan); font-weight:700;">${currentChosenWorld === 'interview' ? 'Placement World' : 'Hackathon World'}</span>
+          <strong>🔗 GitHub:</strong> ${github}<br>
+          <strong>💼 LinkedIn:</strong> ${linkedin}<br>
+          <strong>⚡ Skills:</strong> ${skills}<br>
+          <strong>🌟 World:</strong> <span class="text-cyan" style="font-weight:700;">${currentChosenWorld === 'interview' ? 'Placement World' : 'Hackathon World'}</span>
         `;
       }
     }
 
     function chooseWorld(world) {
-      if (window.phoenixAudio) window.phoenixAudio.playPop();
       currentChosenWorld = world;
-      document.getElementById('wcInterview').style.borderColor = world === 'interview' ? 'var(--cyan)' : 'var(--border-subtle)';
-      document.getElementById('wcHackathon').style.borderColor = world === 'hackathon' ? 'var(--coral)' : 'var(--border-subtle)';
-      
-      document.getElementById('descHeaderTitle').innerText = world === 'interview' ? 'Step 5: Target Job Description (JD)' : 'Step 5: Hackathon Challenge Statement';
-      document.getElementById('descHeaderSub').innerText = world === 'interview' ? 'Paste the target Job Description to calibrate your ATS resume & roadmap.' : 'Paste the Hackathon theme/challenge to configure your AI team & ideas.';
+      const ic = document.getElementById('wcInterview');
+      const hc = document.getElementById('wcHackathon');
+
+      ic.className = 'world-card' + (world === 'interview' ? ' selected' : '');
+      hc.className = 'world-card' + (world === 'hackathon' ? ' selected-hackathon' : '');
+
+      document.getElementById('descHeaderTitle').textContent = world === 'interview'
+        ? 'Step 5: Target Job Description (JD)'
+        : 'Step 5: Hackathon Challenge Statement';
+      document.getElementById('descHeaderSub').textContent = world === 'interview'
+        ? 'Paste the target Job Description to calibrate your ATS resume & roadmap.'
+        : 'Paste the Hackathon theme/challenge to configure your AI team & ideas.';
     }
 
     function launchWorldPortal() {
-      if (window.phoenixAudio) window.phoenixAudio.playSuccess();
-      triggerConfettiExplosion(window.innerWidth / 2, window.innerHeight / 2);
       const profile = {
         name: document.getElementById('uName').value,
         email: document.getElementById('uEmail').value,
         github: document.getElementById('uGithub').value,
         linkedin: document.getElementById('uLinkedin').value,
         portfolio: document.getElementById('uPortfolio').value,
-        skills: document.getElementById('uSkills').value.split(',').map(s=>s.trim()),
+        skills: document.getElementById('uSkills').value.split(',').map(s => s.trim()),
         teamSpecialty: document.getElementById('uTeamSpecialty').value,
         targetDescription: document.getElementById('uTargetDesc').value,
         destinationWorld: currentChosenWorld
@@ -437,47 +412,16 @@
       localStorage.setItem('userProfile', JSON.stringify(profile));
       localStorage.setItem('onboardingCompleted', 'true');
 
+      Phoenix.Toast.success('Profile saved! Launching...');
+
       setTimeout(() => {
         if (currentChosenWorld === 'interview') {
           window.location.href = './interview-prep/roadmap.html';
         } else {
           window.location.href = './hackathon-agent/command-center.html';
         }
-      }, 400);
+      }, 500);
     }
-
-    // GLOBAL THEME TOGGLE HANDLER (LIGHT CYAN <-> DARK OBSIDIAN)
-    function toggleGlobalTheme() {
-      const isDark = document.body.classList.contains('theme-dark-obsidian');
-      if (isDark) {
-        document.body.classList.remove('theme-dark-obsidian');
-        document.body.classList.add('theme-light-cyan');
-        document.getElementById('themeToggleBtn').innerText = '✨ Light Cyan';
-        localStorage.setItem('phoenixTheme', 'light-cyan');
-      } else {
-        document.body.classList.remove('theme-light-cyan');
-        document.body.classList.add('theme-dark-obsidian');
-        document.getElementById('themeToggleBtn').innerText = '🌙 Dark Obsidian';
-        localStorage.setItem('phoenixTheme', 'dark-obsidian');
-      }
-    }
-
-    // Apply saved theme on load
-    document.addEventListener('DOMContentLoaded', () => {
-      const savedTheme = localStorage.getItem('phoenixTheme') || 'light-cyan';
-      if (savedTheme === 'dark-obsidian') {
-        document.body.classList.remove('theme-light-cyan');
-        document.body.classList.add('theme-dark-obsidian');
-        document.getElementById('themeToggleBtn').innerText = '🌙 Dark Obsidian';
-      }
-
-      if (!localStorage.getItem('tourShown')) {
-        setTimeout(() => {
-          window.phoenixTour.startTour();
-          localStorage.setItem('tourShown', 'true');
-        }, 600);
-      }
-    });
   </script>
 </body>
 </html>
