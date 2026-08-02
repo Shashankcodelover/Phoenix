@@ -1,6 +1,10 @@
 const User = require('../../models/userModel');
 const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
 const { analyzeAndDisruptResume } = require('./resumeDisruptor');
+const { generateResumeDiff } = require('./resumeDiffEngine');
+const { questions: PYQ_DATABASE } = require('./questionBankData');
+const { getCompanyProfile, COMPANY_INTELLIGENCE } = require('./companyIntelligence');
+const { WINNING_PROJECTS } = require('../hackathon-agent/hackathonWinnersData');
 
 
 // @desc    Disrupt & Optimize Resume for Target Role
@@ -237,65 +241,143 @@ const submitQuiz = async (req, res) => {
   }
 };
 
-// @desc    Get company-tagged question bank
+// @desc    Get company-tagged question bank (200+ PYQs across Companies x Roles x Domains)
 const getQuestions = async (req, res) => {
   try {
-    const questions = [
-      {
-        title: "Reverse a Linked List in Groups of Size K",
-        company: "Amazon",
-        category: "DSA",
-        difficulty: "Hard",
-        description: "Given a pointer to the head node of a linked list, reverse the nodes of the list k at a time, and return the modified list. k is a positive integer and is less than or equal to the length of the linked list."
-      },
-      {
-        title: "LRU Cache Design & Implementation",
-        company: "Google",
-        category: "DSA",
-        difficulty: "Medium",
-        description: "Design a data structure that follows the constraints of a Least Recently Used (LRU) cache. Implement LRUCache class with get(key) and put(key, value) in O(1) time complexity."
-      },
-      {
-        title: "Explain CPU Scheduling & Deadlock Prevention",
-        company: "TCS",
-        category: "OS",
-        difficulty: "Easy",
-        description: "What is a deadlock situation? Explain four necessary conditions for deadlocks (Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait) and strategies to prevent them."
-      },
-      {
-        title: "Optimizing Joins in Large SQL Databases",
-        company: "Adobe",
-        category: "DBMS",
-        difficulty: "Medium",
-        description: "Explain nested loop joins, hash joins, and sort-merge joins. How do indexes alter database parser cost estimation when fetching millions of records?"
-      },
-      {
-        title: "Three-way Partitioning of Arrays",
-        company: "Microsoft",
-        category: "DSA",
-        difficulty: "Medium",
-        description: "Given an array and a range [lowVal, highVal], partition the array such that all elements less than lowVal come first, elements between lowVal and highVal come second, and elements greater than highVal come last."
-      }
-    ];
-    res.json(questions);
+    const { company, role, category, subCategory, difficulty, search, limit = 50, page = 1 } = req.query;
+
+    let filtered = PYQ_DATABASE;
+
+    if (company && company !== 'all') {
+      const cLower = company.toLowerCase();
+      filtered = filtered.filter(q => q.companyTags.some(t => t.toLowerCase() === cLower));
+    }
+
+    if (role && role !== 'all') {
+      const rLower = role.toLowerCase();
+      filtered = filtered.filter(q => q.roleTags.some(t => t.toLowerCase().includes(rLower)));
+    }
+
+    if (category && category !== 'all') {
+      const catLower = category.toLowerCase();
+      filtered = filtered.filter(q => q.category.toLowerCase() === catLower);
+    }
+
+    if (subCategory && subCategory !== 'all') {
+      const subLower = subCategory.toLowerCase();
+      filtered = filtered.filter(q => (q.subCategory || '').toLowerCase().includes(subLower));
+    }
+
+    if (difficulty && difficulty !== 'all') {
+      const diffLower = difficulty.toLowerCase();
+      filtered = filtered.filter(q => q.difficulty.toLowerCase() === diffLower);
+    }
+
+    if (search && search.trim() !== '') {
+      const qStr = search.toLowerCase();
+      filtered = filtered.filter(q =>
+        q.title.toLowerCase().includes(qStr) ||
+        q.description.toLowerCase().includes(qStr) ||
+        q.solutionHint.toLowerCase().includes(qStr)
+      );
+    }
+
+    // Pagination
+    const pageNum = parseInt(page) || 1;
+    const limitNum = parseInt(limit) || 50;
+    const startIndex = (pageNum - 1) * limitNum;
+    const paginated = filtered.slice(startIndex, startIndex + limitNum);
+
+    res.json({
+      totalQuestions: filtered.length,
+      page: pageNum,
+      totalPages: Math.ceil(filtered.length / limitNum),
+      filters: { company: company || 'all', role: role || 'all', category: category || 'all', difficulty: difficulty || 'all' },
+      questions: paginated
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Get recommended peer matches
-const getPeerMatches = async (req, res) => {
+// @desc    Get company hiring intelligence profile
+// @route   GET /api/v1/prep/company-intelligence
+const getCompanyIntelligenceEndpoint = async (req, res) => {
   try {
-    const peers = [
-      { _id: "1", name: "Alice Johnson", targetRole: "Fullstack React Developer", level: 3, xp: 260 },
-      { _id: "2", name: "Bob Smith", targetRole: "Machine Learning Engineer", level: 4, xp: 380 },
-      { _id: "3", name: "Carol Lee", targetRole: "Mobile Android Programmer", level: 2, xp: 140 }
-    ];
-    res.json(peers);
+    const { company = 'google' } = req.query;
+    const profile = getCompanyProfile(company);
+    res.json({
+      company: company.toLowerCase(),
+      profile,
+      availableCompanies: Object.keys(COMPANY_INTELLIGENCE)
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+// @desc    Get hackathon winner solution blueprints
+// @route   GET /api/v1/prep/hackathon-winners
+const getHackathonWinnersEndpoint = async (req, res) => {
+  try {
+    const { track, search } = req.query;
+    let results = WINNING_PROJECTS;
+
+    if (track) {
+      results = results.filter(w => w.winningTrack.toLowerCase().includes(track.toLowerCase()));
+    }
+    if (search) {
+      const s = search.toLowerCase();
+      results = results.filter(w =>
+        w.projectTitle.toLowerCase().includes(s) ||
+        w.whyItWon.toLowerCase().includes(s) ||
+        w.hackathonName.toLowerCase().includes(s)
+      );
+    }
+
+    res.json({
+      total: results.length,
+      winners: results
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// @desc    Get recommended peer matches (queries MongoDB Users with mock fallback)
+const getPeerMatches = async (req, res) => {
+  try {
+    const { userId, targetRole } = req.query;
+
+    let dbPeers = [];
+    try {
+      const query = userId ? { _id: { $ne: userId } } : {};
+      if (targetRole) query.targetRole = new RegExp(targetRole, 'i');
+
+      dbPeers = await User.find(query).select('name targetRole level xp avatar').limit(10).lean();
+    } catch (dbErr) {
+      console.warn('Peer database query failed, using static fallback:', dbErr.message);
+    }
+
+    // Fallback static peers if DB has few or no users
+    const fallbackPeers = [
+      { _id: "1", name: "Alice Johnson", targetRole: "Fullstack React Developer", level: 3, xp: 260 },
+      { _id: "2", name: "Bob Smith", targetRole: "Machine Learning Engineer", level: 4, xp: 380 },
+      { _id: "3", name: "Carol Lee", targetRole: "Mobile Android Programmer", level: 2, xp: 140 },
+      { _id: "4", name: "David Kim", targetRole: "Backend Go / Distributed Systems", level: 5, xp: 520 },
+      { _id: "5", name: "Evelyn Sharma", targetRole: "Cloud DevOps & Kubernetes", level: 4, xp: 410 }
+    ];
+
+    const peers = dbPeers.length >= 3 ? dbPeers : [...dbPeers, ...fallbackPeers.slice(0, 5 - dbPeers.length)];
+
+    res.json({
+      totalMatches: peers.length,
+      peers
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 // @desc    Calculate time budget allocations using Gemini
 const allocatePlanner = async (req, res) => {
@@ -499,8 +581,11 @@ module.exports = {
   mockInterview,
   tailorResume,
   disruptResume,
+  generateResumeDiff,
   submitQuiz,
   getQuestions,
+  getCompanyIntelligenceEndpoint,
+  getHackathonWinnersEndpoint,
   getPeerMatches,
   allocatePlanner,
   generateRevisionSheet,

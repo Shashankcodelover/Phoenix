@@ -14,6 +14,7 @@ const {
 const { generateIdeas, refineIdeas } = require('./ideaGeneratorController');
 const { generateProjectRoadmap, generateMemberGuide, memberGuideChat, generatePitchPlan } = require('./roadmapController');
 const { generateProjectExplainer } = require('./explainerEngine');
+const { runJudgeDefenseSim } = require('./judgeSimulatorController');
 
 const router = express.Router();
 
@@ -47,6 +48,9 @@ router.post('/judge-explainer', validate(schemas.judgeExplainer), async (req, re
     res.status(500).json({ message: error.message });
   }
 });
+
+// V7.0: Live 3-Round Interactive Judge Defense Simulator
+router.post('/judge-defense-sim', runJudgeDefenseSim);
 
 // V21: RAG & Deadline Notification routes
 const ragService = require('./rag_service');

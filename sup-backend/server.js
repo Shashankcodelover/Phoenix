@@ -17,10 +17,11 @@ const fs = require('fs');
 });
 
 // --- CORS WHITELIST ---
-const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:5173').split(',');
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:5173,http://127.0.0.1:5500').split(',');
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    // Allow requests with no origin or 'null' (local file:// protocol) or whitelisted domains
+    if (!origin || origin === 'null' || allowedOrigins.includes(origin)) return cb(null, true);
     cb(new Error('CORS policy violation'));
   },
   credentials: true
@@ -62,7 +63,7 @@ app.use((req, res, next) => {
 
 // --- HEALTH & READINESS ---
 app.get('/health', (req, res) => {
-  res.json({ status: 'V4 Production', uptime: process.uptime() });
+  res.json({ status: 'V5 Production', uptime: process.uptime() });
 });
 app.get('/ready', (req, res) => {
   res.json({ ready: true });
@@ -112,13 +113,25 @@ app.use('/api', createPromptShield({ maxPayloadBytes: 50 * 1024, sanitize: true,
 const getHealthStatus = (req, res) => {
   res.json({
     status: 'ONLINE',
-    system: 'Project Phoenix 10000X Career Accelerator',
-    version: '3.1.0',
+    system: 'Project Phoenix Ultimate Autonomous Career Operating System',
+    version: '7.0.0',
     timestamp: new Date().toISOString(),
     uptimeSeconds: Math.round(process.uptime()),
-    aiEngineStatus: 'Multi-Provider Cascade Router (Gemini -> OpenAI -> OpenRouter -> Local Engine)',
+    aiEngineStatus: 'Multi-Provider Cascade Router (Groq 70B -> Gemini Flash -> OpenAI -> OpenRouter -> Local Engine)',
+    cacheStatus: 'ACTIVE (LRU In-Memory Response Caching Enabled)',
+    pyqEngineStatus: 'ACTIVE (200+ Multi-Domain Previous Year Questions Database)',
+    ragEngineStatus: 'ACTIVE (Hackathon Winner Solution Blueprints RAG)',
+    judgeDefenseStatus: 'ACTIVE (3-Round Interactive Live AI Judge Simulator)',
+    atsDiffEngineStatus: 'ACTIVE (Side-by-Side ATS Resume Optimizer & Diff Engine)',
+    readinessIndexStatus: 'ACTIVE (Unified 0-100% Placement Readiness Telemetry)',
     securityShieldStatus: 'ACTIVE (Prompt Injection Shield + XSS Sanitizer + Payload Ceiling Guard)',
     availableModules: [
+      '3-Round Live AI Judge Defense Simulator (/api/v1/agent/judge-defense-sim)',
+      'ATS Resume Diff & Optimizer Engine (/api/v1/prep/resume-diff)',
+      'Placement Readiness Index Telemetry (/api/v1/gamification/readiness-index/:userId)',
+      'Multi-Domain 200+ PYQ Question Bank (/api/v1/prep/questions)',
+      'Company & Role Intelligence Engine (/api/v1/prep/company-intelligence)',
+      'Hackathon Winner Solutions RAG Archive (/api/v1/prep/hackathon-winners)',
       'Hackathon Simulator Game Engine (/api/v1/simulator)',
       'AI Teammate Personality Engine (/api/v1/simulator/vote)',
       'Chaos Incident Engine (/api/v1/simulator/chaos)',
@@ -126,8 +139,6 @@ const getHealthStatus = (req, res) => {
       'ATS Resume Disruptor (/api/v1/prep/resume-disrupt)',
       'Project Judge Explainer (/api/v1/agent/judge-explainer)',
       'AI Code Review Agent (/api/v1/code-review/audit)',
-      'Cybersecurity Shield (/api/v1/enterprise/security-audit)',
-      'Peer-to-Peer AI Safety-Net (/api/v1/prep/peer-match)',
       'Universal AI Copilot Assistant (/api/v1/bot/assistant)'
     ]
   });

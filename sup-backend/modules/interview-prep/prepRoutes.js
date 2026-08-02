@@ -4,8 +4,11 @@ const {
   mockInterview,
   tailorResume,
   disruptResume,
+  generateResumeDiff,
   submitQuiz,
   getQuestions,
+  getCompanyIntelligenceEndpoint,
+  getHackathonWinnersEndpoint,
   getPeerMatches,
   allocatePlanner,
   generateRevisionSheet,
@@ -22,8 +25,11 @@ router.post('/generate-roadmap', validate(schemas.generateRoadmap), generateRoad
 router.post('/mock-interview', validate(schemas.mockInterview), mockInterview);
 router.post('/tailor-resume', validate(schemas.tailorResume), tailorResume);
 router.post('/resume-disrupt', validate(schemas.disruptResume), disruptResume);
+router.post('/resume-diff', generateResumeDiff);
 router.post('/quiz-submit', validate(schemas.quizSubmit), submitQuiz);
 router.get('/questions', getQuestions);
+router.get('/company-intelligence', getCompanyIntelligenceEndpoint);
+router.get('/hackathon-winners', getHackathonWinnersEndpoint);
 router.post('/peer-match', getPeerMatches);
 router.post('/planner/allocate', validate(schemas.planner), allocatePlanner);
 router.post('/revision', validate(schemas.revision), generateRevisionSheet);

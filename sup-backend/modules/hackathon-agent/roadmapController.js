@@ -7,6 +7,7 @@
  */
 
 const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
+const { roadmapCache } = require('../../middleware/responseCache');
 
 
 // ──────────────────────────────────────────────
@@ -198,6 +199,13 @@ const generateProjectRoadmap = async (req, res) => {
       hackathonName = ''
     } = req.body;
 
+    // Check response cache first
+    const cacheKey = roadmapCache.generateKey('roadmap', { projectTitle, techStack, durationHours, teamSize: teamMembers.length });
+    const cached = roadmapCache.get(cacheKey);
+    if (cached) {
+      return res.json({ ...cached, cached: true });
+    }
+
     let roadmap;
 
     try {
@@ -258,10 +266,12 @@ RULES:
       roadmap = generateFallbackRoadmap(projectTitle, teamMembers, durationHours);
     }
 
-    res.json({
+    const responsePayload = {
       message: `Roadmap generated for "${projectTitle}" (${durationHours}h, ${teamMembers.length} members)`,
       roadmap
-    });
+    };
+    roadmapCache.set(cacheKey, responsePayload);
+    res.json(responsePayload);
   } catch (error) {
     console.error('Roadmap generation error:', error);
     res.status(500).json({ message: error.message });

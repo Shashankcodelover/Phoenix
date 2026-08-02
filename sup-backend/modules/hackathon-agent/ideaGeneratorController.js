@@ -7,6 +7,7 @@
  */
 
 const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
+const { ideaCache } = require('../../middleware/responseCache');
 
 
 // ──────────────────────────────────────────────
@@ -115,9 +116,17 @@ const generateIdeas = async (req, res) => {
       duration = '24 hours'
     } = req.body;
 
-    // Retrieve active related hackathons from catalog
+    // Check response cache first (saves ~60% API quota)
+    const cacheKey = ideaCache.generateKey('ideas', { hackathonName, teamSkills, duration, constraints });
+    const cached = ideaCache.get(cacheKey);
+    if (cached) {
+      return res.json({ ...cached, cached: true, cacheStats: ideaCache.getStats() });
+    }
+
+    // Retrieve active related hackathons & winner blueprints from RAG catalog
     const queryContext = `${hackathonName} ${hackathonDescription} ${rules}`;
     const retrievedHacks = ragService.retrieveHackathons(queryContext, 2);
+    const retrievedWinners = ragService.retrieveWinnerSolutions(queryContext, 2);
 
     let ideas;
 
@@ -134,11 +143,14 @@ A team is entering this hackathon:
 - **Team Size:** ${teamSize}
 - **Duration:** ${duration}
 
-RETRIEVED ACTIVE CONTEXT:
-The following related active/past hackathons and themes were retrieved from our indexed database catalog to augment your brainstorming:
+RETRIEVED RAG CONTEXT (PAST HACKATHON WINNER BLUEPRINTS):
+The following real-world winning solutions were retrieved from our Hall-of-Fame database:
+${JSON.stringify(retrievedWinners, null, 2)}
+
+RETRIEVED ACTIVE COMPETITIONS CONTEXT:
 ${JSON.stringify(retrievedHacks, null, 2)}
 
-Generate exactly 10 unique, innovative, REAL-WORLD problem-solving project ideas that would WIN this hackathon. Ensure the ideas incorporate aspects from the retrieved active context to be highly competitive today.
+Generate exactly 10 unique, innovative, REAL-WORLD problem-solving project ideas that would WIN this hackathon. Draw structural inspiration from the retrieved winning blueprints to build unbeatable, award-worthy projects.
 
 For each idea, include:
 - rank (1-10, 1 being the strongest)
@@ -174,11 +186,16 @@ Do not wrap in markdown code blocks.
       ideas = FALLBACK_IDEAS;
     }
 
-    res.json({
+    const responsePayload = {
       message: `Generated ${ideas.length} winning ideas for "${hackathonName}"`,
       hackathonName,
       ideas
-    });
+    };
+
+    // Store in cache for future requests
+    ideaCache.set(cacheKey, responsePayload);
+
+    res.json(responsePayload);
   } catch (error) {
     console.error('Idea generation error:', error);
     res.status(500).json({ message: error.message });

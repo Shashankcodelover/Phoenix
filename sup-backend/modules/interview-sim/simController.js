@@ -67,6 +67,24 @@ const COMPANY_PROFILES = {
     archetypeWeights: 'product-builder',
     focusAreas: ['Shipping Speed', 'Full-Stack Skills', 'Culture Fit', 'Portfolio'],
     difficultyMultiplier: 0.9
+  },
+  tcs: {
+    name: 'TCS (Tata Consultancy Services)',
+    logo: '🌐',
+    interviewStyle: 'Campus placement focus. Strong emphasis on core CS fundamentals (OS, DBMS, CN, OOP) and clear English communication.',
+    stages: ['behavioral', 'technical', 'team_fit'],
+    archetypeWeights: 'bar-raiser',
+    focusAreas: ['CS Fundamentals', 'OS & DBMS', 'SQL Queries', 'Aptitude & Verbal'],
+    difficultyMultiplier: 0.85
+  },
+  infosys: {
+    name: 'Infosys',
+    logo: '🏢',
+    interviewStyle: 'Rigorous pseudo-code tracing, fundamental Data Structures, and problem-solving mindset. High-volume campus hiring style.',
+    stages: ['behavioral', 'technical', 'team_fit'],
+    archetypeWeights: 'tech-deep',
+    focusAreas: ['Pseudo Code', 'Data Structures', 'Logical Thinking', 'Communication'],
+    difficultyMultiplier: 0.85
   }
 };
 
