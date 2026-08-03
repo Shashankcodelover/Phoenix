@@ -67,4 +67,15 @@ router.get('/deadlines', (req, res) => {
   res.json({ alerts });
 });
 
+const { searchAndRankHackathons } = require('./hackathonScraperEngine');
+
+router.post('/rank-hackathons', (req, res) => {
+  try {
+    const results = searchAndRankHackathons(req.body);
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

@@ -35,6 +35,41 @@ router.post('/planner/allocate', validate(schemas.planner), allocatePlanner);
 router.post('/revision', validate(schemas.revision), generateRevisionSheet);
 router.post('/analyze-audio', analyzeAudio);
 router.get('/performance-trend/:userId', getPerformanceTrend);
-router.post('/system-design', validate(schemas.systemDesign), generateSystemDesignQuestion);
+const { evaluateSpeechProsody } = require('./speechEvaluatorEngine');
+const { createOrMatchPeerRoom, sendRoomHeartbeat } = require('./peerMatchEngine');
+const { evaluateSystemDesign } = require('./systemDesignEvaluator');
+
+router.post('/analyze-speech', (req, res) => {
+  try {
+    const { transcript, durationSeconds } = req.body;
+    const evaluation = evaluateSpeechProsody(transcript, durationSeconds);
+    res.json(evaluation);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/peer-session', (req, res) => {
+  try {
+    const { action, user, roomId, userId } = req.body;
+    if (action === 'heartbeat') {
+      const result = sendRoomHeartbeat(roomId, userId);
+      return res.json(result);
+    }
+    const result = createOrMatchPeerRoom(user);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/evaluate-architecture', (req, res) => {
+  try {
+    const evaluation = evaluateSystemDesign(req.body);
+    res.json(evaluation);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;
