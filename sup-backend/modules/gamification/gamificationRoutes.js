@@ -12,6 +12,7 @@ const { getReadinessIndex } = require('./telemetryController');
 const router = express.Router();
 
 const { calculateSkillMatrix } = require('./skillMatrixEngine');
+const { getActiveQuests } = require('./questEngine');
 
 router.get('/leaderboard', getLeaderboard);
 router.post('/award-xp', awardXp);
@@ -23,6 +24,14 @@ router.post('/skill-matrix', (req, res) => {
   try {
     const report = calculateSkillMatrix(req.body);
     res.json(report);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+router.post('/quests', (req, res) => {
+  try {
+    const quests = getActiveQuests(req.body);
+    res.json(quests);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

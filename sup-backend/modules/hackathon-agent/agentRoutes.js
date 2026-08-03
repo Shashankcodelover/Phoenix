@@ -78,4 +78,15 @@ router.post('/rank-hackathons', (req, res) => {
   }
 });
 
+const { generatePitchDeckBlueprint } = require('./pitchDeckGenerator');
+
+router.post('/pitch-deck', (req, res) => {
+  try {
+    const blueprint = generatePitchDeckBlueprint(req.body);
+    res.json(blueprint);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

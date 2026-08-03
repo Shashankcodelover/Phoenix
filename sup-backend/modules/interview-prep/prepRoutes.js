@@ -72,4 +72,25 @@ router.post('/evaluate-architecture', (req, res) => {
   }
 });
 
+const { synthesizeSTARStory } = require('./starStorySynthesizer');
+const { getCompensationBenchmark } = require('./compBenchmarkingEngine');
+
+router.post('/star-synthesize', (req, res) => {
+  try {
+    const result = synthesizeSTARStory(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/comp-benchmark', (req, res) => {
+  try {
+    const result = getCompensationBenchmark(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

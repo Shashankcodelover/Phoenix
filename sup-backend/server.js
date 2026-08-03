@@ -114,7 +114,7 @@ const getHealthStatus = (req, res) => {
   res.json({
     status: 'ONLINE',
     system: 'Project Phoenix Ultimate Autonomous Career Operating System',
-    version: '8.0.0',
+    version: '9.0.0',
     timestamp: new Date().toISOString(),
     uptimeSeconds: Math.round(process.uptime()),
     aiEngineStatus: 'Multi-Provider Cascade Router (Groq 70B -> Gemini Flash -> OpenAI -> OpenRouter -> Local Engine)',
@@ -123,6 +123,11 @@ const getHealthStatus = (req, res) => {
     systemDesignStatus: 'ACTIVE (Interactive Architecture SLA, SPOF & Cloud Cost Evaluator)',
     hackathonScraperStatus: 'ACTIVE (Multi-Platform Feed Deduplication & Urgency Match Scorer)',
     skillMatrixStatus: 'ACTIVE (Unified 6-Axis Skill Radar Mastery Matrix)',
+    starSynthesizerStatus: 'ACTIVE (STAR Behavioral Interview Story Synthesizer)',
+    compBenchmarkStatus: 'ACTIVE (Salary & Equity Compensation Benchmarking Engine)',
+    pitchDeckStatus: 'ACTIVE (5-Slide Pitch Presenter Blueprint Generator)',
+    webhookDispatcherStatus: 'ACTIVE (Outbound Signed Event Relay & Dispatcher)',
+    questEngineStatus: 'ACTIVE (Daily Streak Multiplier & XP Quest Engine)',
     securityShieldStatus: 'ACTIVE (Prompt Injection Shield + XSS Sanitizer + Payload Ceiling Guard)',
     availableModules: [
       'Speech & Vocal Prosody Evaluator (/api/v1/prep/analyze-speech)',
@@ -131,8 +136,12 @@ const getHealthStatus = (req, res) => {
       'Hackathon Urgency & Match Scorer (/api/v1/agent/rank-hackathons)',
       'Unified 6-Axis Skill Radar Matrix (/api/v1/gamification/skill-matrix)',
       '3-Round Live AI Judge Defense Simulator (/api/v1/agent/judge-defense-sim)',
-      'ATS Resume Diff & Optimizer Engine (/api/v1/prep/resume-diff)'
-    ]
+      'ATS Resume Diff & Optimizer Engine (/api/v1/prep/resume-diff)',
+      'STAR Behavioral Story Synthesizer (/api/v1/prep/star-synthesize)',
+      'Compensation Benchmarking Engine (/api/v1/prep/comp-benchmark)',
+      'Pitch Deck & Presenter Blueprint Generator (/api/v1/agent/pitch-deck)',
+      'Webhook Notification Relay (/api/v1/webhooks/dispatch)',
+      'Daily Streak & XP Quests (/api/v1/gamification/quests)',
       'AI Teammate Personality Engine (/api/v1/simulator/vote)',
       'Chaos Incident Engine (/api/v1/simulator/chaos)',
       'Jury Roast Engine (/api/v1/simulator/evaluate)',
