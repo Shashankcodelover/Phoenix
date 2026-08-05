@@ -84,3 +84,32 @@
 ### 🎯 What To Tackle Next Session
 - Add automated E2E browser rendering tests using Playwright for `dashboard.html` and `command-center.html`.
 - Add WebSocket real-time event mocks for live peer mock interview rooms.
+
+---
+
+## [2026-08-05] — Production Docker Containerization & Repo Standards Hardening
+
+### 🔍 What Was Found (Audit & Weaknesses)
+1. **Container Compose Version Warning**: `docker-compose.yml` specified obsolete `version: '3.8'` key causing warnings on modern Docker Compose V2 engines.
+2. **Missing Deployment Setup Guide**: Repository lacked a single authoritative `SETUP.md` specifying environment variable dependencies (`.env.example`) and a complete file inventory detailing component roles.
+3. **Repository Media Artifact Overhead**: Unused heavy video files (`.mp4`) and local screenshots were not explicitly excluded in `.gitignore`.
+
+---
+
+### 🛠️ What Was Changed
+- **Cleaned Docker Compose Specification**: Removed obsolete `version: '3.8'` header from `docker-compose.yml` to ensure clean execution on Compose V2.
+- **Created `SETUP.md` & Standard File Inventory**: Documented setup guide, environment variable keys (`.env.example`), and file-by-file inventory explaining component roles across backend, frontend, and test suites.
+- **Hardened `.gitignore`**: Excluded heavy media binaries, temporary logs, and secrets while preserving core architectural markdown files (`CEO_EVALUATION_CHECKLIST.md`, `JIRA_TRACKER.md`, `GROWTH_STRATEGY.md`, `FEATURE_EXPLORATION_GUIDE.md`).
+- **Updated `README.md`**: Refreshed main documentation with Docker Compose setup instructions and file inventory reference links.
+- **Quality Gate Execution**: Executed `npm test` across native backend test runner — all **55 unit & integration tests across 15 suites passed with 100% success**.
+
+---
+
+### ⚠️ What Is Still Weak
+- E2E Playwright browser rendering tests can be integrated to validate client-side visual components automatically.
+
+---
+
+### 🎯 What To Tackle Next Session
+- Integrate Playwright E2E test runner for `sup-frontend/dashboard/dashboard.html`.
+
