@@ -1,5 +1,7 @@
 const User = require('../../models/userModel');
 const Team = require('../../models/teamModel');
+const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
+
 
 // Haversine formula to compute distance in km
 const getDistance = (lat1, lon1, lat2, lon2) => {
@@ -190,17 +192,12 @@ const mineStory = async (req, res) => {
       return res.status(400).json({ message: "projectTitle and projectDescription are required" });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey || apiKey === 'your-gemini-api-key-here') {
-      return res.json({
-        story: `### STAR Interview Story: ${projectTitle} (Fallback Mode)
+    const fallbackStory = `### STAR Interview Story: ${projectTitle} (Fallback Mode)
         
 **Situation:** Our team participated in a hackathon to build a solution for "${projectTitle}".
 **Task:** We needed to design and implement the system under a strict 24-hour limit.
 **Action:** As a developer/contributor (${roleContribution || 'Core Programmer'}), I worked on building the web interfaces and backend connection.
-**Result:** The application was built successfully and deployed, allowing the team to demonstrate a working prototype.`
-      });
-    }
+**Result:** The application was built successfully and deployed, allowing the team to demonstrate a working prototype.`;
 
     const prompt = `
       Create a detailed, high-impact interview response in STAR (Situation, Task, Action, Result) format.
@@ -214,24 +211,15 @@ const mineStory = async (req, res) => {
       Output the result in clear, easy-to-read markdown.
     `;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        systemInstruction: { parts: [{ text: "You are an elite coding coach. Format the response beautifully using Markdown headings." }] }
-      })
-    });
+    const result = await callAIForFeature(
+      'creative',
+      prompt,
+      'You are an elite coding coach. Format the response beautifully using Markdown headings.',
+      false,
+      fallbackStory
+    );
 
-    if (!response.ok) {
-      throw new Error("Gemini API request failed.");
-    }
-
-    const data = await response.json();
-    const storyText = data.candidates[0].content.parts[0].text;
-
-    res.json({ story: storyText });
+    res.json({ story: result.text });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -297,22 +285,18 @@ const checkIdeaNovelty = async (req, res) => {
       return res.status(400).json({ message: 'ideaTitle and ideaDescription are required.' });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      // Fallback static analysis when no API key
-      return res.json({
-        noveltyScore: 72,
-        feasibilityScore: 68,
-        verdict: 'Feasible',
-        strengths:  ['Unique problem framing', 'Strong social impact angle'],
-        weaknesses: ['Similar tools exist (e.g. Devpost)', 'API rate limits may bottleneck scraping'],
-        recommendations: [
-          'Add a real-time collaboration layer to differentiate',
-          'Use a lightweight in-memory queue (Bull) for scraping jobs',
-          'Create a live demo board to showcase progress during judging'
-        ]
-      });
-    }
+    const fallbackData = JSON.stringify({
+      noveltyScore: 72,
+      feasibilityScore: 68,
+      verdict: 'Feasible',
+      strengths: ['Unique problem framing', 'Strong social impact angle'],
+      weaknesses: ['Similar tools exist (e.g. Devpost)', 'API rate limits may bottleneck scraping'],
+      recommendations: [
+        'Add a real-time collaboration layer to differentiate',
+        'Use a lightweight in-memory queue (Bull) for scraping jobs',
+        'Create a live demo board to showcase progress during judging'
+      ]
+    });
 
     const prompt = `
 You are an expert hackathon mentor and innovation consultant.
@@ -336,25 +320,15 @@ Provide your analysis as a strict JSON object (no markdown, no backticks) with t
 }
 `;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        systemInstruction: { parts: [{ text: 'You are a hackathon idea analyst. Return only raw JSON — no markdown fences, no extra text.' }] }
-      })
-    });
+    const aiRes = await callAIForFeature(
+      'analytical',
+      prompt,
+      'You are a hackathon idea analyst. Return only raw JSON — no markdown fences, no extra text.',
+      true,
+      fallbackData
+    );
 
-    if (!response.ok) throw new Error('Gemini API error: ' + response.status);
-
-    const data = await response.json();
-    let raw = data.candidates[0].content.parts[0].text;
-
-    // Strip possible markdown fences
-    raw = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
-
-    const result = JSON.parse(raw);
+    const result = parseAIJson(aiRes.text);
     res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });

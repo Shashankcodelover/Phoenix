@@ -17,10 +17,11 @@ const fs = require('fs');
 });
 
 // --- CORS WHITELIST ---
-const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:5173').split(',');
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:5173,http://127.0.0.1:5500').split(',');
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    // Allow requests with no origin or 'null' (local file:// protocol) or whitelisted domains
+    if (!origin || origin === 'null' || allowedOrigins.includes(origin)) return cb(null, true);
     cb(new Error('CORS policy violation'));
   },
   credentials: true
@@ -62,7 +63,7 @@ app.use((req, res, next) => {
 
 // --- HEALTH & READINESS ---
 app.get('/health', (req, res) => {
-  res.json({ status: 'V4 Production', uptime: process.uptime() });
+  res.json({ status: 'V5 Production', uptime: process.uptime() });
 });
 app.get('/ready', (req, res) => {
   res.json({ ready: true });
@@ -85,15 +86,75 @@ const enterpriseRoutes = require('./modules/enterprise/enterpriseRoutes');
 const webhookRoutes = require('./modules/webhooks/webhookRoutes');
 const simulatorRoutes = require('./modules/simulator/simulatorRoutes');
 const codeReviewRoutes = require('./modules/code-review/codeReviewRoutes');
+const botRoutes = require('./modules/bot/botRoutes');
 const { inputSecurityMiddleware } = require('./middleware/inputSanitizer');
+const { createPromptShield } = require('./middleware/promptShield');
 const { createRateLimiter } = require('./middleware/rateLimiter');
 
 // Rate limiters
 const aiRateLimiter = createRateLimiter({ windowMs: 60000, maxRequests: 15, message: 'AI endpoint rate limit exceeded. Max 15 requests per minute.' });
 const generalRateLimiter = createRateLimiter({ windowMs: 60000, maxRequests: 60 });
 
+// Google-Standard Security Headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  next();
+});
+
 app.use('/uploads', express.static('uploads'));
 app.use(inputSecurityMiddleware);
+app.use('/api', createPromptShield({ maxPayloadBytes: 50 * 1024, sanitize: true, blockOnInjection: true }));
+
+
+// Health & Telemetry Status Endpoint
+const getHealthStatus = (req, res) => {
+  res.json({
+    status: 'ONLINE',
+    system: 'Project Phoenix Ultimate Autonomous Career Operating System',
+    version: '9.0.0',
+    timestamp: new Date().toISOString(),
+    uptimeSeconds: Math.round(process.uptime()),
+    aiEngineStatus: 'Multi-Provider Cascade Router (Groq 70B -> Gemini Flash -> OpenAI -> OpenRouter -> Local Engine)',
+    speechProsodyStatus: 'ACTIVE (WPM, Clarity, Filler Density & Vocal Prosody Evaluator)',
+    peerMatchStatus: 'ACTIVE (P2P Signaling Room Engine & AI Safety-Net Takeover)',
+    systemDesignStatus: 'ACTIVE (Interactive Architecture SLA, SPOF & Cloud Cost Evaluator)',
+    hackathonScraperStatus: 'ACTIVE (Multi-Platform Feed Deduplication & Urgency Match Scorer)',
+    skillMatrixStatus: 'ACTIVE (Unified 6-Axis Skill Radar Mastery Matrix)',
+    starSynthesizerStatus: 'ACTIVE (STAR Behavioral Interview Story Synthesizer)',
+    compBenchmarkStatus: 'ACTIVE (Salary & Equity Compensation Benchmarking Engine)',
+    pitchDeckStatus: 'ACTIVE (5-Slide Pitch Presenter Blueprint Generator)',
+    webhookDispatcherStatus: 'ACTIVE (Outbound Signed Event Relay & Dispatcher)',
+    questEngineStatus: 'ACTIVE (Daily Streak Multiplier & XP Quest Engine)',
+    securityShieldStatus: 'ACTIVE (Prompt Injection Shield + XSS Sanitizer + Payload Ceiling Guard)',
+    availableModules: [
+      'Speech & Vocal Prosody Evaluator (/api/v1/prep/analyze-speech)',
+      'Peer-to-Peer Interview Signaling & AI Safety-Net (/api/v1/prep/peer-session)',
+      'System Design Architecture Evaluator (/api/v1/prep/evaluate-architecture)',
+      'Hackathon Urgency & Match Scorer (/api/v1/agent/rank-hackathons)',
+      'Unified 6-Axis Skill Radar Matrix (/api/v1/gamification/skill-matrix)',
+      '3-Round Live AI Judge Defense Simulator (/api/v1/agent/judge-defense-sim)',
+      'ATS Resume Diff & Optimizer Engine (/api/v1/prep/resume-diff)',
+      'STAR Behavioral Story Synthesizer (/api/v1/prep/star-synthesize)',
+      'Compensation Benchmarking Engine (/api/v1/prep/comp-benchmark)',
+      'Pitch Deck & Presenter Blueprint Generator (/api/v1/agent/pitch-deck)',
+      'Webhook Notification Relay (/api/v1/webhooks/dispatch)',
+      'Daily Streak & XP Quests (/api/v1/gamification/quests)',
+      'AI Teammate Personality Engine (/api/v1/simulator/vote)',
+      'Chaos Incident Engine (/api/v1/simulator/chaos)',
+      'Jury Roast Engine (/api/v1/simulator/evaluate)',
+      'ATS Resume Disruptor (/api/v1/prep/resume-disrupt)',
+      'Project Judge Explainer (/api/v1/agent/judge-explainer)',
+      'AI Code Review Agent (/api/v1/code-review/audit)',
+      'Universal AI Copilot Assistant (/api/v1/bot/assistant)'
+    ]
+  });
+};
+
+app.get('/api/v1/health', getHealthStatus);
+app.get('/api/health', getHealthStatus);
 
 // API Versioning
 app.use('/api/v1/hackathons', hackathonRoutes);
@@ -111,6 +172,7 @@ app.use('/api/v1/enterprise', enterpriseRoutes);
 app.use('/api/v1/webhooks', webhookRoutes);
 app.use('/api/v1/simulator', simulatorRoutes);
 app.use('/api/v1/code-review', codeReviewRoutes);
+app.use('/api/v1/bot', aiRateLimiter, botRoutes);
 
 // Fallback compatibility
 app.use('/api/hackathons', hackathonRoutes);
@@ -128,6 +190,7 @@ app.use('/api/enterprise', enterpriseRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/simulator', simulatorRoutes);
 app.use('/api/code-review', codeReviewRoutes);
+app.use('/api/bot', botRoutes);
 
 // --- GLOBAL ERROR BOUNDARY ---
 app.use((err, req, res, next) => {

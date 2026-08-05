@@ -6,42 +6,9 @@
  *   POST /api/agent/refine-ideas    — Refine existing ideas with extra constraints/instructions
  */
 
-// Helper to call Gemini API (reused pattern from prepController)
-const callGemini = async (prompt, systemInstruction = '', jsonMode = false) => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'your-gemini-api-key-here') {
-    throw new Error('NO_API_KEY');
-  }
+const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
+const { ideaCache } = require('../../middleware/responseCache');
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-
-  const requestBody = {
-    contents: [{ parts: [{ text: prompt }] }]
-  };
-
-  if (systemInstruction) {
-    requestBody.systemInstruction = { parts: [{ text: systemInstruction }] };
-  }
-
-  if (jsonMode) {
-    requestBody.generationConfig = { responseMimeType: "application/json" };
-  }
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestBody)
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    console.error('Gemini API Error:', errText);
-    throw new Error(`Gemini API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data.candidates[0].content.parts[0].text;
-};
 
 // ──────────────────────────────────────────────
 // FALLBACK DATA — used when Gemini API key is missing
@@ -149,9 +116,17 @@ const generateIdeas = async (req, res) => {
       duration = '24 hours'
     } = req.body;
 
-    // Retrieve active related hackathons from catalog
+    // Check response cache first (saves ~60% API quota)
+    const cacheKey = ideaCache.generateKey('ideas', { hackathonName, teamSkills, duration, constraints });
+    const cached = ideaCache.get(cacheKey);
+    if (cached) {
+      return res.json({ ...cached, cached: true, cacheStats: ideaCache.getStats() });
+    }
+
+    // Retrieve active related hackathons & winner blueprints from RAG catalog
     const queryContext = `${hackathonName} ${hackathonDescription} ${rules}`;
     const retrievedHacks = ragService.retrieveHackathons(queryContext, 2);
+    const retrievedWinners = ragService.retrieveWinnerSolutions(queryContext, 2);
 
     let ideas;
 
@@ -168,11 +143,14 @@ A team is entering this hackathon:
 - **Team Size:** ${teamSize}
 - **Duration:** ${duration}
 
-RETRIEVED ACTIVE CONTEXT:
-The following related active/past hackathons and themes were retrieved from our indexed database catalog to augment your brainstorming:
+RETRIEVED RAG CONTEXT (PAST HACKATHON WINNER BLUEPRINTS):
+The following real-world winning solutions were retrieved from our Hall-of-Fame database:
+${JSON.stringify(retrievedWinners, null, 2)}
+
+RETRIEVED ACTIVE COMPETITIONS CONTEXT:
 ${JSON.stringify(retrievedHacks, null, 2)}
 
-Generate exactly 10 unique, innovative, REAL-WORLD problem-solving project ideas that would WIN this hackathon. Ensure the ideas incorporate aspects from the retrieved active context to be highly competitive today.
+Generate exactly 10 unique, innovative, REAL-WORLD problem-solving project ideas that would WIN this hackathon. Draw structural inspiration from the retrieved winning blueprints to build unbeatable, award-worthy projects.
 
 For each idea, include:
 - rank (1-10, 1 being the strongest)
@@ -193,31 +171,31 @@ Return a strict JSON object: { "ideas": [...] }
 Do not wrap in markdown code blocks.
 `;
 
-      const resultText = await callGemini(
+      const result = await callAIForFeature(
+        'creative',
         prompt,
         'You are the world\'s best hackathon idea strategist. Return strict raw JSON only.',
-        true
+        true,
+        JSON.stringify({ ideas: FALLBACK_IDEAS })
       );
 
-      let parsed;
-      try {
-        parsed = JSON.parse(resultText);
-      } catch (e) {
-        const cleaned = resultText.replace(/```json/gi, '').replace(/```/g, '').trim();
-        parsed = JSON.parse(cleaned);
-      }
-
-      ideas = parsed.ideas;
+      const parsed = parseAIJson(result.text);
+      ideas = parsed.ideas || FALLBACK_IDEAS;
     } catch (apiErr) {
-      console.warn('Gemini API unavailable for idea generation, using fallback:', apiErr.message);
+      console.warn('AI provider unavailable for idea generation, using fallback:', apiErr.message);
       ideas = FALLBACK_IDEAS;
     }
 
-    res.json({
+    const responsePayload = {
       message: `Generated ${ideas.length} winning ideas for "${hackathonName}"`,
       hackathonName,
       ideas
-    });
+    };
+
+    // Store in cache for future requests
+    ideaCache.set(cacheKey, responsePayload);
+
+    res.json(responsePayload);
   } catch (error) {
     console.error('Idea generation error:', error);
     res.status(500).json({ message: error.message });
@@ -260,23 +238,17 @@ Keep the same JSON format: { "ideas": [{ rank, title, description, techStack, wh
 Return strict JSON only.
 `;
 
-      const resultText = await callGemini(
+      const result = await callAIForFeature(
+        'creative',
         prompt,
         'You are a hackathon idea refinement specialist. Return strict raw JSON only.',
         true
       );
 
-      let parsed;
-      try {
-        parsed = JSON.parse(resultText);
-      } catch (e) {
-        const cleaned = resultText.replace(/```json/gi, '').replace(/```/g, '').trim();
-        parsed = JSON.parse(cleaned);
-      }
-
+      const parsed = parseAIJson(result.text);
       refinedIdeas = parsed.ideas;
     } catch (apiErr) {
-      console.warn('Gemini API unavailable for refinement, using modified fallback:', apiErr.message);
+      console.warn('AI provider unavailable for refinement, using modified fallback:', apiErr.message);
       // Modify fallback ideas to reflect constraints
       refinedIdeas = FALLBACK_IDEAS.map((idea, i) => ({
         ...idea,

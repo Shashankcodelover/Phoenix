@@ -8,7 +8,8 @@
  * can debate a topic side-by-side.
  */
 
-const { callAI, parseAIJson } = require('../../config/aiProvider');
+const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
+
 
 // --- Mentor Personality Definitions ---
 const MENTORS = {
@@ -160,7 +161,8 @@ const chatWithMentor = async (req, res) => {
 
     const prompt = `${context ? `Context about the student: ${context}\n` : ''}${historyContext}\n\nStudent's question: "${message}"\n\nRespond in character. Keep it concise and actionable.`;
 
-    const result = await callAI(
+    const result = await callAIForFeature(
+      'conversational',
       prompt,
       mentor.systemPrompt,
       false,
@@ -214,7 +216,8 @@ const mentorDebate = async (req, res) => {
       const prompt = `${context ? `Context: ${context}\n` : ''}Topic being discussed: "${topic}"\n\nGive your perspective on this topic. Be concise (2-3 sentences max). You may disagree with other mentors if your expertise suggests a different approach.`;
 
       try {
-        const result = await callAI(
+        const result = await callAIForFeature(
+          'conversational',
           prompt,
           mentor.systemPrompt,
           false,

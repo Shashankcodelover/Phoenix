@@ -16,8 +16,9 @@
  *   8. verdict          — Detailed scorecard with improvement suggestions
  */
 
-const { callAI, parseAIJson } = require('../../config/aiProvider');
-const { selectChaosEvent, resolveChaosChoice } = require('./chaosEvents');
+const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
+const { selectChaosEvent, resolveChaosChoice } = require('../interview-prep/chaosEvents');
+
 const { calculateWeightedScore, INTERVIEWER_ARCHETYPES } = require('../gamification/scoringEngine');
 
 // --- Company Interview Profiles ---
@@ -66,6 +67,24 @@ const COMPANY_PROFILES = {
     archetypeWeights: 'product-builder',
     focusAreas: ['Shipping Speed', 'Full-Stack Skills', 'Culture Fit', 'Portfolio'],
     difficultyMultiplier: 0.9
+  },
+  tcs: {
+    name: 'TCS (Tata Consultancy Services)',
+    logo: '🌐',
+    interviewStyle: 'Campus placement focus. Strong emphasis on core CS fundamentals (OS, DBMS, CN, OOP) and clear English communication.',
+    stages: ['behavioral', 'technical', 'team_fit'],
+    archetypeWeights: 'bar-raiser',
+    focusAreas: ['CS Fundamentals', 'OS & DBMS', 'SQL Queries', 'Aptitude & Verbal'],
+    difficultyMultiplier: 0.85
+  },
+  infosys: {
+    name: 'Infosys',
+    logo: '🏢',
+    interviewStyle: 'Rigorous pseudo-code tracing, fundamental Data Structures, and problem-solving mindset. High-volume campus hiring style.',
+    stages: ['behavioral', 'technical', 'team_fit'],
+    archetypeWeights: 'tech-deep',
+    focusAreas: ['Pseudo Code', 'Data Structures', 'Logical Thinking', 'Communication'],
+    difficultyMultiplier: 0.85
   }
 };
 
@@ -330,7 +349,11 @@ Evaluate this response and provide:
 
 Return strict JSON with keys: "feedback" (string), "scoreAdjustments" (object with the 5 axes).`;
 
-  const result = await callAI(prompt, `You are a strict but fair ${company} interviewer. Return JSON only.`, true,
+  const result = await callAIForFeature(
+    'analytical',
+    prompt,
+    `You are a strict but fair ${company} interviewer. Return JSON only.`,
+    true,
     JSON.stringify({
       feedback: 'Your response has been noted. You showed some good thinking but could improve clarity.',
       scoreAdjustments: { technicalDepth: 2, communication: 1, systemThinking: 0, builderScore: 0, leadership: 0 }
@@ -357,7 +380,11 @@ Company focus areas: ${session.profile.focusAreas.join(', ')}
 
 Return a JSON object with: "question" (string), "hint" (string), "timeLimit" (number in seconds).`;
 
-  const result = await callAI(prompt, 'You are a professional interview question generator. Return JSON only.', true,
+  const result = await callAIForFeature(
+    'structured',
+    prompt,
+    'You are a professional interview question generator. Return JSON only.',
+    true,
     JSON.stringify(getStaticQuestion(stage, session.company))
   );
 

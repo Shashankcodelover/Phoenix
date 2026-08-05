@@ -13,26 +13,44 @@ const {
 // V20: Hackathon Command Center controllers
 const { generateIdeas, refineIdeas } = require('./ideaGeneratorController');
 const { generateProjectRoadmap, generateMemberGuide, memberGuideChat, generatePitchPlan } = require('./roadmapController');
+const { generateProjectExplainer } = require('./explainerEngine');
+const { runJudgeDefenseSim } = require('./judgeSimulatorController');
 
 const router = express.Router();
+
+const { validate, schemas } = require('../../middleware/inputValidator');
 
 // Existing routes
 router.post('/scrape', getScrapedEvents);
 router.post('/save-team', saveTeam);
 router.post('/auto-fill', triggerAutoFill);
-router.post('/mine-story', mineStory);
+router.post('/mine-story', validate(schemas.mineStory), mineStory);
 router.post('/skill-gap', runSkillGapAnalysis);
-router.post('/novelty-check', checkIdeaNovelty);
+router.post('/novelty-check', validate(schemas.noveltyCheck), checkIdeaNovelty);
 router.post('/portfolio', addPortfolioProject);
 router.get('/portfolio/:userId', getPortfolioProjects);
 
 // V20: Hackathon Command Center routes
-router.post('/generate-ideas', generateIdeas);
+router.post('/generate-ideas', validate(schemas.generateIdeas), generateIdeas);
 router.post('/refine-ideas', refineIdeas);
-router.post('/project-roadmap', generateProjectRoadmap);
+router.post('/project-roadmap', validate(schemas.projectRoadmap), generateProjectRoadmap);
 router.post('/member-guide', generateMemberGuide);
 router.post('/member-guide-chat', memberGuideChat);
 router.post('/pitch-planner', generatePitchPlan);
+
+// V22: Project Explainer & Judge Defense Blueprint
+router.post('/judge-explainer', validate(schemas.judgeExplainer), async (req, res) => {
+  try {
+    const { projectTitle, techStack = [], projectDescription, targetTrack } = req.body;
+    const explainer = await generateProjectExplainer({ projectTitle, techStack, projectDescription, targetTrack });
+    res.json(explainer);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// V7.0: Live 3-Round Interactive Judge Defense Simulator
+router.post('/judge-defense-sim', runJudgeDefenseSim);
 
 // V21: RAG & Deadline Notification routes
 const ragService = require('./rag_service');
@@ -49,5 +67,26 @@ router.get('/deadlines', (req, res) => {
   res.json({ alerts });
 });
 
-module.exports = router;
+const { searchAndRankHackathons } = require('./hackathonScraperEngine');
 
+router.post('/rank-hackathons', (req, res) => {
+  try {
+    const results = searchAndRankHackathons(req.body);
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+const { generatePitchDeckBlueprint } = require('./pitchDeckGenerator');
+
+router.post('/pitch-deck', (req, res) => {
+  try {
+    const blueprint = generatePitchDeckBlueprint(req.body);
+    res.json(blueprint);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+module.exports = router;

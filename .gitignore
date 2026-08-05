@@ -3,16 +3,30 @@ node_modules/
 dist/
 build/
 uploads/
-*.log
-.DS_Store
+coverage/
 
 # Local Environment Variables & Secrets
 .env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
 
-# Internal Scratch & Evaluation Checklists
-CEO_EVALUATION_CHECKLIST.md
-JIRA_TRACKER.md
-EXPLAINER.md
+# Operating system & IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.kiro/
 scratch/
 *.tmp
+
+# Logs
+*.log
+npm-debug.log*
+
+# Heavy Media Files (Demo video & Screenshots)
+*.mp4
+*.jpeg
+*.png

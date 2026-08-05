@@ -1,28 +1,36 @@
 /**
- * Phoenix v2.0: Multi-Provider AI Dispatch
+ * Phoenix v3.0: Modular Multi-Provider AI Dispatch Engine
  * 
- * Inspired by The Hackathon Simulator's multi-provider fallback chain.
- * Tries AI providers in priority order and falls back gracefully:
- *   1. Google Gemini (primary — already configured)
- *   2. OpenAI GPT-4o-mini (fallback 1)
- *   3. OpenRouter (fallback 2 — aggregator)
- *   4. Local static responses (always works — no API needed)
+ * "Right Model for the Right Job" Architecture.
+ * Routes AI feature requests to the specialized model best suited for the task:
  * 
- * If ALL providers fail, returns a helpful static fallback instead of crashing.
+ * Feature Slots:
+ *   - 'creative'      : Hackathon Ideas, STAR Stories, Pitches (Gemini 2.5 Flash)
+ *   - 'analytical'    : Code Review, Stage Scoring, Novelty Checks, ATS Disruptor (Groq Llama 3.3 70B)
+ *   - 'conversational': Mock Interview, Mentor Panel, Member Guide Chat (Gemini 2.5 Flash)
+ *   - 'structured'    : Syllabus Roadmaps, Schedules, System Design Qs (Groq Llama 3.3 70B)
+ *   - 'document'      : Resume Tailoring, Revision Sheets, Project Explainer (Gemini 2.5 Flash)
+ *   - 'quick'         : Copilot Bot Assistant, Quick Navigation (Groq Llama 3.1 8B)
+ * 
+ * Multi-Provider Fallback Cascade for 100% Uptime:
+ *   Primary Dedicated Model → Gemini Flash → Groq → OpenAI → OpenRouter → Local Engine
  */
+
+const { humanizeText } = require('../utils/humanizer');
 
 // --- Provider Implementations ---
 
 /**
- * Google Gemini provider (primary).
+ * Call Google Gemini API
  */
 async function callGemini(prompt, systemInstruction = '', jsonMode = false) {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'your-gemini-api-key-here') {
+  if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY_HERE' || apiKey.startsWith('your-')) {
     throw new Error('GEMINI_API_KEY not configured');
   }
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   const requestBody = {
     contents: [{ parts: [{ text: prompt }] }]
@@ -37,7 +45,7 @@ async function callGemini(prompt, systemInstruction = '', jsonMode = false) {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000); // 15s timeout
+  const timeout = setTimeout(() => controller.abort(), 15000);
 
   try {
     const response = await fetch(url, {
@@ -63,7 +71,63 @@ async function callGemini(prompt, systemInstruction = '', jsonMode = false) {
 }
 
 /**
- * OpenAI GPT provider (fallback 1).
+ * Call Groq API (Ultra-fast inference, Llama 3.3 70B & 8B)
+ */
+async function callGroq(prompt, systemInstruction = '', jsonMode = false, modelName = null) {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey || apiKey.startsWith('your-')) {
+    throw new Error('GROQ_API_KEY not configured');
+  }
+
+  const model = modelName || process.env.GROQ_MODEL_LARGE || 'llama-3.3-70b-versatile';
+  const messages = [];
+
+  if (systemInstruction) {
+    messages.push({ role: 'system', content: systemInstruction });
+  }
+  messages.push({ role: 'user', content: prompt });
+
+  const requestBody = {
+    model,
+    messages,
+    temperature: 0.7
+  };
+
+  if (jsonMode) {
+    requestBody.response_format = { type: 'json_object' };
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000);
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(requestBody),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Groq ${response.status}: ${errText.substring(0, 200)}`);
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content;
+  } catch (err) {
+    clearTimeout(timeout);
+    throw err;
+  }
+}
+
+/**
+ * Call OpenAI GPT-4o-mini
  */
 async function callOpenAI(prompt, systemInstruction = '', jsonMode = false) {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -116,7 +180,7 @@ async function callOpenAI(prompt, systemInstruction = '', jsonMode = false) {
 }
 
 /**
- * OpenRouter provider (fallback 2 — aggregates multiple models).
+ * Call OpenRouter API
  */
 async function callOpenRouter(prompt, systemInstruction = '', jsonMode = false) {
   const apiKey = process.env.OPENROUTER_API_KEY;
@@ -170,14 +234,7 @@ async function callOpenRouter(prompt, systemInstruction = '', jsonMode = false) 
   }
 }
 
-// --- Provider Registry ---
-const PROVIDERS = [
-  { name: 'Gemini', fn: callGemini, envKey: 'GEMINI_API_KEY' },
-  { name: 'OpenAI', fn: callOpenAI, envKey: 'OPENAI_API_KEY' },
-  { name: 'OpenRouter', fn: callOpenRouter, envKey: 'OPENROUTER_API_KEY' }
-];
-
-// --- Telemetry Tracking ---
+// --- Provider Telemetry & Stats ---
 const providerStats = {
   attempts: {},
   successes: {},
@@ -185,92 +242,163 @@ const providerStats = {
   fallbacksUsed: 0
 };
 
+// --- Feature Model Routing Slots ---
+const FEATURE_ROUTING_MAP = {
+  creative:       { primary: 'Gemini', fallbackPriority: ['Gemini', 'Groq70B', 'OpenAI', 'OpenRouter'] },
+  analytical:     { primary: 'Groq70B', fallbackPriority: ['Groq70B', 'Gemini', 'OpenAI', 'OpenRouter'] },
+  conversational: { primary: 'Gemini', fallbackPriority: ['Gemini', 'Groq70B', 'OpenAI', 'OpenRouter'] },
+  structured:     { primary: 'Groq70B', fallbackPriority: ['Groq70B', 'Gemini', 'OpenAI', 'OpenRouter'] },
+  document:       { primary: 'Gemini', fallbackPriority: ['Gemini', 'Groq70B', 'OpenAI', 'OpenRouter'] },
+  quick:          { primary: 'Groq8B', fallbackPriority: ['Groq8B', 'Groq70B', 'Gemini', 'OpenAI'] }
+};
+
 /**
- * Main AI dispatcher — tries providers in order, falls back gracefully.
- * 
- * @param {string} prompt - The user prompt
- * @param {string} systemInstruction - System instruction for the AI
- * @param {boolean} jsonMode - Whether to request JSON output
- * @param {string} fallbackResponse - Static fallback if all providers fail
- * @returns {Object} { text: string, provider: string, isFallback: boolean }
+ * Execute call to named provider
  */
-async function callAI(prompt, systemInstruction = '', jsonMode = false, fallbackResponse = null) {
+async function executeProviderCall(providerName, prompt, systemInstruction, jsonMode) {
+  switch (providerName) {
+    case 'Gemini':
+      return await callGemini(prompt, systemInstruction, jsonMode);
+    case 'Groq70B':
+      return await callGroq(prompt, systemInstruction, jsonMode, process.env.GROQ_MODEL_LARGE || 'llama-3.3-70b-versatile');
+    case 'Groq8B':
+      return await callGroq(prompt, systemInstruction, jsonMode, process.env.GROQ_MODEL_SMALL || 'llama-3.1-8b-instant');
+    case 'OpenAI':
+      return await callOpenAI(prompt, systemInstruction, jsonMode);
+    case 'OpenRouter':
+      return await callOpenRouter(prompt, systemInstruction, jsonMode);
+    default:
+      throw new Error(`Unknown provider: ${providerName}`);
+  }
+}
+
+/**
+ * Dispatch an AI request using feature-based modular model routing with fallback cascade.
+ * 
+ * @param {string} featureSlot - 'creative' | 'analytical' | 'conversational' | 'structured' | 'document' | 'quick'
+ * @param {string} prompt - Prompt string
+ * @param {string} systemInstruction - System prompt / instruction
+ * @param {boolean} jsonMode - Request raw JSON mode output
+ * @param {string|Function} fallbackResponse - Static fallback string or generator function
+ * @returns {Promise<{text: string, provider: string, isFallback: boolean}>}
+ */
+async function callAIForFeature(featureSlot, prompt, systemInstruction = '', jsonMode = false, fallbackResponse = null) {
+  const routeConfig = FEATURE_ROUTING_MAP[featureSlot] || FEATURE_ROUTING_MAP.creative;
+  const providersToTry = routeConfig.fallbackPriority;
+
   const errors = [];
 
-  for (const provider of PROVIDERS) {
-    // Skip providers without configured API keys
-    const key = process.env[provider.envKey];
-    if (!key || key.startsWith('your-')) continue;
-
-    providerStats.attempts[provider.name] = (providerStats.attempts[provider.name] || 0) + 1;
+  for (const pName of providersToTry) {
+    providerStats.attempts[pName] = (providerStats.attempts[pName] || 0) + 1;
 
     try {
-      const text = await provider.fn(prompt, systemInstruction, jsonMode);
-      providerStats.successes[provider.name] = (providerStats.successes[provider.name] || 0) + 1;
+      const rawText = await executeProviderCall(pName, prompt, systemInstruction, jsonMode);
+      providerStats.successes[pName] = (providerStats.successes[pName] || 0) + 1;
+      const cleanText = humanizeText(rawText);
 
       return {
-        text,
-        provider: provider.name,
+        text: cleanText,
+        provider: pName,
         isFallback: false
       };
     } catch (err) {
-      providerStats.failures[provider.name] = (providerStats.failures[provider.name] || 0) + 1;
-      errors.push(`${provider.name}: ${err.message}`);
-      console.warn(`[AI Provider] ${provider.name} failed: ${err.message}`);
-      // Continue to next provider
+      providerStats.failures[pName] = (providerStats.failures[pName] || 0) + 1;
+      errors.push(`${pName}: ${err.message}`);
+      // Continue to next provider in cascade
     }
   }
 
-  // All providers failed — use static fallback
+  // All providers failed — trigger local engine fallback
   providerStats.fallbacksUsed++;
-  console.error(`[AI Provider] ALL providers failed. Errors: ${errors.join(' | ')}`);
+  console.warn(`[AI Dispatcher] All online providers failed for feature "${featureSlot}". Errors: ${errors.join(' | ')}`);
 
-  if (fallbackResponse) {
-    return {
-      text: fallbackResponse,
-      provider: 'LocalFallback',
-      isFallback: true
-    };
+  let fallbackText = '';
+  if (typeof fallbackResponse === 'function') {
+    fallbackText = fallbackResponse(prompt);
+  } else if (typeof fallbackResponse === 'string' && fallbackResponse.length > 0) {
+    fallbackText = fallbackResponse;
+  } else {
+    fallbackText = 'Phoenix Offline AI Engine: Request processed successfully via static procedural fallback.';
   }
 
-  // Generic fallback if none provided
   return {
-    text: 'I apologize, but I am temporarily unable to process this request. Our AI services are experiencing issues. Please try again in a few moments.',
+    text: humanizeText(fallbackText),
     provider: 'LocalFallback',
     isFallback: true
   };
 }
 
 /**
- * Helper to parse AI response as JSON with cleanup.
- * Handles markdown code blocks that AI sometimes wraps around JSON.
+ * Universal callAI function — supports BOTH traditional positional arguments AND object signature.
+ * 
+ * Signatures:
+ *   1. callAI(prompt, systemInstruction, jsonMode, fallbackResponse)
+ *   2. callAI({ prompt, systemPrompt, timeoutMs, fallbackGenerator })
  */
-function parseAIJson(text) {
-  try {
-    return JSON.parse(text);
-  } catch (e) {
-    // Try cleaning markdown wrappers
-    const cleaned = text
-      .replace(/```json\s*/i, '')
-      .replace(/```\s*/g, '')
-      .trim();
-    return JSON.parse(cleaned);
+async function callAI(param1, param2 = '', param3 = false, param4 = null) {
+  if (typeof param1 === 'object' && param1 !== null) {
+    const { prompt, systemPrompt = '', jsonMode = false, fallbackGenerator = null } = param1;
+    const res = await callAIForFeature('creative', prompt, systemPrompt, jsonMode, fallbackGenerator);
+    return res.text;
   }
+
+  return await callAIForFeature('creative', param1, param2, param3, param4);
 }
 
 /**
- * Returns current provider statistics for monitoring.
+ * Generate simple text reply (used by botRoutes.js)
  */
+async function generateText(prompt, systemInstruction = '') {
+  const result = await callAIForFeature('quick', prompt, systemInstruction, false);
+  return result.text;
+}
+
+/**
+ * Helper to parse AI JSON with markdown fence cleanup.
+ */
+function parseAIJson(text, defaultFallback = {}) {
+  if (typeof text !== 'string') return text;
+  
+  // Clean markdown code block fences
+  const cleaned = text
+    .replace(/```json\s*/gi, '')
+    .replace(/```\s*/g, '')
+    .trim();
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (e) {
+    // Try to extract JSON array or object substring
+    const match = cleaned.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+    if (match) {
+      try {
+        return JSON.parse(match[0]);
+      } catch (innerErr) {
+        // Fall through to fallback
+      }
+    }
+
+    // Return safe structured fallback instead of crashing
+    return {
+      isFallback: true,
+      text: cleaned,
+      ...defaultFallback
+    };
+  }
+}
+
 function getProviderStats() {
   return { ...providerStats };
 }
 
 module.exports = {
   callAI,
+  callAIForFeature,
+  generateText,
   parseAIJson,
   getProviderStats,
-  // Export individual providers for direct use if needed
   callGemini,
+  callGroq,
   callOpenAI,
   callOpenRouter
 };

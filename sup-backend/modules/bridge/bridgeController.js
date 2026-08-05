@@ -12,7 +12,8 @@
  * This is the "Shared Skill Graph" — fully automated.
  */
 
-const { callAI, parseAIJson } = require('../../config/aiProvider');
+const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
+
 const { mineSTARStory, rateStoryStrength } = require('../interview-prep/story_miner');
 
 // --- Skill Mapping Registry ---
@@ -236,7 +237,11 @@ Each story should have a different angle:
 
 Return a JSON array of 3 objects, each with: "angle", "situation", "task", "action", "result".`;
 
-  const result = await callAI(prompt, 'You are a professional interview coach. Generate realistic, specific STAR stories. Return JSON only.', true,
+  const result = await callAIForFeature(
+    'creative',
+    prompt,
+    'You are a professional interview coach. Generate realistic, specific STAR stories. Return JSON only.',
+    true,
     JSON.stringify([
       { angle: 'Technical Challenge', situation: `During ${hackathon}, our team needed to build ${title}.`, task: 'Deliver a working prototype using ' + techStack.join(', '), action: description.substring(0, 200), result: outcome || 'Successfully delivered the project.' }
     ])
@@ -254,7 +259,11 @@ Description: "${description.substring(0, 500)}"
 
 Return a JSON array of objects with: "question", "difficulty" (easy/medium/hard), "category" (technical/behavioral/design).`;
 
-  const result = await callAI(prompt, 'You are a senior technical interviewer. Return JSON array only.', true,
+  const result = await callAIForFeature(
+    'structured',
+    prompt,
+    'You are a senior technical interviewer. Return JSON array only.',
+    true,
     JSON.stringify(getStaticQuestions(techStack))
   );
 
@@ -271,7 +280,11 @@ Outcome: "${outcome}"
 
 Return a single string — the pitch script. Keep it under 150 words.`;
 
-  const result = await callAI(prompt, 'You are a pitch coach. Write natural, engaging pitches. Return plain text only.');
+  const result = await callAIForFeature(
+    'creative',
+    prompt,
+    'You are a pitch coach. Write natural, engaging pitches. Return plain text only.'
+  );
   return result.text;
 }
 

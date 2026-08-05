@@ -1,30 +1,6 @@
 const WinnerProject = require('../../models/winnerProjectModel');
+const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
 
-// Helper to call Gemini API
-const callGemini = async (prompt, systemInstruction = '') => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'your-gemini-api-key-here') {
-    throw new Error('GEMINI_API_KEY environment variable is not configured.');
-  }
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-  const requestBody = {
-    contents: [{ parts: [{ text: prompt }] }]
-  };
-  if (systemInstruction) {
-    requestBody.systemInstruction = { parts: [{ text: systemInstruction }] };
-  }
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestBody)
-  });
-
-  if (!response.ok) throw new Error(`Gemini API error: ${response.status}`);
-  const data = await response.json();
-  return data.candidates[0].content.parts[0].text;
-};
 
 // @desc    Add a past winning project to the RAG catalog
 // @route   POST /api/idea-gen/add-winner
@@ -101,9 +77,15 @@ const generateIdea = async (req, res) => {
 
     let reply;
     try {
-      reply = await callGemini(prompt, 'You are a hackathon innovation strategist. Return raw JSON array only.');
+      const result = await callAIForFeature(
+        'creative',
+        prompt,
+        'You are a hackathon innovation strategist. Return raw JSON array only.',
+        true
+      );
+      reply = result.text;
     } catch (apiErr) {
-      console.warn('Gemini unavailable, using fallback ideas');
+      console.warn('AI provider unavailable, using fallback ideas');
       reply = JSON.stringify([
         {
           title: "EcoTrack AI",

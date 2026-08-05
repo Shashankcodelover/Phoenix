@@ -156,7 +156,7 @@ function logSuspicious(ip, threatType, details) {
 }
 
 // Cleanup old suspicious IP entries every 30 minutes
-setInterval(() => {
+const cleanupInterval = setInterval(() => {
   const thirtyMinAgo = Date.now() - (30 * 60 * 1000);
   for (const [ip, entry] of suspiciousIPs.entries()) {
     if (entry.firstSeen < thirtyMinAgo && entry.count < 10) {
@@ -164,6 +164,7 @@ setInterval(() => {
     }
   }
 }, 30 * 60 * 1000);
+if (cleanupInterval.unref) cleanupInterval.unref();
 
 /**
  * Creates the Prompt Shield middleware.

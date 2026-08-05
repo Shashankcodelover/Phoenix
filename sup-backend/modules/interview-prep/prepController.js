@@ -1,52 +1,21 @@
 const User = require('../../models/userModel');
+const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
+const { analyzeAndDisruptResume } = require('./resumeDisruptor');
+const { generateResumeDiff } = require('./resumeDiffEngine');
+const { questions: PYQ_DATABASE } = require('./questionBankData');
+const { getCompanyProfile, COMPANY_INTELLIGENCE } = require('./companyIntelligence');
+const { WINNING_PROJECTS } = require('../hackathon-agent/hackathonWinnersData');
 
-// Helper to make calls to Gemini API
-const callGemini = async (prompt, systemInstruction = '', jsonMode = false) => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'your-gemini-api-key-here') {
-    throw new Error('GEMINI_API_KEY environment variable is not configured.');
-  }
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-  
-  const requestBody = {
-    contents: [
-      {
-        parts: [{ text: prompt }]
-      }
-    ]
-  };
-
-  if (systemInstruction) {
-    requestBody.systemInstruction = {
-      parts: [{ text: systemInstruction }]
-    };
-  }
-
-  if (jsonMode) {
-    requestBody.generationConfig = {
-      responseMimeType: "application/json"
-    };
-  }
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestBody)
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    console.error('Gemini API Error details:', errText);
-    throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
-  }
-
-  const data = await response.json();
+// @desc    Disrupt & Optimize Resume for Target Role
+// @route   POST /api/v1/prep/resume-disrupt
+const disruptResume = async (req, res) => {
   try {
-    return data.candidates[0].content.parts[0].text;
-  } catch (err) {
-    console.error('Failed to extract text from Gemini response:', data);
-    throw new Error('Invalid response structure from Gemini API');
+    const { resumeText = '', targetRole = 'google_sde' } = req.body;
+    const analysis = await analyzeAndDisruptResume(resumeText, targetRole);
+    res.json(analysis);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -108,17 +77,14 @@ const generateRoadmap = async (req, res) => {
 
     const systemInstruction = "You are a professional roadmap generator. Return strict raw JSON format only.";
     
-    let resultText = await callGemini(prompt, systemInstruction, true);
-    // Parse to ensure it is valid JSON
-    let roadmapData;
-    try {
-      roadmapData = JSON.parse(resultText);
-    } catch (e) {
-      console.warn("JSON parsing failed, attempting to clean markdown code blocks...", e);
-      // fallback cleanup if Gemini outputs markdown wrappers anyway
-      resultText = resultText.replace(/```json/i, '').replace(/```/g, '').trim();
-      roadmapData = JSON.parse(resultText);
-    }
+    const result = await callAIForFeature(
+      'structured',
+      prompt,
+      systemInstruction,
+      true
+    );
+
+    const roadmapData = parseAIJson(result.text);
 
     res.json({
       message: "Roadmap generated successfully",
@@ -170,13 +136,14 @@ const mockInterview = async (req, res) => {
       Keep the response encouraging yet technically rigorous.
     `;
 
-    const responseText = await callGemini(
+    const result = await callAIForFeature(
+      'conversational',
       prompt,
       `You are a professional technical interviewer operating in ${difficulty} mode. Keep responses concise and focused.`
     );
 
     res.json({
-      reply: responseText,
+      reply: result.text,
       fillerCount,
       difficulty
     });
@@ -208,8 +175,12 @@ const tailorResume = async (req, res) => {
       Provide the output in clean, formatted Markdown that the student can copy and download directly. Do not include any meta comments. Focus on producing a clean resume layout.
     `;
 
-    const responseText = await callGemini(prompt, "You are a professional resume writer. Return a beautifully formatted Markdown resume.");
-    res.json({ resume: responseText });
+    const result = await callAIForFeature(
+      'document',
+      prompt,
+      "You are a professional resume writer. Return a beautifully formatted Markdown resume."
+    );
+    res.json({ resume: result.text });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -270,65 +241,143 @@ const submitQuiz = async (req, res) => {
   }
 };
 
-// @desc    Get company-tagged question bank
+// @desc    Get company-tagged question bank (200+ PYQs across Companies x Roles x Domains)
 const getQuestions = async (req, res) => {
   try {
-    const questions = [
-      {
-        title: "Reverse a Linked List in Groups of Size K",
-        company: "Amazon",
-        category: "DSA",
-        difficulty: "Hard",
-        description: "Given a pointer to the head node of a linked list, reverse the nodes of the list k at a time, and return the modified list. k is a positive integer and is less than or equal to the length of the linked list."
-      },
-      {
-        title: "LRU Cache Design & Implementation",
-        company: "Google",
-        category: "DSA",
-        difficulty: "Medium",
-        description: "Design a data structure that follows the constraints of a Least Recently Used (LRU) cache. Implement LRUCache class with get(key) and put(key, value) in O(1) time complexity."
-      },
-      {
-        title: "Explain CPU Scheduling & Deadlock Prevention",
-        company: "TCS",
-        category: "OS",
-        difficulty: "Easy",
-        description: "What is a deadlock situation? Explain four necessary conditions for deadlocks (Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait) and strategies to prevent them."
-      },
-      {
-        title: "Optimizing Joins in Large SQL Databases",
-        company: "Adobe",
-        category: "DBMS",
-        difficulty: "Medium",
-        description: "Explain nested loop joins, hash joins, and sort-merge joins. How do indexes alter database parser cost estimation when fetching millions of records?"
-      },
-      {
-        title: "Three-way Partitioning of Arrays",
-        company: "Microsoft",
-        category: "DSA",
-        difficulty: "Medium",
-        description: "Given an array and a range [lowVal, highVal], partition the array such that all elements less than lowVal come first, elements between lowVal and highVal come second, and elements greater than highVal come last."
-      }
-    ];
-    res.json(questions);
+    const { company, role, category, subCategory, difficulty, search, limit = 50, page = 1 } = req.query;
+
+    let filtered = PYQ_DATABASE;
+
+    if (company && company !== 'all') {
+      const cLower = company.toLowerCase();
+      filtered = filtered.filter(q => q.companyTags.some(t => t.toLowerCase() === cLower));
+    }
+
+    if (role && role !== 'all') {
+      const rLower = role.toLowerCase();
+      filtered = filtered.filter(q => q.roleTags.some(t => t.toLowerCase().includes(rLower)));
+    }
+
+    if (category && category !== 'all') {
+      const catLower = category.toLowerCase();
+      filtered = filtered.filter(q => q.category.toLowerCase() === catLower);
+    }
+
+    if (subCategory && subCategory !== 'all') {
+      const subLower = subCategory.toLowerCase();
+      filtered = filtered.filter(q => (q.subCategory || '').toLowerCase().includes(subLower));
+    }
+
+    if (difficulty && difficulty !== 'all') {
+      const diffLower = difficulty.toLowerCase();
+      filtered = filtered.filter(q => q.difficulty.toLowerCase() === diffLower);
+    }
+
+    if (search && search.trim() !== '') {
+      const qStr = search.toLowerCase();
+      filtered = filtered.filter(q =>
+        q.title.toLowerCase().includes(qStr) ||
+        q.description.toLowerCase().includes(qStr) ||
+        q.solutionHint.toLowerCase().includes(qStr)
+      );
+    }
+
+    // Pagination
+    const pageNum = parseInt(page) || 1;
+    const limitNum = parseInt(limit) || 50;
+    const startIndex = (pageNum - 1) * limitNum;
+    const paginated = filtered.slice(startIndex, startIndex + limitNum);
+
+    res.json({
+      totalQuestions: filtered.length,
+      page: pageNum,
+      totalPages: Math.ceil(filtered.length / limitNum),
+      filters: { company: company || 'all', role: role || 'all', category: category || 'all', difficulty: difficulty || 'all' },
+      questions: paginated
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Get recommended peer matches
-const getPeerMatches = async (req, res) => {
+// @desc    Get company hiring intelligence profile
+// @route   GET /api/v1/prep/company-intelligence
+const getCompanyIntelligenceEndpoint = async (req, res) => {
   try {
-    const peers = [
-      { _id: "1", name: "Alice Johnson", targetRole: "Fullstack React Developer", level: 3, xp: 260 },
-      { _id: "2", name: "Bob Smith", targetRole: "Machine Learning Engineer", level: 4, xp: 380 },
-      { _id: "3", name: "Carol Lee", targetRole: "Mobile Android Programmer", level: 2, xp: 140 }
-    ];
-    res.json(peers);
+    const { company = 'google' } = req.query;
+    const profile = getCompanyProfile(company);
+    res.json({
+      company: company.toLowerCase(),
+      profile,
+      availableCompanies: Object.keys(COMPANY_INTELLIGENCE)
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+// @desc    Get hackathon winner solution blueprints
+// @route   GET /api/v1/prep/hackathon-winners
+const getHackathonWinnersEndpoint = async (req, res) => {
+  try {
+    const { track, search } = req.query;
+    let results = WINNING_PROJECTS;
+
+    if (track) {
+      results = results.filter(w => w.winningTrack.toLowerCase().includes(track.toLowerCase()));
+    }
+    if (search) {
+      const s = search.toLowerCase();
+      results = results.filter(w =>
+        w.projectTitle.toLowerCase().includes(s) ||
+        w.whyItWon.toLowerCase().includes(s) ||
+        w.hackathonName.toLowerCase().includes(s)
+      );
+    }
+
+    res.json({
+      total: results.length,
+      winners: results
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// @desc    Get recommended peer matches (queries MongoDB Users with mock fallback)
+const getPeerMatches = async (req, res) => {
+  try {
+    const { userId, targetRole } = req.query;
+
+    let dbPeers = [];
+    try {
+      const query = userId ? { _id: { $ne: userId } } : {};
+      if (targetRole) query.targetRole = new RegExp(targetRole, 'i');
+
+      dbPeers = await User.find(query).select('name targetRole level xp avatar').limit(10).lean();
+    } catch (dbErr) {
+      console.warn('Peer database query failed, using static fallback:', dbErr.message);
+    }
+
+    // Fallback static peers if DB has few or no users
+    const fallbackPeers = [
+      { _id: "1", name: "Alice Johnson", targetRole: "Fullstack React Developer", level: 3, xp: 260 },
+      { _id: "2", name: "Bob Smith", targetRole: "Machine Learning Engineer", level: 4, xp: 380 },
+      { _id: "3", name: "Carol Lee", targetRole: "Mobile Android Programmer", level: 2, xp: 140 },
+      { _id: "4", name: "David Kim", targetRole: "Backend Go / Distributed Systems", level: 5, xp: 520 },
+      { _id: "5", name: "Evelyn Sharma", targetRole: "Cloud DevOps & Kubernetes", level: 4, xp: 410 }
+    ];
+
+    const peers = dbPeers.length >= 3 ? dbPeers : [...dbPeers, ...fallbackPeers.slice(0, 5 - dbPeers.length)];
+
+    res.json({
+      totalMatches: peers.length,
+      peers
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 // @desc    Calculate time budget allocations using Gemini
 const allocatePlanner = async (req, res) => {
@@ -361,11 +410,17 @@ const allocatePlanner = async (req, res) => {
       Ensure the JSON is strictly valid. Do not wrap in markdown block.
     `;
 
-    let resultText;
+    let parsed;
     try {
-      resultText = await callGemini(prompt, "You are a professional academic time budget planner. Return strict raw JSON format only.", true);
+      const result = await callAIForFeature(
+        'structured',
+        prompt,
+        "You are a professional academic time budget planner. Return strict raw JSON format only.",
+        true
+      );
+      parsed = parseAIJson(result.text);
     } catch (apiErr) {
-      console.warn("Gemini call failed in planner, using fallback static schedule", apiErr);
+      console.warn("AI call failed in planner, using fallback static schedule", apiErr);
       return res.json({
         schedule: [
           { title: "Solve 2 LeetCode Medium Hashmap Problems", duration: `${prepHours} hrs`, type: "prep" },
@@ -374,14 +429,6 @@ const allocatePlanner = async (req, res) => {
           { title: "Configure Geofenced Instagram scraper APIs", duration: `${hackHours} hrs`, type: "hackathon" }
         ]
       });
-    }
-
-    let parsed;
-    try {
-      parsed = JSON.parse(resultText);
-    } catch (e) {
-      resultText = resultText.replace(/```json/i, '').replace(/```/g, '').trim();
-      parsed = JSON.parse(resultText);
     }
 
     res.json({ schedule: parsed.schedule });
@@ -418,7 +465,12 @@ const generateRevisionSheet = async (req, res) => {
 
     let sheetContent;
     try {
-      sheetContent = await callGemini(prompt, "You are a senior technical interview coach. Return response in Markdown only.");
+      const result = await callAIForFeature(
+        'document',
+        prompt,
+        "You are a senior technical interview coach. Return response in Markdown only."
+      );
+      sheetContent = result.text;
     } catch (apiErr) {
       console.warn("Gemini call failed in revision generator, using static fallback", apiErr);
       sheetContent = `### Revision Sheet: ${topic} (Fallback Mode)
@@ -510,16 +562,14 @@ const generateSystemDesignQuestion = async (req, res) => {
       Do not include markdown tags.
     `;
 
-    let responseText = await callGemini(prompt, "You are a professional system design interviewer. Return raw JSON only.", true);
+    const result = await callAIForFeature(
+      'structured',
+      prompt,
+      "You are a professional system design interviewer. Return raw JSON only.",
+      true
+    );
     
-    let parsed;
-    try {
-      parsed = JSON.parse(responseText);
-    } catch (e) {
-      responseText = responseText.replace(/```json/i, '').replace(/```/g, '').trim();
-      parsed = JSON.parse(responseText);
-    }
-
+    const parsed = parseAIJson(result.text);
     res.json(parsed);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -530,8 +580,12 @@ module.exports = {
   generateRoadmap,
   mockInterview,
   tailorResume,
+  disruptResume,
+  generateResumeDiff,
   submitQuiz,
   getQuestions,
+  getCompanyIntelligenceEndpoint,
+  getHackathonWinnersEndpoint,
   getPeerMatches,
   allocatePlanner,
   generateRevisionSheet,

@@ -58,7 +58,7 @@ const login = async (req, res) => {
     // Generate token
     const token = jwt.sign(
       { id: user._id },
-      "superSecretKey",
+      process.env.JWT_SECRET || "phoenix_super_secret_jwt_key_2026",
       { expiresIn: "1d" }
     );
 

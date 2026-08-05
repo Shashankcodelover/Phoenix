@@ -3,835 +3,412 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phoenix Command Center</title>
+  <title>Phoenix Dual-World Command Portal</title>
+  <meta name="description" content="Central command portal for Placement Interview Prep and Hackathon Builder Worlds.">
   <link rel="stylesheet" href="../phoenix.css">
   <style>
-    /* Dashboard-specific custom layout overrides */
-    .dashboard-layout {
-      display: grid;
-      grid-template-columns: 320px 1fr 340px;
-      gap: 24px;
-      margin-top: 20px;
+    #topXpContainer {
+      width: 100%; height: 4px;
+      background: rgba(88, 166, 255, 0.15);
+      position: fixed; top: 64px; left: 0; z-index: 999;
+    }
+    #topXpFill {
+      width: 0%; height: 100%;
+      background: var(--gradient-brand);
+      transition: width 0.8s var(--transition-spring);
+      box-shadow: 0 0 12px var(--cyan);
+    }
+    
+    .world-tab-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      background: rgba(22, 27, 34, 0.85);
+      padding: 6px;
+      border-radius: 14px;
+      border: 1px solid rgba(240, 246, 252, 0.1);
+      backdrop-filter: blur(12px);
     }
 
-    .stat-ring-container {
-      position: relative;
-      width: 140px;
-      height: 140px;
-      margin: 0 auto 20px auto;
+    .world-tab {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
+      font-size: 1.05rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.25s ease;
+      color: var(--text-secondary, #8b949e);
+      border: 1px solid transparent;
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 8px;
     }
 
-    .stat-ring-svg {
-      transform: rotate(-90deg);
-      width: 100%;
-      height: 100%;
+    .world-tab.active-interview {
+      background: linear-gradient(135deg, rgba(88, 166, 255, 0.2), rgba(188, 140, 255, 0.1));
+      color: #f0f6fc;
+      border-color: rgba(88, 166, 255, 0.4);
+      box-shadow: 0 4px 20px rgba(88, 166, 255, 0.15);
     }
 
-    .stat-ring-bg {
-      fill: none;
-      stroke: rgba(255, 255, 255, 0.03);
-      stroke-width: 8;
+    .world-tab.active-hackathon {
+      background: linear-gradient(135deg, rgba(63, 185, 80, 0.2), rgba(210, 153, 34, 0.1));
+      color: #f0f6fc;
+      border-color: rgba(63, 185, 80, 0.4);
+      box-shadow: 0 4px 20px rgba(63, 185, 80, 0.15);
     }
 
-    .stat-ring-fill {
-      fill: none;
-      stroke: url(#cyan-purple-grad);
-      stroke-width: 8;
-      stroke-linecap: round;
-      stroke-dasharray: 377;
-      stroke-dashoffset: 377;
-      transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+    .world-tab:hover:not(.active-interview):not(.active-hackathon) {
+      color: #f0f6fc;
+      background: rgba(255, 255, 255, 0.04);
     }
 
-    .stat-ring-text {
-      position: absolute;
-      font-family: 'Space Grotesk', sans-serif;
-      text-align: center;
+    .world-section {
+      display: none;
+      animation: fadeIn 0.35s ease forwards;
     }
 
-    .stat-ring-text span {
+    .world-section.active {
       display: block;
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--cyan);
-      text-shadow: 0 0 10px rgba(0, 245, 255, 0.3);
     }
 
-    .stat-ring-text label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 1px;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .dashboard-card {
+    .stat-pill-row {
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 180px;
-      cursor: pointer;
-      border: 1px solid var(--border-subtle);
-      transition: var(--transition-smooth);
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
     }
 
-    .dashboard-card:hover {
-      transform: translateY(-4px) scale(1.02);
-      border-color: rgba(0, 245, 255, 0.25);
-      box-shadow: var(--shadow-glow-cyan);
-    }
-
-    .dashboard-card .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .dashboard-card .card-top .icon {
-      font-size: 2rem;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .dashboard-card .card-bottom h3 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.15rem;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-
-    .dashboard-card .card-bottom p {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    .ticker-bar {
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 12px 20px;
+    .stat-pill {
+      background: rgba(22, 27, 34, 0.7);
+      border: 1px solid rgba(240, 246, 252, 0.1);
+      border-radius: 10px;
+      padding: 10px 16px;
       display: flex;
       align-items: center;
-      gap: 15px;
-      overflow: hidden;
-      margin-top: 24px;
+      gap: 8px;
+      font-size: 0.9rem;
     }
 
-    .ticker-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.8rem;
+    .stat-pill .val {
       font-weight: 700;
-      color: var(--coral);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      color: #f0f6fc;
     }
 
-    .ticker-content {
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .ticker-text {
-      display: inline-block;
-      padding-left: 100%;
-      animation: tickerMove 25s linear infinite;
-      color: var(--text-secondary);
-      font-size: 0.88rem;
-    }
-
-    @keyframes tickerMove {
-      0% { transform: translate3d(0, 0, 0); }
-      100% { transform: translate3d(-100%, 0, 0); }
-    }
-
-    @media (max-width: 1100px) {
-      .dashboard-layout {
-        grid-template-columns: 1fr;
-      }
+    @media (max-width: 768px) {
+      #topXpContainer { top: 56px; }
+      .world-tab-bar { flex-direction: column; }
     }
   </style>
 </head>
-<body>
+<body class="theme-dark-obsidian">
 
-  <!-- Persistent Top XP Bar -->
-  <div id="topXpContainer" style="width: 100%; height: 5px; background: rgba(255,255,255,0.05); position: fixed; top: 64px; left: 0; z-index: 999; overflow: hidden;">
-    <div id="topXpFill" style="width: 0%; height: 100%; background: var(--gradient-brand); transition: width 0.8s ease-out; box-shadow: 0 0 10px var(--cyan);"></div>
-  </div>
-
-  <!-- Navigation Bar -->
-  <nav class="navbar">
-    <div class="navbar-brand" onclick="window.location.href='./dashboard.html'">PHOENIX</div>
-    <ul class="nav-links">
-      <li><a href="./dashboard.html" class="active">Dashboard</a></li>
-      <li><a href="./leaderboard.html">🏆 Leaderboard</a></li>
-      <li class="nav-dropdown">
-        <a href="#">Prep Roadmap ▾</a>
-        <div class="nav-dropdown-content">
-          <a href="../interview-prep/roadmap.html">🗺️ Adaptive Syllabus</a>
-          <a href="../interview-prep/practice.html">💬 Mock Interview</a>
-          <a href="../interview-prep/resume.html">📝 Resume Optimizer</a>
-          <a href="../interview-prep/questions.html">🏷️ Company Questions</a>
-          <a href="../interview-prep/peer-match.html">👥 Peer Mock Matching</a>
-        </div>
-      </li>
-      <li class="nav-dropdown">
-        <a href="#">Hackathons ▾</a>
-        <div class="nav-dropdown-content">
-          <a href="../hackathon-agent/agent.html">🤖 Hack-Auto Agent</a>
-          <a href="../hackathon-agent/view.html">📋 Discovery Feed</a>
-          <a href="../hackathon-agent/team.html">👥 Team Roster</a>
-          <a href="../hackathon-agent/chat.html">💬 Discord War Room</a>
-          <a href="../hackathon-agent/portfolio.html">🏆 Portfolio Capture</a>
-        </div>
-      </li>
-      <li class="nav-dropdown">
-        <a href="#">🎨 Theme ▾</a>
-        <div class="nav-dropdown-content">
-          <a href="#" onclick="toggleThemeAccent('cyan'); return false;">💎 Cyber Blue</a>
-          <a href="#" onclick="toggleThemeAccent('purple'); return false;">🔮 Purple</a>
-          <a href="#" onclick="toggleThemeAccent('emerald'); return false;">🌲 Emerald</a>
-          <a href="#" onclick="toggleThemeAccent('coral'); return false;">🌸 Coral</a>
-        </div>
-      </li>
-      <li><a href="../interview-prep/planner.html">Planner</a></li>
-      <li><a href="../profile/profile.html">👤 Profile</a></li>
-      <li><a href="#" id="logoutBtn" style="color: var(--coral);">Logout</a></li>
-    </ul>
-  </nav>
+  <!-- Top XP Progress Bar -->
+  <div id="topXpContainer"><div id="topXpFill"></div></div>
 
   <!-- Particle Background -->
   <canvas id="particles"></canvas>
 
-  <div class="container">
+  <div class="container" style="padding-top: 30px;">
     
     <!-- Hero Header -->
-    <div class="page-header" style="text-align: left; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <div class="page-header d-flex justify-between align-center flex-wrap gap-md" style="text-align: left; margin-bottom: 24px;">
       <div>
-        <h1 style="font-size: 2.5rem; letter-spacing: 0.5px;">Phoenix Command Center</h1>
-        <p style="margin: 5px 0 0 0;" id="userGreeting">Analyzing profile and loading career track stats...</p>
+        <h1 style="margin-bottom: 6px; font-size: 2.2rem;" class="font-space">Command Portal</h1>
+        <p id="userGreeting" style="color: #8b949e;">Welcome back! Loading your dual-world stats...</p>
       </div>
-      <button class="btn btn-secondary" onclick="startOnboardingTour()" style="font-size: 0.8rem; padding: 8px 16px;">💡 Take Tour</button>
+      <div class="d-flex gap-sm">
+        <button class="btn btn-secondary" onclick="Phoenix.Tour.start()">💡 Guided Tour</button>
+        <button class="btn btn-primary" onclick="window.location.href='../profile/profile.html'">👤 User Profile</button>
+      </div>
     </div>
 
-    <!-- Main Command Center Layout -->
-    <div class="dashboard-layout">
-
-      <!-- LEFT COLUMN: Roadmap & Deadlines -->
-      <div class="col-sidebar">
-        
-        <!-- Live Roadmap Progress -->
-        <div class="glass-card">
-          <h3 class="font-space mb-2" style="font-size: 1.15rem; display: flex; justify-content: space-between; align-items: center;">
-            Roadmap Tracker <span class="badge badge-cyan" id="roadmapStatusBadge">Inactive</span>
-          </h3>
-          <div id="sidebarRoadmapContainer" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
-            <p style="color: var(--text-secondary); font-size: 0.85rem; text-align: center; padding: 20px 0;">
-              No active syllabus generated. Head to <strong>Prep Roadmap</strong> to get started.
-            </p>
-          </div>
-        </div>
-
-        <!-- Upcoming Deadlines -->
-        <div class="glass-card">
-          <h3 class="font-space mb-2" style="font-size: 1.15rem;">Upcoming Dates</h3>
-          <div id="sidebarDeadlinesContainer" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
-            <div class="log-row">
-              <div>
-                <strong style="color: var(--cyan); display: block; font-size: 0.85rem;">Phoenix Rebuild Hack</strong>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">Deadline: Registration Close</span>
-              </div>
-              <span class="badge badge-orange">5 Days Left</span>
-            </div>
-            <div class="log-row">
-              <div>
-                <strong style="color: var(--cyan); display: block; font-size: 0.85rem;">Open AI Challenge</strong>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">Deadline: Final Submission</span>
-              </div>
-              <span class="badge badge-coral">30 Days Left</span>
-            </div>
-          </div>
-        </div>
-
+    <!-- Live XP & Streak Telemetry Pill Row -->
+    <div class="stat-pill-row">
+      <div class="stat-pill">
+        <span>⚡ XP Points:</span>
+        <span class="val text-cyan" id="statXp">120 XP</span>
       </div>
-
-      <!-- CENTER COLUMN: Feature Command Matrix -->
-      <div class="col-main">
-        <h2 class="font-space mb-2" style="font-size: 1.3rem;">Core Operations Matrix</h2>
-        <div class="cards-grid">
-          
-          <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/roadmap.html'">
-            <div class="card-top">
-              <span class="icon">🗺️</span>
-              <span class="badge badge-cyan">Layer A</span>
-            </div>
-            <div class="card-bottom">
-              <h3>Syllabus Roadmap</h3>
-              <p>Generate day-by-day practice tasks customized by resume, target role, and timeline.</p>
-            </div>
-          </div>
-
-          <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/practice.html'">
-            <div class="card-top">
-              <span class="icon">💬</span>
-              <span class="badge badge-cyan">Layer A</span>
-            </div>
-            <div class="card-bottom">
-              <h3>Mock Interview</h3>
-              <p>Practice live mock technical interviews with Gemini and receive real-time filler-word analytics.</p>
-            </div>
-          </div>
-
-          <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/questions.html'">
-            <div class="card-top">
-              <span class="icon">🏷️</span>
-              <span class="badge badge-cyan">Layer A</span>
-            </div>
-            <div class="card-bottom">
-              <h3>Question Bank</h3>
-              <p>Access crowd-sourced, company-tagged interview and coding challenges tailored by role.</p>
-            </div>
-          </div>
-
-          <div class="glass-card dashboard-card" onclick="window.location.href='../hackathon-agent/agent.html'">
-            <div class="card-top">
-              <span class="icon">🤖</span>
-              <span class="badge badge-purple">Layer B</span>
-            </div>
-            <div class="card-bottom">
-              <h3>Hack-Auto Agent</h3>
-              <p>Launch autonomous geofenced web scrapers and pre-fill multi-member event registrations.</p>
-            </div>
-          </div>
-
-          <div class="glass-card dashboard-card" onclick="window.location.href='../hackathon-agent/chat.html'">
-            <div class="card-top">
-              <span class="icon">🔊</span>
-              <span class="badge badge-purple">Layer B</span>
-            </div>
-            <div class="card-bottom">
-              <h3>Discord War Rooms</h3>
-              <p>Invite peers, coordinate submission deadlines, and start voice calls for ongoing hackathons.</p>
-            </div>
-          </div>
-
-          <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/planner.html'">
-            <div class="card-top">
-              <span class="icon">📅</span>
-              <span class="badge badge-coral">Layer C</span>
-            </div>
-            <div class="card-bottom">
-              <h3>Time Allocator</h3>
-              <p>Resolve schedule conflicts between interview prep syllabus timelines and hackathon gates.</p>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="glass-card" style="margin-top: 20px;">
-          <h3 class="font-space mb-2" style="font-size: 1.15rem; display: flex; justify-content: space-between; align-items: center;">
-            📊 Learning Activity Heatmap
-            <span style="font-size: 0.75rem; color: var(--text-secondary);">Last 24 Weeks</span>
-          </h3>
-          <div id="heatmapContainer" style="display: grid; grid-template-rows: repeat(7, 10px); grid-auto-flow: column; grid-auto-columns: 10px; gap: 4px; overflow-x: auto; padding: 10px 0;">
-          </div>
-        </div>
+      <div class="stat-pill">
+        <span>🔥 Daily Streak:</span>
+        <span class="val text-orange" id="statStreak">1 Days</span>
       </div>
-
-      <!-- RIGHT COLUMN: Career Momentum HUD -->
-      <div class="col-sidebar">
-        
-        <div class="glass-card" style="text-align: center;">
-          <h3 class="font-space mb-2" style="font-size: 1.15rem; text-align: left;">Career Momentum</h3>
-          
-          <div class="stat-ring-container">
-            <svg class="stat-ring-svg" viewBox="0 0 130 130">
-              <defs>
-                <linearGradient id="cyan-purple-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="var(--cyan)" />
-                  <stop offset="100%" stop-color="var(--purple)" />
-                </linearGradient>
-              </defs>
-              <circle class="stat-ring-bg" cx="65" cy="65" r="60" />
-              <circle class="stat-ring-fill" id="xpProgressCircle" cx="65" cy="65" r="60" />
-            </svg>
-            <div class="stat-ring-text">
-              <span id="hudLevelVal">Lvl 1</span>
-              <label id="hudXpLeftVal">0 / 100 XP</label>
-            </div>
-          </div>
-
-          <div style="margin-bottom: 12px;">
-            <span class="badge badge-cyan" id="badgeRankVal" style="font-size: 0.8rem; padding: 6px 14px; text-transform: uppercase;">Iron Rank</span>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <div style="background: rgba(255, 255, 255, 0.02); padding: 10px 6px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-              <span style="font-size: 0.68rem; color: var(--text-secondary); display: block; text-transform: uppercase;">Total XP</span>
-              <strong id="hudTotalXpVal" style="font-size: 1.05rem; color: var(--cyan);">0 XP</strong>
-            </div>
-            <div style="background: rgba(255, 255, 255, 0.02); padding: 10px 6px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-              <span style="font-size: 0.68rem; color: var(--text-secondary); display: block; text-transform: uppercase;">Projects</span>
-              <strong id="hudPortfolioVal" style="font-size: 1.05rem; color: var(--green);">📦 0</strong>
-            </div>
-            <div style="background: rgba(255, 255, 255, 0.02); padding: 10px 6px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-              <span style="font-size: 0.68rem; color: var(--text-secondary); display: block; text-transform: uppercase;">Streak</span>
-              <strong id="hudStreakVal" style="font-size: 1.05rem; color: var(--orange);">🔥 0d</strong>
-            </div>
-            <div style="background: rgba(255, 255, 255, 0.02); padding: 10px 6px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); display: flex; flex-direction: column; align-items: center; justify-content: center;">
-              <span style="font-size: 0.6rem; color: var(--text-secondary); display: block; text-transform: uppercase;">Streak Freeze</span>
-              <div style="display: flex; align-items: center; gap: 4px; margin-top: 2px;">
-                <strong id="hudFreezeVal" style="font-size: 0.85rem; color: var(--cyan);">❄️ 0</strong>
-                <button onclick="useStreakFreezeToken()" class="btn btn-secondary" style="padding: 2px 4px; font-size: 0.55rem; border-radius: 4px; height: 16px;">Use</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-card" style="text-align: center;">
-          <h3 class="font-space mb-2" style="font-size: 1.15rem; text-align: left;">Skill Radar</h3>
-          <div id="radarContainer" style="display: flex; justify-content: center; align-items: center; height: 180px; position: relative;">
-          </div>
-        </div>
-
-        <div class="glass-card">
-          <h3 class="font-space mb-2" style="font-size: 1.15rem;">🏆 Trophy Cabinet</h3>
-          <div id="trophyContainer" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
-            <span style="color: var(--text-muted); font-size: 0.8rem;">No trophies earned yet. Join a hackathon!</span>
-          </div>
-        </div>
-
-        <div class="glass-card">
-          <h3 class="font-space mb-2" style="font-size: 1.15rem;">Active Scraper Stream</h3>
-          <div class="console-box" id="hudSystemLogs" style="font-size: 0.75rem; height: 180px;">
-[Console] Listening for system webhook logs...
-[Scraper] Geofencing base initialized: SJCE, Mysuru.
-[Agent] Loaded 4 core student roster templates.
-          </div>
-        </div>
-
+      <div class="stat-pill">
+        <span>🏅 Level:</span>
+        <span class="val text-purple" id="statLevel">Level 2</span>
       </div>
-
+      <div class="stat-pill">
+        <span>🛡️ Security Shield:</span>
+        <span class="val text-green">ACTIVE (Prompt Injection Guard)</span>
+      </div>
     </div>
 
-    <div class="ticker-bar">
-      <div class="ticker-title">
-        <span class="notif-dot"></span>
-        <span>Live Scrapes:</span>
+    <!-- DUAL WORLD TAB SWITCHER -->
+    <div class="world-tab-bar">
+      <div class="world-tab active-interview" id="tabInterview" onclick="switchWorldTab('interview')">
+        ⚔️ Placement & Interview World
       </div>
-      <div class="ticker-content">
-        <div class="ticker-text" id="liveTickerText">Waiting to scrape events in geofence radius... Run Aegis Scraper to list incoming matches.</div>
+      <div class="world-tab" id="tabHackathon" onclick="switchWorldTab('hackathon')">
+        🚀 Hackathon & Builder World
+      </div>
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- WORLD 1: PLACEMENT & INTERVIEW WORLD CONTENT            -->
+    <!-- ======================================================= -->
+    <div class="world-section active" id="sectionInterview">
+      <div class="dashboard-layout">
+        
+        <!-- Left Sidebar: Roadmap & Performance -->
+        <div class="col-sidebar">
+          <div class="glass-card">
+            <h3 class="font-space mb-2 d-flex justify-between align-center">
+              Roadmap Tracker <span class="badge badge-cyan" id="roadmapStatusBadge">Active</span>
+            </h3>
+            <div id="sidebarRoadmapContainer" class="d-flex flex-col gap-sm mt-2">
+              <div class="empty-state" style="padding: 16px 10px;">
+                <p>Day 1: Arrays & Hashing (3 problems)</p>
+                <button class="btn btn-sm btn-primary mt-2" onclick="window.location.href='../interview-prep/roadmap.html'">Open Roadmap</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card mt-3">
+            <h3 class="font-space mb-2">⚡ Quick Revision</h3>
+            <p class="text-secondary" style="font-size: 0.85rem; margin-bottom: 12px;">High-yield SDE cheat sheets for System Design, OS, DBMS, & Networks.</p>
+            <button class="btn btn-sm btn-secondary w-100" onclick="window.location.href='../interview-prep/roadmap.html#revision'">📖 Generate Revision Sheet</button>
+          </div>
+        </div>
+
+        <!-- Center Main: Feature Cards -->
+        <div class="col-main">
+          <h2 class="font-space mb-2">Interview Ops Matrix</h2>
+          
+          <div class="cards-grid">
+            <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/roadmap.html'">
+              <div class="card-top">
+                <span class="icon">🗺️</span>
+                <span class="badge badge-cyan">Roadmap Engine</span>
+              </div>
+              <div class="card-bottom">
+                <h3>Adaptive Syllabus</h3>
+                <p>Generate day-by-day practice syllabus customized by resume, target role, & time frame.</p>
+              </div>
+            </div>
+
+            <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/practice.html'">
+              <div class="card-top">
+                <span class="icon">🎙️</span>
+                <span class="badge badge-cyan">Bar Raiser AI</span>
+              </div>
+              <div class="card-bottom">
+                <h3>Mock Simulator</h3>
+                <p>Live technical & behavioral interview rounds with AI difficulty scaling & filler word audit.</p>
+              </div>
+            </div>
+
+            <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/resume.html'">
+              <div class="card-top">
+                <span class="icon">📄</span>
+                <span class="badge badge-purple">ATS Optimizer</span>
+              </div>
+              <div class="card-bottom">
+                <h3>Resume Disruptor</h3>
+                <p>Audit resume text against Google/Amazon keywords, fix bullet points into STAR format.</p>
+              </div>
+            </div>
+
+            <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/questions.html'">
+              <div class="card-top">
+                <span class="icon">🏷️</span>
+                <span class="badge badge-cyan">Company Bank</span>
+              </div>
+              <div class="card-bottom">
+                <h3>Question Vault</h3>
+                <p>Company-tagged DSA, System Design, OS, and SQL questions from top tech firms.</p>
+              </div>
+            </div>
+
+            <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/peer-match.html'">
+              <div class="card-top">
+                <span class="icon">🤝</span>
+                <span class="badge badge-green">P2P Match</span>
+              </div>
+              <div class="card-bottom">
+                <h3>Peer Mock Match</h3>
+                <p>Match with peer candidates for live peer interviews with automatic AI safety-net backup.</p>
+              </div>
+            </div>
+
+            <div class="glass-card dashboard-card" onclick="window.location.href='../interview-prep/planner.html'">
+              <div class="card-top">
+                <span class="icon">📅</span>
+                <span class="badge badge-coral">Time Budget</span>
+              </div>
+              <div class="card-bottom">
+                <h3>Time Allocator</h3>
+                <p>Resolve schedule conflicts between daily placement prep & hackathon build sprints.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- WORLD 2: HACKATHON & BUILDER WORLD CONTENT              -->
+    <!-- ======================================================= -->
+    <div class="world-section" id="sectionHackathon">
+      <div class="dashboard-layout">
+        
+        <!-- Left Sidebar: Scraped Events & Command Stats -->
+        <div class="col-sidebar">
+          <div class="glass-card">
+            <h3 class="font-space mb-2 d-flex justify-between align-center">
+              Active Hackathons <span class="badge badge-green">Live Feed</span>
+            </h3>
+            <div class="d-flex flex-col gap-sm mt-2">
+              <div class="log-row">
+                <div>
+                  <strong class="text-cyan d-block" style="font-size: 0.85rem;">Smart India Hackathon 2026</strong>
+                  <span class="text-muted" style="font-size: 0.75rem;">National Level • AgriTech & AI</span>
+                </div>
+                <span class="badge badge-orange">Starts 2d</span>
+              </div>
+              <div class="log-row">
+                <div>
+                  <strong class="text-cyan d-block" style="font-size: 0.85rem;">Google Solution Challenge</strong>
+                  <span class="text-muted" style="font-size: 0.75rem;">Global • Sustainability & Cloud</span>
+                </div>
+                <span class="badge badge-cyan">Active</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card mt-3">
+            <h3 class="font-space mb-2">🔍 AI Code Audit</h3>
+            <p class="text-secondary" style="font-size: 0.85rem; margin-bottom: 12px;">Audit hackathon code snippets for OWASP vulnerabilities & speed bottlenecks.</p>
+            <button class="btn btn-sm btn-secondary w-100" onclick="window.location.href='../hackathon-agent/command-center.html#code-review'">Run AI Code Review</button>
+          </div>
+        </div>
+
+        <!-- Center Main: Hackathon Ops Matrix -->
+        <div class="col-main">
+          <h2 class="font-space mb-2">Hackathon Ops Matrix</h2>
+          
+          <div class="cards-grid">
+            <div class="glass-card dashboard-card" onclick="window.location.href='../hackathon-agent/command-center.html'">
+              <div class="card-top">
+                <span class="icon">💡</span>
+                <span class="badge badge-green">RAG Engine</span>
+              </div>
+              <div class="card-bottom">
+                <h3>AI Idea Generator</h3>
+                <p>Generate unique winning project ideas using RAG contextual search over past winning projects.</p>
+              </div>
+            </div>
+
+            <div class="glass-card dashboard-card" onclick="window.location.href='../hackathon-agent/command-center.html#roadmap'">
+              <div class="card-top">
+                <span class="icon">🎮</span>
+                <span class="badge badge-purple">10-Stage Game</span>
+              </div>
+              <div class="card-bottom">
+                <h3>Hackathon Simulator</h3>
+                <p>Turn-based hackathon simulator with AI teammate voting, chaos events, and 5 AI judges.</p>
+              </div>
+            </div>
+
+            <div class="glass-card dashboard-card" onclick="window.location.href='../hackathon-agent/command-center.html#explainer'">
+              <div class="card-top">
+                <span class="icon">🎤</span>
+                <span class="badge badge-cyan">Pitch & Defense</span>
+              </div>
+              <div class="card-bottom">
+                <h3>Judge Explainer</h3>
+                <p>Generate 5-slide presenter scripts, architecture walkthroughs, and Q&A defense answers.</p>
+              </div>
+            </div>
+
+            <div class="glass-card dashboard-card" onclick="window.location.href='../hackathon-agent/agent.html'">
+              <div class="card-top">
+                <span class="icon">🤖</span>
+                <span class="badge badge-green">Scraper Agent</span>
+              </div>
+              <div class="card-bottom">
+                <h3>Hack-Auto Agent</h3>
+                <p>Autonomous Puppeteer agent that discovers geofenced hackathons and autofills registration forms.</p>
+              </div>
+            </div>
+
+            <div class="glass-card dashboard-card" onclick="window.location.href='../hackathon-agent/team.html'">
+              <div class="card-top">
+                <span class="icon">👥</span>
+                <span class="badge badge-purple">Team Builder</span>
+              </div>
+              <div class="card-bottom">
+                <h3>Team Roster</h3>
+                <p>Manage hackathon team credentials, run skill-gap checks, and fill missing roles.</p>
+              </div>
+            </div>
+
+            <div class="glass-card dashboard-card" onclick="window.location.href='../hackathon-agent/portfolio.html'">
+              <div class="card-top">
+                <span class="icon">🏆</span>
+                <span class="badge badge-coral">Capture</span>
+              </div>
+              <div class="card-bottom">
+                <h3>Portfolio Vault</h3>
+                <p>Capture completed hackathon projects, prove technical skills, and earn XP rewards.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
   </div>
 
-  <div class="message-hud">
-    <div class="message-indicator">
-      <span class="message-icon">💬</span>
-      <span class="message-count" id="dashMsgCount">0</span>
-    </div>
-    <div class="message-dropdown" id="dashMessageDropdown">
-      <div style="padding: 16px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
-        <span class="font-space" style="font-weight: 700; font-size: 0.95rem; color: var(--cyan);">Notifications</span>
-        <button class="btn btn-icon" id="dashCloseBtn" style="padding: 4px 8px; font-size: 0.8rem;">×</button>
-      </div>
-      <div id="dashMessageList" style="padding: 10px; max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
-        <p style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px 0;">No new notifications</p>
-      </div>
-    </div>
-  </div>
- 
-  <script src="./ux-polish.js"></script>
+  <script src="../phoenix-core.js"></script>
   <script>
-    const API_BASE_URL = 'http://localhost:5000/api';
+    Phoenix.init({ particles: true, particleCount: 65, auth: true, nav: true, theme: true, transitions: true });
 
-    // Particle Background
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    let particles = [];
-    for (let i = 0; i < 40; i++) {
-        particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            radius: Math.random() * 1.2,
-            dx: (Math.random() - 0.5) * 0.15,
-            dy: (Math.random() - 0.5) * 0.15
-        });
-    }
-    function animateParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "rgba(0, 245, 255, 0.25)";
-        particles.forEach(p => {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fill();
-            p.x += p.dx;
-            p.y += p.dy;
-            if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-            if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-        });
-        requestAnimationFrame(animateParticles);
-    }
-    animateParticles();
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
+    // Handle World Switching
+    function switchWorldTab(world) {
+      const tabInt = document.getElementById('tabInterview');
+      const tabHack = document.getElementById('tabHackathon');
+      const secInt = document.getElementById('sectionInterview');
+      const secHack = document.getElementById('sectionHackathon');
 
-    // Check Authentication
-    document.addEventListener('DOMContentLoaded', () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = '../auth/login.html';
-            return;
-        }
-        
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const userId = user._id || user.id;
-
-        loadUserProfileStats(userId, token);
-        loadUpcomingEvents(token);
-        loadUserNotifications(userId, token);
-
-        // Auto onboarding trigger
-        if (!localStorage.getItem('onboardingCompleted')) {
-            setTimeout(() => {
-                startOnboardingTour();
-                localStorage.setItem('onboardingCompleted', 'true');
-            }, 1200);
-        }
-    });
-
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '../auth/login.html';
-    });
-
-    // Toggle Notifications Dropdown
-    const notifIndicator = document.querySelector('.message-indicator');
-    const notifDropdown = document.getElementById('dashMessageDropdown');
-    const notifClose = document.getElementById('dashCloseBtn');
-
-    notifIndicator.addEventListener('click', () => {
-        notifDropdown.classList.toggle('active');
-    });
-    notifClose.addEventListener('click', () => {
-        notifDropdown.classList.remove('active');
-    });
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.message-hud')) {
-            notifDropdown.classList.remove('active');
-        }
-    });
-
-    // Use Streak Freeze Token
-    async function useStreakFreezeToken() {
-        const token = localStorage.getItem('token');
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const userId = user._id || user.id;
-
-        try {
-            const res = await fetch(`${API_BASE_URL}/gamification/use-streak-freeze`, {
-                method: 'POST',
-                headers: { 
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}` 
-                },
-                body: JSON.stringify({ userId })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                alert(data.message);
-                loadUserProfileStats(userId, token);
-            } else {
-                alert(data.message || 'Could not use token');
-            }
-        } catch (e) {
-            console.error('Streak freeze error:', e);
-        }
-    }
-
-    // Fetch and display user profile stats (Level, XP, Streak)
-    async function loadUserProfileStats(userId, token) {
-        try {
-            const res = await fetch(`${API_BASE_URL}/profile/${userId}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) {
-                const data = await res.json();
-                
-                // Greeting text
-                document.getElementById('userGreeting').textContent = `Welcome back, ${data.name || 'Developer'}! Here is your personal placement dashboard status.`;
-
-                // Career Momentum ring and labels
-                const level = data.level || 1;
-                const xp = data.xp || 0;
-                const streak = data.streak || 0;
-                const projectsCount = data.portfolioProjects ? data.portfolioProjects.length : 0;
-                const streakFreezes = data.streakFreezeTokens !== undefined ? data.streakFreezeTokens : 2;
-                const badgeRank = data.rank || 'Iron';
-                
-                document.getElementById('hudLevelVal').textContent = `Lvl ${level}`;
-                document.getElementById('badgeRankVal').textContent = `${badgeRank} Rank`;
-                document.getElementById('badgeRankVal').className = `badge badge-${getBadgeClass(badgeRank)}`;
-                
-                // 100 XP per level, calculate relative progress
-                const relativeXp = xp % 100;
-                document.getElementById('hudXpLeftVal').textContent = `${relativeXp} / 100 XP`;
-                document.getElementById('hudTotalXpVal').textContent = `${xp} XP`;
-                document.getElementById('hudStreakVal').textContent = `🔥 ${streak}d`;
-                document.getElementById('hudPortfolioVal').textContent = `📦 ${projectsCount}`;
-                document.getElementById('hudFreezeVal').textContent = `❄️ ${streakFreezes}`;
-
-                // Top Persistent XP Bar
-                document.getElementById('topXpFill').style.width = `${relativeXp}%`;
-
-                // Render ring SVG animation
-                const strokeOffset = 377 - (relativeXp / 100) * 377;
-                document.getElementById('xpProgressCircle').style.strokeDashoffset = strokeOffset;
-
-                // Render Radar Chart
-                renderRadarChart(data.skillRadar || { dsa: 10, os: 10, dbms: 10, cn: 10, systemDesign: 10 });
-
-                // Render Trophy Cabinet
-                renderTrophies(data.trophies || []);
-
-                // Render Activity Heatmap
-                renderHeatmap(data.dailyActivity || []);
-
-                // Load active roadmap info
-                const roadmapStatus = document.getElementById('roadmapStatusBadge');
-                const sidebarRoadmap = document.getElementById('sidebarRoadmapContainer');
-                
-                if (data.targetRole) {
-                    roadmapStatus.className = 'badge badge-green';
-                    roadmapStatus.textContent = 'Active';
-                    
-                    sidebarRoadmap.innerHTML = `
-                      <div class="log-row">
-                        <span>Target Role:</span>
-                        <strong style="color: var(--cyan);">${data.targetRole}</strong>
-                      </div>
-                      <div class="log-row">
-                        <span>Timeframe:</span>
-                        <strong style="color: var(--cyan);">${data.prepTimeFrame || 30} Days</strong>
-                      </div>
-                      <button class="btn btn-secondary mt-1" onclick="window.location.href='../interview-prep/roadmap.html'" style="width: 100%; font-size: 0.8rem; padding: 8px;">
-                        🗺️ Resume Daily Practice
-                      </button>
-                    `;
-                }
-            }
-        } catch (e) {
-            console.error('Error loading profile stats:', e);
-        }
-    }
-
-    function getBadgeClass(rank) {
-      const r = rank.toLowerCase();
-      if (r === 'phoenix') return 'coral';
-      if (r === 'platinum') return 'purple';
-      if (r === 'gold') return 'orange';
-      if (r === 'silver') return 'cyan';
-      if (r === 'bronze') return 'green';
-      return 'cyan';
-    }
-
-    function renderRadarChart(skills) {
-      const container = document.getElementById('radarContainer');
-      const r = 70; // radius
-      const cx = 90;
-      const cy = 90;
-
-      // 5 points of the spider web (Angles in radians)
-      const angles = [
-        -Math.PI / 2, // Top (DSA)
-        -Math.PI / 2 + (2 * Math.PI / 5), // Top-Right (OS)
-        -Math.PI / 2 + (4 * Math.PI / 5), // Bottom-Right (DBMS)
-        -Math.PI / 2 + (6 * Math.PI / 5), // Bottom-Left (CN)
-        -Math.PI / 2 + (8 * Math.PI / 5)  // Top-Left (System Design)
-      ];
-
-      const dsaVal = skills.dsa || 20;
-      const osVal = skills.os || 20;
-      const dbmsVal = skills.dbms || 20;
-      const cnVal = skills.cn || 20;
-      const sdVal = skills.systemDesign || 20;
-
-      const vals = [dsaVal, osVal, dbmsVal, cnVal, sdVal];
-      const points = angles.map((angle, i) => {
-        const dist = (vals[i] / 100) * r;
-        const x = cx + dist * Math.cos(angle);
-        const y = cy + dist * Math.sin(angle);
-        return `${x},${y}`;
-      }).join(' ');
-
-      // Base grids
-      let grids = '';
-      [0.2, 0.4, 0.6, 0.8, 1].forEach(scale => {
-        const gridPoints = angles.map(angle => {
-          const x = cx + (r * scale) * Math.cos(angle);
-          const y = cy + (r * scale) * Math.sin(angle);
-          return `${x},${y}`;
-        }).join(' ');
-        grids += `<polygon points="${gridPoints}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" />`;
-      });
-
-      // Label coords
-      const labelDists = [85, 95, 100, 100, 105];
-      const labels = ['DSA', 'OS', 'DBMS', 'CN', 'Design'].map((txt, i) => {
-        const x = cx + labelDists[i] * Math.cos(angles[i]);
-        const y = cy + labelDists[i] * Math.sin(angles[i]);
-        let anchor = 'middle';
-        if (i === 1 || i === 2) anchor = 'start';
-        if (i === 3 || i === 4) anchor = 'end';
-        return `<text x="${x}" y="${y + 4}" fill="var(--text-secondary)" font-size="9" text-anchor="${anchor}">${txt}</text>`;
-      }).join('');
-
-      container.innerHTML = `
-        <svg width="200" height="200" style="overflow: visible;">
-          ${grids}
-          <!-- Filled Radar Poly -->
-          <polygon points="${points}" fill="rgba(0, 245, 255, 0.15)" stroke="var(--cyan)" stroke-width="2" />
-          <!-- Vertices points -->
-          ${angles.map((angle, i) => {
-            const dist = (vals[i] / 100) * r;
-            const x = cx + dist * Math.cos(angle);
-            const y = cy + dist * Math.sin(angle);
-            return `<circle cx="${x}" cy="${y}" r="3" fill="var(--purple)" />`;
-          }).join('')}
-          ${labels}
-        </svg>
-      `;
-    }
-
-    function renderTrophies(trophies) {
-      const container = document.getElementById('trophyContainer');
-      if (trophies.length === 0) {
-        container.innerHTML = '<span style="color: var(--text-muted); font-size: 0.8rem;">No trophies earned yet. Join a hackathon!</span>';
-        return;
+      if (world === 'hackathon') {
+        tabInt.className = 'world-tab';
+        tabHack.className = 'world-tab active-hackathon';
+        secInt.classList.remove('active');
+        secHack.classList.add('active');
+      } else {
+        tabInt.className = 'world-tab active-interview';
+        tabHack.className = 'world-tab';
+        secHack.classList.remove('active');
+        secInt.classList.add('active');
       }
-      container.innerHTML = trophies.map(t => `
-        <div class="badge badge-purple" style="display: flex; align-items: center; gap: 4px; padding: 6px 12px;" title="Earned on ${new Date(t.earnedAt).toDateString()}">
-          <span>${t.icon}</span>
-          <span>${t.name}</span>
-        </div>
-      `).join('');
     }
 
-    function renderHeatmap(activities) {
-      const container = document.getElementById('heatmapContainer');
-      container.innerHTML = '';
-      
-      // We will generate the last 24 weeks (168 days)
-      const now = new Date();
-      const activityMap = {};
-      activities.forEach(a => {
-        activityMap[a.date] = a.xpEarned;
-      });
-
-      const dayCells = [];
-      for (let i = 168; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(now.getDate() - i);
-        const yyyymmdd = d.toISOString().split('T')[0];
-        const xp = activityMap[yyyymmdd] || 0;
-        
-        let opacity = 0.05;
-        if (xp > 50) opacity = 0.8;
-        else if (xp > 30) opacity = 0.5;
-        else if (xp > 10) opacity = 0.25;
-        else if (xp > 0) opacity = 0.12;
-
-        dayCells.push(`<div style="width: 10px; height: 10px; background: rgba(0, 245, 255, ${opacity}); border-radius: 2px;" title="${d.toDateString()}: ${xp} XP earned"></div>`);
-      }
-      container.innerHTML = dayCells.join('');
-    }
-
-    // Fetch and display upcoming scraped/added hackathons
-    async function loadUpcomingEvents(token) {
-        try {
-            const res = await fetch(`${API_BASE_URL}/hackathons`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) {
-                const data = await res.json();
-                if (data && data.length > 0) {
-                    // Update bottom live ticker text
-                    const tickerContent = data.map(h => `🌐 ${h.name} (${h.location}) - Deadline: ${new Date(h.date).toDateString()}`).join('   |   ');
-                    document.getElementById('liveTickerText').textContent = tickerContent;
-
-                    // Update system console logs
-                    const systemLogs = document.getElementById('hudSystemLogs');
-                    systemLogs.innerHTML += `\n[Database] Found ${data.length} active hackathons listed.`;
-                    systemLogs.scrollTop = systemLogs.scrollHeight;
-                }
-            }
-        } catch (e) {
-            console.error('Error loading hackathons for ticker:', e);
-        }
-    }
-
-    // Load active notifications
-    async function loadUserNotifications(userId, token) {
-        let count = 0;
-        const msgList = document.getElementById('dashMessageList');
-        msgList.innerHTML = '';
-
-        try {
-            // Fetch pending invites
-            const res = await fetch(`${API_BASE_URL}/teams/user/${userId}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) {
-                const teams = await res.json();
-                teams.forEach(t => {
-                    t.members.forEach(m => {
-                        if (m.userId._id === userId && m.status === 'invited') {
-                            count++;
-                            const div = document.createElement('div');
-                            div.className = 'log-row';
-                            div.innerHTML = `
-                              <div>
-                                <strong style="color: var(--cyan); display:block; font-size:0.8rem;">Team Invitation</strong>
-                                <span style="font-size:0.75rem; color:var(--text-secondary);">Invited to join team "${t.teamName}"</span>
-                              </div>
-                              <button class="btn btn-primary" onclick="window.location.href='../hackathon-agent/team.html'" style="padding: 4px 10px; font-size: 0.7rem;">View</button>
-                            `;
-                            msgList.appendChild(div);
-                        }
-                    });
-                });
-            }
-        } catch (e) {
-            console.warn('Error fetching notifications:', e);
-        }
-
-        const msgCount = document.getElementById('dashMsgCount');
-        msgCount.textContent = count;
-        msgCount.style.display = count > 0 ? 'flex' : 'none';
-
-        if (count === 0) {
-            msgList.innerHTML = '<p style="color: var(--text-muted); font-size:0.8rem; text-align:center; padding:20px 0;">No new notifications</p>';
-        }
+    // Auto-detect URL parameter ?world=hackathon
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('world') === 'hackathon') {
+      switchWorldTab('hackathon');
     }
   </script>
-
 </body>
 </html>
