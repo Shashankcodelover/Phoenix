@@ -88,6 +88,7 @@ const simulatorRoutes = require('./modules/simulator/simulatorRoutes');
 const codeReviewRoutes = require('./modules/code-review/codeReviewRoutes');
 const botRoutes = require('./modules/bot/botRoutes');
 const horizonRoutes = require('./modules/horizon/horizonRoutes');
+const csPipelineRoutes = require('./modules/horizon/csPipelineRoutes');
 const { inputSecurityMiddleware } = require('./middleware/inputSanitizer');
 const { createPromptShield } = require('./middleware/promptShield');
 const { createRateLimiter } = require('./middleware/rateLimiter');
@@ -186,6 +187,7 @@ app.use('/api/v1/simulator', simulatorRoutes);
 app.use('/api/v1/code-review', codeReviewRoutes);
 app.use('/api/v1/bot', aiRateLimiter, botRoutes);
 app.use('/api/v1/horizon', horizonRoutes);
+app.use('/api/v1/horizon', csPipelineRoutes);
 
 // Fallback compatibility
 app.use('/api/hackathons', hackathonRoutes);
