@@ -18,8 +18,12 @@ const protect = async (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1];
 
-      const secret = process.env.JWT_SECRET || 'phoenix_super_secret_jwt_key_2026';
-      const decoded = jwt.verify(token, secret);
+      const secret = process.env.JWT_SECRET;
+      if (!secret && process.env.NODE_ENV === 'production') {
+        throw new Error('FATAL: JWT_SECRET environment variable is missing in production.');
+      }
+      const activeSecret = secret || 'phoenix_dev_only_jwt_secret_key_2026';
+      const decoded = jwt.verify(token, activeSecret);
 
       // Attach user object to request context
       req.user = await User.findById(decoded.id).select('-password');

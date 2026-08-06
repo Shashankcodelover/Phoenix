@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phoenix Horizon — Frictionless Career Diagnostic</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --accent-purple: #8b5cf6;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+
+    body {
+      background: radial-gradient(circle at top, #1e1b4b, var(--bg-dark));
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 33%;
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+      transition: width 0.4s ease;
+    }
+
+    h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; text-align: center; }
+    p.subtitle { color: var(--text-muted); font-size: 0.95rem; text-align: center; margin-bottom: 32px; }
+
+    .grid-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .option-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-align: center;
+    }
+
+    .option-card:hover {
+      border-color: var(--accent-purple);
+      background: rgba(139, 92, 246, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .option-card.selected {
+      border-color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.15);
+    }
+
+    .option-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+    .option-title { font-weight: 600; font-size: 1rem; color: var(--text-main); }
+    .option-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+
+    .btn-next {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-next:hover { opacity: 0.9; }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- STEP 1: Academic Stage -->
+    <div id="step1">
+      <h1>Select Your Current Academic Stage</h1>
+      <p class="subtitle">3 clicks to get your personalized roadmap. No tedious forms.</p>
+      <div class="grid-options">
+        <div class="option-card" onclick="selectStage('10th')">
+          <span class="option-icon">🎓</span>
+          <div class="option-title">10th Grade / SSLC</div>
+          <div class="option-desc">Exploring Stream Choices</div>
+        </div>
+        <div class="option-card" onclick="selectStage('2nd_pu')">
+          <span class="option-icon">📚</span>
+          <div class="option-title">1st / 2nd PU (11th/12th)</div>
+          <div class="option-desc">Science, Commerce, Arts</div>
+        </div>
+        <div class="option-card" onclick="selectStage('diploma_3')">
+          <span class="option-icon">⚙️</span>
+          <div class="option-title">Polytechnic Diploma</div>
+          <div class="option-desc">DCET Lateral Entry Prep</div>
+        </div>
+        <div class="option-card" onclick="selectStage('eng_2')">
+          <span class="option-icon">💻</span>
+          <div class="option-title">Engineering (B.E/B.Tech)</div>
+          <div class="option-desc">CS, EC, Civil, Mech</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Interest World Sector -->
+    <div id="step2" class="hidden">
+      <h1>Choose Your Target Career World</h1>
+      <p class="subtitle">What field excites you the most?</p>
+      <div class="grid-options">
+        <div class="option-card" onclick="selectSector('software_coding')">
+          <span class="option-icon">⚡</span>
+          <div class="option-title">Software & Tech</div>
+          <div class="option-desc">Full-Stack, AI, App Dev</div>
+        </div>
+        <div class="option-card" onclick="selectSector('commerce_ca_finance')">
+          <span class="option-icon">📈</span>
+          <div class="option-title">Commerce & CA</div>
+          <div class="option-desc">CA, Finance, Banking</div>
+        </div>
+        <div class="option-card" onclick="selectSector('medical_bio')">
+          <span class="option-icon">🩺</span>
+          <div class="option-title">Bio & Medical</div>
+          <div class="option-desc">NEET-UG, Biotech, Pharmacy</div>
+        </div>
+        <div class="option-card" onclick="selectSector('electronics_iot')">
+          <span class="option-icon">🤖</span>
+          <div class="option-title">Electronics & Robotics</div>
+          <div class="option-desc">Embedded C, IoT, VLSI</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Instant Redirection Loading -->
+    <div id="step3" class="hidden" style="text-align: center; padding: 40px 0;">
+      <div style="font-size: 3rem; margin-bottom: 16px;">🚀</div>
+      <h2>Redirecting To Your Career World...</h2>
+      <p class="subtitle" style="margin-top: 8px;">Setting up your 30-day roadmap and exam alerts.</p>
+    </div>
+  </div>
+
+  <script>
+    let selectedData = { academicStage: '', interestSector: '' };
+
+    function selectStage(stage) {
+      selectedData.academicStage = stage;
+      document.getElementById('step1').classList.add('hidden');
+      document.getElementById('step2').classList.remove('hidden');
+      document.getElementById('progressFill').style.width = '66%';
+    }
+
+    function selectSector(sector) {
+      selectedData.interestSector = sector;
+      document.getElementById('step2').classList.add('hidden');
+      document.getElementById('step3').classList.remove('hidden');
+      document.getElementById('progressFill').style.width = '100%';
+
+      fetch('/api/v1/horizon/diagnostic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(selectedData)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.redirectionUrl) {
+          setTimeout(() => {
+            window.location.href = data.redirectionUrl;
+          }, 800);
+        }
+      })
+      .catch(err => {
+        alert('Redirection complete!');
+      });
+    }
+  </script>
+</body>
+</html>

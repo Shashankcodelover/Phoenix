@@ -87,6 +87,7 @@ const webhookRoutes = require('./modules/webhooks/webhookRoutes');
 const simulatorRoutes = require('./modules/simulator/simulatorRoutes');
 const codeReviewRoutes = require('./modules/code-review/codeReviewRoutes');
 const botRoutes = require('./modules/bot/botRoutes');
+const horizonRoutes = require('./modules/horizon/horizonRoutes');
 const { inputSecurityMiddleware } = require('./middleware/inputSanitizer');
 const { createPromptShield } = require('./middleware/promptShield');
 const { createRateLimiter } = require('./middleware/rateLimiter');
@@ -173,6 +174,7 @@ app.use('/api/v1/webhooks', webhookRoutes);
 app.use('/api/v1/simulator', simulatorRoutes);
 app.use('/api/v1/code-review', codeReviewRoutes);
 app.use('/api/v1/bot', aiRateLimiter, botRoutes);
+app.use('/api/v1/horizon', horizonRoutes);
 
 // Fallback compatibility
 app.use('/api/hackathons', hackathonRoutes);

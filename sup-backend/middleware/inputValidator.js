@@ -252,6 +252,17 @@ const schemas = {
     architectureTopology: { type: 'array', required: false, maxItems: 50 },
     SLAThresholdMs: { type: 'number', required: false, min: 1, max: 10000 },
     retryLimit: { type: 'number', required: false, min: 0, max: 10 }
+  },
+
+  horizonDiagnostic: {
+    academicStage: { type: 'string', required: true, maxLength: 50 },
+    interestSector: { type: 'string', required: true, maxLength: 100 },
+    primaryGoal: { type: 'string', required: false, maxLength: 500 }
+  },
+
+  horizonPyqSubmit: {
+    examKey: { type: 'string', required: false, maxLength: 50 },
+    answers: { type: 'array', required: true, maxItems: 100 }
   }
 };
 
