@@ -3,284 +3,592 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Phoenix Horizon World Dashboard — Your personalized career foundation with roadmaps, exam alerts, daily checklists, and AI guide.">
   <title>Phoenix Horizon — World Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #090d16;
-      --card-bg: rgba(22, 30, 46, 0.75);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --accent-purple: #8b5cf6;
-      --accent-blue: #3b82f6;
-      --accent-cyan: #06b6d4;
-      --accent-gold: #f59e0b;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
+      --bg-base: #030712;
+      --bg-surface: rgba(15, 23, 42, 0.55);
+      --bg-elevated: rgba(30, 41, 59, 0.45);
+      --glass-border: rgba(255,255,255,0.06);
+      --purple-500: #8b5cf6; --purple-400: #a78bfa; --purple-300: #c4b5fd;
+      --blue-500: #3b82f6; --blue-400: #60a5fa;
+      --cyan-400: #22d3ee; --cyan-500: #06b6d4;
+      --emerald-400: #34d399; --emerald-500: #10b981;
+      --amber-400: #fbbf24; --amber-500: #f59e0b;
+      --rose-400: #fb7185; --rose-500: #f43f5e;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-dim: #64748b;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #090d16;
-      color: var(--text-main);
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
       min-height: 100vh;
       display: flex;
     }
 
-    /* Sidebar Navigation */
+    /* ═══ Background ═══ */
+    .bg-mesh {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(109,40,217,0.15), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(8,145,178,0.12), transparent),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(219,39,119,0.06), transparent);
+    }
+
+    /* ═══ Sidebar ═══ */
     .sidebar {
-      width: 260px;
-      background: rgba(15, 23, 42, 0.95);
-      border-right: 1px solid var(--card-border);
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-    }
-
-    .logo {
-      font-size: 1.2rem;
-      font-weight: 800;
-      background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nav-section { display: flex; flex-direction: column; gap: 8px; }
-    .nav-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 8px; }
-
-    .nav-item {
-      padding: 12px 16px;
-      border-radius: 12px;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav-item:hover, .nav-item.active {
-      background: rgba(139, 92, 246, 0.15);
-      color: var(--text-main);
-    }
-
-    .nav-item.active { border-left: 3px solid var(--accent-purple); }
-
-    /* Main Content */
-    .main-content {
-      flex: 1;
-      padding: 32px 40px;
+      position: fixed; left: 0; top: 0; bottom: 0;
+      width: 260px; z-index: 10;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--glass-border);
+      padding: 28px 20px;
+      display: flex; flex-direction: column; gap: 28px;
       overflow-y: auto;
     }
 
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .sidebar-brand {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sidebar-brand-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple-500), var(--cyan-400));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 900; color: white;
+    }
+    .sidebar-brand-text {
+      font-size: 1rem; font-weight: 800;
+      background: linear-gradient(90deg, var(--purple-300), var(--cyan-400));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .nav-group-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--text-dim); margin-bottom: 8px;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 12px;
+      font-size: 0.88rem; font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer; transition: all 0.2s ease;
+      position: relative;
+    }
+    .nav-item:hover { background: rgba(139,92,246,0.08); color: var(--text-primary); }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.08));
+      color: var(--text-primary); font-weight: 600;
+    }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 20px; border-radius: 0 3px 3px 0;
+      background: linear-gradient(180deg, var(--purple-500), var(--cyan-400));
+    }
+    .nav-icon { font-size: 1.1rem; width: 22px; text-align: center; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 14px; border-radius: 14px;
+      background: rgba(139,92,246,0.08);
+      border: 1px solid rgba(139,92,246,0.15);
+    }
+    .sidebar-footer-label { font-size: 0.7rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+    .sidebar-footer-value { font-size: 0.85rem; font-weight: 700; color: var(--amber-400); margin-top: 2px; }
+
+    /* ═══ Main Content ═══ */
+    .main {
+      margin-left: 260px; flex: 1;
+      padding: 32px 36px; position: relative; z-index: 1;
+      overflow-y: auto; max-height: 100vh;
+    }
+
+    .header {
+      display: flex; justify-content: space-between; align-items: flex-start;
       margin-bottom: 32px;
     }
-
-    .world-badge {
-      background: rgba(6, 182, 212, 0.15);
-      border: 1px solid var(--accent-cyan);
-      color: var(--accent-cyan);
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
+    .header h1 {
+      font-size: 1.6rem; font-weight: 800; line-height: 1.3;
     }
+    .header-sub { font-size: 0.88rem; color: var(--text-secondary); margin-top: 4px; }
+    .world-pill {
+      padding: 7px 18px; border-radius: 24px;
+      font-size: 0.78rem; font-weight: 700;
+      border: 1px solid; white-space: nowrap;
+    }
+    .world-pill.tech { background: rgba(139,92,246,0.1); border-color: var(--purple-400); color: var(--purple-300); }
+    .world-pill.commerce { background: rgba(52,211,153,0.1); border-color: var(--emerald-400); color: var(--emerald-400); }
 
-    /* Grid Layout */
-    .dashboard-grid {
+    /* ═══ Dashboard Grid ═══ */
+    .dash-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 24px;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
     }
+    .dash-grid .span-2 { grid-column: 1 / -1; }
 
+    /* ═══ Glass Card ═══ */
     .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--card-border);
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
       border-radius: 20px;
       padding: 24px;
-      margin-bottom: 24px;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
-
-    .card-title {
+    .card:hover {
+      border-color: rgba(255,255,255,0.1);
+      box-shadow: 0 8px 32px -8px rgba(0,0,0,0.3);
+    }
+    .card-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 18px;
+    }
+    .card-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
       font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
+    .card-icon.purple { background: rgba(139,92,246,0.15); }
+    .card-icon.cyan { background: rgba(6,182,212,0.15); }
+    .card-icon.amber { background: rgba(251,191,36,0.15); }
+    .card-icon.emerald { background: rgba(52,211,153,0.15); }
+    .card-icon.rose { background: rgba(251,113,133,0.15); }
 
-    /* Phase Roadmap Nodes */
-    .phase-timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    .card-title { font-size: 0.95rem; font-weight: 700; }
 
-    .phase-item {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--card-border);
+    /* ═══ Phase Timeline ═══ */
+    .phase-list { display: flex; flex-direction: column; gap: 10px; }
+    .phase-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
       border-radius: 14px;
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      transition: background 0.2s;
+    }
+    .phase-row:hover { background: rgba(255,255,255,0.04); }
+    .phase-name { font-size: 0.88rem; font-weight: 600; }
+    .phase-desc { font-size: 0.76rem; color: var(--text-dim); margin-top: 2px; }
+    .phase-tag {
+      padding: 4px 12px; border-radius: 8px;
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    .tag-current { background: rgba(139,92,246,0.15); color: var(--purple-300); }
+    .tag-upcoming { background: rgba(255,255,255,0.04); color: var(--text-dim); }
+    .tag-done { background: rgba(52,211,153,0.12); color: var(--emerald-400); }
+
+    /* ═══ Checklist ═══ */
+    .checklist-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 0.88rem;
+    }
+    .checklist-item:last-child { border-bottom: none; }
+    .checklist-item input[type="checkbox"] {
+      width: 18px; height: 18px; accent-color: var(--emerald-400);
+      cursor: pointer;
+    }
+    .xp-badge {
+      margin-left: auto; padding: 2px 8px;
+      border-radius: 6px; font-size: 0.72rem; font-weight: 700;
+      background: rgba(251,191,36,0.12); color: var(--amber-400);
     }
 
-    .phase-info h4 { font-size: 0.95rem; margin-bottom: 4px; }
-    .phase-info p { font-size: 0.8rem; color: var(--text-muted); }
-
-    .tag {
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: rgba(245, 158, 11, 0.15);
-      color: var(--accent-gold);
+    /* ═══ Exam Alerts ═══ */
+    .exam-item {
+      padding: 14px 16px;
+      border-left: 3px solid var(--purple-500);
+      background: rgba(139,92,246,0.04);
+      border-radius: 0 12px 12px 0;
+      margin-bottom: 10px;
     }
+    .exam-item:nth-child(2) { border-left-color: var(--cyan-400); background: rgba(6,182,212,0.04); }
+    .exam-item:nth-child(3) { border-left-color: var(--amber-400); background: rgba(251,191,36,0.04); }
+    .exam-name { font-size: 0.88rem; font-weight: 700; margin-bottom: 3px; }
+    .exam-detail { font-size: 0.78rem; color: var(--text-dim); }
 
-    /* Exam Alert List */
-    .exam-alert {
-      padding: 12px;
-      border-left: 3px solid var(--accent-purple);
-      background: rgba(139, 92, 246, 0.05);
-      border-radius: 0 10px 10px 0;
-      margin-bottom: 12px;
-    }
-
-    .exam-alert h5 { font-size: 0.9rem; margin-bottom: 4px; }
-    .exam-alert p { font-size: 0.8rem; color: var(--text-muted); }
-
-    /* Mentor Wisdom Cards */
-    .mentor-card {
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 12px;
+    /* ═══ Mentor Cards ═══ */
+    .mentor-item {
       padding: 14px;
-      margin-bottom: 12px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 14px;
+      margin-bottom: 10px;
+    }
+    .mentor-name { font-size: 0.85rem; font-weight: 700; color: var(--cyan-400); }
+    .mentor-role { font-size: 0.72rem; color: var(--text-dim); margin-top: 1px; }
+    .mentor-quote {
+      font-size: 0.82rem; color: var(--text-secondary);
+      font-style: italic; margin-top: 8px;
+      padding-left: 12px;
+      border-left: 2px solid rgba(34,211,238,0.3);
     }
 
-    .mentor-name { font-weight: 600; font-size: 0.85rem; color: var(--accent-cyan); }
-    .mentor-quote { font-size: 0.8rem; color: var(--text-muted); font-style: italic; margin-top: 6px; }
+    /* ═══ AI Guide Bot Floating Widget ═══ */
+    .bot-fab {
+      position: fixed; bottom: 28px; right: 28px; z-index: 100;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple-500), var(--cyan-500));
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; color: white;
+      box-shadow: 0 8px 32px -4px rgba(139,92,246,0.4);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .bot-fab:hover { transform: scale(1.1); box-shadow: 0 12px 40px -4px rgba(139,92,246,0.5); }
+
+    .bot-panel {
+      position: fixed; bottom: 96px; right: 28px; z-index: 100;
+      width: 380px; max-height: 520px;
+      background: rgba(15,23,42,0.92);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      display: none; flex-direction: column;
+      box-shadow: 0 24px 64px -12px rgba(0,0,0,0.6);
+      overflow: hidden;
+      animation: botSlideUp 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .bot-panel.open { display: flex; }
+    @keyframes botSlideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bot-header {
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.08));
+      border-bottom: 1px solid var(--glass-border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .bot-header-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--emerald-400);
+      box-shadow: 0 0 8px var(--emerald-400);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+    .bot-header-text { font-size: 0.88rem; font-weight: 700; }
+    .bot-header-sub { font-size: 0.72rem; color: var(--text-dim); }
+
+    .bot-messages {
+      flex: 1; overflow-y: auto;
+      padding: 16px 20px;
+      display: flex; flex-direction: column; gap: 12px;
+      max-height: 340px;
+    }
+    .bot-msg {
+      max-width: 85%; padding: 12px 16px;
+      border-radius: 16px; font-size: 0.84rem; line-height: 1.5;
+    }
+    .bot-msg.from-bot {
+      background: rgba(139,92,246,0.1);
+      border: 1px solid rgba(139,92,246,0.15);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .bot-msg.from-user {
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(59,130,246,0.15);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .bot-input-bar {
+      padding: 12px 16px;
+      border-top: 1px solid var(--glass-border);
+      display: flex; gap: 8px;
+    }
+    .bot-input-bar input {
+      flex: 1; padding: 10px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      color: var(--text-primary);
+      font-size: 0.84rem;
+      outline: none;
+    }
+    .bot-input-bar input:focus { border-color: var(--purple-400); }
+    .bot-input-bar button {
+      padding: 10px 16px; border: none; border-radius: 12px;
+      background: linear-gradient(135deg, var(--purple-500), var(--blue-500));
+      color: white; font-weight: 700; font-size: 0.84rem;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .bot-input-bar button:hover { opacity: 0.85; }
+
+    /* ═══ Focus Highlight Effect ═══ */
+    .phoenix-focus-highlight {
+      outline: 3px solid var(--cyan-400) !important;
+      outline-offset: 4px;
+      box-shadow: 0 0 24px rgba(34,211,238,0.3) !important;
+      animation: focusPulse 1.5s ease-in-out 3;
+      position: relative;
+      z-index: 50;
+    }
+    @keyframes focusPulse {
+      0%, 100% { outline-color: var(--cyan-400); box-shadow: 0 0 24px rgba(34,211,238,0.3); }
+      50% { outline-color: var(--purple-400); box-shadow: 0 0 36px rgba(139,92,246,0.4); }
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .dash-grid { grid-template-columns: 1fr; }
+      .bot-panel { width: calc(100vw - 32px); right: 16px; }
+    }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <div class="logo">🌅 PHOENIX HORIZON</div>
-    <div class="nav-section">
-      <div class="nav-label">Navigation</div>
-      <div class="nav-item active">🗺️ Phased Roadmap</div>
-      <div class="nav-item">✅ Daily Checklists</div>
-      <div class="nav-item">📚 PYQ Practice Bank</div>
-      <div class="nav-item">📡 Exam Radar Alerts</div>
-      <div class="nav-item">🎓 Senior Mentorship</div>
-      <div class="nav-item">🧭 Stage Explorer</div>
+  <div class="bg-mesh"></div>
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">P</div>
+      <div class="sidebar-brand-text">Phoenix Horizon</div>
     </div>
-  </div>
+    <div>
+      <div class="nav-group-label">Your Journey</div>
+      <div class="nav-item active" data-section="roadmap"><span class="nav-icon">🗺️</span> Phased Roadmap</div>
+      <div class="nav-item" data-section="checklist"><span class="nav-icon">✅</span> Daily Checklist</div>
+      <div class="nav-item" data-section="pyqs"><span class="nav-icon">📝</span> PYQ Practice</div>
+    </div>
+    <div>
+      <div class="nav-group-label">Intelligence</div>
+      <div class="nav-item" data-section="exams"><span class="nav-icon">📡</span> Exam Radar</div>
+      <div class="nav-item" data-section="mentors"><span class="nav-icon">🎓</span> Senior Bridge</div>
+      <div class="nav-item" data-section="resources"><span class="nav-icon">📚</span> Resources</div>
+      <div class="nav-item" data-section="explorer"><span class="nav-icon">🧭</span> Stage Explorer</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-label">Daily XP</div>
+      <div class="sidebar-footer-value">0 XP earned today</div>
+    </div>
+  </nav>
 
-  <div class="main-content">
-    <div class="header-bar">
+  <!-- Main Dashboard -->
+  <main class="main">
+    <div class="header">
       <div>
-        <h1 id="welcomeTitle">Welcome to Your Career World</h1>
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Zero-to-Hero Foundation & Career Roadmap</p>
+        <h1 id="welcomeTitle">Your Career Foundation</h1>
+        <p class="header-sub">Zero-to-Hero roadmap, daily actions, exam alerts & AI mentor</p>
       </div>
-      <div class="world-badge" id="worldBadge">Tech & Engineering World</div>
+      <div class="world-pill tech" id="worldPill">💻 Tech & Engineering</div>
     </div>
 
-    <div class="dashboard-grid">
-      <!-- Left Column: Roadmap & Checklists -->
-      <div>
-        <div class="card">
-          <div class="card-title">🗺️ Your Active Phased Roadmap (Full Stack Web)</div>
-          <div class="phase-timeline" id="roadmapTimeline">
-            <div class="phase-item">
-              <div class="phase-info">
-                <h4>Phase 1: Zero-to-One Foundation</h4>
-                <p>HTML5, CSS3, JS ES6+, Git & GitHub (Weeks 1–4)</p>
-              </div>
-              <span class="tag">CURRENT PHASE</span>
-            </div>
-            <div class="phase-item">
-              <div class="phase-info">
-                <h4>Phase 2: Core Domain Deep-Dive</h4>
-                <p>React.js, Node.js, Express, MongoDB (Weeks 5–16)</p>
-              </div>
-              <span class="tag" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">UPCOMING</span>
-            </div>
-            <div class="phase-item">
-              <div class="phase-info">
-                <h4>Phase 3: Real-World Application & Portfolio</h4>
-                <p>Build 2 deployed full-stack projects with live demo (Weeks 17–24)</p>
-              </div>
-              <span class="tag" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">UPCOMING</span>
-            </div>
-            <div class="phase-item">
-              <div class="phase-info">
-                <h4>Phase 4: Exam / Interview / Placement Sprint</h4>
-                <p>DSA 150+, System Design basics & Mock interviews (Weeks 25+)</p>
-              </div>
-              <span class="tag" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">UPCOMING</span>
-            </div>
-          </div>
+    <div class="dash-grid">
+      <!-- Roadmap Card -->
+      <div class="card span-2" id="roadmapCard">
+        <div class="card-header">
+          <div class="card-icon purple">🗺️</div>
+          <div class="card-title">Your Phased Roadmap</div>
         </div>
-
-        <div class="card">
-          <div class="card-title">✅ Today's Action Checklist (Day 1)</div>
-          <div style="display: flex; flex-direction: column; gap: 10px;" id="dailyChecklist">
-            <label style="display: flex; align-items: center; gap: 12px; font-size: 0.9rem; cursor: pointer;">
-              <input type="checkbox"> Complete HTML semantic elements masterclass (30 mins) — <strong style="color: var(--accent-gold);">+10 XP</strong>
-            </label>
-            <label style="display: flex; align-items: center; gap: 12px; font-size: 0.9rem; cursor: pointer;">
-              <input type="checkbox"> Build a basic personal profile page in HTML (45 mins) — <strong style="color: var(--accent-gold);">+15 XP</strong>
-            </label>
+        <div class="phase-list" id="roadmapTimeline">
+          <div class="phase-row">
+            <div><div class="phase-name">Phase 1 · Zero-to-One Foundation</div><div class="phase-desc">HTML, CSS, JavaScript ES6+, Git & GitHub — Weeks 1–4</div></div>
+            <span class="phase-tag tag-current">Current</span>
+          </div>
+          <div class="phase-row">
+            <div><div class="phase-name">Phase 2 · Core Domain Deep-Dive</div><div class="phase-desc">React.js, Node.js, Express, MongoDB — Weeks 5–16</div></div>
+            <span class="phase-tag tag-upcoming">Upcoming</span>
+          </div>
+          <div class="phase-row">
+            <div><div class="phase-name">Phase 3 · Real-World Portfolio</div><div class="phase-desc">2 deployed projects, GitHub profile, open-source PR — Weeks 17–24</div></div>
+            <span class="phase-tag tag-upcoming">Upcoming</span>
+          </div>
+          <div class="phase-row">
+            <div><div class="phase-name">Phase 4 · Interview & Placement Sprint</div><div class="phase-desc">DSA 150+, System Design, Mock Interviews — Weeks 25+</div></div>
+            <span class="phase-tag tag-upcoming">Upcoming</span>
           </div>
         </div>
       </div>
 
-      <!-- Right Column: Exam Radar & Senior Bridge -->
-      <div>
-        <div class="card">
-          <div class="card-title">📡 Entrance Exam Radar</div>
-          <div id="examRadarList">
-            <div class="exam-alert">
-              <h5>KCET 2026 (KEA)</h5>
-              <p>Registration Deadline: 2026-03-25 | Exam: 2026-04-18</p>
-            </div>
-            <div class="exam-alert" style="border-color: var(--accent-cyan); background: rgba(6,182,212,0.05);">
-              <h5>DCET 2026 (Diploma Lateral Entry)</h5>
-              <p>Registration: Upcoming (May 2026) | Exam: 2026-06-02</p>
-            </div>
-          </div>
+      <!-- Daily Checklist -->
+      <div class="card" id="checklistCard">
+        <div class="card-header">
+          <div class="card-icon emerald">✅</div>
+          <div class="card-title">Today's Actions</div>
         </div>
+        <div id="dailyChecklist">
+          <div class="checklist-item"><input type="checkbox"> Complete HTML semantic elements tutorial <span class="xp-badge">+10 XP</span></div>
+          <div class="checklist-item"><input type="checkbox"> Build a basic personal profile page <span class="xp-badge">+15 XP</span></div>
+          <div class="checklist-item"><input type="checkbox"> Push your code to GitHub <span class="xp-badge">+20 XP</span></div>
+        </div>
+      </div>
 
-        <div class="card">
-          <div class="card-title">🎓 Senior Mentorship Wisdom</div>
-          <div id="seniorMentorsList">
-            <div class="mentor-card">
-              <div class="mentor-name">Ananya Sharma (Senior SE @ Google)</div>
-              <div class="mentor-quote">"Don’t wait until 3rd year to learn DSA. Having 2 live projects beats 10 tutorial certificates."</div>
-            </div>
+      <!-- Exam Radar -->
+      <div class="card" id="examCard">
+        <div class="card-header">
+          <div class="card-icon amber">📡</div>
+          <div class="card-title">Exam Radar</div>
+        </div>
+        <div id="examRadarList">
+          <div class="exam-item"><div class="exam-name">KCET 2026</div><div class="exam-detail">Registration: Mar 25 · Exam: Apr 18 · No negative marking</div></div>
+          <div class="exam-item"><div class="exam-name">DCET 2026</div><div class="exam-detail">Registration: May · Exam: Jun 2 · Lateral entry to B.E 2nd year</div></div>
+          <div class="exam-item"><div class="exam-name">COMEDK UGET</div><div class="exam-detail">Registration: Jan · Exam: May 11 · Private engineering colleges</div></div>
+        </div>
+      </div>
+
+      <!-- Senior Mentorship -->
+      <div class="card" id="mentorCard">
+        <div class="card-header">
+          <div class="card-icon cyan">🎓</div>
+          <div class="card-title">Senior Wisdom</div>
+        </div>
+        <div id="seniorMentorsList">
+          <div class="mentor-item">
+            <div class="mentor-name">Ananya Sharma</div>
+            <div class="mentor-role">Senior SE @ Google · VTU 2023</div>
+            <div class="mentor-quote">"Don't wait until 3rd year to learn DSA. Having 2 live projects beats 10 tutorial certificates."</div>
+          </div>
+          <div class="mentor-item">
+            <div class="mentor-name">Karthik R</div>
+            <div class="mentor-role">SDE-2 @ Amazon · RVCE 2022</div>
+            <div class="mentor-quote">"I wish I had started competitive programming in 2nd year. Consistency beats cramming every time."</div>
           </div>
         </div>
       </div>
+
+      <!-- Resources -->
+      <div class="card" id="resourceCard">
+        <div class="card-header">
+          <div class="card-icon rose">📚</div>
+          <div class="card-title">Top Free Resources</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <a href="https://cs50.harvard.edu/x/" target="_blank" style="color:var(--cyan-400);font-size:0.85rem;text-decoration:none;">🏆 CS50 by Harvard — Best Intro to CS</a>
+          <a href="https://www.freecodecamp.org/" target="_blank" style="color:var(--emerald-400);font-size:0.85rem;text-decoration:none;">🌐 freeCodeCamp — Full Curriculum (Free)</a>
+          <a href="https://takeuforward.org/strivers-a2z-dsa-course/strivers-a2z-dsa-course-sheet-2/" target="_blank" style="color:var(--amber-400);font-size:0.85rem;text-decoration:none;">📊 Striver A2Z DSA Sheet</a>
+          <a href="https://www.theodinproject.com/" target="_blank" style="color:var(--purple-300);font-size:0.85rem;text-decoration:none;">💎 The Odin Project — Full Stack Path</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- AI Guide Bot FAB -->
+  <button class="bot-fab" onclick="toggleBot()" title="AI Guide">🤖</button>
+
+  <!-- AI Guide Bot Panel -->
+  <div class="bot-panel" id="botPanel">
+    <div class="bot-header">
+      <div class="bot-header-dot"></div>
+      <div>
+        <div class="bot-header-text">Phoenix AI Guide</div>
+        <div class="bot-header-sub">Ask me anything about your career journey</div>
+      </div>
+    </div>
+    <div class="bot-messages" id="botMessages">
+      <div class="bot-msg from-bot">Hey! 👋 I'm your Phoenix Guide. Try asking:<br><br>• "Show me my roadmap"<br>• "How do I prepare for KCET?"<br>• "Where is the exam radar?"<br>• "What is my college not teaching me?"</div>
+    </div>
+    <div class="bot-input-bar">
+      <input type="text" id="botInput" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')sendBotMessage()">
+      <button onclick="sendBotMessage()">Send</button>
     </div>
   </div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const world = urlParams.get('world') || 'tech_world';
+    const world = urlParams.get('world') || 'software_coding';
     const stage = urlParams.get('stage') || '2nd_pu';
 
-    document.getElementById('worldBadge').innerText = world.replace('_', ' ').toUpperCase();
+    const WORLD_LABELS = {
+      tech_world: '💻 Tech & Engineering', software_coding: '💻 Tech & Engineering',
+      commerce_world: '📈 Commerce & Finance', commerce_ca_finance: '📈 Commerce & Finance',
+      bio_world: '🧬 Bio & Medical', medical_bio: '🧬 Bio & Medical',
+      electronics_world: '🤖 Electronics & Hardware', electronics_iot: '🤖 Electronics & Hardware',
+      arts_world: '🎨 Arts & Design', arts_design: '🎨 Arts & Design'
+    };
+    document.getElementById('worldPill').textContent = WORLD_LABELS[world] || '💻 Tech & Engineering';
+
+    // Bot Toggle
+    function toggleBot() {
+      document.getElementById('botPanel').classList.toggle('open');
+    }
+
+    // Bot Chat
+    function sendBotMessage() {
+      const input = document.getElementById('botInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+      input.value = '';
+
+      const messagesEl = document.getElementById('botMessages');
+      messagesEl.innerHTML += `<div class="bot-msg from-user">${escapeHtml(msg)}</div>`;
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+
+      fetch('/api/v1/horizon/bot/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg, userStage: stage, currentPage: 'world-dashboard' })
+      })
+      .then(r => r.json())
+      .then(data => {
+        const reply = data.botReply || 'I couldn\'t process that. Try asking about your roadmap or exam prep.';
+        messagesEl.innerHTML += `<div class="bot-msg from-bot">${reply.replace(/\n/g, '<br>')}</div>`;
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+
+        // Apply focus highlights
+        if (data.focusElements && data.focusElements.length > 0) {
+          document.querySelectorAll('.phoenix-focus-highlight').forEach(el => el.classList.remove('phoenix-focus-highlight'));
+          data.focusElements.forEach(fe => {
+            const el = document.querySelector(fe.selector.split(',')[0].trim());
+            if (el) {
+              el.classList.add('phoenix-focus-highlight');
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              setTimeout(() => el.classList.remove('phoenix-focus-highlight'), 5000);
+            }
+          });
+        }
+      })
+      .catch(() => {
+        messagesEl.innerHTML += `<div class="bot-msg from-bot">I'm offline right now, but I can still help! Try refreshing the page.</div>`;
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Nav item clicks
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+        const section = item.dataset.section;
+        const cardMap = { roadmap: 'roadmapCard', checklist: 'checklistCard', exams: 'examCard', mentors: 'mentorCard', resources: 'resourceCard' };
+        const target = document.getElementById(cardMap[section]);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // XP tracking
+    document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const xpBadge = cb.parentElement.querySelector('.xp-badge');
+        if (cb.checked && xpBadge) {
+          const xp = parseInt(xpBadge.textContent.replace(/[^0-9]/g, ''));
+          const footer = document.querySelector('.sidebar-footer-value');
+          const current = parseInt(footer.textContent) || 0;
+          footer.textContent = `${current + xp} XP earned today`;
+          cb.parentElement.style.opacity = '0.5';
+          cb.parentElement.style.textDecoration = 'line-through';
+        }
+      });
+    });
   </script>
 </body>
 </html>
