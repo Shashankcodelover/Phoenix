@@ -1,13 +1,13 @@
-# 🔥 Project Phoenix v9.0 — Autonomous Career & Interview Operating System
+# 🔥 Project Phoenix v10.0 — Autonomous Career & Interview Preparation Engine
 
 > **Google & Microsoft Senior Staff Engineering Standards Compliance**  
-> A Next-Generation Platform for **Placement Interview Preparation**, **Turn-Based Hackathon Simulations**, **STAR Story Synthesizer**, **Salary & Equity Comp Benchmarking**, **5-Slide Pitch Deck Generator**, **Outbound Signed Webhook Relay**, and **Daily Streak & XP Quests**.
+> A Next-Generation Platform for **Placement Interview Preparation**, **Behavioral Outage Crisis Pressure Simulators**, **Latency Budget & Circuit Breaker Architecture Evaluators**, **STAR Story Synthesizer**, **Salary & Equity Comp Benchmarking**, **Live AI Judge Defense**, and **60-Test Automated Suite**.
 
 ---
 
 ## 🌟 Architecture & Dual-World Design
 
-Project Phoenix bridges the gap between theoretical algorithm practice and real-world project building. The platform is architected into **two distinct, high-fidelity feature ecosystems**:
+Project Phoenix bridges theoretical algorithm practice and real-world software engineering under pressure. The platform is architected into **two distinct, high-fidelity feature ecosystems**:
 
 ```text
                                 🏰 PHOENIX COMMAND PORTAL
@@ -18,14 +18,16 @@ Project Phoenix bridges the gap between theoretical algorithm practice and real-
 ┌───────────────────────────────────────┐               ┌───────────────────────────────────────┐
 │ ⚔️ PLACEMENT & INTERVIEW WORLD        │               │ 🚀 HACKATHON & BUILDER WORLD          │
 ├───────────────────────────────────────┤               ├───────────────────────────────────────┤
-│ • 🗺️ Adaptive Syllabus Roadmap        │               │ • 💡 AI Idea Generator (Winner RAG)   │
-│ • 🎙️ Bar-Raiser AI Mock Simulator     │               │ • 🎮 10-Stage Hackathon Simulator     │
-│ • 📄 ATS Resume Diff Engine           │               │ • ⚖️ Live 3-Round AI Judge Defense    │
-│ • 📚 200+ Multi-Domain PYQ Bank       │               │ • 🎤 5-Slide Pitch Presenter Blueprint│
-│ • 🏢 Company & Role Intelligence      │               │ • 🔍 AI Code Review Audit Agent       │
-│ • 📊 Placement Readiness Index        │               │ • ⚡ LRU Response Cache Engine        │
-│ • 🌟 STAR Behavioral Story Miner      │               │ • 📡 Outbound Signed Webhook Relay    │
-│ • 💰 Salary & Equity Comp Benchmarks  │               │ • 🏆 Daily Streak Multipliers & XP    │
+│ • 💥 Outage Crisis & Pressure Engine  │               │ • 💡 AI Idea Generator (Winner RAG)   │
+│ • ⚡ Latency Budget & Circuit Breaker │               │ • 🎮 10-Stage Hackathon Simulator     │
+│ • 🗺️ Adaptive Syllabus Roadmap        │               │ • ⚖️ Live 3-Round AI Judge Defense    │
+│ • 🎙️ Bar-Raiser AI Mock Simulator     │               │ • 🎤 5-Slide Pitch Presenter Blueprint│
+│ • 📄 ATS Resume Diff Engine           │               │ • 🔍 AI Code Review Audit Agent       │
+│ • 📚 200+ Multi-Domain PYQ Bank       │               │ • ⚡ LRU Response Cache Engine        │
+│ • 🏢 Company & Role Intelligence      │               │ • 📡 Outbound Signed Webhook Relay    │
+│ • 📊 Placement Readiness Index        │               │ • 🏆 Daily Streak Multipliers & XP    │
+│ • 🌟 STAR Behavioral Story Miner      │               │ • 🛡️ Zero-Trust Input Security        │
+│ • 💰 Salary & Equity Comp Benchmarks  │               │                                       │
 └───────────────────────────────────────┘               └───────────────────────────────────────┘
 ```
 
@@ -33,7 +35,7 @@ Project Phoenix bridges the gap between theoretical algorithm practice and real-
 
 ## 🚀 Quick Start
 
-### Method 1: Docker Compose (Recommended — Instant Setup)
+### Method 1: Docker Compose (Recommended)
 
 ```bash
 # 1. Copy environment template
@@ -46,28 +48,25 @@ docker-compose up -d --build
 - ⚙️ **Backend API Server**: `http://localhost:5000`
 - 🍃 **MongoDB Database**: `localhost:27017`
 
-### Method 2: Local Development & Automated Tests
+### Method 2: Local Native Execution & Automated Tests
 
 ```bash
-# 1. Navigate to backend
-cd sup-backend
-
-# 2. Install dependencies
-npm install
-
-# 3. Run automated 55-test suite
+# 1. Run root test suite (runs 60 automated backend tests)
 npm test
 
-# 4. Start backend server
+# 2. Start local backend server
 npm start
 ```
 
 ---
 
-## 📚 Complete Documentation & File Inventory
+## 📚 Essential Project Documentation
 
-For a comprehensive guide on environment variables, setup instructions, and a file-by-file inventory of all roles in the project, please see:
-📖 **[SETUP.md](SETUP.md)**
+- 📋 **[PROJECT_SETUP_CHECKLIST.md](PROJECT_SETUP_CHECKLIST.md)** — Step-by-step local setup & verification checklist.
+- 🎯 **[TASKS.md](TASKS.md)** — Living task manager (To Do / In Progress / Done).
+- 🗺️ **[ROADMAP_AND_FLOW.md](ROADMAP_AND_FLOW.md)** — Tech stack rationale, end-to-end data flow, and competitive position.
+- 🧭 **[EXPLORE_GUIDE.md](EXPLORE_GUIDE.md)** — Guided developer tour of the codebase.
+- 📅 **[CHANGELOG_DAILY.md](docs/CHANGELOG_DAILY.md)** — Honest daily audit & change history log.
 
 ---
 

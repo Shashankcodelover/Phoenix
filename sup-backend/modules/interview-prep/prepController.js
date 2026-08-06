@@ -5,6 +5,8 @@ const { generateResumeDiff } = require('./resumeDiffEngine');
 const { questions: PYQ_DATABASE } = require('./questionBankData');
 const { getCompanyProfile, COMPANY_INTELLIGENCE } = require('./companyIntelligence');
 const { WINNING_PROJECTS } = require('../hackathon-agent/hackathonWinnersData');
+const { evaluateBehavioralPressure } = require('./behavioralPressureEngine');
+const { evaluateLatencyCircuitBreaker } = require('./latencyCircuitBreakerEngine');
 
 
 // @desc    Disrupt & Optimize Resume for Target Role
@@ -574,6 +576,28 @@ const generateSystemDesignQuestion = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+// @desc    Evaluate candidate response to crisis curveball under pressure
+// @route   POST /api/v1/prep/behavioral-pressure
+const analyzeBehavioralPressureEndpoint = async (req, res) => {
+  try {
+    const { candidateAnswer = '', crisisScenario = 'PROD_OUTAGE', reactionTimeSeconds = 15 } = req.body;
+    const result = evaluateBehavioralPressure({ candidateAnswer, crisisScenario, reactionTimeSeconds });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Evaluate system design latency budget & circuit breaker SLA risk
+// @route   POST /api/v1/prep/evaluate-latency
+const evaluateLatencyCircuitBreakerEndpoint = async (req, res) => {
+  try {
+    const { architectureTopology = [], SLAThresholdMs = 250, retryLimit = 3 } = req.body;
+    const result = evaluateLatencyCircuitBreaker({ architectureTopology, SLAThresholdMs, retryLimit });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 module.exports = {
@@ -591,5 +615,7 @@ module.exports = {
   generateRevisionSheet,
   analyzeAudio,
   getPerformanceTrend,
-  generateSystemDesignQuestion
+  generateSystemDesignQuestion,
+  analyzeBehavioralPressureEndpoint,
+  evaluateLatencyCircuitBreakerEndpoint
 };

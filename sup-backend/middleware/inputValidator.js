@@ -240,6 +240,18 @@ const schemas = {
     projectTitle: { type: 'string', required: true, maxLength: 300 },
     hackathonName: { type: 'string', required: false, maxLength: 200 },
     techStack: { type: 'array', required: false, maxItems: 30 }
+  },
+
+  behavioralPressure: {
+    candidateAnswer: { type: 'string', required: true, maxLength: 5000 },
+    crisisScenario: { type: 'string', required: false, maxLength: 100 },
+    reactionTimeSeconds: { type: 'number', required: false, min: 0, max: 600 }
+  },
+
+  latencyCircuit: {
+    architectureTopology: { type: 'array', required: false, maxItems: 50 },
+    SLAThresholdMs: { type: 'number', required: false, min: 1, max: 10000 },
+    retryLimit: { type: 'number', required: false, min: 0, max: 10 }
   }
 };
 

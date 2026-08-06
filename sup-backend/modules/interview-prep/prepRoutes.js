@@ -14,12 +14,17 @@ const {
   generateRevisionSheet,
   analyzeAudio,
   getPerformanceTrend,
-  generateSystemDesignQuestion
+  generateSystemDesignQuestion,
+  analyzeBehavioralPressureEndpoint,
+  evaluateLatencyCircuitBreakerEndpoint
 } = require('./prepController');
 
 const { validate, schemas } = require('../../middleware/inputValidator');
 
 const router = express.Router();
+
+router.post('/behavioral-pressure', validate(schemas.behavioralPressure), analyzeBehavioralPressureEndpoint);
+router.post('/evaluate-latency', validate(schemas.latencyCircuit), evaluateLatencyCircuitBreakerEndpoint);
 
 router.post('/generate-roadmap', validate(schemas.generateRoadmap), generateRoadmap);
 router.post('/mock-interview', validate(schemas.mockInterview), mockInterview);
