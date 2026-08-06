@@ -32,4 +32,8 @@ router.get('/mentors', horizonController.getMentors);
 // Stage-Based Domain Explorer ("What's out there at my stage?")
 router.get('/explorer/:stageKey', horizonController.getStageExplorer);
 
+// A-to-Z Gap & Pathway Guides
+router.get('/guides', horizonController.getGapGuidesList);
+router.get('/guides/:domainKey', horizonController.getGapGuideByKey);
+
 module.exports = router;

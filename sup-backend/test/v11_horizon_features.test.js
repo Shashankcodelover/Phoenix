@@ -8,6 +8,7 @@ const { getRoadmap, listRoadmaps } = require('../modules/horizon/roadmapEngine')
 const { generateDailyChecklist, generateMonthlyMilestones } = require('../modules/horizon/checklistEngine');
 const { getResources } = require('../modules/horizon/resourceRepository');
 const { exploreDomainByStage } = require('../modules/horizon/domainExplorer');
+const { getGapGuide, listGapGuides } = require('../modules/horizon/gapGuideEngine');
 
 test('evaluateStudentDiagnostic matches Tech sector correctly', () => {
   const result = evaluateStudentDiagnostic({
@@ -96,4 +97,14 @@ test('exploreDomainByStage returns stage-appropriate streams and exams', () => {
   const explore10th = exploreDomainByStage('10th');
   assert.equal(explore10th.success, true);
   assert.ok(explore10th.availableStreams.length >= 3);
+});
+
+test('getGapGuide and listGapGuides return A-to-Z domain pathway guides', () => {
+  const list = listGapGuides({});
+  assert.ok(list.count >= 5);
+
+  const caGuide = getGapGuide('commerce_ca');
+  assert.equal(caGuide.success, true);
+  assert.ok(caGuide.guide.stepByStepPathway.length >= 4);
+  assert.ok(caGuide.guide.topMistakesToAvoid.length >= 3);
 });

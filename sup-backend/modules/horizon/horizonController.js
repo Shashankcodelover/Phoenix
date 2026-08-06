@@ -6,6 +6,7 @@ const { getRoadmap, listRoadmaps } = require('./roadmapEngine');
 const { generateDailyChecklist, generateMonthlyMilestones } = require('./checklistEngine');
 const { getResources } = require('./resourceRepository');
 const { exploreDomainByStage } = require('./domainExplorer');
+const { getGapGuide, listGapGuides } = require('./gapGuideEngine');
 
 /**
  * Horizon Controller
@@ -139,6 +140,28 @@ const horizonController = {
   getStageExplorer: async (req, res) => {
     try {
       const result = exploreDomainByStage(req.params.stageKey);
+      if (!result.success) return res.status(404).json(result);
+      return res.status(200).json(result);
+    } catch (err) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
+  // GET /api/v1/horizon/guides
+  getGapGuidesList: async (req, res) => {
+    try {
+      const { world } = req.query;
+      const result = listGapGuides({ world });
+      return res.status(200).json(result);
+    } catch (err) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
+  // GET /api/v1/horizon/guides/:domainKey
+  getGapGuideByKey: async (req, res) => {
+    try {
+      const result = getGapGuide(req.params.domainKey);
       if (!result.success) return res.status(404).json(result);
       return res.status(200).json(result);
     } catch (err) {
