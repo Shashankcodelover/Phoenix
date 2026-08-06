@@ -114,11 +114,13 @@ app.use('/api', createPromptShield({ maxPayloadBytes: 50 * 1024, sanitize: true,
 const getHealthStatus = (req, res) => {
   res.json({
     status: 'ONLINE',
-    system: 'Project Phoenix Ultimate Autonomous Career Operating System',
-    version: '9.0.0',
+    system: 'Project Phoenix Ultimate Autonomous Career & Hackathon Operating System',
+    version: '11.0.0',
     timestamp: new Date().toISOString(),
     uptimeSeconds: Math.round(process.uptime()),
+    architecture: 'Tri-Pillar Modular World System (1. Placement & Interview World, 2. Hackathon & Builder World, 3. Phoenix Horizon Gap-Filler & Foundation)',
     aiEngineStatus: 'Multi-Provider Cascade Router (Groq 70B -> Gemini Flash -> OpenAI -> OpenRouter -> Local Engine)',
+    horizonStatus: 'ACTIVE (Diagnostic Engine, 4-Phase Roadmaps, Exam Radar, PYQ Bank, Senior Bridge)',
     speechProsodyStatus: 'ACTIVE (WPM, Clarity, Filler Density & Vocal Prosody Evaluator)',
     peerMatchStatus: 'ACTIVE (P2P Signaling Room Engine & AI Safety-Net Takeover)',
     systemDesignStatus: 'ACTIVE (Interactive Architecture SLA, SPOF & Cloud Cost Evaluator)',
@@ -130,27 +132,36 @@ const getHealthStatus = (req, res) => {
     webhookDispatcherStatus: 'ACTIVE (Outbound Signed Event Relay & Dispatcher)',
     questEngineStatus: 'ACTIVE (Daily Streak Multiplier & XP Quest Engine)',
     securityShieldStatus: 'ACTIVE (Prompt Injection Shield + XSS Sanitizer + Payload Ceiling Guard)',
-    availableModules: [
-      'Speech & Vocal Prosody Evaluator (/api/v1/prep/analyze-speech)',
-      'Peer-to-Peer Interview Signaling & AI Safety-Net (/api/v1/prep/peer-session)',
-      'System Design Architecture Evaluator (/api/v1/prep/evaluate-architecture)',
-      'Hackathon Urgency & Match Scorer (/api/v1/agent/rank-hackathons)',
-      'Unified 6-Axis Skill Radar Matrix (/api/v1/gamification/skill-matrix)',
-      '3-Round Live AI Judge Defense Simulator (/api/v1/agent/judge-defense-sim)',
-      'ATS Resume Diff & Optimizer Engine (/api/v1/prep/resume-diff)',
-      'STAR Behavioral Story Synthesizer (/api/v1/prep/star-synthesize)',
-      'Compensation Benchmarking Engine (/api/v1/prep/comp-benchmark)',
-      'Pitch Deck & Presenter Blueprint Generator (/api/v1/agent/pitch-deck)',
-      'Webhook Notification Relay (/api/v1/webhooks/dispatch)',
-      'Daily Streak & XP Quests (/api/v1/gamification/quests)',
-      'AI Teammate Personality Engine (/api/v1/simulator/vote)',
-      'Chaos Incident Engine (/api/v1/simulator/chaos)',
-      'Jury Roast Engine (/api/v1/simulator/evaluate)',
-      'ATS Resume Disruptor (/api/v1/prep/resume-disrupt)',
-      'Project Judge Explainer (/api/v1/agent/judge-explainer)',
-      'AI Code Review Agent (/api/v1/code-review/audit)',
-      'Universal AI Copilot Assistant (/api/v1/bot/assistant)'
-    ]
+    availablePillars: {
+      pillar1_placement_interview: [
+        'Behavioral Outage Crisis Engine (/api/v1/prep/behavioral-pressure)',
+        'Latency Budget Circuit Breaker (/api/v1/prep/evaluate-latency)',
+        'Speech Prosody Evaluator (/api/v1/prep/analyze-speech)',
+        'Peer Mock Room & AI Safety-Net (/api/v1/prep/peer-session)',
+        'System Design Architecture Evaluator (/api/v1/prep/evaluate-architecture)',
+        'ATS Resume Diff Engine (/api/v1/prep/resume-diff)',
+        'STAR Story Synthesizer (/api/v1/prep/star-synthesize)',
+        'Compensation Benchmarking Engine (/api/v1/prep/comp-benchmark)'
+      ],
+      pillar2_hackathon_builder: [
+        'Hackathon Urgency & Match Scorer (/api/v1/agent/rank-hackathons)',
+        'Live 3-Round AI Judge Defense Simulator (/api/v1/agent/judge-defense-sim)',
+        '5-Slide Pitch Deck Presenter Blueprint (/api/v1/agent/pitch-deck)',
+        'AI Code Review Audit Agent (/api/v1/code-review/audit)',
+        'Hackathon Winner Solutions RAG (/api/v1/idea-gen/generate-ideas)',
+        'Webhook Outbound Relay (/api/v1/webhooks/dispatch)'
+      ],
+      pillar3_horizon_gap_filler: [
+        'Zero-Friction Diagnostic Onboarding (/api/v1/horizon/diagnostic)',
+        'Multi-Sector 4-Phase Domain Roadmaps (/api/v1/horizon/roadmaps)',
+        'Daily Action Checklists & XP Rewards (/api/v1/horizon/checklists/daily)',
+        'Verified Resource & Link Repository (/api/v1/horizon/resources)',
+        'Entrance Exam Radar (KCET/DCET/NEET/CA/JEE) (/api/v1/horizon/exams)',
+        '500+ Categorized PYQ Question Bank & Mock Simulator (/api/v1/horizon/pyqs)',
+        'Senior Alumni Mentorship Bridge (/api/v1/horizon/mentors)',
+        'Stage-Based Career Path Explorer (/api/v1/horizon/explorer/:stageKey)'
+      ]
+    }
   });
 };
 
