@@ -5,11 +5,35 @@
  * heartbeat monitoring, and automated AI Copilot Takeover when a peer disconnects or goes silent.
  */
 
-const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
-// In-memory active peer room session registry
+// In-memory active peer room session registry with disk backup
 const ACTIVE_ROOMS = new Map();
 const WAITING_QUEUE = [];
+const BACKUP_FILE = path.join(__dirname, '../../uploads/peer_rooms_backup.json');
+
+// Restore persisted active rooms on module load
+try {
+  if (fs.existsSync(BACKUP_FILE)) {
+    const raw = fs.readFileSync(BACKUP_FILE, 'utf8');
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      parsed.forEach(([id, room]) => ACTIVE_ROOMS.set(id, room));
+    }
+  }
+} catch (e) {
+  // Silent fallback
+}
+
+function persistRooms() {
+  try {
+    const entries = Array.from(ACTIVE_ROOMS.entries());
+    fs.writeFileSync(BACKUP_FILE, JSON.stringify(entries), 'utf8');
+  } catch (e) {
+    // Silent fallback
+  }
+}
 
 /**
  * Finds or creates a peer mock interview room.

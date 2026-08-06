@@ -4,6 +4,10 @@ const { evaluateStudentDiagnostic } = require('../modules/horizon/diagnosticEngi
 const { getExamNotifications } = require('../modules/horizon/examRadarEngine');
 const { getPyqQuestions, evaluateMockExam } = require('../modules/horizon/pyqDatabase');
 const { getSeniorMentors } = require('../modules/horizon/mentorshipEngine');
+const { getRoadmap, listRoadmaps } = require('../modules/horizon/roadmapEngine');
+const { generateDailyChecklist, generateMonthlyMilestones } = require('../modules/horizon/checklistEngine');
+const { getResources } = require('../modules/horizon/resourceRepository');
+const { exploreDomainByStage } = require('../modules/horizon/domainExplorer');
 
 test('evaluateStudentDiagnostic matches Tech sector correctly', () => {
   const result = evaluateStudentDiagnostic({
@@ -57,4 +61,39 @@ test('getSeniorMentors returns verified alumni advice cards', () => {
   const mentors = getSeniorMentors({ world: 'tech_world' });
   assert.ok(mentors.mentors.length >= 3);
   assert.equal(mentors.mentors[0].verifiedAlumni, true);
+});
+
+test('getRoadmap and listRoadmaps return 4-phase structured domain roadmaps', () => {
+  const list = listRoadmaps({});
+  assert.ok(list.count >= 5);
+
+  const webRoadmap = getRoadmap('fullstack_web');
+  assert.equal(webRoadmap.success, true);
+  assert.equal(webRoadmap.roadmap.phases.length, 4);
+  assert.equal(webRoadmap.roadmap.phases[0].name, 'Zero-to-One Foundation');
+});
+
+test('generateDailyChecklist returns day-specific tasks with XP rewards', () => {
+  const checklist = generateDailyChecklist({ domainKey: 'fullstack_web', phaseId: 1, dayOfMonth: 1 });
+  assert.equal(checklist.success, true);
+  assert.ok(checklist.dailyTasks.length > 0);
+  assert.ok(checklist.totalXpAvailable > 0);
+});
+
+test('generateMonthlyMilestones returns phase milestone', () => {
+  const milestone = generateMonthlyMilestones({ domainKey: 'fullstack_web', phaseId: 1 });
+  assert.equal(milestone.success, true);
+  assert.ok(milestone.milestone.xpReward >= 100);
+});
+
+test('getResources returns verified learning links per phase', () => {
+  const resources = getResources({ domainKey: 'fullstack_web', phase: 1, freeOnly: true });
+  assert.equal(resources.success, true);
+  assert.ok(resources.count >= 2);
+});
+
+test('exploreDomainByStage returns stage-appropriate streams and exams', () => {
+  const explore10th = exploreDomainByStage('10th');
+  assert.equal(explore10th.success, true);
+  assert.ok(explore10th.availableStreams.length >= 3);
 });

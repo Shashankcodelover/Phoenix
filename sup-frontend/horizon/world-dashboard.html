@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phoenix Horizon — World Dashboard</title>
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: rgba(22, 30, 46, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-purple: #8b5cf6;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-gold: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+
+    body {
+      background: #090d16;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 260px;
+      background: rgba(15, 23, 42, 0.95);
+      border-right: 1px solid var(--card-border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .logo {
+      font-size: 1.2rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-section { display: flex; flex-direction: column; gap: 8px; }
+    .nav-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 8px; }
+
+    .nav-item {
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--text-main);
+    }
+
+    .nav-item.active { border-left: 3px solid var(--accent-purple); }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 32px 40px;
+      overflow-y: auto;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .world-badge {
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Phase Roadmap Nodes */
+    .phase-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .phase-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .phase-info h4 { font-size: 0.95rem; margin-bottom: 4px; }
+    .phase-info p { font-size: 0.8rem; color: var(--text-muted); }
+
+    .tag {
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-gold);
+    }
+
+    /* Exam Alert List */
+    .exam-alert {
+      padding: 12px;
+      border-left: 3px solid var(--accent-purple);
+      background: rgba(139, 92, 246, 0.05);
+      border-radius: 0 10px 10px 0;
+      margin-bottom: 12px;
+    }
+
+    .exam-alert h5 { font-size: 0.9rem; margin-bottom: 4px; }
+    .exam-alert p { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* Mentor Wisdom Cards */
+    .mentor-card {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .mentor-name { font-weight: 600; font-size: 0.85rem; color: var(--accent-cyan); }
+    .mentor-quote { font-size: 0.8rem; color: var(--text-muted); font-style: italic; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">🌅 PHOENIX HORIZON</div>
+    <div class="nav-section">
+      <div class="nav-label">Navigation</div>
+      <div class="nav-item active">🗺️ Phased Roadmap</div>
+      <div class="nav-item">✅ Daily Checklists</div>
+      <div class="nav-item">📚 PYQ Practice Bank</div>
+      <div class="nav-item">📡 Exam Radar Alerts</div>
+      <div class="nav-item">🎓 Senior Mentorship</div>
+      <div class="nav-item">🧭 Stage Explorer</div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="header-bar">
+      <div>
+        <h1 id="welcomeTitle">Welcome to Your Career World</h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Zero-to-Hero Foundation & Career Roadmap</p>
+      </div>
+      <div class="world-badge" id="worldBadge">Tech & Engineering World</div>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Left Column: Roadmap & Checklists -->
+      <div>
+        <div class="card">
+          <div class="card-title">🗺️ Your Active Phased Roadmap (Full Stack Web)</div>
+          <div class="phase-timeline" id="roadmapTimeline">
+            <div class="phase-item">
+              <div class="phase-info">
+                <h4>Phase 1: Zero-to-One Foundation</h4>
+                <p>HTML5, CSS3, JS ES6+, Git & GitHub (Weeks 1–4)</p>
+              </div>
+              <span class="tag">CURRENT PHASE</span>
+            </div>
+            <div class="phase-item">
+              <div class="phase-info">
+                <h4>Phase 2: Core Domain Deep-Dive</h4>
+                <p>React.js, Node.js, Express, MongoDB (Weeks 5–16)</p>
+              </div>
+              <span class="tag" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">UPCOMING</span>
+            </div>
+            <div class="phase-item">
+              <div class="phase-info">
+                <h4>Phase 3: Real-World Application & Portfolio</h4>
+                <p>Build 2 deployed full-stack projects with live demo (Weeks 17–24)</p>
+              </div>
+              <span class="tag" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">UPCOMING</span>
+            </div>
+            <div class="phase-item">
+              <div class="phase-info">
+                <h4>Phase 4: Exam / Interview / Placement Sprint</h4>
+                <p>DSA 150+, System Design basics & Mock interviews (Weeks 25+)</p>
+              </div>
+              <span class="tag" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">UPCOMING</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">✅ Today's Action Checklist (Day 1)</div>
+          <div style="display: flex; flex-direction: column; gap: 10px;" id="dailyChecklist">
+            <label style="display: flex; align-items: center; gap: 12px; font-size: 0.9rem; cursor: pointer;">
+              <input type="checkbox"> Complete HTML semantic elements masterclass (30 mins) — <strong style="color: var(--accent-gold);">+10 XP</strong>
+            </label>
+            <label style="display: flex; align-items: center; gap: 12px; font-size: 0.9rem; cursor: pointer;">
+              <input type="checkbox"> Build a basic personal profile page in HTML (45 mins) — <strong style="color: var(--accent-gold);">+15 XP</strong>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Exam Radar & Senior Bridge -->
+      <div>
+        <div class="card">
+          <div class="card-title">📡 Entrance Exam Radar</div>
+          <div id="examRadarList">
+            <div class="exam-alert">
+              <h5>KCET 2026 (KEA)</h5>
+              <p>Registration Deadline: 2026-03-25 | Exam: 2026-04-18</p>
+            </div>
+            <div class="exam-alert" style="border-color: var(--accent-cyan); background: rgba(6,182,212,0.05);">
+              <h5>DCET 2026 (Diploma Lateral Entry)</h5>
+              <p>Registration: Upcoming (May 2026) | Exam: 2026-06-02</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🎓 Senior Mentorship Wisdom</div>
+          <div id="seniorMentorsList">
+            <div class="mentor-card">
+              <div class="mentor-name">Ananya Sharma (Senior SE @ Google)</div>
+              <div class="mentor-quote">"Don’t wait until 3rd year to learn DSA. Having 2 live projects beats 10 tutorial certificates."</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const world = urlParams.get('world') || 'tech_world';
+    const stage = urlParams.get('stage') || '2nd_pu';
+
+    document.getElementById('worldBadge').innerText = world.replace('_', ' ').toUpperCase();
+  </script>
+</body>
+</html>
