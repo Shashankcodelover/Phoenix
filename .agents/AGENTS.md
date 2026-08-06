@@ -1,25 +1,65 @@
-# PHOENIX INTERVIEW PREP — AGENT OPERATING DIRECTIVES
+# PHOENIX INTERVIEW PREP — DAILY OPERATING DIRECTIVES
 
-## DAILY WORKFLOW — READ THIS EVERY SESSION BEFORE DOING ANYTHING ELSE
+## DAILY WORKFLOW — ONE COMPLETE DUAL-PASS CYCLE PER DAY
 
-You have two reference prompts in this project's `AGENT_PROMPTS/` (and `Agent prompt/`) folder:
-- `AGENT_PROMPTS/BUILDER_PROMPT.md` — your default working identity
-- `AGENT_PROMPTS/REJECTOR_PROMPT.md` — an independent, adversarial audit pass
-
-Decide today's mode using this order of checks:
-
-1. **CHECK FOR OPEN REJECTIONS FIRST.**
-   Look at `REJECTION_REPORT.md` at the project root (if it exists). If it contains any OPEN item marked Critical or Major, today is a **BUILD** day: read and follow `AGENT_PROMPTS/BUILDER_PROMPT.md` in full — its own first step already tells you to prioritize resolving those items before anything else. Stop here; do not also run the Rejector today.
-
-2. **OTHERWISE, CHECK HOW LONG SINCE THE LAST AUDIT.**
-   Read `docs/CHANGELOG_DAILY.md` and count how many consecutive entries exist since the last one that mentions a Rejector pass (or count total entries if none has happened yet). If that count has reached 5, today is a **REJECT** day: read and follow `AGENT_PROMPTS/REJECTOR_PROMPT.md` in full, and note in `docs/CHANGELOG_DAILY.md` that today was a Rejector pass so the count resets.
-
-3. **OTHERWISE**, today is a normal **BUILD** day: read and follow `AGENT_PROMPTS/BUILDER_PROMPT.md` in full.
+Every session follows a **SINGLE COMPLETE DAILY CYCLE** combining both the **BUILDER** and **REJECTOR** identities in sequence. This cycle runs **once per day at 9:00 AM** (or when the daily session is started).
 
 ---
 
-## BEFORE ENDING ANY SESSION, REGARDLESS OF MODE:
+### 🔄 THE COMPLETE DAILY CYCLE WORKFLOW
 
-Look ahead, not just back. In `docs/CHANGELOG_DAILY.md`'s entry for today, add a short **"Looking ahead"** note: 1–3 ideas for features or improvements that are NOT worth doing today (too large, too risky, or lower priority than what you did) but are worth a future session considering. Also fold anything genuinely new into `ROADMAP_AND_FLOW.md`'s forward-looking section, so the project's future direction stays visible and isn't lost between sessions — but do not act on these ideas today; they're for tomorrow's session (or a future Research role pass) to properly evaluate first, not to be implemented on a hunch.
+```text
+                               ┌──────────────────────────────────────────┐
+                               │  START DAILY SESSION (09:00 AM Trigger)  │
+                               └────────────────────┬─────────────────────┘
+                                                    │
+                                                    ▼
+ ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+ │  PART 1: THE BUILD / RESOLVER PASS (BUILDER_PROMPT.md)                                           │
+ ├──────────────────────────────────────────────────────────────────────────────────────────────────┤
+ │  1. Go to `AGENT_PROMPTS/BUILDER_PROMPT.md` and adopt the Master Identity.                      │
+ │  2. Read `REJECTION_REPORT.md` at root for open Critical/Major items to resolve.                │
+ │  3. Read `docs/upcoming-features/IMPLEMENTATION_PLAN_CAREER_FOUNDATION.md` for upcoming features.│
+ │  4. Move through the 6 Roles in sequence:                                                       │
+ │     • Role 1: Research & Competitive Intelligence                                                │
+ │     • Role 2: UI/UX Design                                                                       │
+ │     • Role 3: Software & Feature Engineering (Fix rejections + build feature increments)          │
+ │     • Role 4: QA / Test Engineering (Run `npm test` — 100% pass required)                       │
+ │     • Role 5: Security Engineering                                                               │
+ │     • Role 6: Documentation & Knowledge-Base Engineer (README, TASKS, ROADMAP, CHANGELOG)        │
+ └──────────────────────────────────────────────────┬───────────────────────────────────────────────┘
+                                                    │
+                                                    ▼
+ ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+ │  PART 2: THE REJECTOR AUDIT PASS (REJECTOR_PROMPT.md)                                            │
+ ├──────────────────────────────────────────────────────────────────────────────────────────────────┤
+ │  1. Switch identity to THE REJECTOR by reading `AGENT_PROMPTS/REJECTOR_PROMPT.md`.              │
+ │  2. Perform an independent, adversarial audit of the updated codebase and features.             │
+ │  3. Score all 8 categories harsly (0–10).                                                        │
+ │  4. Update `REJECTION_REPORT.md` at project root with updated verdict, scores, and open items.   │
+ └──────────────────────────────────────────────────┬───────────────────────────────────────────────┘
+                                                    │
+                                                    ▼
+                               ┌──────────────────────────────────────────┐
+                               │   END DAILY CYCLE (Commit & Report)      │
+                               └──────────────────────────────────────────┘
+```
 
-If `AGENT_PROMPTS/BUILDER_PROMPT.md` or `AGENT_PROMPTS/REJECTOR_PROMPT.md` is missing, stop and flag that clearly instead of guessing at what they would have said.
+---
+
+## 📌 PERMISSION & SIGN-OFF PROTOCOL
+
+- **Local Execution (Autonomous)**: The agent has full authority to edit files, run tests (`npm test`), create documentation, and commit locally to branch `daily-improvements`.
+- **User Permission Required**: The agent will explicitly ask for your sign-off before:
+  1. Pushing to any remote GitHub repository (`git push`).
+  2. Merging `daily-improvements` into `main`.
+  3. Modifying production credentials or environment secrets.
+
+---
+
+## 📁 REFERENCE PROMPT LOCATIONS
+
+- **Builder Prompt**: [`AGENT_PROMPTS/BUILDER_PROMPT.md`](file:///d:/users/Shashank%20J/Desktop/my%20stufs/phoenix-interview-prep/AGENT_PROMPTS/BUILDER_PROMPT.md)
+- **Rejector Prompt**: [`AGENT_PROMPTS/REJECTOR_PROMPT.md`](file:///d:/users/Shashank%20J/Desktop/my%20stufs/phoenix-interview-prep/AGENT_PROMPTS/REJECTOR_PROMPT.md)
+- **Rejection Report**: [`REJECTION_REPORT.md`](file:///d:/users/Shashank%20J/Desktop/my%20stufs/phoenix-interview-prep/REJECTION_REPORT.md)
+- **Implementation Plan**: [`docs/upcoming-features/IMPLEMENTATION_PLAN_CAREER_FOUNDATION.md`](file:///d:/users/Shashank%20J/Desktop/my%20stufs/phoenix-interview-prep/docs/upcoming-features/IMPLEMENTATION_PLAN_CAREER_FOUNDATION.md)
