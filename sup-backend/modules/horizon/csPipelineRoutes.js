@@ -13,6 +13,13 @@ const { getEngSemesterGapAnalysis, getEngRoadmap, evaluatePlacementReadiness } =
 // AI Guide Bot
 const { processMessage } = require('./ai-guide-bot/guideBotEngine');
 
+// Advanced Modules
+const { submitMentorQuestion, getDispatchedQuestions } = require('./mentorWebhookRelay');
+const { predictScholarshipEligibility } = require('./scholarshipEngine');
+const { searchLearningResources } = require('./resourceSearchEngine');
+const { evaluateCodeTypingIntegrity } = require('../interview-prep/reasoningIntegrityEngine');
+const { scanCodeForVulnerabilities } = require('../security/sastSecurityScanner');
+
 // ════════════════════════════════════════════════════
 // PU CS ROUTES (/api/v1/horizon/cs-pu/*)
 // ════════════════════════════════════════════════════
@@ -93,13 +100,47 @@ router.post('/cs-eng/readiness', (req, res) => {
 });
 
 // ════════════════════════════════════════════════════
-// AI GUIDE BOT (/api/v1/horizon/bot/*)
+// AI GUIDE BOT & ADVANCED SERVICES (/api/v1/horizon/*)
 // ════════════════════════════════════════════════════
 router.post('/bot/chat', (req, res) => {
   try {
     const { message, userStage, currentPage } = req.body;
     const result = processMessage({ message, userStage, currentPage });
     res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+router.post('/mentors/ask', (req, res) => {
+  try { res.json(submitMentorQuestion(req.body)); }
+  catch (e) { res.status(400).json({ success: false, error: e.message }); }
+});
+
+router.get('/mentors/questions', (req, res) => {
+  try { res.json(getDispatchedQuestions(req.query)); }
+  catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+
+router.post('/scholarships/predict', (req, res) => {
+  try { res.json(predictScholarshipEligibility(req.body)); }
+  catch (e) { res.status(400).json({ success: false, error: e.message }); }
+});
+
+router.get('/resources/search', (req, res) => {
+  try { res.json(searchLearningResources(req.query)); }
+  catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+
+router.post('/integrity/evaluate', (req, res) => {
+  try { res.json(evaluateCodeTypingIntegrity(req.body)); }
+  catch (e) { res.status(400).json({ success: false, error: e.message }); }
+});
+
+router.post('/security/sast-scan', (req, res) => {
+  try {
+    const { codeSnippet, filename } = req.body;
+    res.json(scanCodeForVulnerabilities(codeSnippet, filename));
   } catch (e) {
     res.status(400).json({ success: false, error: e.message });
   }
