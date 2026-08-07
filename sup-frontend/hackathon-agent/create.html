@@ -115,7 +115,9 @@
             return;
         }
 
-        animateParticles();
+        if (typeof window.animateParticles === 'function') {
+            window.animateParticles();
+        }
     });
 
     

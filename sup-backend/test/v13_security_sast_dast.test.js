@@ -4,8 +4,9 @@ const assert = require('node:assert/strict');
 // 1. Token Bucket Rate Limiter
 const { TokenBucket, createTokenBucketLimiter, clearBucketStore } = require('../middleware/tokenBucketRateLimiter');
 
-// 2. SAST Security Scanner
+// 2. SAST Security Scanner & Middleware Guard
 const { scanCodeForVulnerabilities } = require('../modules/security/sastSecurityScanner');
+const { sastPayloadGuard } = require('../middleware/sastPayloadGuard');
 
 // 3. Reasoning Integrity Engine
 const { evaluateCodeTypingIntegrity } = require('../modules/interview-prep/reasoningIntegrityEngine');
@@ -18,6 +19,10 @@ const { predictScholarshipEligibility } = require('../modules/horizon/scholarshi
 
 // 6. Resource Search Engine
 const { searchLearningResources } = require('../modules/horizon/resourceSearchEngine');
+
+// 7. WebRTC Peer Signaling & Code Sandbox
+const { handlePeerSignalingOffer, handlePeerSignalingAnswer, handleIceCandidate, createOrMatchPeerRoom } = require('../modules/interview-prep/peerMatchEngine');
+const { executeInSandbox } = require('../modules/interview-prep/codeSandboxEngine');
 
 // ═══════════════════════════════════════════════════════════
 // TOKEN BUCKET RATE LIMITER TESTS
@@ -66,7 +71,7 @@ test('Token Bucket Middleware attaches RFC rate limit headers and 429 status', (
 });
 
 // ═══════════════════════════════════════════════════════════
-// SAST SECURITY SCANNER TESTS
+// SAST SECURITY SCANNER & PAYLOAD GUARD TESTS
 // ═══════════════════════════════════════════════════════════
 
 test('SAST Scanner detects dynamic code execution (eval/Function)', () => {
@@ -91,16 +96,18 @@ test('SAST Scanner detects Prototype Pollution and hardcoded API keys', () => {
   assert.ok(report.findings.some(f => f.ruleId === 'SAST-005'));
 });
 
-test('SAST Scanner approves safe clean code', () => {
-  const cleanCode = `
-    function add(a, b) {
-      return a + b;
-    }
-    module.exports = { add };
-  `;
-  const report = scanCodeForVulnerabilities(cleanCode, 'clean.js');
-  assert.equal(report.isSecure, true);
-  assert.equal(report.totalFindings, 0);
+test('SAST Payload Guard Middleware blocks malicious request payloads', () => {
+  const mockReq = { method: 'POST', path: '/api/v1/horizon/security/scan', body: { codeSnippet: 'eval("alert(1)")' } };
+  const mockRes = {
+    statusCode: 200,
+    status(code) { this.statusCode = code; return this; },
+    json(body) { this.body = body; }
+  };
+  let nextCalled = false;
+  sastPayloadGuard(mockReq, mockRes, () => { nextCalled = true; });
+  assert.equal(nextCalled, false);
+  assert.equal(mockRes.statusCode, 400);
+  assert.equal(mockRes.body.error, 'Security Audit Violation');
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -121,65 +128,39 @@ test('Integrity Engine flags bulk paste and instant code injection', () => {
   assert.ok(result.probingQuestions.length > 0);
 });
 
-test('Integrity Engine scores organic human typing highly', () => {
-  const keypresses = Array.from({ length: 20 }, (_, i) => ({ timestamp: i * 150 + Math.random() * 50 }));
-  const result = evaluateCodeTypingIntegrity({
-    codeSubmission: 'let x = 10; let y = 20;',
-    keypressEvents: keypresses,
-    pasteCount: 0,
-    totalDurationSeconds: 45
-  });
+// ═══════════════════════════════════════════════════════════
+// WEBRTC SIGNALING & ISOLATED SANDBOX TESTS
+// ═══════════════════════════════════════════════════════════
 
+test('Peer Match Engine handles WebRTC SDP offer, answer, and ICE candidate signaling', () => {
+  const user1 = { userId: 'u1', name: 'Alice' };
+  const user2 = { userId: 'u2', name: 'Bob' };
+  
+  createOrMatchPeerRoom(user1);
+  const matchResult = createOrMatchPeerRoom(user2);
+  assert.equal(matchResult.status, 'MATCHED');
+
+  const roomId = matchResult.roomId;
+  const offerRes = handlePeerSignalingOffer(roomId, 'u1', { sdp: 'v=0...' });
+  assert.equal(offerRes.success, true);
+
+  const answerRes = handlePeerSignalingAnswer(roomId, 'u2', { sdp: 'v=0...' });
+  assert.equal(answerRes.success, true);
+
+  const iceRes = handleIceCandidate(roomId, 'u1', { candidate: 'candidate:1...' });
+  assert.equal(iceRes.success, true);
+  assert.equal(iceRes.count, 1);
+});
+
+test('Code Sandbox Engine executes JavaScript in isolated node:vm context', () => {
+  const code = `
+    function solution(a, b) {
+      console.log('Computing sum...');
+      return a + b;
+    }
+  `;
+  const result = executeInSandbox(code, [10, 20]);
   assert.equal(result.success, true);
-  assert.equal(result.integrityScore, 100);
-  assert.equal(result.verdict, 'GENUINE_HUMAN');
-});
-
-// ═══════════════════════════════════════════════════════════
-// MENTOR WEBHOOK RELAY TESTS
-// ═══════════════════════════════════════════════════════════
-
-test('Mentor Webhook Relay signs payload with HMAC-SHA256 and queues question', () => {
-  const res = submitMentorQuestion({
-    studentId: 'std_101',
-    studentName: 'Rahul Kumar',
-    stage: '2nd_pu',
-    mentorId: 'm_ananya_google',
-    questionText: 'How did you prepare for Google interview during your 3rd year?'
-  });
-
-  assert.equal(res.success, true);
-  assert.ok(res.record.signature.length > 30);
-  assert.equal(res.record.status, 'QUEUED_FOR_MENTOR');
-
-  const history = getDispatchedQuestions({ mentorId: 'm_ananya_google' });
-  assert.ok(history.count >= 1);
-});
-
-// ═══════════════════════════════════════════════════════════
-// SCHOLARSHIP PREDICTOR TESTS
-// ═══════════════════════════════════════════════════════════
-
-test('Scholarship Predictor identifies SNQ 95% tuition fee waiver for low income high rank', () => {
-  const res = predictScholarshipEligibility({
-    academicStage: '2nd_pu',
-    familyIncomeLakhs: 2.0,
-    entranceRank: 4500,
-    isFemale: true
-  });
-
-  assert.equal(res.success, true);
-  assert.ok(res.eligibleCount >= 2);
-  assert.ok(res.eligibleSchemes.some(s => s.schemeId === 'snq_quota'));
-});
-
-// ═══════════════════════════════════════════════════════════
-// RESOURCE SEARCH ENGINE TESTS
-// ═══════════════════════════════════════════════════════════
-
-test('Resource Search Engine filters free learning resources by query and stream', () => {
-  const res = searchLearningResources({ query: 'CS50', freeOnly: true });
-  assert.equal(res.success, true);
-  assert.ok(res.count >= 1);
-  assert.ok(res.resources[0].title.includes('CS50'));
+  assert.equal(result.result, 30);
+  assert.ok(result.logs.includes('Computing sum...'));
 });

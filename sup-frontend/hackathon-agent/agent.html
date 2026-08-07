@@ -347,7 +347,9 @@
         }
 
         loadTeamData();
-        animateParticles();
+        if (typeof window.animateParticles === 'function') {
+            window.animateParticles();
+        }
 
         // Geofence radius slider event listener
         const slider = document.getElementById('geofenceRadius');

@@ -1,10 +1,11 @@
 /**
  * Phoenix v8.0: Peer-to-Peer Mock Interview Room & AI Safety-Net Engine
  * 
- * Manages live peer matching sessions, room state transitions, WebSocket/HTTP signaling,
+ * Manages live peer matching sessions, room state transitions, WebRTC SDP/ICE signaling,
  * heartbeat monitoring, and automated AI Copilot Takeover when a peer disconnects or goes silent.
  */
 
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
@@ -23,15 +24,19 @@ try {
     }
   }
 } catch (e) {
-  // Silent fallback
+  console.error('[PeerMatchEngine Restore Error]:', e.message);
 }
 
 function persistRooms() {
   try {
+    const dir = path.dirname(BACKUP_FILE);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
     const entries = Array.from(ACTIVE_ROOMS.entries());
     fs.writeFileSync(BACKUP_FILE, JSON.stringify(entries), 'utf8');
   } catch (e) {
-    // Silent fallback
+    console.error('[PeerMatchEngine Persist Error]:', e.message);
   }
 }
 
@@ -68,6 +73,7 @@ function createOrMatchPeerRoom(user = {}) {
         { userId: peer.userId, name: peer.name, targetRole: peer.targetRole, roleInInterview: 'Interviewer', status: 'ACTIVE', lastHeartbeat: Date.now() },
         { userId, name, targetRole, roleInInterview: 'Candidate', status: 'ACTIVE', lastHeartbeat: Date.now() }
       ],
+      signalingData: { offer: null, answer: null, iceCandidates: [] },
       aiSafetyNetActive: false,
       currentQuestion: {
         title: 'Design a Scalable Rate Limiter',
@@ -78,6 +84,7 @@ function createOrMatchPeerRoom(user = {}) {
     };
 
     ACTIVE_ROOMS.set(roomId, roomState);
+    persistRooms();
 
     return {
       status: 'MATCHED',
@@ -101,11 +108,40 @@ function createOrMatchPeerRoom(user = {}) {
 }
 
 /**
+ * WebRTC SDP Offer Relay Handler
+ */
+function handlePeerSignalingOffer(roomId, userId, sdpOffer) {
+  const room = ACTIVE_ROOMS.get(roomId);
+  if (!room) throw new Error(`Room ${roomId} not found.`);
+  room.signalingData.offer = { from: userId, sdpOffer, timestamp: new Date().toISOString() };
+  persistRooms();
+  return { success: true, message: 'WebRTC offer relayed successfully.' };
+}
+
+/**
+ * WebRTC SDP Answer Relay Handler
+ */
+function handlePeerSignalingAnswer(roomId, userId, sdpAnswer) {
+  const room = ACTIVE_ROOMS.get(roomId);
+  if (!room) throw new Error(`Room ${roomId} not found.`);
+  room.signalingData.answer = { from: userId, sdpAnswer, timestamp: new Date().toISOString() };
+  persistRooms();
+  return { success: true, message: 'WebRTC answer relayed successfully.' };
+}
+
+/**
+ * WebRTC ICE Candidate Relay Handler
+ */
+function handleIceCandidate(roomId, userId, candidate) {
+  const room = ACTIVE_ROOMS.get(roomId);
+  if (!room) throw new Error(`Room ${roomId} not found.`);
+  room.signalingData.iceCandidates.push({ from: userId, candidate, timestamp: new Date().toISOString() });
+  persistRooms();
+  return { success: true, count: room.signalingData.iceCandidates.length };
+}
+
+/**
  * Processes heartbeat signals and triggers AI Copilot Takeover if peer times out (30s).
- * 
- * @param {string} roomId - Active room ID
- * @param {string} userId - Heartbeat sender user ID
- * @returns {Object} Updated room status
  */
 function sendRoomHeartbeat(roomId, userId) {
   const room = ACTIVE_ROOMS.get(roomId);
@@ -167,6 +203,9 @@ function getRoomSession(roomId) {
 
 module.exports = {
   createOrMatchPeerRoom,
+  handlePeerSignalingOffer,
+  handlePeerSignalingAnswer,
+  handleIceCandidate,
   sendRoomHeartbeat,
   getRoomSession,
   ACTIVE_ROOMS,

@@ -118,7 +118,7 @@
   </div>
 
   <script>
-    const API_BASE_URL = 'http://localhost:5000/api';
+    const API_BASE_URL = window.location.protocol === 'file:' ? 'http://localhost:5000/api/v1' : (window.location.origin.includes('localhost') ? 'http://localhost:5000/api/v1' : '/api/v1');
     let tailoredResumeText = "";
     let userToken = null;
 
@@ -129,7 +129,9 @@
             return;
         }
 
-        animateParticles();
+        if (typeof window.animateParticles === 'function') {
+            window.animateParticles();
+        }
         
         // Pre-populate resume if user has uploaded previously
         const user = JSON.parse(localStorage.getItem('user') || '{}');

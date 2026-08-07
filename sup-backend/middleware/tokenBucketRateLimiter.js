@@ -6,9 +6,9 @@
  *
  * Implements:
  * - Atomic bucket refilling based on elapsed millisecond precision
+ * - Memory leak protection (TTL cleanup interval & max 10,000 keys LRU eviction)
  * - Burst allowance configuration
  * - HTTP 429 response with RFC-compliant 'Retry-After' and X-RateLimit-* headers
- * - IP and User-ID based keying
  */
 
 class TokenBucket {
@@ -42,19 +42,34 @@ class TokenBucket {
 }
 
 const BUCKET_STORE = new Map();
+const MAX_BUCKET_KEYS = 10000;
+const TTL_CLEANUP_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
+
+// Periodic memory leak cleanup interval
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, bucket] of BUCKET_STORE.entries()) {
+    if (now - bucket.lastRefillTimestamp > TTL_CLEANUP_INTERVAL_MS) {
+      BUCKET_STORE.delete(key);
+    }
+  }
+}, TTL_CLEANUP_INTERVAL_MS).unref();
 
 /**
  * Creates an Express middleware enforcing Token Bucket rate limiting.
- * @param {Object} options
- * @param {number} options.capacity - Max tokens bucket can hold (allows bursts)
- * @param {number} options.refillRatePerSec - Tokens added per second
- * @param {string} options.keyPrefix - Prefix for grouping limiters
  */
-function createTokenBucketLimiter({ capacity = 20, refillRatePerSec = 2, keyPrefix = 'global' } = {}) {
+function createTokenBucketLimiter({ capacity = 30, refillRatePerSec = 2, keyPrefix = 'global' } = {}) {
   return (req, res, next) => {
-    const clientKey = `${keyPrefix}:${req.ip || req.headers['x-forwarded-for'] || '127.0.0.1'}`;
-    let bucket = BUCKET_STORE.get(clientKey);
+    const ip = req.ip || req.headers['x-forwarded-for'] || req.connection?.remoteAddress || '127.0.0.1';
+    const clientKey = `${keyPrefix}:${ip}`;
 
+    // Max key capacity safeguard to prevent OOM
+    if (BUCKET_STORE.size >= MAX_BUCKET_KEYS && !BUCKET_STORE.has(clientKey)) {
+      const firstKey = BUCKET_STORE.keys().next().value;
+      if (firstKey) BUCKET_STORE.delete(firstKey);
+    }
+
+    let bucket = BUCKET_STORE.get(clientKey);
     if (!bucket) {
       bucket = new TokenBucket({ capacity, refillRatePerSec });
       BUCKET_STORE.set(clientKey, bucket);
@@ -84,4 +99,4 @@ function clearBucketStore() {
   BUCKET_STORE.clear();
 }
 
-module.exports = { TokenBucket, createTokenBucketLimiter, clearBucketStore };
+module.exports = { TokenBucket, createTokenBucketLimiter, clearBucketStore, BUCKET_STORE };

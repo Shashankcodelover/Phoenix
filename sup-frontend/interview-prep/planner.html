@@ -130,7 +130,7 @@
   </div>
 
   <script>
-    const API_BASE_URL = 'http://localhost:5000/api';
+    const API_BASE_URL = window.location.protocol === 'file:' ? 'http://localhost:5000/api/v1' : (window.location.origin.includes('localhost') ? 'http://localhost:5000/api/v1' : '/api/v1');
     let userToken = null;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -148,7 +148,9 @@
         document.getElementById('interviewDate').value = nextFortnight.toISOString().substring(0, 10);
         document.getElementById('hackathonDate').value = nextWeek.toISOString().substring(0, 10);
 
-        animateParticles();
+        if (typeof window.animateParticles === 'function') {
+            window.animateParticles();
+        }
     });
 
     

@@ -9,6 +9,15 @@
  */
 
 const PhoenixCore = (() => {
+  // ─── Dynamic API Base Resolver (Fixes hardcoded localhost) ───
+  const getApiBaseUrl = () => {
+    if (window.location.protocol === 'file:') return 'http://localhost:5000/api/v1';
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return `http://${window.location.hostname}:5000/api/v1`;
+    }
+    return `${window.location.origin}/api/v1`;
+  };
+
   // ─── Particle Background ───
   const Particles = {
     canvas: null,
@@ -156,7 +165,7 @@ const PhoenixCore = (() => {
     }
   };
 
-  // ─── Toast Notifications (replaces alert()) ───
+  // ─── Toast Notifications (XSS Hardened) ───
   const Toast = {
     container: null,
 
@@ -173,13 +182,26 @@ const PhoenixCore = (() => {
       const toast = document.createElement('div');
       toast.className = `toast toast-${type}`;
       const icons = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
-      toast.innerHTML = `
-        <span class="toast-icon">${icons[type] || 'ℹ'}</span>
-        <span class="toast-message">${message}</span>
-        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
-      `;
+
+      // XSS Protection: Safely escape message via DOM textNode
+      const iconSpan = document.createElement('span');
+      iconSpan.className = 'toast-icon';
+      iconSpan.textContent = icons[type] || 'ℹ';
+
+      const msgSpan = document.createElement('span');
+      msgSpan.className = 'toast-message';
+      msgSpan.textContent = String(message);
+
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'toast-close';
+      closeBtn.textContent = '×';
+      closeBtn.onclick = () => toast.remove();
+
+      toast.appendChild(iconSpan);
+      toast.appendChild(msgSpan);
+      toast.appendChild(closeBtn);
+
       this.container.appendChild(toast);
-      // Trigger entrance animation
       requestAnimationFrame(() => toast.classList.add('toast-visible'));
       setTimeout(() => {
         toast.classList.remove('toast-visible');
@@ -195,7 +217,9 @@ const PhoenixCore = (() => {
 
   // ─── API Helper ───
   const API = {
-    baseUrl: 'http://localhost:5000/api',
+    get baseUrl() {
+      return getApiBaseUrl();
+    },
 
     async request(endpoint, options = {}) {
       const url = `${this.baseUrl}${endpoint}`;
@@ -238,14 +262,12 @@ const PhoenixCore = (() => {
       const navbar = document.querySelector('.navbar');
       if (!navbar) return;
 
-      // Create hamburger button if not present
       if (!document.querySelector('.hamburger-btn')) {
         const hamburger = document.createElement('button');
         hamburger.className = 'hamburger-btn';
         hamburger.id = 'hamburgerBtn';
         hamburger.setAttribute('aria-label', 'Toggle navigation menu');
         hamburger.innerHTML = `<span></span><span></span><span></span>`;
-        // Insert before nav-links
         const navLinks = navbar.querySelector('.nav-links');
         if (navLinks) {
           navbar.insertBefore(hamburger, navLinks);
@@ -257,7 +279,6 @@ const PhoenixCore = (() => {
           document.body.classList.toggle('nav-overlay-active');
         });
 
-        // Close on link click
         if (navLinks) {
           navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
@@ -268,7 +289,6 @@ const PhoenixCore = (() => {
           });
         }
 
-        // Close on outside click
         document.addEventListener('click', (e) => {
           if (!e.target.closest('.navbar')) {
             hamburger.classList.remove('is-active');
@@ -304,10 +324,7 @@ const PhoenixCore = (() => {
   // ─── Smooth Page Transitions ───
   const Transitions = {
     init() {
-      // Add fade-in on page load
       document.body.classList.add('page-enter');
-
-      // Intercept internal navigation links for smooth exit
       document.querySelectorAll('a[href]').forEach(link => {
         const href = link.getAttribute('href');
         if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('javascript')) return;
@@ -332,34 +349,22 @@ const PhoenixCore = (() => {
       transitions = true
     } = options;
 
-    // Theme always first (prevents flash of unstyled theme)
     if (theme) Theme.init();
-
-    // Auth check
     if (auth && !Auth.requireAuth(authRedirect)) return;
 
-    // Toast system
     Toast.init();
-
-    // Navigation
     if (nav) Nav.init();
 
-    // Particles
     if (particles) {
       Particles.init('particles', particleCount);
     }
 
-    // Auth logout binding
     Auth.bindLogout();
-
-    // Page transitions
     if (transitions) Transitions.init();
 
-    // Initialize Universal Copilot Bot
     if (window.PhoenixBot) {
       PhoenixBot.init();
     } else {
-      // Dynamically load phoenix-bot.js if script is missing
       const botScript = document.createElement('script');
       const relDepth = window.location.pathname.includes('/interview-prep/') || window.location.pathname.includes('/hackathon-agent/') || window.location.pathname.includes('/dashboard/') || window.location.pathname.includes('/profile/') || window.location.pathname.includes('/auth/') || window.location.pathname.includes('/splash/') ? '../phoenix-bot.js' : './phoenix-bot.js';
       botScript.src = relDepth;
@@ -484,5 +489,10 @@ const PhoenixCore = (() => {
   };
 })();
 
-// Global shorthand
+// Global shorthands & backwards-compatibility functions
 window.Phoenix = PhoenixCore;
+window.animateParticles = function(canvasId = 'particles', count = 50) {
+  if (PhoenixCore && PhoenixCore.Particles) {
+    PhoenixCore.Particles.init(canvasId, count);
+  }
+};

@@ -41,7 +41,7 @@ router.post('/revision', validate(schemas.revision), generateRevisionSheet);
 router.post('/analyze-audio', analyzeAudio);
 router.get('/performance-trend/:userId', getPerformanceTrend);
 const { evaluateSpeechProsody } = require('./speechEvaluatorEngine');
-const { createOrMatchPeerRoom, sendRoomHeartbeat } = require('./peerMatchEngine');
+const { createOrMatchPeerRoom, sendRoomHeartbeat, handlePeerSignalingOffer, handlePeerSignalingAnswer, handleIceCandidate } = require('./peerMatchEngine');
 const { evaluateSystemDesign } = require('./systemDesignEvaluator');
 
 router.post('/analyze-speech', (req, res) => {
@@ -63,6 +63,18 @@ router.post('/peer-session', (req, res) => {
     }
     const result = createOrMatchPeerRoom(user);
     res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/peer-signaling', (req, res) => {
+  try {
+    const { action, roomId, userId, sdpOffer, sdpAnswer, candidate } = req.body;
+    if (action === 'offer') return res.json(handlePeerSignalingOffer(roomId, userId, sdpOffer));
+    if (action === 'answer') return res.json(handlePeerSignalingAnswer(roomId, userId, sdpAnswer));
+    if (action === 'ice-candidate') return res.json(handleIceCandidate(roomId, userId, candidate));
+    res.status(400).json({ error: 'INVALID_SIGNALING_ACTION' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

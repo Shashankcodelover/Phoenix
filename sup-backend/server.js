@@ -16,12 +16,14 @@ const fs = require('fs');
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
-// --- CORS WHITELIST ---
+// --- HARDENED CORS WHITELIST (No Origin 'null' vulnerability) ---
 const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:5173,http://127.0.0.1:5500').split(',');
 app.use(cors({
   origin: (origin, cb) => {
-    // Allow requests with no origin or 'null' (local file:// protocol) or whitelisted domains
-    if (!origin || origin === 'null' || allowedOrigins.includes(origin)) return cb(null, true);
+    // Allow non-browser requests (mobile apps/curl) with no origin header in production, or whitelisted domains
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    // Explicitly reject untrusted 'null' origin strings from sandboxed cross-origin iframes
+    if (origin === 'null' && process.env.ALLOW_NULL_ORIGIN === 'true') return cb(null, true);
     cb(new Error('CORS policy violation'));
   },
   credentials: true
@@ -46,11 +48,28 @@ app.use((req, res, next) => {
   next();
 });
 
-// --- RATE LIMITER ---
+// --- RATE LIMITER & BOUNDED MEMORY STORE (Memory Leak Guard) ---
 const rateLimitMap = new Map();
-app.use((req, res, next) => {
-  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+const MAX_RATE_LIMIT_KEYS = 5000;
+
+setInterval(() => {
   const now = Date.now();
+  for (const [ip, timestamps] of rateLimitMap.entries()) {
+    const valid = timestamps.filter(t => now - t < 60000);
+    if (valid.length === 0) rateLimitMap.delete(ip);
+    else rateLimitMap.set(ip, valid);
+  }
+}, 60000).unref();
+
+app.use((req, res, next) => {
+  const ip = req.ip || req.connection?.remoteAddress || 'unknown';
+  const now = Date.now();
+
+  if (rateLimitMap.size >= MAX_RATE_LIMIT_KEYS && !rateLimitMap.has(ip)) {
+    const firstKey = rateLimitMap.keys().next().value;
+    if (firstKey) rateLimitMap.delete(firstKey);
+  }
+
   const timestamps = rateLimitMap.get(ip) || [];
   const valid = timestamps.filter(t => now - t < 60000);
   if (valid.length >= 100) {
@@ -92,10 +111,12 @@ const csPipelineRoutes = require('./modules/horizon/csPipelineRoutes');
 const { inputSecurityMiddleware } = require('./middleware/inputSanitizer');
 const { createPromptShield } = require('./middleware/promptShield');
 const { createRateLimiter } = require('./middleware/rateLimiter');
+const { createTokenBucketLimiter } = require('./middleware/tokenBucketRateLimiter');
+const { sastPayloadGuard } = require('./middleware/sastPayloadGuard');
 
 // Rate limiters
 const aiRateLimiter = createRateLimiter({ windowMs: 60000, maxRequests: 15, message: 'AI endpoint rate limit exceeded. Max 15 requests per minute.' });
-const generalRateLimiter = createRateLimiter({ windowMs: 60000, maxRequests: 60 });
+const tokenBucketLimiter = createTokenBucketLimiter({ capacity: 60, refillRatePerSec: 5, keyPrefix: 'api' });
 
 // Google-Standard Security Headers
 app.use((req, res, next) => {
@@ -108,59 +129,29 @@ app.use((req, res, next) => {
 
 app.use('/uploads', express.static('uploads'));
 app.use(inputSecurityMiddleware);
+app.use('/api', tokenBucketLimiter);
 app.use('/api', createPromptShield({ maxPayloadBytes: 50 * 1024, sanitize: true, blockOnInjection: true }));
-
+app.use('/api/v1/horizon/security', sastPayloadGuard);
 
 // Health & Telemetry Status Endpoint
 const getHealthStatus = (req, res) => {
   res.json({
-    status: 'ONLINE',
-    system: 'Project Phoenix Ultimate Autonomous Career & Hackathon Operating System',
-    version: '11.0.0',
+    status: 'HEALTHY',
+    version: '13.0.0',
     timestamp: new Date().toISOString(),
-    uptimeSeconds: Math.round(process.uptime()),
-    architecture: 'Tri-Pillar Modular World System (1. Placement & Interview World, 2. Hackathon & Builder World, 3. Phoenix Horizon Gap-Filler & Foundation)',
-    aiEngineStatus: 'Multi-Provider Cascade Router (Groq 70B -> Gemini Flash -> OpenAI -> OpenRouter -> Local Engine)',
-    horizonStatus: 'ACTIVE (Diagnostic Engine, 4-Phase Roadmaps, Exam Radar, PYQ Bank, Senior Bridge)',
-    speechProsodyStatus: 'ACTIVE (WPM, Clarity, Filler Density & Vocal Prosody Evaluator)',
-    peerMatchStatus: 'ACTIVE (P2P Signaling Room Engine & AI Safety-Net Takeover)',
-    systemDesignStatus: 'ACTIVE (Interactive Architecture SLA, SPOF & Cloud Cost Evaluator)',
-    hackathonScraperStatus: 'ACTIVE (Multi-Platform Feed Deduplication & Urgency Match Scorer)',
-    skillMatrixStatus: 'ACTIVE (Unified 6-Axis Skill Radar Mastery Matrix)',
-    starSynthesizerStatus: 'ACTIVE (STAR Behavioral Interview Story Synthesizer)',
-    compBenchmarkStatus: 'ACTIVE (Salary & Equity Compensation Benchmarking Engine)',
-    pitchDeckStatus: 'ACTIVE (5-Slide Pitch Presenter Blueprint Generator)',
-    webhookDispatcherStatus: 'ACTIVE (Outbound Signed Event Relay & Dispatcher)',
-    questEngineStatus: 'ACTIVE (Daily Streak Multiplier & XP Quest Engine)',
-    securityShieldStatus: 'ACTIVE (Prompt Injection Shield + XSS Sanitizer + Payload Ceiling Guard)',
-    availablePillars: {
-      pillar1_placement_interview: [
-        'Behavioral Outage Crisis Engine (/api/v1/prep/behavioral-pressure)',
-        'Latency Budget Circuit Breaker (/api/v1/prep/evaluate-latency)',
-        'Speech Prosody Evaluator (/api/v1/prep/analyze-speech)',
-        'Peer Mock Room & AI Safety-Net (/api/v1/prep/peer-session)',
-        'System Design Architecture Evaluator (/api/v1/prep/evaluate-architecture)',
-        'ATS Resume Diff Engine (/api/v1/prep/resume-diff)',
-        'STAR Story Synthesizer (/api/v1/prep/star-synthesize)',
-        'Compensation Benchmarking Engine (/api/v1/prep/comp-benchmark)'
+    uptime: process.uptime(),
+    memoryUsage: process.memoryUsage(),
+    activeArchitecture: {
+      triPillar: [
+        'Pillar 1: Placement & Interview Preparation OS',
+        'Pillar 2: Hackathon Builder Defense Engine',
+        'Pillar 3: Phoenix Horizon Universal Career Foundation'
       ],
-      pillar2_hackathon_builder: [
-        'Hackathon Urgency & Match Scorer (/api/v1/agent/rank-hackathons)',
-        'Live 3-Round AI Judge Defense Simulator (/api/v1/agent/judge-defense-sim)',
-        '5-Slide Pitch Deck Presenter Blueprint (/api/v1/agent/pitch-deck)',
-        'AI Code Review Audit Agent (/api/v1/code-review/audit)',
-        'Hackathon Winner Solutions RAG (/api/v1/idea-gen/generate-ideas)',
-        'Webhook Outbound Relay (/api/v1/webhooks/dispatch)'
-      ],
-      pillar3_horizon_gap_filler: [
-        'Zero-Friction Diagnostic Onboarding (/api/v1/horizon/diagnostic)',
-        'Multi-Sector 4-Phase Domain Roadmaps (/api/v1/horizon/roadmaps)',
-        'Daily Action Checklists & XP Rewards (/api/v1/horizon/checklists/daily)',
-        'Verified Resource & Link Repository (/api/v1/horizon/resources)',
-        'Entrance Exam Radar (KCET/DCET/NEET/CA/JEE) (/api/v1/horizon/exams)',
-        '500+ Categorized PYQ Question Bank & Mock Simulator (/api/v1/horizon/pyqs)',
-        'Senior Alumni Mentorship Bridge (/api/v1/horizon/mentors)',
-        'Stage-Based Career Path Explorer (/api/v1/horizon/explorer/:stageKey)'
+      securityGuards: [
+        'Token Bucket Rate Limiter with Memory Leak Safeguard',
+        'Automated SAST Security Payload Scanner',
+        'Code Playback & Reasoning Integrity Inspector',
+        'Zero-Trust Input Injection Shield'
       ]
     }
   });
@@ -195,33 +186,21 @@ app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/chat', chatRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/prep', prepRoutes);
-app.use('/api/agent', agentRoutes);
-app.use('/api/gamification', gamificationRoutes);
-app.use('/api/github', githubRoutes);
-app.use('/api/idea-gen', ideaGenRoutes);
-app.use('/api/enterprise', enterpriseRoutes);
-app.use('/api/webhooks', webhookRoutes);
-app.use('/api/simulator', simulatorRoutes);
-app.use('/api/code-review', codeReviewRoutes);
-app.use('/api/bot', botRoutes);
 
-// --- GLOBAL ERROR BOUNDARY ---
+// Global Error Handler
 app.use((err, req, res, next) => {
-  console.error(JSON.stringify({ requestId: req.requestId, error: err.message, stack: err.stack }));
-  res.status(500).json({ error: 'Internal server error', requestId: req.requestId });
+  console.error('[Unhandled Engine Exception]:', err);
+  res.status(err.status || 500).json({
+    error: err.message || 'Internal Server Error',
+    requestId: req.requestId,
+    timestamp: new Date().toISOString()
+  });
 });
 
-let server = app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`[Phoenix Server v13.0.0]: Running on http://localhost:${PORT}`);
+  });
+}
 
-process.on('SIGTERM', () => {
-  server.close(() => process.exit(0));
-});
-process.on('SIGINT', () => {
-  server.close(() => process.exit(0));
-});
-
-module.exports = server;
+module.exports = app;
