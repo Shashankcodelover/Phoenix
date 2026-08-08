@@ -58,10 +58,10 @@ const examAlertSchema = new mongoose.Schema({
 
 const mcqBankSchema = new mongoose.Schema({
   questionId: { type: String, required: true, unique: true },
-  examKey: { type: String, required: true },
-  subject: { type: String, required: true },
+  examKey: { type: String, required: true, index: true },
+  subject: { type: String, required: true, index: true },
   year: { type: Number },
-  difficulty: { type: String, enum: ['EASY', 'MEDIUM', 'HARD'] },
+  difficulty: { type: String, enum: ['EASY', 'MEDIUM', 'HARD'], index: true },
   questionText: { type: String, required: true },
   options: [{ type: String }],
   correctOptionIndex: { type: Number, required: true },

@@ -69,6 +69,14 @@ function validateField(value, fieldSchema, fieldName) {
     }
   }
 
+  // Object properties validation
+  if (fieldSchema.type === 'object' && fieldSchema.properties && value !== null) {
+    for (const [propName, propSchema] of Object.entries(fieldSchema.properties)) {
+      const propError = validateField(value[propName], propSchema, `${fieldName}.${propName}`);
+      if (propError) return propError;
+    }
+  }
+
   return null;
 }
 
@@ -261,13 +269,24 @@ const schemas = {
   },
 
   horizonExamQuery: {
-    sector: { type: 'string', required: true, maxLength: 50 },
+    sector: { type: 'string', required: false, maxLength: 50 },
     examKey: { type: 'string', required: false, maxLength: 50 }
   },
 
   horizonPyqSubmit: {
     examKey: { type: 'string', required: true, maxLength: 50 },
-    answers: { type: 'array', required: true, maxItems: 100 }
+    answers: { 
+      type: 'array', 
+      required: true, 
+      maxItems: 100,
+      items: {
+        type: 'object',
+        properties: {
+          questionId: { type: 'string', required: true, maxLength: 100 },
+          selectedOptionIndex: { type: 'number', required: true, min: 0, max: 10 }
+        }
+      }
+    }
   }
 };
 

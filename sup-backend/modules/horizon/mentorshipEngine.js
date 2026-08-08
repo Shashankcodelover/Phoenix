@@ -57,8 +57,13 @@ async function seedMentorsIfEmpty() {
 async function getSeniorMentors({ world }) {
   await seedMentorsIfEmpty();
 
-  // Optionally filter by world if needed in the future
   let query = {};
+  if (world) {
+    if (world === 'tech_world') query.originPath = { $regex: 'CS|B.E', $options: 'i' };
+    else if (world === 'commerce_world') query.originPath = { $regex: 'Commerce|CA', $options: 'i' };
+    else if (world === 'bio_world') query.originPath = { $regex: 'Medical|NEET|Science', $options: 'i' };
+    // Add other mappings as necessary, or rely on a proper `world` field if added to schema later
+  }
   
   const mentors = await MentorProfile.find(query).lean();
 

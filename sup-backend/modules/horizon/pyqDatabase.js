@@ -92,8 +92,17 @@ async function evaluateMockExam({ examKey, answers }) {
   let incorrectCount = 0;
   const breakdown = [];
 
+  const questionIds = answers.map(a => a.questionId);
+  const questionsList = await MCQBank.find({ questionId: { $in: questionIds } }).lean();
+  
+  // Create a map for O(1) lookup
+  const questionMap = {};
+  questionsList.forEach(q => {
+    questionMap[q.questionId] = q;
+  });
+
   for (const ans of answers) {
-    const question = await MCQBank.findOne({ questionId: ans.questionId }).lean();
+    const question = questionMap[ans.questionId];
     if (question) {
       const isCorrect = ans.selectedOptionIndex === question.correctOptionIndex;
       if (isCorrect) correctCount++;

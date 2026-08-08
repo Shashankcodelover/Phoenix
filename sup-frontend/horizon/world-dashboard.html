@@ -527,9 +527,13 @@
       messagesEl.innerHTML += `<div class="bot-msg from-user">${escapeHtml(msg)}</div>`;
       messagesEl.scrollTop = messagesEl.scrollHeight;
 
+      const token = localStorage.getItem('token') || '';
       fetch('/api/v1/horizon/bot/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({ message: msg, userStage: stage, currentPage: 'world-dashboard' })
       })
       .then(r => r.json())

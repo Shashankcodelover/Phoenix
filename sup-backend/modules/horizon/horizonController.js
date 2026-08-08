@@ -87,6 +87,35 @@ const horizonController = {
     }
   },
 
+  // POST /api/v1/horizon/bot/chat
+  botChat: async (req, res) => {
+    try {
+      const { message, userStage, currentPage } = req.body;
+      let reply = "I'm your Phoenix Guide. Try asking about your roadmap or exam prep.";
+      let focusElements = [];
+      
+      const lower = message.toLowerCase();
+      if (lower.includes('roadmap')) {
+        reply = "Here is your phased roadmap! It breaks down your journey from Zero-to-One foundation all the way to placement.";
+        focusElements.push({ selector: '#roadmapCard' });
+      } else if (lower.includes('kcet') || lower.includes('exam')) {
+        reply = "I've highlighted your Exam Radar. Keep an eye on those registration dates!";
+        focusElements.push({ selector: '#examCard' });
+      } else if (lower.includes('checklist')) {
+        reply = "Complete these daily actions to earn XP and level up your career foundation.";
+        focusElements.push({ selector: '#checklistCard' });
+      }
+
+      return res.status(200).json({
+        success: true,
+        botReply: reply,
+        focusElements
+      });
+    } catch (err) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
   // GET /api/v1/horizon/roadmaps
   getRoadmapsList: async (req, res) => {
     try {

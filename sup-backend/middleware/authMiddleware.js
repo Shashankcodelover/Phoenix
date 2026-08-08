@@ -45,5 +45,30 @@ const protect = async (req, res, next) => {
     message: 'Not authorized, no token provided'
   });
 };
+const protectOptional = async (req, res, next) => {
+  let token;
 
-module.exports = { protect };
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    try {
+      token = req.headers.authorization.split(' ')[1];
+
+      const secret = process.env.JWT_SECRET;
+      const decoded = jwt.verify(token, secret);
+
+      req.user = await User.findById(decoded.id).select('-password');
+      if (!req.user) {
+        req.userId = decoded.id; 
+      } else {
+        req.userId = req.user._id.toString();
+      }
+    } catch (error) {
+      console.warn(`[AuthMiddleware] Invalid token attempt from IP ${req.ip} for optional route: ${error.message}`);
+    }
+  }
+  return next();
+};
+
+module.exports = { protect, protectOptional };

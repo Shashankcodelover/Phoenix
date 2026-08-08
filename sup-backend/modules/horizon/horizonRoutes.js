@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const horizonController = require('./horizonController');
 const { validate, schemas } = require('../../middleware/inputValidator');
-const { protect } = require('../../middleware/authMiddleware');
+const { protect, protectOptional } = require('../../middleware/authMiddleware');
 
 // Diagnostic onboarding assessment
-router.post('/diagnostic', validate(schemas.horizonDiagnostic), horizonController.submitDiagnostic);
+router.post('/diagnostic', protectOptional, validate(schemas.horizonDiagnostic), horizonController.submitDiagnostic);
 
 // Multi-Sector Domain Roadmaps
 router.get('/roadmaps', horizonController.getRoadmapsList);
@@ -36,5 +36,8 @@ router.get('/explorer/:stageKey', horizonController.getStageExplorer);
 // A-to-Z Gap & Pathway Guides
 router.get('/guides', horizonController.getGapGuidesList);
 router.get('/guides/:domainKey', horizonController.getGapGuideByKey);
+
+// AI Bot Chat (world-dashboard)
+router.post('/bot/chat', protectOptional, horizonController.botChat);
 
 module.exports = router;

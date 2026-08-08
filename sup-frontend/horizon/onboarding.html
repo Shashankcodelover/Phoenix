@@ -349,18 +349,27 @@
         primaryGoal: 'Find the best path'
       };
 
+      const token = localStorage.getItem('token') || '';
+      
       fetch('/api/v1/horizon/diagnostic', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify(payload)
       })
       .then(r => r.json())
       .then(data => {
         if (data.redirectionUrl) {
           setTimeout(() => { window.location.href = data.redirectionUrl; }, 1200);
+        } else if (data.success === false) {
+          alert("Error saving profile: " + data.message);
+          window.location.href = `world-dashboard.html?world=${sector}&stage=${selectedData.academicStage}`;
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        alert("Network error: Could not reach the server. Falling back to guest dashboard.");
         setTimeout(() => {
           window.location.href = `world-dashboard.html?world=${sector}&stage=${selectedData.academicStage}`;
         }, 1200);
