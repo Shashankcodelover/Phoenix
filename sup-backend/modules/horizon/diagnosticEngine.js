@@ -1,101 +1,127 @@
 /**
  * Phoenix Horizon — Diagnostic & Sector Match Engine
- * Provides ultra-fast, 3-click sector matching with zero friction.
+ * 
+ * Maps a student's current stage, interests, and goals to a tailored "World".
  */
 
-const SECTOR_MAPPINGS = {
-  software_coding: {
-    matchedWorld: 'tech_world',
-    title: 'Tech & Software Engineering World',
-    startingPhase: 'Phase 1: Programming Foundations & Algorithmic Thinking',
-    recommendedDomains: ['Full-Stack Web', 'Data Structures & Algorithms', 'AI & Machine Learning', 'Mobile Dev'],
-    first30DaysRoadmap: [
-      { day: 1, task: 'Install VS Code, Node.js, and Git', durationMinutes: 20 },
-      { day: 3, task: 'Master JavaScript Variables, Data Types & Control Flow', durationMinutes: 45 },
-      { day: 7, task: 'Build your first interactive DOM web application', durationMinutes: 60 },
-      { day: 14, task: 'Understand Arrays, Maps, Sets & Time Complexity (Big-O)', durationMinutes: 45 },
-      { day: 21, task: 'Create a REST API backend with Express.js', durationMinutes: 60 },
-      { day: 30, task: 'Deploy your project live to Vercel/Render', durationMinutes: 30 }
-    ]
+const { HorizonProfile } = require('../../models/horizonModel');
+
+const WORLD_MAP = {
+  tech_world: {
+    name: 'Tech World',
+    description: 'The realm of Software Engineering, Data Science, Cyber Security, and AI.',
+    domains: ['Full Stack Development', 'AI/ML', 'Cloud Computing', 'Cyber Security']
   },
-  commerce_ca_finance: {
-    matchedWorld: 'commerce_world',
-    title: 'Commerce, Finance & CA World',
-    startingPhase: 'Phase 1: Financial Accounting & Quantitative Aptitude',
-    recommendedDomains: ['CA Foundation', 'Investment Banking', 'Corporate Law', 'Financial Analysis'],
-    first30DaysRoadmap: [
-      { day: 1, task: 'Understand Double-Entry Bookkeeping Principles', durationMinutes: 30 },
-      { day: 5, task: 'Master Journal Entries, Ledger Posting & Trial Balance', durationMinutes: 45 },
-      { day: 10, task: 'Learn Financial Statement Analysis (Balance Sheet & P&L)', durationMinutes: 60 },
-      { day: 20, task: 'Solve 50 CA Foundation Quantitative Aptitude PYQs', durationMinutes: 60 },
-      { day: 30, task: 'Complete 1 Full Timed Mock Exam for Accounts', durationMinutes: 90 }
-    ]
+  commerce_world: {
+    name: 'Commerce & Finance World',
+    description: 'The realm of Chartered Accountancy, Investment Banking, and Business Strategy.',
+    domains: ['CA/CS', 'Investment Banking', 'Actuarial Science', 'FinTech']
   },
-  medical_bio: {
-    matchedWorld: 'bio_world',
-    title: 'Bio-Medical & Healthcare World',
-    startingPhase: 'Phase 1: NEET Biology & Organic Chemistry Core',
-    recommendedDomains: ['NEET-UG Preparation', 'Biotechnology', 'Pharmacy', 'Clinical Research'],
-    first30DaysRoadmap: [
-      { day: 1, task: 'NCERT Human Physiology & Cell Biology Masterclass', durationMinutes: 45 },
-      { day: 7, task: 'Solve 100 NEET Previous Year Questions (Biology)', durationMinutes: 60 },
-      { day: 15, task: 'Organic Chemistry Reaction Mechanisms & IUPAC Naming', durationMinutes: 60 },
-      { day: 30, task: 'Full Length NEET Biology Mock Test with Error Log Analysis', durationMinutes: 90 }
-    ]
+  bio_world: {
+    name: 'Bio-Medical & Health World',
+    description: 'The realm of Medicine, Biotechnology, and Clinical Research.',
+    domains: ['MBBS', 'Biotech Research', 'Pharmacy', 'Bioinformatics']
   },
-  electronics_iot: {
-    matchedWorld: 'electronics_world',
-    title: 'Electronics, Hardware & Embedded Systems World',
-    startingPhase: 'Phase 1: Digital Electronics & C Programming for Microcontrollers',
-    recommendedDomains: ['Embedded Systems', 'IoT & Sensors', 'VLSI Design', 'Robotics'],
-    first30DaysRoadmap: [
-      { day: 1, task: 'Understand Logic Gates, Boolean Algebra & Truth Tables', durationMinutes: 30 },
-      { day: 10, task: 'Write C Code for Arduino/ESP32 LED & Sensor Interfaces', durationMinutes: 60 },
-      { day: 30, task: 'Build an Automated IoT Temperature Alert System', durationMinutes: 90 }
-    ]
+  electronics_world: {
+    name: 'Electronics & Hardware World',
+    description: 'The realm of VLSI, Embedded Systems, and IoT.',
+    domains: ['VLSI Design', 'IoT', 'Robotics', 'Signal Processing']
   },
-  arts_design: {
-    matchedWorld: 'arts_world',
-    title: 'Arts, UI/UX Design & Media World',
-    startingPhase: 'Phase 1: Design Systems, Color Theory & Visual Communication',
-    recommendedDomains: ['UI/UX Product Design', 'Graphic Design', 'Content Creation', 'Digital Media'],
-    first30DaysRoadmap: [
-      { day: 1, task: 'Learn Figma Fundamentals & Wireframing', durationMinutes: 30 },
-      { day: 10, task: 'Design a Mobile App UI with Auto-Layout & Design Tokens', durationMinutes: 60 },
-      { day: 30, task: 'Publish a 3-Page Case Study Portfolio on Behance', durationMinutes: 90 }
-    ]
+  arts_world: {
+    name: 'Arts & Design World',
+    description: 'The realm of UI/UX, Graphic Design, Animation, and Humanities.',
+    domains: ['UI/UX Design', 'Animation', 'Journalism', 'Psychology']
   }
 };
 
 /**
- * Evaluates student diagnostic choices cleanly with zero friction.
- * @param {Object} input - { academicStage, interestSector, primaryGoal }
+ * Determine the best world match based on interests and stage.
  */
-function evaluateStudentDiagnostic({ academicStage, interestSector, primaryGoal }) {
-  if (!academicStage || !interestSector) {
-    throw new Error('Academic stage and interest sector are required.');
+function matchWorld(interests) {
+  let scores = {
+    tech_world: 0,
+    commerce_world: 0,
+    bio_world: 0,
+    electronics_world: 0,
+    arts_world: 0
+  };
+
+  const techKeywords = ['coding', 'computers', 'software', 'ai', 'hacking', 'games', 'tech'];
+  const commerceKeywords = ['money', 'business', 'stocks', 'accounts', 'finance', 'commerce'];
+  const bioKeywords = ['biology', 'medicine', 'health', 'animals', 'science', 'doctor', 'bio'];
+  const electronicsKeywords = ['circuits', 'hardware', 'robotics', 'physics', 'gadgets'];
+  const artsKeywords = ['design', 'drawing', 'psychology', 'writing', 'art', 'ui', 'creative'];
+
+  if (Array.isArray(interests)) {
+    interests.forEach(interest => {
+      const lower = interest.toLowerCase();
+      if (techKeywords.some(kw => lower.includes(kw))) scores.tech_world++;
+      if (commerceKeywords.some(kw => lower.includes(kw))) scores.commerce_world++;
+      if (bioKeywords.some(kw => lower.includes(kw))) scores.bio_world++;
+      if (electronicsKeywords.some(kw => lower.includes(kw))) scores.electronics_world++;
+      if (artsKeywords.some(kw => lower.includes(kw))) scores.arts_world++;
+    });
   }
 
-  const mappingKey = SECTOR_MAPPINGS[interestSector] ? interestSector : 'software_coding';
-  const sectorData = SECTOR_MAPPINGS[mappingKey];
+  // Default to tech_world if no strong match
+  let maxScore = -1;
+  let bestMatch = 'tech_world';
+
+  for (const [world, score] of Object.entries(scores)) {
+    if (score > maxScore) {
+      maxScore = score;
+      bestMatch = world;
+    }
+  }
+
+  return bestMatch;
+}
+
+/**
+ * Evaluates the student's diagnostic input.
+ * In a real scenario, this creates/updates their profile in the DB.
+ */
+async function evaluateStudentDiagnostic(userId, { academicStage, interests, primaryGoal }) {
+  if (!academicStage || !interests) {
+    throw new Error('Academic stage and interests are required.');
+  }
+
+  const matchedWorld = matchWorld(interests);
+  const worldDetails = WORLD_MAP[matchedWorld];
+
+  let profile = await HorizonProfile.findOne({ userId });
+  if (!profile) {
+    profile = new HorizonProfile({
+      userId: userId,
+      academicStage: academicStage,
+      selectedWorld: matchedWorld,
+      activeRoadmapId: 'foundation_30_day',
+      completedChecklistItems: [],
+      pyqBookmarks: [],
+      examAlertSubscriptions: []
+    });
+    await profile.save();
+  } else {
+    profile.academicStage = academicStage;
+    profile.selectedWorld = matchedWorld;
+    await profile.save();
+  }
 
   return {
     success: true,
-    academicStage,
-    primaryGoal: primaryGoal || 'Career & Entrance Exam Success',
-    evaluatedAt: new Date().toISOString(),
-    matchDetails: {
-      matchedWorld: sectorData.matchedWorld,
-      title: sectorData.title,
-      startingPhase: sectorData.startingPhase,
-      recommendedDomains: sectorData.recommendedDomains,
-      first30DaysRoadmap: sectorData.first30DaysRoadmap,
-    },
-    redirectionUrl: `/horizon/world-dashboard.html?world=${sectorData.matchedWorld}&stage=${academicStage}`,
+    matchedWorld: matchedWorld,
+    worldName: worldDetails.name,
+    worldDescription: worldDetails.description,
+    recommendedDomains: worldDetails.domains,
+    startingPhase: 'Phase 1: Foundation',
+    initialRoadmap: [
+      { day: 1, task: 'Explore the domain landscape', completed: false },
+      { day: 2, task: 'Join the community forums', completed: false },
+      { day: 3, task: 'Review top 3 mistakes to avoid', completed: false }
+    ],
+    message: 'Diagnostic complete. Welcome to your World.',
+    redirectionUrl: `/horizon/world-dashboard.html?world=${matchedWorld}&stage=${academicStage}`
   };
 }
 
-module.exports = {
-  evaluateStudentDiagnostic,
-  SECTOR_MAPPINGS,
-};
+module.exports = { evaluateStudentDiagnostic, matchWorld, WORLD_MAP };

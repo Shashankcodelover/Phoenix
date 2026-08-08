@@ -1,5 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
+
 const { evaluateStudentDiagnostic } = require('../modules/horizon/diagnosticEngine');
 const { getExamNotifications } = require('../modules/horizon/examRadarEngine');
 const { getPyqQuestions, evaluateMockExam } = require('../modules/horizon/pyqDatabase');
@@ -10,43 +13,55 @@ const { getResources } = require('../modules/horizon/resourceRepository');
 const { exploreDomainByStage } = require('../modules/horizon/domainExplorer');
 const { getGapGuide, listGapGuides } = require('../modules/horizon/gapGuideEngine');
 
-test('evaluateStudentDiagnostic matches Tech sector correctly', () => {
-  const result = evaluateStudentDiagnostic({
+let mongoServer;
+
+test.before(async () => {
+  mongoServer = await MongoMemoryServer.create();
+  const uri = mongoServer.getUri();
+  await mongoose.connect(uri);
+});
+
+test.after(async () => {
+  await mongoose.disconnect();
+  await mongoServer.stop();
+});
+
+test('evaluateStudentDiagnostic matches Tech sector correctly', async () => {
+  const result = await evaluateStudentDiagnostic('user123', {
     academicStage: '2nd_pu',
-    interestSector: 'software_coding'
+    interests: ['software', 'coding']
   });
 
   assert.equal(result.success, true);
-  assert.equal(result.matchDetails.matchedWorld, 'tech_world');
-  assert.ok(result.matchDetails.first30DaysRoadmap.length >= 5);
+  assert.equal(result.matchedWorld, 'tech_world');
 });
 
-test('evaluateStudentDiagnostic matches Commerce sector correctly', () => {
-  const result = evaluateStudentDiagnostic({
+test('evaluateStudentDiagnostic matches Commerce sector correctly', async () => {
+  const result = await evaluateStudentDiagnostic('user456', {
     academicStage: 'commerce',
-    interestSector: 'commerce_ca_finance'
+    interests: ['commerce', 'finance']
   });
 
   assert.equal(result.success, true);
-  assert.equal(result.matchDetails.matchedWorld, 'commerce_world');
+  assert.equal(result.matchedWorld, 'commerce_world');
 });
 
-test('getExamNotifications filters KCET and DCET entrance exams', () => {
-  const allExams = getExamNotifications({});
+test('getExamNotifications filters KCET and DCET entrance exams', async () => {
+  const allExams = await getExamNotifications({});
   assert.ok(allExams.count >= 4);
 
-  const dcetOnly = getExamNotifications({ examKey: 'dcet' });
-  assert.equal(dcetOnly.exams[0].name, 'DCET (Diploma Common Entrance Test)');
+  const dcetOnly = await getExamNotifications({ examKey: 'dcet' });
+  assert.equal(dcetOnly.exams[0].examName, 'DCET (Diploma Common Entrance Test)');
 });
 
-test('getPyqQuestions returns subject-filtered questions', () => {
-  const mathPyqs = getPyqQuestions({ subject: 'Mathematics' });
+test('getPyqQuestions returns subject-filtered questions', async () => {
+  const mathPyqs = await getPyqQuestions({ subject: 'Mathematics' });
   assert.ok(mathPyqs.questions.length > 0);
   assert.equal(mathPyqs.questions[0].subject, 'Mathematics');
 });
 
-test('evaluateMockExam scores answers correctly', () => {
-  const mockResult = evaluateMockExam({
+test('evaluateMockExam scores answers correctly', async () => {
+  const mockResult = await evaluateMockExam({
     examKey: 'kcet',
     answers: [
       { questionId: 'kcet_math_2025_01', selectedOptionIndex: 0 } // Correct option (8 or -8)
@@ -58,12 +73,13 @@ test('evaluateMockExam scores answers correctly', () => {
   assert.equal(mockResult.results.percentageScore, 100);
 });
 
-test('getSeniorMentors returns verified alumni advice cards', () => {
-  const mentors = getSeniorMentors({ world: 'tech_world' });
+test('getSeniorMentors returns verified alumni advice cards', async () => {
+  const mentors = await getSeniorMentors({ world: 'tech_world' });
   assert.ok(mentors.mentors.length >= 3);
   assert.equal(mentors.mentors[0].verifiedAlumni, true);
 });
 
+// The remaining tests are for synchronous roadmap/checklist modules
 test('getRoadmap and listRoadmaps return 4-phase structured domain roadmaps', () => {
   const list = listRoadmaps({});
   assert.ok(list.count >= 5);

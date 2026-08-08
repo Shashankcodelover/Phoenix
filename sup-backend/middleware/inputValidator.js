@@ -256,12 +256,17 @@ const schemas = {
 
   horizonDiagnostic: {
     academicStage: { type: 'string', required: true, maxLength: 50 },
-    interestSector: { type: 'string', required: true, maxLength: 100 },
+    interests: { type: 'array', required: true, maxItems: 10 },
     primaryGoal: { type: 'string', required: false, maxLength: 500 }
   },
 
+  horizonExamQuery: {
+    sector: { type: 'string', required: true, maxLength: 50 },
+    examKey: { type: 'string', required: false, maxLength: 50 }
+  },
+
   horizonPyqSubmit: {
-    examKey: { type: 'string', required: false, maxLength: 50 },
+    examKey: { type: 'string', required: true, maxLength: 50 },
     answers: { type: 'array', required: true, maxItems: 100 }
   }
 };

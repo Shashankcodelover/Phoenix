@@ -15,8 +15,28 @@ const horizonController = {
   // POST /api/v1/horizon/diagnostic
   submitDiagnostic: async (req, res) => {
     try {
-      const { academicStage, interestSector, primaryGoal } = req.body;
-      const result = evaluateStudentDiagnostic({ academicStage, interestSector, primaryGoal });
+      const { academicStage, interests, primaryGoal } = req.body;
+      
+      let userId = req.user ? req.user._id : null;
+      let result;
+      if (userId) {
+        result = await evaluateStudentDiagnostic(userId, { academicStage, interests, primaryGoal });
+      } else {
+        // Guest mode - don't save to DB
+        const { matchWorld, WORLD_MAP } = require('./diagnosticEngine');
+        const matchedWorld = matchWorld(interests);
+        const worldDetails = WORLD_MAP[matchedWorld];
+        result = {
+          success: true,
+          matchedWorld: matchedWorld,
+          worldName: worldDetails.name,
+          worldDescription: worldDetails.description,
+          recommendedDomains: worldDetails.domains,
+          startingPhase: 'Phase 1: Foundation',
+          message: 'Diagnostic complete. (Guest mode)',
+          redirectionUrl: `/horizon/world-dashboard.html?world=${matchedWorld}&stage=${academicStage}`
+        };
+      }
       return res.status(200).json(result);
     } catch (err) {
       return res.status(400).json({ success: false, error: err.message });
@@ -26,8 +46,8 @@ const horizonController = {
   // GET /api/v1/horizon/exams
   getExams: async (req, res) => {
     try {
-      const { stage, examKey } = req.query;
-      const result = getExamNotifications({ stage, examKey });
+      const { sector, examKey } = req.query;
+      const result = await getExamNotifications({ sector, examKey });
       return res.status(200).json(result);
     } catch (err) {
       return res.status(500).json({ success: false, error: err.message });
@@ -38,7 +58,7 @@ const horizonController = {
   getPyqs: async (req, res) => {
     try {
       const { examKey, subject, difficulty, limit } = req.query;
-      const result = getPyqQuestions({ examKey, subject, difficulty, limit: limit ? parseInt(limit) : 10 });
+      const result = await getPyqQuestions({ examKey, subject, difficulty, limit: limit ? parseInt(limit) : 10 });
       return res.status(200).json(result);
     } catch (err) {
       return res.status(500).json({ success: false, error: err.message });
@@ -49,7 +69,7 @@ const horizonController = {
   evaluatePyqMock: async (req, res) => {
     try {
       const { examKey, answers } = req.body;
-      const result = evaluateMockExam({ examKey, answers });
+      const result = await evaluateMockExam({ examKey, answers });
       return res.status(200).json(result);
     } catch (err) {
       return res.status(400).json({ success: false, error: err.message });
@@ -60,7 +80,7 @@ const horizonController = {
   getMentors: async (req, res) => {
     try {
       const { world } = req.query;
-      const result = getSeniorMentors({ world });
+      const result = await getSeniorMentors({ world });
       return res.status(200).json(result);
     } catch (err) {
       return res.status(500).json({ success: false, error: err.message });

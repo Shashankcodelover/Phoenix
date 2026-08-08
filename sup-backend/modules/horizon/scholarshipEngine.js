@@ -32,7 +32,8 @@ const SCHOLARSHIP_SCHEMES = [
   }
 ];
 
-function predictScholarshipEligibility({ academicStage, familyIncomeLakhs, entranceRank, isFemale = false }) {
+function predictScholarshipEligibility({ userId, academicStage, familyIncomeLakhs, entranceRank, isFemale = false }) {
+  if (!userId) throw new Error('Authentication state is missing. userId is required.');
   if (!academicStage) throw new Error('academicStage is required.');
 
   const income = parseFloat(familyIncomeLakhs || 5);

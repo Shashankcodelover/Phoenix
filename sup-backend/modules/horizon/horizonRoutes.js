@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const horizonController = require('./horizonController');
 const { validate, schemas } = require('../../middleware/inputValidator');
+const { protect } = require('../../middleware/authMiddleware');
 
 // Diagnostic onboarding assessment
 router.post('/diagnostic', validate(schemas.horizonDiagnostic), horizonController.submitDiagnostic);
@@ -18,16 +19,16 @@ router.get('/checklists/milestones', horizonController.getMonthlyMilestones);
 router.get('/resources', horizonController.getResourcesList);
 
 // Entrance Exam Radar alerts (KCET, DCET, NEET, CA, JEE)
-router.get('/exams', horizonController.getExams);
+router.get('/exams', protect, validate(schemas.horizonExamQuery), horizonController.getExams);
 
 // PYQ Question Bank & Search
-router.get('/pyqs', horizonController.getPyqs);
+router.get('/pyqs', protect, horizonController.getPyqs);
 
 // Timed Mock Exam Submission & Evaluator
-router.post('/pyq/evaluate', validate(schemas.horizonPyqSubmit), horizonController.evaluatePyqMock);
+router.post('/pyq/evaluate', protect, validate(schemas.horizonPyqSubmit), horizonController.evaluatePyqMock);
 
 // Senior Alumni Mentorship Bridge
-router.get('/mentors', horizonController.getMentors);
+router.get('/mentors', protect, horizonController.getMentors);
 
 // Stage-Based Domain Explorer ("What's out there at my stage?")
 router.get('/explorer/:stageKey', horizonController.getStageExplorer);

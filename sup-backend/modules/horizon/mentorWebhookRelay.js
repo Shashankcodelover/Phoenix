@@ -6,8 +6,7 @@
  */
 
 const crypto = require('crypto');
-
-const DISPATCHED_QUESTIONS = [];
+const DispatchedQuestion = require('../../models/DispatchedQuestion');
 
 function generateWebhookSignature(payloadString, secretKey) {
   return crypto
@@ -16,7 +15,7 @@ function generateWebhookSignature(payloadString, secretKey) {
     .digest('hex');
 }
 
-function submitMentorQuestion({ studentId, studentName, stage, mentorId, questionText }) {
+async function submitMentorQuestion({ studentId, studentName, stage, mentorId, questionText }) {
   if (!studentName || !mentorId || !questionText) {
     throw new Error('studentName, mentorId, and questionText are required.');
   }
@@ -34,17 +33,16 @@ function submitMentorQuestion({ studentId, studentName, stage, mentorId, questio
   };
 
   const payloadString = JSON.stringify(payloadObj);
-  const secretKey = process.env.WEBHOOK_SECRET || 'phoenix_mentor_relay_secret_key_2026';
+  const secretKey = process.env.WEBHOOK_SECRET;
+  if (!secretKey) throw new Error('WEBHOOK_SECRET environment variable is missing.');
   const signature = generateWebhookSignature(payloadString, secretKey);
 
-  const record = {
+  const record = await DispatchedQuestion.create({
     ...payloadObj,
     signature,
     status: 'QUEUED_FOR_MENTOR',
     estimatedResponseHours: 24
-  };
-
-  DISPATCHED_QUESTIONS.push(record);
+  });
 
   return {
     success: true,
@@ -53,10 +51,11 @@ function submitMentorQuestion({ studentId, studentName, stage, mentorId, questio
   };
 }
 
-function getDispatchedQuestions({ mentorId, studentId }) {
-  let list = [...DISPATCHED_QUESTIONS];
-  if (mentorId) list = list.filter(q => q.mentorId === mentorId);
-  if (studentId) list = list.filter(q => q.student.id === studentId);
+async function getDispatchedQuestions({ mentorId, studentId }) {
+  const query = {};
+  if (mentorId) query.mentorId = mentorId;
+  if (studentId) query['student.id'] = studentId;
+  const list = await DispatchedQuestion.find(query).sort({ createdAt: -1 });
   return { success: true, count: list.length, questions: list };
 }
 

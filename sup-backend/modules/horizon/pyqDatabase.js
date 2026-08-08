@@ -1,9 +1,11 @@
 /**
  * Phoenix Horizon — PYQ Database & Timed Mock Exam Engine
- * Provides categorized previous year question bank with automated scoring.
+ * Provides categorized previous year question bank with automated scoring via MongoDB.
  */
 
-const SAMPLE_PYQS = [
+const { MCQBank } = require('../../models/horizonModel');
+
+const SAMPLE_PYQS_SEED = [
   {
     questionId: 'kcet_math_2025_01',
     examKey: 'kcet',
@@ -50,33 +52,37 @@ const SAMPLE_PYQS = [
   },
 ];
 
-/**
- * Searches questions by exam key, subject, or difficulty.
- */
-function getPyqQuestions({ examKey, subject, difficulty, limit = 10 }) {
-  let filtered = [...SAMPLE_PYQS];
+async function seedMCQsIfEmpty() {
+  const count = await MCQBank.countDocuments();
+  if (count === 0) {
+    await MCQBank.insertMany(SAMPLE_PYQS_SEED);
+  }
+}
 
-  if (examKey) {
-    filtered = filtered.filter((q) => q.examKey === examKey);
-  }
-  if (subject) {
-    filtered = filtered.filter((q) => q.subject.toLowerCase().includes(subject.toLowerCase()));
-  }
-  if (difficulty) {
-    filtered = filtered.filter((q) => q.difficulty === difficulty);
-  }
+/**
+ * Searches questions by exam key, subject, or difficulty via MongoDB.
+ */
+async function getPyqQuestions({ examKey, subject, difficulty, limit = 10 }) {
+  await seedMCQsIfEmpty();
+
+  let query = {};
+  if (examKey) query.examKey = examKey;
+  if (subject) query.subject = { $regex: subject, $options: 'i' };
+  if (difficulty) query.difficulty = difficulty;
+
+  const questions = await MCQBank.find(query).limit(limit).lean();
 
   return {
     success: true,
-    count: filtered.length,
-    questions: filtered.slice(0, limit),
+    count: questions.length,
+    questions: questions,
   };
 }
 
 /**
  * Evaluates timed mock exam submissions and generates instant score report.
  */
-function evaluateMockExam({ examKey, answers }) {
+async function evaluateMockExam({ examKey, answers }) {
   if (!answers || !Array.isArray(answers)) {
     throw new Error('Answers array is required.');
   }
@@ -86,8 +92,8 @@ function evaluateMockExam({ examKey, answers }) {
   let incorrectCount = 0;
   const breakdown = [];
 
-  answers.forEach((ans) => {
-    const question = SAMPLE_PYQS.find((q) => q.questionId === ans.questionId);
+  for (const ans of answers) {
+    const question = await MCQBank.findOne({ questionId: ans.questionId }).lean();
     if (question) {
       const isCorrect = ans.selectedOptionIndex === question.correctOptionIndex;
       if (isCorrect) correctCount++;
@@ -102,7 +108,7 @@ function evaluateMockExam({ examKey, answers }) {
         explanation: question.explanation,
       });
     }
-  });
+  }
 
   const percentageScore = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
 
@@ -123,6 +129,5 @@ function evaluateMockExam({ examKey, answers }) {
 
 module.exports = {
   getPyqQuestions,
-  evaluateMockExam,
-  SAMPLE_PYQS,
+  evaluateMockExam
 };

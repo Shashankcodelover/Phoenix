@@ -1,92 +1,94 @@
 /**
  * Phoenix Horizon — Exam Radar & Entrance Notification Engine
- * Tracks KCET, DCET, NEET-UG, CA Foundation, JEE Main, COMEDK alerts.
+ * Tracks KCET, DCET, NEET-UG, CA Foundation, JEE Main, COMEDK alerts using MongoDB.
  */
 
-const EXAM_DATABASE = {
-  kcet: {
+const { ExamAlert } = require('../../models/horizonModel');
+
+const INITIAL_SEED = [
+  {
     examKey: 'kcet',
-    name: 'KCET (Karnataka Common Entrance Test)',
-    category: 'Engineering / Agriculture',
-    targetStudents: ['2nd_pu', '12th'],
-    registrationStatus: 'OPEN',
-    registrationDeadline: '2026-03-25',
-    examDate: '2026-04-18',
-    officialPortal: 'https://cetonline.karnataka.gov.in/kea/',
-    syllabusSubjects: ['Physics', 'Chemistry', 'Mathematics', 'Biology'],
-    topPreparationTip: 'Focus 70% of time on Class 12 NCERT numerical problems and last 10 years KEA PYQs.',
+    examName: 'KCET (Karnataka Common Entrance Test)',
+    sector: 'Engineering / Agriculture',
+    registrationStartDate: new Date('2026-02-01'),
+    registrationEndDate: new Date('2026-03-25'),
+    examDate: new Date('2026-04-18'),
+    officialLink: 'https://cetonline.karnataka.gov.in/kea/',
+    syllabusChanges: 'Focus 70% of time on Class 12 NCERT numerical problems and last 10 years KEA PYQs.'
   },
-  dcet: {
+  {
     examKey: 'dcet',
-    name: 'DCET (Diploma Common Entrance Test)',
-    category: 'Diploma Lateral Entry to B.E/B.Tech (2nd Year)',
-    targetStudents: ['diploma_1', 'diploma_2', 'diploma_3'],
-    registrationStatus: 'UPCOMING',
-    registrationDeadline: '2026-05-10',
-    examDate: '2026-06-02',
-    officialPortal: 'https://cetonline.karnataka.gov.in/kea/',
-    syllabusSubjects: ['Applied Mathematics', 'Applied Science', 'Engineering Core Branch Subject'],
-    topPreparationTip: 'Master DCET Engineering Mathematics (Matrices, Calculus, Differential Equations) — accounts for 40% total score.',
+    examName: 'DCET (Diploma Common Entrance Test)',
+    sector: 'Diploma Lateral Entry to B.E/B.Tech (2nd Year)',
+    registrationStartDate: new Date('2026-04-01'),
+    registrationEndDate: new Date('2026-05-10'),
+    examDate: new Date('2026-06-02'),
+    officialLink: 'https://cetonline.karnataka.gov.in/kea/',
+    syllabusChanges: 'Master DCET Engineering Mathematics (Matrices, Calculus, Differential Equations).'
   },
-  neet: {
+  {
     examKey: 'neet',
-    name: 'NEET-UG (National Eligibility cum Entrance Test)',
-    category: 'Medical / Dental / Veterinary',
-    targetStudents: ['2nd_pu', '12th', 'bio_medical'],
-    registrationStatus: 'OPEN',
-    registrationDeadline: '2026-03-09',
-    examDate: '2026-05-03',
-    officialPortal: 'https://neet.nta.nic.in/',
-    syllabusSubjects: ['Botany', 'Zoology', 'Physics', 'Chemistry'],
-    topPreparationTip: 'NCERT Biology textbook must be memorized line-by-line. 85+ questions come directly from NCERT text diagrams.',
+    examName: 'NEET-UG (National Eligibility cum Entrance Test)',
+    sector: 'Medical / Dental / Veterinary',
+    registrationStartDate: new Date('2026-01-15'),
+    registrationEndDate: new Date('2026-03-09'),
+    examDate: new Date('2026-05-03'),
+    officialLink: 'https://neet.nta.nic.in/',
+    syllabusChanges: 'NCERT Biology textbook must be memorized line-by-line.'
   },
-  ca_foundation: {
+  {
     examKey: 'ca_foundation',
-    name: 'ICAI CA Foundation Exam',
-    category: 'Chartered Accountancy',
-    targetStudents: ['2nd_pu', 'commerce', '12th'],
-    registrationStatus: 'OPEN',
-    registrationDeadline: '2026-02-01',
-    examDate: '2026-06-20',
-    officialPortal: 'https://www.icai.org/',
-    syllabusSubjects: ['Accounting', 'Business Laws', 'Quantitative Aptitude', 'Business Economics'],
-    topPreparationTip: 'Practice written presentation of ICAI Law answers and speed-solve Quantitative Aptitude MCQs.',
+    examName: 'ICAI CA Foundation Exam',
+    sector: 'Chartered Accountancy',
+    registrationStartDate: new Date('2025-12-01'),
+    registrationEndDate: new Date('2026-02-01'),
+    examDate: new Date('2026-06-20'),
+    officialLink: 'https://www.icai.org/',
+    syllabusChanges: 'Practice written presentation of ICAI Law answers and speed-solve Quantitative Aptitude MCQs.'
   },
-  jee_main: {
+  {
     examKey: 'jee_main',
-    name: 'JEE Main (Session 2)',
-    category: 'Engineering / NITs / IIITs / CFTIs',
-    targetStudents: ['2nd_pu', '12th'],
-    registrationStatus: 'OPEN',
-    registrationDeadline: '2026-03-02',
-    examDate: '2026-04-04',
-    officialPortal: 'https://jeemain.nta.ac.in/',
-    syllabusSubjects: ['Physics', 'Chemistry', 'Mathematics'],
-    topPreparationTip: 'Prioritize Chemistry NCERT for quick 100/100 points, followed by high-yield Physics topics.',
-  },
-};
+    examName: 'JEE Main (Session 2)',
+    sector: 'Engineering / NITs / IIITs / CFTIs',
+    registrationStartDate: new Date('2026-02-01'),
+    registrationEndDate: new Date('2026-03-02'),
+    examDate: new Date('2026-04-04'),
+    officialLink: 'https://jeemain.nta.ac.in/',
+    syllabusChanges: 'Prioritize Chemistry NCERT for quick 100/100 points, followed by high-yield Physics topics.'
+  }
+];
+
+async function seedExamsIfEmpty() {
+  const count = await ExamAlert.countDocuments();
+  if (count === 0) {
+    await ExamAlert.insertMany(INITIAL_SEED);
+  }
+}
 
 /**
- * Retrieves exam radar alerts filtered by target stage or exam key.
+ * Retrieves exam radar alerts filtered by target sector or exam key from MongoDB.
  */
-function getExamNotifications({ stage, examKey }) {
-  if (examKey && EXAM_DATABASE[examKey]) {
-    return { success: true, count: 1, exams: [EXAM_DATABASE[examKey]] };
+async function getExamNotifications({ sector, examKey }) {
+  await seedExamsIfEmpty();
+  
+  let query = {};
+  if (examKey) {
+    query.examKey = examKey;
+  }
+  if (sector) {
+    // For fuzzy matching sectors
+    query.sector = { $regex: sector, $options: 'i' };
   }
 
-  let exams = Object.values(EXAM_DATABASE);
-  if (stage) {
-    exams = exams.filter((e) => e.targetStudents.includes(stage));
-  }
-
+  const exams = await ExamAlert.find(query);
+  
   return {
     success: true,
     count: exams.length,
-    exams,
+    exams: exams,
   };
 }
 
 module.exports = {
-  getExamNotifications,
-  EXAM_DATABASE,
+  getExamNotifications
 };

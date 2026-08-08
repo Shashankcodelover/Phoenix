@@ -45,5 +45,47 @@ const horizonSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+const examAlertSchema = new mongoose.Schema({
+  sector: { type: String, required: true },
+  examKey: { type: String, required: true, unique: true },
+  examName: { type: String, required: true },
+  registrationStartDate: { type: Date },
+  registrationEndDate: { type: Date },
+  examDate: { type: Date },
+  officialLink: { type: String },
+  syllabusChanges: { type: String }
+}, { timestamps: true });
 
-module.exports = mongoose.model('HorizonProfile', horizonSchema);
+const mcqBankSchema = new mongoose.Schema({
+  questionId: { type: String, required: true, unique: true },
+  examKey: { type: String, required: true },
+  subject: { type: String, required: true },
+  year: { type: Number },
+  difficulty: { type: String, enum: ['EASY', 'MEDIUM', 'HARD'] },
+  questionText: { type: String, required: true },
+  options: [{ type: String }],
+  correctOptionIndex: { type: Number, required: true },
+  explanation: { type: String }
+}, { timestamps: true });
+
+const mentorProfileSchema = new mongoose.Schema({
+  mentorId: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  currentRole: { type: String, required: true },
+  originPath: { type: String, required: true },
+  verifiedAlumni: { type: Boolean, default: true },
+  top3MistakesToAvoid: [{ type: String }],
+  wisdomQuote: { type: String }
+}, { timestamps: true });
+
+const HorizonProfile = mongoose.model('HorizonProfile', horizonSchema);
+const ExamAlert = mongoose.model('ExamAlert', examAlertSchema);
+const MCQBank = mongoose.model('MCQBank', mcqBankSchema);
+const MentorProfile = mongoose.model('MentorProfile', mentorProfileSchema);
+
+module.exports = {
+  HorizonProfile,
+  ExamAlert,
+  MCQBank,
+  MentorProfile
+};

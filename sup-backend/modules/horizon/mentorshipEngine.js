@@ -1,9 +1,11 @@
 /**
  * Phoenix Horizon — Senior Mentorship Bridge Engine
- * Provides verified senior alumni advice cards and mistakes-to-avoid guides.
+ * Provides verified senior alumni advice cards and mistakes-to-avoid guides from MongoDB.
  */
 
-const SENIOR_PROFILES = [
+const { MentorProfile } = require('../../models/horizonModel');
+
+const SENIOR_PROFILES_SEED = [
   {
     mentorId: 'senior_01',
     name: 'Ananya Sharma',
@@ -45,15 +47,28 @@ const SENIOR_PROFILES = [
   }
 ];
 
-function getSeniorMentors({ world }) {
+async function seedMentorsIfEmpty() {
+  const count = await MentorProfile.countDocuments();
+  if (count === 0) {
+    await MentorProfile.insertMany(SENIOR_PROFILES_SEED);
+  }
+}
+
+async function getSeniorMentors({ world }) {
+  await seedMentorsIfEmpty();
+
+  // Optionally filter by world if needed in the future
+  let query = {};
+  
+  const mentors = await MentorProfile.find(query).lean();
+
   return {
     success: true,
-    count: SENIOR_PROFILES.length,
-    mentors: SENIOR_PROFILES,
+    count: mentors.length,
+    mentors: mentors,
   };
 }
 
 module.exports = {
-  getSeniorMentors,
-  SENIOR_PROFILES,
+  getSeniorMentors
 };

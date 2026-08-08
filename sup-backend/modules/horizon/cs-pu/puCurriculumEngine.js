@@ -18,6 +18,8 @@
 // SECTION 1: THE REAL PU CS SYLLABUS vs WHAT INDUSTRY NEEDS
 // ═══════════════════════════════════════════════════════════
 
+const { PyqBank, Roadmap } = require('../../../models/Curriculum');
+
 const PU_CS_SYLLABUS_REALITY = {
   whatCollegeTeaches: {
     firstPU: [
@@ -252,12 +254,14 @@ function getPuSyllabusGapAnalysis() {
   };
 }
 
-function getPuMonthByMonthRoadmap() {
+async function getPuMonthByMonthRoadmap() {
+  const doc = await Roadmap.findOne({ stage: 'pu' });
+  const roadmapData = doc ? doc.roadmap : PU_CS_MONTH_BY_MONTH_ROADMAP;
   return {
     success: true,
     engine: 'PU CS 2-Year Month-by-Month Roadmap',
-    totalMonths: PU_CS_MONTH_BY_MONTH_ROADMAP.length,
-    roadmap: PU_CS_MONTH_BY_MONTH_ROADMAP,
+    totalMonths: roadmapData.length,
+    roadmap: roadmapData,
   };
 }
 
@@ -270,11 +274,23 @@ function getPuEntranceExamPrep(examKey) {
   return { success: true, exams: PU_ENTRANCE_EXAMS };
 }
 
-function getPuBoardPyqs({ chapter, year, limit }) {
-  let pyqs = [...PU_CS_BOARD_PYQS];
-  if (chapter) pyqs = pyqs.filter(q => q.chapter.toLowerCase().includes(chapter.toLowerCase()));
-  if (year) pyqs = pyqs.filter(q => q.year === parseInt(year));
-  if (limit) pyqs = pyqs.slice(0, parseInt(limit));
+async function getPuBoardPyqs({ chapter, year, limit, skip }) {
+  if (limit && isNaN(parseInt(limit))) {
+    throw new Error('Limit must be a valid number');
+  }
+  if (skip && isNaN(parseInt(skip))) {
+    throw new Error('Skip must be a valid number');
+  }
+
+  const query = { stage: 'pu' };
+  if (chapter) query.chapter = new RegExp(chapter, 'i');
+  if (year) query.year = parseInt(year);
+
+  let mQuery = PyqBank.find(query);
+  if (skip) mQuery = mQuery.skip(parseInt(skip));
+  if (limit) mQuery = mQuery.limit(parseInt(limit));
+
+  const pyqs = await mQuery;
   return { success: true, count: pyqs.length, questions: pyqs };
 }
 

@@ -3,6 +3,20 @@ const cors = require('cors');
 const crypto = require('crypto');
 require('dotenv').config();
 
+const fs = require('fs');
+
+if (!process.env.JWT_SECRET) {
+  process.env.JWT_SECRET = crypto.randomBytes(32).toString('hex');
+  fs.appendFileSync('.env', `\nJWT_SECRET=${process.env.JWT_SECRET}\n`);
+  console.warn('[Security Warning]: JWT_SECRET not found. Generated and persisted to .env');
+}
+
+if (!process.env.WEBHOOK_SECRET) {
+  process.env.WEBHOOK_SECRET = crypto.randomBytes(32).toString('hex');
+  fs.appendFileSync('.env', `\nWEBHOOK_SECRET=${process.env.WEBHOOK_SECRET}\n`);
+  console.warn('[Security Warning]: WEBHOOK_SECRET not found. Generated and persisted to .env');
+}
+
 const connectDB = require('./config/db');
 
 const app = express();
@@ -11,7 +25,6 @@ const app = express();
 connectDB();
 
 // ensure upload directories exist
-const fs = require('fs');
 ['uploads', 'uploads/profiles', 'uploads/chat'].forEach(dir => {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
@@ -23,7 +36,7 @@ app.use(cors({
     // Allow non-browser requests (mobile apps/curl) with no origin header in production, or whitelisted domains
     if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
     // Explicitly reject untrusted 'null' origin strings from sandboxed cross-origin iframes
-    if (origin === 'null' && process.env.ALLOW_NULL_ORIGIN === 'true') return cb(null, true);
+    if (origin === 'null') return cb(new Error('CORS policy violation: null origin not permitted'));
     cb(new Error('CORS policy violation'));
   },
   credentials: true
@@ -131,6 +144,7 @@ app.use('/uploads', express.static('uploads'));
 app.use(inputSecurityMiddleware);
 app.use('/api', tokenBucketLimiter);
 app.use('/api', createPromptShield({ maxPayloadBytes: 50 * 1024, sanitize: true, blockOnInjection: true }));
+app.use('/api/v1/prep', sastPayloadGuard);
 app.use('/api/v1/horizon/security', sastPayloadGuard);
 
 // Health & Telemetry Status Endpoint
@@ -197,8 +211,25 @@ app.use((err, req, res, next) => {
   });
 });
 
+const http = require('http');
+const { Server } = require('socket.io');
+const { setupPeerSignalingSockets } = require('./modules/interview-prep/peerMatchEngine');
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: (origin, cb) => {
+      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      cb(new Error('CORS policy violation'));
+    },
+    credentials: true
+  }
+});
+
+setupPeerSignalingSockets(io);
+
 if (require.main === module) {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`[Phoenix Server v13.0.0]: Running on http://localhost:${PORT}`);
   });
 }

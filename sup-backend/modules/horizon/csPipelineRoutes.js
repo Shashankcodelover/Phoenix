@@ -1,5 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const { protect } = require('../../middleware/authMiddleware');
+const { tokenBucketLimiter } = require('../../middleware/tokenBucketRateLimiter');
+
+// Globally protect all horizon routes
+router.use(protect);
 
 // PU CS Module
 const { getPuSyllabusGapAnalysis, getPuMonthByMonthRoadmap, getPuEntranceExamPrep, getPuBoardPyqs, getPuResources } = require('./cs-pu/puCurriculumEngine');
@@ -23,107 +28,110 @@ const { scanCodeForVulnerabilities } = require('../security/sastSecurityScanner'
 // ════════════════════════════════════════════════════
 // PU CS ROUTES (/api/v1/horizon/cs-pu/*)
 // ════════════════════════════════════════════════════
-router.get('/cs-pu/gap-analysis', (req, res) => {
-  try { res.json(getPuSyllabusGapAnalysis()); }
+router.get('/cs-pu/gap-analysis', async (req, res) => {
+  try { res.json(await getPuSyllabusGapAnalysis()); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-router.get('/cs-pu/roadmap', (req, res) => {
-  try { res.json(getPuMonthByMonthRoadmap()); }
+router.get('/cs-pu/roadmap', async (req, res) => {
+  try { res.json(await getPuMonthByMonthRoadmap()); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-router.get('/cs-pu/entrance-exams', (req, res) => {
-  try { res.json(getPuEntranceExamPrep(req.query.examKey)); }
+router.get('/cs-pu/entrance-exams', async (req, res) => {
+  try { res.json(await getPuEntranceExamPrep(req.query.examKey)); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-router.get('/cs-pu/pyqs', (req, res) => {
-  try { res.json(getPuBoardPyqs(req.query)); }
+router.get('/cs-pu/pyqs', async (req, res) => {
+  try { res.json(await getPuBoardPyqs(req.query)); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-router.get('/cs-pu/resources', (req, res) => {
-  try { res.json(getPuResources(req.query)); }
+router.get('/cs-pu/resources', async (req, res) => {
+  try { res.json(await getPuResources(req.query)); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
 // ════════════════════════════════════════════════════
 // DIPLOMA CS ROUTES (/api/v1/horizon/cs-diploma/*)
 // ════════════════════════════════════════════════════
-router.get('/cs-diploma/gap-analysis', (req, res) => {
-  try { res.json(getDiplomaSyllabusGapAnalysis()); }
+router.get('/cs-diploma/gap-analysis', async (req, res) => {
+  try { res.json(await getDiplomaSyllabusGapAnalysis()); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-router.get('/cs-diploma/roadmap', (req, res) => {
-  try { res.json(getDiplomaRoadmap()); }
+router.get('/cs-diploma/roadmap', async (req, res) => {
+  try { res.json(await getDiplomaRoadmap()); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-router.get('/cs-diploma/dcet-prep', (req, res) => {
-  try { res.json(getDcetPrepPlan()); }
+router.get('/cs-diploma/dcet-prep', async (req, res) => {
+  try { res.json(await getDcetPrepPlan()); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-router.get('/cs-diploma/pyqs', (req, res) => {
-  try { res.json(getDcetPyqs(req.query)); }
+router.get('/cs-diploma/pyqs', async (req, res) => {
+  try { res.json(await getDcetPyqs(req.query)); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-router.get('/cs-diploma/resources', (req, res) => {
-  try { res.json(getDiplomaResources(req.query)); }
+router.get('/cs-diploma/resources', async (req, res) => {
+  try { res.json(await getDiplomaResources(req.query)); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-router.get('/cs-diploma/lateral-entry', (req, res) => {
-  try { res.json(getLateralEntryGuide()); }
+router.get('/cs-diploma/lateral-entry', async (req, res) => {
+  try { res.json(await getLateralEntryGuide()); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
 // ════════════════════════════════════════════════════
 // ENGINEERING CS ROUTES (/api/v1/horizon/cs-eng/*)
 // ════════════════════════════════════════════════════
-router.get('/cs-eng/gap-analysis', (req, res) => {
-  try { res.json(getEngSemesterGapAnalysis(req.query.semester)); }
+router.get('/cs-eng/gap-analysis', async (req, res) => {
+  try { res.json(await getEngSemesterGapAnalysis(req.query.semester)); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-router.get('/cs-eng/roadmap', (req, res) => {
-  try { res.json(getEngRoadmap()); }
+router.get('/cs-eng/roadmap', async (req, res) => {
+  try { res.json(await getEngRoadmap()); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-router.post('/cs-eng/readiness', (req, res) => {
-  try { res.json(evaluatePlacementReadiness(req.body)); }
+router.post('/cs-eng/readiness', async (req, res) => {
+  try { res.json(await evaluatePlacementReadiness(req.body)); }
   catch (e) { res.status(400).json({ success: false, error: e.message }); }
 });
 
 // ════════════════════════════════════════════════════
 // AI GUIDE BOT & ADVANCED SERVICES (/api/v1/horizon/*)
 // ════════════════════════════════════════════════════
-router.post('/bot/chat', (req, res) => {
+router.post('/bot/chat', tokenBucketLimiter, async (req, res) => {
   try {
     const { message, userStage, currentPage } = req.body;
-    const result = processMessage({ message, userStage, currentPage });
+    const result = await processMessage({ message, userStage, currentPage });
     res.json(result);
   } catch (e) {
     res.status(400).json({ success: false, error: e.message });
   }
 });
 
-router.post('/mentors/ask', (req, res) => {
-  try { res.json(submitMentorQuestion(req.body)); }
+router.post('/mentors/ask', async (req, res) => {
+  try { res.json(await submitMentorQuestion(req.body)); }
   catch (e) { res.status(400).json({ success: false, error: e.message }); }
 });
 
-router.get('/mentors/questions', (req, res) => {
-  try { res.json(getDispatchedQuestions(req.query)); }
+router.get('/mentors/questions', async (req, res) => {
+  try { res.json(await getDispatchedQuestions(req.query)); }
   catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-router.post('/scholarships/predict', (req, res) => {
-  try { res.json(predictScholarshipEligibility(req.body)); }
+router.post('/scholarships/predict', async (req, res) => {
+  try { 
+    const payload = { ...req.body, userId: req.user._id };
+    res.json(await predictScholarshipEligibility(payload)); 
+  }
   catch (e) { res.status(400).json({ success: false, error: e.message }); }
 });
 

@@ -322,7 +322,7 @@
   </div>
 
   <script>
-    let selectedData = { academicStage: '', interestSector: '' };
+    let selectedData = { academicStage: '' };
     const WORLD_EMOJIS = { software_coding: '💻', commerce_ca_finance: '📈', medical_bio: '🧬', electronics_iot: '🤖', arts_design: '🎨' };
     const WORLD_NAMES = { software_coding: 'Tech & Engineering World', commerce_ca_finance: 'Commerce & Finance World', medical_bio: 'Bio & Medical World', electronics_iot: 'Electronics & Hardware World', arts_design: 'Arts & Design World' };
 
@@ -343,10 +343,16 @@
       document.getElementById('dot3').classList.add('active');
       document.getElementById('progressFill').style.width = '100%';
 
+      const payload = {
+        academicStage: selectedData.academicStage,
+        interests: [sector],
+        primaryGoal: 'Find the best path'
+      };
+
       fetch('/api/v1/horizon/diagnostic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(selectedData)
+        body: JSON.stringify(payload)
       })
       .then(r => r.json())
       .then(data => {
