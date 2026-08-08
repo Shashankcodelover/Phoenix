@@ -1,4 +1,8 @@
 const express = require('express');
+const { protect } = require('../../middleware/authMiddleware');
+const { aiRateLimiter } = require('../../middleware/rateLimiter');
+const { validate, schemas } = require('../../middleware/inputValidator');
+
 const {
   getScrapedEvents,
   saveTeam,
@@ -10,36 +14,37 @@ const {
   getPortfolioProjects
 } = require('./agentController');
 
-// V20: Hackathon Command Center controllers
 const { generateIdeas, refineIdeas } = require('./ideaGeneratorController');
 const { generateProjectRoadmap, generateMemberGuide, memberGuideChat, generatePitchPlan } = require('./roadmapController');
 const { generateProjectExplainer } = require('./explainerEngine');
 const { runJudgeDefenseSim } = require('./judgeSimulatorController');
+const ragService = require('./rag_service');
+const notificationService = require('./notification_service');
+const { searchAndRankHackathons } = require('./hackathonScraperEngine');
+const { generatePitchDeckBlueprint } = require('./pitchDeckGenerator');
 
 const router = express.Router();
 
-const { validate, schemas } = require('../../middleware/inputValidator');
+// Apply protect middleware to ALL agent routes
+router.use(protect);
 
-// Existing routes
 router.post('/scrape', getScrapedEvents);
 router.post('/save-team', saveTeam);
 router.post('/auto-fill', triggerAutoFill);
-router.post('/mine-story', validate(schemas.mineStory), mineStory);
+router.post('/mine-story', aiRateLimiter, validate(schemas.mineStory), mineStory);
 router.post('/skill-gap', runSkillGapAnalysis);
-router.post('/novelty-check', validate(schemas.noveltyCheck), checkIdeaNovelty);
+router.post('/novelty-check', aiRateLimiter, validate(schemas.noveltyCheck), checkIdeaNovelty);
 router.post('/portfolio', addPortfolioProject);
 router.get('/portfolio/:userId', getPortfolioProjects);
 
-// V20: Hackathon Command Center routes
-router.post('/generate-ideas', validate(schemas.generateIdeas), generateIdeas);
-router.post('/refine-ideas', refineIdeas);
-router.post('/project-roadmap', validate(schemas.projectRoadmap), generateProjectRoadmap);
-router.post('/member-guide', generateMemberGuide);
-router.post('/member-guide-chat', memberGuideChat);
-router.post('/pitch-planner', generatePitchPlan);
+router.post('/generate-ideas', aiRateLimiter, validate(schemas.generateIdeas), generateIdeas);
+router.post('/refine-ideas', aiRateLimiter, refineIdeas);
+router.post('/project-roadmap', aiRateLimiter, validate(schemas.projectRoadmap), generateProjectRoadmap);
+router.post('/member-guide', aiRateLimiter, generateMemberGuide);
+router.post('/member-guide-chat', aiRateLimiter, memberGuideChat);
+router.post('/pitch-planner', aiRateLimiter, generatePitchPlan);
 
-// V22: Project Explainer & Judge Defense Blueprint
-router.post('/judge-explainer', validate(schemas.judgeExplainer), async (req, res) => {
+router.post('/judge-explainer', aiRateLimiter, validate(schemas.judgeExplainer), async (req, res) => {
   try {
     const { projectTitle, techStack = [], projectDescription, targetTrack } = req.body;
     const explainer = await generateProjectExplainer({ projectTitle, techStack, projectDescription, targetTrack });
@@ -49,17 +54,16 @@ router.post('/judge-explainer', validate(schemas.judgeExplainer), async (req, re
   }
 });
 
-// V7.0: Live 3-Round Interactive Judge Defense Simulator
-router.post('/judge-defense-sim', runJudgeDefenseSim);
+router.post('/judge-defense-sim', aiRateLimiter, runJudgeDefenseSim);
 
-// V21: RAG & Deadline Notification routes
-const ragService = require('./rag_service');
-const notificationService = require('./notification_service');
-
-router.post('/rag-search', (req, res) => {
-  const { query, limit } = req.body;
-  const results = ragService.retrieveHackathons(query, limit || 3);
-  res.json({ results });
+router.post('/rag-search', async (req, res) => {
+  try {
+    const { query, limit } = req.body;
+    const results = await ragService.retrieveHackathons(query, limit || 3);
+    res.json({ results });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 router.get('/deadlines', (req, res) => {
@@ -67,22 +71,18 @@ router.get('/deadlines', (req, res) => {
   res.json({ alerts });
 });
 
-const { searchAndRankHackathons } = require('./hackathonScraperEngine');
-
-router.post('/rank-hackathons', (req, res) => {
+router.post('/rank-hackathons', async (req, res) => {
   try {
-    const results = searchAndRankHackathons(req.body);
+    const results = await searchAndRankHackathons(req.body);
     res.json(results);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-const { generatePitchDeckBlueprint } = require('./pitchDeckGenerator');
-
-router.post('/pitch-deck', (req, res) => {
+router.post('/pitch-deck', aiRateLimiter, async (req, res) => {
   try {
-    const blueprint = generatePitchDeckBlueprint(req.body);
+    const blueprint = await generatePitchDeckBlueprint(req.body);
     res.json(blueprint);
   } catch (error) {
     res.status(500).json({ message: error.message });
