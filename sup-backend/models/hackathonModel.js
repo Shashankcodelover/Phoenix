@@ -13,7 +13,9 @@ const hackathonSchema = new mongoose.Schema(
     logo: { type: String },
     hostingLink: { type: String, trim: true },
     // Vector Embeddings for Semantic RAG Search (using 768 dims for Gemini text-embedding-004)
-    embedding: { type: [Number], default: [] }
+    embedding: { type: [Number], default: [] },
+    // Embedding model version — used to prevent cross-model score pollution
+    embeddingModel: { type: String, default: '' }
   },
   { timestamps: true }
 );

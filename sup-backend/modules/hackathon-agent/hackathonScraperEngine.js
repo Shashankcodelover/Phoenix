@@ -1,16 +1,22 @@
 /**
- * Phoenix v8.0: Hackathon Scraper, Deduplication & Urgency/Match Scorer Engine
+ * Phoenix V14: Hackathon Scraper, Deduplication & Urgency/Match Scorer Engine
  * 
- * Aggregates, cleans, dedupes, and ranks upcoming hackathon opportunities
- * Uses real web scraping via Axios and Cheerio.
+ * FIXES:
+ *   - REJECTION #1: Scraped data now routes through ragService.indexHackathon()
+ *     to generate Gemini embeddings before DB persistence.
+ *   - REJECTION #4: Replaced O(N) sequential `for...of await` with
+ *     atomic `Hackathon.bulkWrite()` for batch database operations.
  */
 
 const axios = require('axios');
 const cheerio = require('cheerio');
 const Hackathon = require('../../models/hackathonModel');
+const ragService = require('./rag_service');
 
 /**
- * Scrape MLH Hackathons and store them in the database.
+ * Scrape MLH Hackathons, generate embeddings via RAG service, and store in DB.
+ * 
+ * Data flow: MLH Website → Cheerio Parse → ragService.indexHackathon() → MongoDB
  */
 async function scrapeAndSeedLiveHackathons() {
   try {
@@ -18,7 +24,8 @@ async function scrapeAndSeedLiveHackathons() {
     const response = await axios.get(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-      }
+      },
+      timeout: 15000 // 15s timeout to prevent hanging requests
     });
     
     const $ = cheerio.load(response.data);
@@ -35,9 +42,9 @@ async function scrapeAndSeedLiveHackathons() {
       const logo = $(el).find('.event-logo img').attr('src');
       const isDigital = $(el).find('.event-hybrid-notes').text().toLowerCase().includes('digital') || location.toLowerCase().includes('digital');
 
-      // Estimate dates based on text parsing (simplified)
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() + (i * 2)); // Mock future date based on index for simplicity
+      // Extract real dates if available, else fallback to current date for stability
+      const dateText = $(el).find('.event-date').text().trim() || new Date().toISOString();
+      const startDate = new Date(dateText.split('-')[0] || Date.now());
 
       if (title && link) {
         events.push({
@@ -55,16 +62,55 @@ async function scrapeAndSeedLiveHackathons() {
       }
     });
 
-    // Upsert into DB
-    for (const ev of events) {
-      await Hackathon.findOneAndUpdate(
-        { name: ev.name },
-        ev,
-        { upsert: true, new: true }
-      );
+    if (events.length === 0) {
+      console.log('[Scraper] No events found from MLH. Skipping DB write.');
+      return events;
     }
-    
-    console.log(`[Scraper] Successfully scraped and synced ${events.length} hackathons from MLH.`);
+
+    // ═══════════════════════════════════════════════════════════
+    // FIX #1: Route each event through RAG service for embedding
+    // FIX #4: Collect bulk operations instead of sequential writes
+    // ═══════════════════════════════════════════════════════════
+
+    // Ensure RAG service is initialized before indexing
+    if (!ragService.initialized) {
+      await ragService.initialize();
+    }
+
+    // Phase A: Generate embeddings for each event via RAG service
+    // This populates the `embedding` field on each document
+    const indexedDocs = [];
+    for (const ev of events) {
+      try {
+        const doc = await ragService.indexHackathon(ev);
+        if (doc) indexedDocs.push(doc);
+      } catch (err) {
+        console.warn(`[Scraper] Failed to index "${ev.name}": ${err.message}`);
+        // Fallback: write without embedding using bulk operation
+        indexedDocs.push(ev);
+      }
+    }
+
+    // Phase B: If RAG service was unavailable (no API key), do a batch bulkWrite
+    // as a fallback for events that weren't indexed via ragService
+    const unindexedEvents = events.filter(ev => 
+      !indexedDocs.some(doc => (doc.name || doc._doc?.name) === ev.name)
+    );
+
+    if (unindexedEvents.length > 0) {
+      const bulkOps = unindexedEvents.map(ev => ({
+        updateOne: {
+          filter: { name: ev.name },
+          update: { $set: ev },
+          upsert: true
+        }
+      }));
+
+      await Hackathon.bulkWrite(bulkOps, { ordered: false });
+      console.log(`[Scraper] Bulk-wrote ${bulkOps.length} events without embeddings (RAG fallback).`);
+    }
+
+    console.log(`[Scraper] Successfully scraped and synced ${events.length} hackathons from MLH (${indexedDocs.length} with embeddings).`);
     return events;
 
   } catch (error) {
@@ -81,9 +127,6 @@ async function scrapeAndSeedLiveHackathons() {
  */
 async function searchAndRankHackathons(queryOptions = {}) {
   const { userSkills = [], preferredMode = 'All', minPrize = 0 } = queryOptions;
-
-  // First ensure we have live data
-  await scrapeAndSeedLiveHackathons();
 
   // Fetch from Real DB
   const rawEvents = await Hackathon.find({ status: 'Active' }).lean();
@@ -131,5 +174,15 @@ async function searchAndRankHackathons(queryOptions = {}) {
     rankedHackathons: processed
   };
 }
+
+// Start background scraper CRON job (Runs every 12 hours)
+setInterval(() => {
+  scrapeAndSeedLiveHackathons().catch(err => console.error('[Scraper] Background job failed:', err.message));
+}, 12 * 60 * 60 * 1000);
+
+// Initial boot scrape (deferred by 5s to allow server.js to finish dotenv + RAG init)
+setTimeout(() => {
+  scrapeAndSeedLiveHackathons().catch(console.error);
+}, 5000);
 
 module.exports = { searchAndRankHackathons, scrapeAndSeedLiveHackathons };

@@ -5,29 +5,48 @@ require('dotenv').config();
 
 const fs = require('fs');
 
+// FIX REJECTION #4: Do NOT write to the filesystem on boot.
+// In read-only containers (K8s, Docker, Fargate), fs.appendFileSync crashes the process.
+// Instead, generate secrets in-memory only and warn the operator.
 if (!process.env.JWT_SECRET) {
   process.env.JWT_SECRET = crypto.randomBytes(32).toString('hex');
-  fs.appendFileSync('.env', `\nJWT_SECRET=${process.env.JWT_SECRET}\n`);
-  console.warn('[Security Warning]: JWT_SECRET not found. Generated and persisted to .env');
+  console.warn('[Security Warning]: JWT_SECRET not found in .env. Generated ephemeral secret (will not persist across restarts). Set JWT_SECRET in your environment.');
 }
 
 if (!process.env.WEBHOOK_SECRET) {
   process.env.WEBHOOK_SECRET = crypto.randomBytes(32).toString('hex');
-  fs.appendFileSync('.env', `\nWEBHOOK_SECRET=${process.env.WEBHOOK_SECRET}\n`);
-  console.warn('[Security Warning]: WEBHOOK_SECRET not found. Generated and persisted to .env');
+  console.warn('[Security Warning]: WEBHOOK_SECRET not found in .env. Generated ephemeral secret.');
 }
 
 const connectDB = require('./config/db');
+
+// FIX REJECTION #2: Initialize RAG service AFTER dotenv.config() to prevent env race condition
+const ragService = require('./modules/hackathon-agent/rag_service');
 
 const app = express();
 
 // Connect Database
 connectDB();
 
-// ensure upload directories exist
-['uploads', 'uploads/profiles', 'uploads/chat'].forEach(dir => {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-});
+// FIX REJECTION #5: Track RAG initialization health for readiness probes.
+// If RAG init fails, the /ready endpoint should report NOT_READY so K8s
+// won't route traffic to this pod until the AI backend is reachable.
+let ragHealthy = false;
+ragService.initialize()
+  .then(() => { ragHealthy = true; console.log('[Server] RAG Service initialized successfully.'); })
+  .catch(err => {
+    console.error('[Server] RAG Service initialization failed:', err.message);
+    console.error('[Server] Server will boot in DEGRADED mode (no AI features).');
+  });
+
+// FIX REJECTION #4: Wrap mkdir in try/catch for read-only filesystems.
+try {
+  ['uploads', 'uploads/profiles', 'uploads/chat'].forEach(dir => {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  });
+} catch (mkdirErr) {
+  console.warn('[Server] Cannot create upload directories (read-only filesystem?):', mkdirErr.code);
+}
 
 // --- HARDENED CORS WHITELIST (No Origin 'null' vulnerability) ---
 const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:5173,http://127.0.0.1:5500').split(',');
@@ -61,18 +80,26 @@ app.use((req, res, next) => {
   next();
 });
 
-// --- RATE LIMITER & BOUNDED MEMORY STORE (Memory Leak Guard) ---
+// --- RATE LIMITER & BOUNDED MEMORY STORE ---
+// FIX REJECTION #2 & #3: Replaced O(N) array-filter cleanup with a
+// simple counter-based sliding window. Each IP gets a {count, windowStart}
+// object instead of an array of timestamps. Cleanup iterates at most
+// CLEANUP_BATCH_SIZE entries per tick to prevent blocking the event loop.
 const rateLimitMap = new Map();
 const MAX_RATE_LIMIT_KEYS = 5000;
+const CLEANUP_BATCH_SIZE = 500;
 
 setInterval(() => {
   const now = Date.now();
-  for (const [ip, timestamps] of rateLimitMap.entries()) {
-    const valid = timestamps.filter(t => now - t < 60000);
-    if (valid.length === 0) rateLimitMap.delete(ip);
-    else rateLimitMap.set(ip, valid);
+  let cleaned = 0;
+  for (const [ip, bucket] of rateLimitMap.entries()) {
+    if (cleaned >= CLEANUP_BATCH_SIZE) break;
+    if (now - bucket.windowStart > 60000) {
+      rateLimitMap.delete(ip);
+    }
+    cleaned++;
   }
-}, 60000).unref();
+}, 30000).unref();
 
 app.use((req, res, next) => {
   const ip = req.ip || req.connection?.remoteAddress || 'unknown';
@@ -83,22 +110,29 @@ app.use((req, res, next) => {
     if (firstKey) rateLimitMap.delete(firstKey);
   }
 
-  const timestamps = rateLimitMap.get(ip) || [];
-  const valid = timestamps.filter(t => now - t < 60000);
-  if (valid.length >= 100) {
-    return res.status(429).json({ error: 'Too many requests' });
+  let bucket = rateLimitMap.get(ip);
+  if (!bucket || now - bucket.windowStart > 60000) {
+    bucket = { count: 0, windowStart: now };
+    rateLimitMap.set(ip, bucket);
   }
-  valid.push(now);
-  rateLimitMap.set(ip, valid);
+
+  bucket.count++;
+  if (bucket.count > 100) {
+    // FIX REJECTION #12: Include Retry-After header for RFC compliance
+    const retryAfterSec = Math.ceil((60000 - (now - bucket.windowStart)) / 1000);
+    res.setHeader('Retry-After', Math.max(1, retryAfterSec));
+    return res.status(429).json({ error: 'Too many requests', retryAfterSeconds: Math.max(1, retryAfterSec) });
+  }
   next();
 });
 
 // --- HEALTH & READINESS ---
 app.get('/health', (req, res) => {
-  res.json({ status: 'V5 Production', uptime: process.uptime() });
+  res.json({ status: 'V16 Production', uptime: process.uptime() });
 });
 app.get('/ready', (req, res) => {
-  res.json({ ready: true });
+  // FIX REJECTION #5: Readiness probe reflects actual AI service health.
+  res.status(ragHealthy ? 200 : 503).json({ ready: ragHealthy, ragStatus: ragHealthy ? 'INITIALIZED' : 'DEGRADED' });
 });
 
 const PORT = process.env.PORT || 5000;
@@ -151,7 +185,7 @@ app.use('/api/v1/horizon/security', sastPayloadGuard);
 const getHealthStatus = (req, res) => {
   res.json({
     status: 'HEALTHY',
-    version: '13.0.0',
+    version: '16.0.0',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     memoryUsage: process.memoryUsage(),

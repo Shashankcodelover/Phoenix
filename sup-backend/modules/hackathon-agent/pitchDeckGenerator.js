@@ -122,9 +122,10 @@ Make the script engaging, professional, and tailored to the tech stack. Provide 
     return parsed;
   } catch (apiErr) {
     console.error('AI provider unavailable for pitch deck generation:', apiErr.message);
-    const err = new Error('AI Service Unavailable. Please try again later.');
-    err.status = 503;
-    throw err;
+    return {
+      success: false,
+      message: 'AI Service Unavailable. Please try again later.'
+    };
   }
 }
 

@@ -103,7 +103,7 @@ router.post('/star-synthesize', protect, (req, res) => {
   }
 });
 
-router.post('/comp-benchmark', (req, res) => {
+router.post('/comp-benchmark', protect, (req, res) => {
   try {
     const result = getCompensationBenchmark(req.body);
     res.json(result);
@@ -112,4 +112,220 @@ router.post('/comp-benchmark', (req, res) => {
   }
 });
 
+// ═══════════════════════════════════════════════════════════
+// V14 NEW FEATURES: Resume Interview Gen, Speech Analysis, STAR Evaluator
+// ═══════════════════════════════════════════════════════════
+
+const { generateResumeInterviewQuestions, analyzeResumeAlignment } = require('./resumeInterviewGenerator');
+const { analyzeSpeech } = require('./speechAnalysisEngine');
+const { evaluateSTAR } = require('./starEvaluator');
+
+// Feature #5: Resume-driven interview question generator
+router.post('/resume-interview-questions', protect, async (req, res) => {
+  try {
+    const result = await generateResumeInterviewQuestions(req.body);
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature #5b: Resume-JD alignment analyzer
+router.post('/resume-alignment', protect, async (req, res) => {
+  try {
+    const result = await analyzeResumeAlignment(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature #6: Speech analysis engine (filler words, pace, STAR compliance)
+router.post('/speech-analysis', protect, (req, res) => {
+  try {
+    const result = analyzeSpeech(req.body);
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature #7: STAR framework auto-evaluator with quantitative rubric
+router.post('/star-evaluate', protect, async (req, res) => {
+  try {
+    const result = await evaluateSTAR(req.body);
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// V15 NEW FEATURES: Agentic Ecosystem (Copilot, Culture Fit, etc.)
+// ═══════════════════════════════════════════════════════════
+
+const { generateLiveCopilotHint } = require('./copilotEngine');
+const { generateNextQuestion } = require('./agenticInterviewer');
+const { evaluateCaseStudy } = require('./caseStudyEngine');
+const { evaluateCultureFit } = require('./cultureFitEngine');
+const { calculateReadinessScore } = require('./readinessBenchmarkEngine');
+const { mitigateSpeechBias } = require('./biasMitigatorEngine');
+const { scoreSocialPresence } = require('./presenceScorerEngine');
+const { evaluateTakeHomeAssignment } = require('./takehomeEvaluator');
+
+// Feature #1: Live Copilot Stealth Hint
+router.post('/copilot/hint', protect, async (req, res) => {
+  try {
+    const result = await generateLiveCopilotHint(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature #2: Agentic Interviewer
+router.post('/agentic/next-question', protect, async (req, res) => {
+  try {
+    const result = await generateNextQuestion(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature #3: Case Study & Guesstimate Simulator
+router.post('/case-study/evaluate', protect, async (req, res) => {
+  try {
+    const result = await evaluateCaseStudy(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature #4: Culture Fit Alignment
+router.post('/culture-fit/evaluate', protect, async (req, res) => {
+  try {
+    const result = await evaluateCultureFit(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature #5: Readiness Benchmark Aggregator
+router.post('/readiness/benchmark', protect, (req, res) => {
+  try {
+    const { scores, targetCompany } = req.body;
+    const result = calculateReadinessScore(scores, targetCompany);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature #6: Bias Mitigator (Middleware wrapper around speech analysis)
+router.post('/speech-analysis/unbiased', protect, (req, res) => {
+  try {
+    // Assuming original analyzeSpeech is available or we wrap the request
+    const { analyzeSpeech } = require('./speechAnalysisEngine');
+    const baseResult = analyzeSpeech(req.body);
+    const unbiasedResult = mitigateSpeechBias(baseResult, req.body.isNonNativeSpeaker);
+    res.json(unbiasedResult);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature #7: Social Presence Scorer
+router.post('/presence/score', protect, (req, res) => {
+  try {
+    const result = scoreSocialPresence(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature #8: Take-Home Assignment Evaluator
+router.post('/takehome/evaluate', protect, async (req, res) => {
+  try {
+    const result = await evaluateTakeHomeAssignment(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// V16 NEW FEATURES: Deep Coaching & Analysis Engines
+// ═══════════════════════════════════════════════════════════
+
+const { analyzeInterviewPatterns } = require('./patternRecognitionEngine');
+const { evaluateNegotiation } = require('./negotiationEngine');
+const { analyzePacing } = require('./pacingCoachEngine');
+const { generateDepthProbe } = require('./depthProberEngine');
+const { compareAnswers } = require('./answerComparisonEngine');
+
+// Feature V16-1: Interview Pattern Recognition (Longitudinal Analysis)
+router.post('/patterns/analyze', protect, (req, res) => {
+  try {
+    const result = analyzeInterviewPatterns(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V16-2: Negotiation Simulator
+router.post('/negotiation/evaluate', protect, async (req, res) => {
+  try {
+    const result = await evaluateNegotiation(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V16-3: Pacing Coach
+router.post('/pacing/analyze', protect, (req, res) => {
+  try {
+    const result = analyzePacing(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V16-4: Technical Depth Prober
+router.post('/depth-probe/next', protect, async (req, res) => {
+  try {
+    const result = await generateDepthProbe(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V16-5: Answer Comparison (A/B)
+router.post('/answers/compare', protect, (req, res) => {
+  try {
+    const result = compareAnswers(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+

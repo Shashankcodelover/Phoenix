@@ -8,7 +8,15 @@ const {
 } = require('./enterpriseController');
 const { runSecurityAudit } = require('./cyberSecurityShield');
 
+const { protect } = require('../../middleware/authMiddleware');
+const { tokenBucketLimiter } = require('../../middleware/rateLimitMiddleware');
+
 const router = express.Router();
+
+// Apply zero-trust authentication and rate limiting to all enterprise routes
+router.use(protect);
+router.use(tokenBucketLimiter);
+
 
 router.get('/candidates', getCandidates);
 router.post('/request-access', requestAccess);
