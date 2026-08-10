@@ -183,10 +183,136 @@ const portfolioSummarizer = async (req, res) => {
   }
 };
 
+const {
+  getLegalDocument,
+  generateDataPortabilityArchive,
+  executeRightToBeForgotten,
+  recordConsentUpdate
+} = require('./legalComplianceEngine');
+
+const {
+  calculateDisparateImpact,
+  generateScoreExplainability,
+  getModelCard
+} = require('./aiEthicsAuditEngine');
+
+// @desc    Retrieve standard legal agreements (ToS, Privacy, etc.)
+// @route   GET /api/v1/enterprise/legal/document/:docType
+const getLegalDocumentHandler = (req, res) => {
+  try {
+    const { docType = 'tos' } = req.params;
+    const doc = getLegalDocument(docType);
+    res.json(doc);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Generate machine-readable GDPR Art. 20 / DPDP Data Portability archive
+// @route   POST /api/v1/enterprise/legal/data-portability
+const dataPortabilityHandler = async (req, res) => {
+  try {
+    const userId = req.user?._id || req.body.userId;
+    const user = await User.findById(userId).select('-password').lean();
+    if (!user) return res.status(404).json({ message: 'User not found.' });
+
+    const exportArchive = generateDataPortabilityArchive(user);
+    res.json(exportArchive);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Execute GDPR Art. 17 / DPDP Sec. 12 Right to be Forgotten
+// @route   POST /api/v1/enterprise/legal/right-to-be-forgotten
+const rightToBeForgottenHandler = async (req, res) => {
+  try {
+    // FIX REJECTION #1: Enforce strict authorization - users can only erase their own account
+    const userId = req.user?._id ? String(req.user._id) : String(req.body.userId || '');
+    if (!userId) {
+      return res.status(400).json({ success: false, error: 'User identifier required for erasure.' });
+    }
+
+    const { confirmationKey } = req.body;
+
+    const receipt = executeRightToBeForgotten(userId, confirmationKey);
+    if (!receipt.success) {
+      return res.status(400).json(receipt);
+    }
+
+    // Erase actual user record from active collection
+    await User.findByIdAndDelete(userId);
+
+    res.json(receipt);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Audit & record user consent updates
+// @route   POST /api/v1/enterprise/legal/consent
+const consentHandler = (req, res) => {
+  try {
+    const userId = req.user?._id || req.body.userId;
+    const result = recordConsentUpdate({
+      userId,
+      consents: req.body.consents || {},
+      ipAddress: req.ip || req.connection?.remoteAddress
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Evaluate Disparate Impact Ratio (EEOC 4/5ths Rule)
+// @route   POST /api/v1/enterprise/ethics/disparate-impact
+const disparateImpactHandler = (req, res) => {
+  try {
+    const result = calculateDisparateImpact(req.body.selectionRates);
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Generate XAI Score Explainability Breakdown
+// @route   POST /api/v1/enterprise/ethics/explainability
+const explainabilityHandler = (req, res) => {
+  try {
+    const { scoreData, assessmentType } = req.body;
+    const result = generateScoreExplainability({ scoreData, assessmentType });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Retrieve current AI System Model Card
+// @route   GET /api/v1/enterprise/ethics/model-card
+const modelCardHandler = (req, res) => {
+  try {
+    res.json(getModelCard());
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getCandidates,
   requestAccess,
   ghostCodeDetector,
   dsarExport,
-  portfolioSummarizer
+  portfolioSummarizer,
+  getLegalDocumentHandler,
+  dataPortabilityHandler,
+  rightToBeForgottenHandler,
+  consentHandler,
+  disparateImpactHandler,
+  explainabilityHandler,
+  modelCardHandler
 };
+

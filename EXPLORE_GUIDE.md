@@ -1,49 +1,51 @@
 # 🧭 EXPLORE_GUIDE.md — Guided Codebase Walkthrough
 
-Welcome to **Project Phoenix**! This guided tour helps new developers and AI agent sessions understand the repository structure quickly.
+Welcome to **Project Phoenix v17.0**! This guided tour helps new developers and AI agent sessions navigate the full-stack architecture.
 
 ---
 
 ## 📍 Step 1: Start Here — Root & Server Gateway
-1. **[README.md](README.md)** — Project overview and high-level architectural ecosystem map.
-2. **[sup-backend/server.js](sup-backend/server.js)** — The Express application entry point. Look here to see middleware initialization, security shield registration, and route mounting.
+1. **[README.md](README.md)** — High-level architectural ecosystem map and feature breakdown.
+2. **[sup-backend/server.js](sup-backend/server.js)** — The Express application entry point, mounting middleware, zero-trust token bucket rate limiters, and route modules.
 
 ---
 
-## 📍 Step 2: Input Security & Middleware Pipeline
-1. **[sup-backend/middleware/inputValidator.js](sup-backend/middleware/inputValidator.js)** — Schema validation middleware enforcing required fields, string lengths, array bounds, and stripping unknown properties.
-2. **[sup-backend/middleware/promptShield.js](sup-backend/middleware/promptShield.js)** — Zero-trust prompt injection shield scanning payloads for malicious injection patterns.
-3. **[sup-backend/middleware/responseCache.js](sup-backend/middleware/responseCache.js)** — In-memory LRU cache engine preventing redundant AI provider calls.
+## 📍 Step 2: Enterprise Legal, Privacy & AI Governance
+Path: `sup-backend/modules/enterprise/`
+1. **[legalComplianceEngine.js](sup-backend/modules/enterprise/legalComplianceEngine.js)** — GDPR Art. 17/20 & India DPDP Act 2023 compliance engine. Generates machine-readable portability archives and cryptographic erasure receipts.
+2. **[aiEthicsAuditEngine.js](sup-backend/modules/enterprise/aiEthicsAuditEngine.js)** — EEOC 4/5ths Disparate Impact Ratio (DIR) calculator, EU AI Act XAI Explainability breakdowns, and System Model Card registry.
+3. **[cyberSecurityShield.js](sup-backend/modules/enterprise/cyberSecurityShield.js)** — Automated security auditing and vulnerability scanning.
 
 ---
 
-## 📍 Step 3: Core Interview & Placement Feature Modules
+## 📍 Step 3: AI Interview Coaching & Copilot Ecosystem
 Path: `sup-backend/modules/interview-prep/`
-
-1. **[behavioralPressureEngine.js](sup-backend/modules/interview-prep/behavioralPressureEngine.js)** — Evaluates candidate answers under simulated production outage stress and computes crisis composure ratings.
-2. **[latencyCircuitBreakerEngine.js](sup-backend/modules/interview-prep/latencyCircuitBreakerEngine.js)** — Analyzes microservice topology for p95/p99 latency budgets, SPOF vulnerabilities, and circuit breaker health.
-3. **[speechEvaluatorEngine.js](sup-backend/modules/interview-prep/speechEvaluatorEngine.js)** — Analyzes vocal prosody, WPM speech pacing, filler word frequency, and confidence indices.
-4. **[starStorySynthesizer.js](sup-backend/modules/interview-prep/starStorySynthesizer.js)** — Formats raw project achievements into structured 4-step STAR stories.
-5. **[compBenchmarkingEngine.js](sup-backend/modules/interview-prep/compBenchmarkingEngine.js)** — Localized salary and equity compensation benchmarks across global tech hubs.
-6. **[prepController.js](sup-backend/modules/interview-prep/prepController.js)** & **[prepRoutes.js](sup-backend/modules/interview-prep/prepRoutes.js)** — Request handling and API endpoint definitions.
+1. **[copilotEngine.js](sup-backend/modules/interview-prep/copilotEngine.js)** — Stealth real-time sub-7-word hints with injection sanitizers.
+2. **[agenticInterviewer.js](sup-backend/modules/interview-prep/agenticInterviewer.js)** — Context-aware conversational follow-up questions with sliding-window history.
+3. **[patternRecognitionEngine.js](sup-backend/modules/interview-prep/patternRecognitionEngine.js)** — Longitudinal skill tracking across past mock sessions.
+4. **[negotiationEngine.js](sup-backend/modules/interview-prep/negotiationEngine.js)** — Salary and equity counter-offer evaluator.
+5. **[pacingCoachEngine.js](sup-backend/modules/interview-prep/pacingCoachEngine.js)** — Duration and WPM cadence analyzer.
+6. **[depthProberEngine.js](sup-backend/modules/interview-prep/depthProberEngine.js)** — Layered L1 to L5 technical drill generator.
+7. **[answerComparisonEngine.js](sup-backend/modules/interview-prep/answerComparisonEngine.js)** — Side-by-side A/B answer metrics comparator.
 
 ---
 
 ## 📍 Step 4: Frontend UI Portals
 Path: `sup-frontend/`
-
-1. **[sup-frontend/dashboard/dashboard.html](sup-frontend/dashboard/dashboard.html)** — The main Phoenix Command Portal interface.
-2. **[sup-frontend/interview-prep/practice.html](sup-frontend/interview-prep/practice.html)** — Interactive mock interview practice environment.
-3. **[sup-frontend/interview-prep/system-design.html](sup-frontend/interview-prep/system-design.html)** — System design architecture evaluation workspace.
+1. **[sup-frontend/enterprise/legal-center.html](sup-frontend/enterprise/legal-center.html)** — Universal Legal, Privacy & AI Ethics Center with 1-click DSAR portal.
+2. **[sup-frontend/interview-prep/copilot-studio.html](sup-frontend/interview-prep/copilot-studio.html)** — Interactive AI Copilot, Agentic Prober & Pacing Studio.
+3. **[sup-frontend/horizon/world-dashboard.html](sup-frontend/horizon/world-dashboard.html)** — Academic roadmap dashboard with AI Guide Bot.
+4. **[sup-frontend/index.html](sup-frontend/index.html)** — Main Phoenix Command Gateway.
 
 ---
 
 ## 📍 Step 5: Native Test Suite
 Path: `sup-backend/test/`
-
-Run all tests via:
+Run all tests:
 ```bash
+cd sup-backend
 npm test
 ```
-- **[v10_features.test.js](sup-backend/test/v10_features.test.js)** — Tests for behavioral pressure and latency circuit breaker engines.
-- **[v9_features.test.js](sup-backend/test/v9_features.test.js)** — Tests for STAR story synthesizer, comp benchmarking, pitch decks, webhooks, and quest engines.
+- **[v17_legal_ai_governance.test.js](sup-backend/test/v17_legal_ai_governance.test.js)** — GDPR, DPDP, EEOC 4/5ths, and XAI test suite.
+- **[v16_deep_coaching.test.js](sup-backend/test/v16_deep_coaching.test.js)** — Pattern recognition, pacing, probers, and answer comparator test suite.
+- **[v15_agentic_ecosystem.test.js](sup-backend/test/v15_agentic_ecosystem.test.js)** — Copilot, culture fit, and bias mitigator tests.

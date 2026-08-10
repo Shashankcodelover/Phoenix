@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live AI Copilot & Adaptive Coaching Studio | Project Phoenix</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #060913;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --text-muted: #94a3b8;
+    }
+    body {
+      background: radial-gradient(circle at 50% 0%, #0f172a 0%, #020617 100%);
+      color: #f8fafc;
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    .studio-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+    .studio-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .badge-glow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 1rem;
+      border-radius: 9999px;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      color: #c084fc;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .studio-title {
+      font-size: 2.75rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0 0 0.5rem 0;
+    }
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 900px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .studio-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1.25rem;
+      padding: 1.75rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
+    }
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 1rem;
+    }
+    .input-field {
+      width: 100%;
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0.6rem;
+      padding: 0.75rem 1rem;
+      color: #f8fafc;
+      font-family: inherit;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      margin-bottom: 1rem;
+      resize: vertical;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+    }
+    .btn-action {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.6rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s ease;
+    }
+    .btn-action:hover {
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px -4px rgba(56, 189, 248, 0.3);
+    }
+    .result-display {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(2, 6, 23, 0.75);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+    .copilot-flash {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #6ee7b7;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-align: center;
+      margin-top: 0.75rem;
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+      50% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.5); }
+    }
+    .pacing-meter {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .pacing-bar {
+      flex: 1;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 9999px;
+      overflow: hidden;
+      position: relative;
+    }
+    .pacing-fill {
+      height: 100%;
+      width: 75%;
+      background: linear-gradient(90deg, #10b981, #38bdf8);
+      border-radius: 9999px;
+      transition: width 0.4s ease;
+    }
+    .pacing-val {
+      font-weight: 700;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="studio-container">
+    <div class="studio-header">
+      <div class="badge-glow">⚡ V16.0 Live Multi-Modal AI Coaching Studio</div>
+      <h1 class="studio-title">Interview Copilot & Performance Studio</h1>
+      <p style="color: var(--text-muted); font-size: 1.1rem;">Real-time stealth hints, dynamic agentic follow-ups, salary negotiation strategy, and A/B answer Polish.</p>
+    </div>
+
+    <div class="studio-grid">
+      <!-- 1. Live Stealth Copilot Simulator -->
+      <div class="studio-card">
+        <div class="card-title">🎯 Live Stealth Copilot (<7 Words)</div>
+        <p style="font-size: 0.88rem; color: var(--text-muted);">Simulate what the interviewer just asked to receive sub-second course-correction hints.</p>
+        <textarea id="copilot-input" class="input-field" rows="2" placeholder="e.g. How would you design a distributed cache to handle 10 million QPS?"></textarea>
+        <button class="btn-action" onclick="runCopilotSimulation()">⚡ Generate Instant Stealth Hint</button>
+        <div id="copilot-result" class="copilot-flash" style="display: none;"></div>
+      </div>
+
+      <!-- 2. Agentic Follow-Up Prober -->
+      <div class="studio-card">
+        <div class="card-title">🗣️ Dynamic Agentic Interviewer</div>
+        <p style="font-size: 0.88rem; color: var(--text-muted);">Enter your response to let the AI analyze gaps and probe deeper into your architecture.</p>
+        <textarea id="agentic-input" class="input-field" rows="2" placeholder="e.g. I used Redis with consistent hashing and master-slave replicas."></textarea>
+        <button class="btn-action" onclick="runAgenticProbe()">🔍 Probe Deeper (L1–L5 Depth)</button>
+        <div id="agentic-result" class="result-display" style="display: none;"></div>
+      </div>
+
+      <!-- 3. Pacing Coach & WPM Meter -->
+      <div class="studio-card">
+        <div class="card-title">⏱️ Live Pacing & Cadence Gauge</div>
+        <p style="font-size: 0.88rem; color: var(--text-muted);">Calculate speaking speed and verify if duration fits optimal behavioral or system design bands.</p>
+        <div style="display: flex; gap: 0.5rem;">
+          <input id="duration-input" class="input-field" type="number" placeholder="Duration (seconds, e.g. 120)" value="120">
+          <input id="words-input" class="input-field" type="number" placeholder="Word count (e.g. 230)" value="230">
+        </div>
+        <button class="btn-action" onclick="calculatePacing()">📊 Calculate Pacing Score</button>
+        <div class="pacing-meter">
+          <div class="pacing-bar"><div id="pacing-fill" class="pacing-fill"></div></div>
+          <div id="pacing-val" class="pacing-val">95 / 100 (Optimal 115 WPM)</div>
+        </div>
+      </div>
+
+      <!-- 4. A/B Answer Polish Studio -->
+      <div class="studio-card">
+        <div class="card-title">⚖️ A/B Answer Polish & Metrics Delta</div>
+        <p style="font-size: 0.88rem; color: var(--text-muted);">Compare original draft against quantified improved version to verify metric impact.</p>
+        <textarea id="ab-improved" class="input-field" rows="2" placeholder="e.g. I led the migration reducing latency by 45% for 2M daily active users using Go."></textarea>
+        <button class="btn-action" onclick="compareABAnswers()">📈 Compare & Score Metric Lift</button>
+        <div id="ab-result" class="result-display" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function runCopilotSimulation() {
+      const q = document.getElementById('copilot-input').value.trim();
+      const resDiv = document.getElementById('copilot-result');
+      resDiv.style.display = 'block';
+      if (!q) {
+        resDiv.innerText = '💡 Mention Redis cache-aside & eviction policies';
+      } else {
+        resDiv.innerText = '💡 Highlight Consistent Hashing & SPOF redundancy';
+      }
+    }
+
+    function runAgenticProbe() {
+      const ans = document.getElementById('agentic-input').value.trim();
+      const resDiv = document.getElementById('agentic-result');
+      resDiv.style.display = 'block';
+      resDiv.innerHTML = `
+        <strong>🎯 Probing Depth Level 3/5 (Senior Level):</strong><br>
+        <em>"You mentioned master-slave replicas. How do you prevent split-brain scenarios and manage quorum during network partitions?"</em><br>
+        <span style="color: #38bdf8;">Tests: CAP Theorem trade-offs & consensus algorithms (Raft/Paxos).</span>
+      `;
+    }
+
+    function calculatePacing() {
+      const dur = parseInt(document.getElementById('duration-input').value) || 120;
+      const words = parseInt(document.getElementById('words-input').value) || 230;
+      const wpm = Math.round((words / dur) * 60);
+      const pacingFill = document.getElementById('pacing-fill');
+      const pacingVal = document.getElementById('pacing-val');
+
+      let score = 95;
+      let label = 'Optimal';
+      if (wpm < 100) { score = 65; label = 'Too Slow'; }
+      else if (wpm > 160) { score = 60; label = 'Too Fast'; }
+
+      pacingFill.style.width = score + '%';
+      pacingVal.innerText = `${score} / 100 (${label} - ${wpm} WPM)`;
+    }
+
+    function compareABAnswers() {
+      const resDiv = document.getElementById('ab-result');
+      resDiv.style.display = 'block';
+      resDiv.innerHTML = `
+        <span style="color: #34d399;"><strong>✅ Significant Score Lift: +25 Points</strong></span><br>
+        • Original Draft Score: 60/100<br>
+        • Improved Version Score: 85/100<br>
+        • Key Driver: Added 2 Quantified Metrics (45% latency reduction, 2M DAU).
+      `;
+    }
+  </script>
+</body>
+</html>
