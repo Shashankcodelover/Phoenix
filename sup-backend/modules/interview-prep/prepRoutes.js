@@ -351,6 +351,55 @@ router.post('/realtime-voice/turn-cadence', protect, (req, res) => {
   }
 });
 
+// ═══════════════════════════════════════════════════════════
+// V19 NEW FEATURES: AST Complexity, Panel, Canvas & IRT
+// ═══════════════════════════════════════════════════════════
+const { analyzeCodeComplexity } = require('./astComplexityEngine');
+const { evaluatePanelConsensus } = require('./multiAgentPanelEngine');
+const { validateArchitectureTopology } = require('./canvasTopologyEngine');
+const { defaultIrtEngine } = require('./irtAdaptiveEngine');
+
+// Feature V19-1: AST Complexity & Algorithmic Runtime Inspector
+router.post('/code/analyze-complexity', protect, (req, res) => {
+  try {
+    const result = analyzeCodeComplexity(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V19-2: Multi-Agent AI Interview Panel Consensus
+router.post('/panel/consensus', protect, (req, res) => {
+  try {
+    const result = evaluatePanelConsensus(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V19-3: Canvas Topology & Architecture Graph Validator
+router.post('/canvas/validate-topology', protect, (req, res) => {
+  try {
+    const result = validateArchitectureTopology(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V19-4: Item Response Theory (IRT) Adaptive Ability Update
+router.post('/adaptive/update-ability', protect, (req, res) => {
+  try {
+    const { currentTheta, isCorrect, itemParams } = req.body;
+    const result = defaultIrtEngine.updateAbility(currentTheta, isCorrect, itemParams);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
 
 
