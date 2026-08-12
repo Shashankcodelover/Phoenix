@@ -89,16 +89,19 @@ function evaluateSpeechProsody(transcript = '', durationSeconds = null) {
   clarityScore = Math.max(0, Math.min(100, Math.round(clarityScore)));
 
   // Calculate Confidence Index (0-100)
-  // Confidence is boosted by structured sentence markers and penalized by high filler density
-  const assertiveWords = ['definitely', 'concluded', 'implemented', 'designed', 'measured', 'optimized', 'achieved', 'because', 'therefore'];
+  // FIX REJECTION #9: Base confidence deduction on normalized filler density percentage rather than raw count,
+  // preventing score collapse on long, articulate responses.
+  const assertiveWords = ['definitely', 'concluded', 'implemented', 'designed', 'measured', 'optimized', 'achieved', 'because', 'therefore', 'spearheaded', 'architected'];
   let assertiveCount = 0;
   words.forEach(word => {
     if (assertiveWords.includes(word)) assertiveCount++;
   });
 
-  let confidenceIndex = 75 + (assertiveCount * 4) - (totalFillers * 3);
+  // Calculate density penalty: normal speech has 1-3% fillers; >5% shows nervousness
+  const fillerConfidencePenalty = Math.min(40, Math.round(fillerDensityPercent * 6));
+  let confidenceIndex = 80 + Math.min(20, assertiveCount * 3) - fillerConfidencePenalty;
   if (wpm >= 120 && wpm <= 160) confidenceIndex += 10;
-  confidenceIndex = Math.max(0, Math.min(100, Math.round(confidenceIndex)));
+  confidenceIndex = Math.max(10, Math.min(100, Math.round(confidenceIndex)));
 
   // Tone Classification
   let tone = 'Conversational & Professional';
@@ -135,6 +138,7 @@ function evaluateSpeechProsody(transcript = '', durationSeconds = null) {
   }
 
   return {
+    success: true,
     transcriptLength: totalWords,
     estimatedDurationSeconds: Math.round(estimatedDuration),
     wpm,

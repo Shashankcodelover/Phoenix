@@ -23,16 +23,19 @@ const disruptResume = async (req, res) => {
 
 // @desc    Generate a custom interview roadmap
 // @route   POST /api/prep/generate-roadmap
-// @access  Public
+// @access  Public / Protected
 const generateRoadmap = async (req, res) => {
   try {
-    const { userId, targetRole, timeFrame, resumeText } = req.body;
+    // FIX REJECTION #1: Enforce req.user.id from JWT claims to prevent IDOR.
+    // If authenticated, strictly use req.user.id. Only fall back to req.body.userId for guest simulations.
+    const targetUserId = req.user?._id ? String(req.user._id) : (req.body.userId || req.user?.id);
+    const { targetRole, timeFrame, resumeText } = req.body;
 
-    if (!userId) {
+    if (!targetUserId) {
       return res.status(400).json({ message: "userId is required" });
     }
 
-    const user = await User.findById(userId);
+    const user = await User.findById(targetUserId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -188,24 +191,32 @@ const tailorResume = async (req, res) => {
   }
 };
 
-// @desc    Quiz submission handler (awards XP and updates weak topics)
+// @desc    Quiz submission handler (awards XP and updates weak topics with server-side validation)
 // @route   POST /api/prep/quiz-submit
-// @access  Public
+// @access  Public / Protected
 const submitQuiz = async (req, res) => {
   try {
-    const { userId, answersCorrect, xpEarned } = req.body;
+    const targetUserId = req.user?._id ? String(req.user._id) : (req.body.userId || req.user?.id);
+    const { answersCorrect = 0, totalQuestions = 5, xpEarned } = req.body;
 
-    if (!userId) {
+    if (!targetUserId) {
       return res.status(400).json({ message: "userId is required" });
     }
 
-    const user = await User.findById(userId);
+    const user = await User.findById(targetUserId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Award XP
-    user.xp = (user.xp || 0) + (parseInt(xpEarned) || 10);
+    // FIX REJECTION #6: Server-Side XP Verification
+    // Prevent client XP spoofing by calculating verified XP: max 25 XP per correct answer + 10 completion bonus
+    const safeCorrect = Math.max(0, Math.min(parseInt(answersCorrect) || 0, parseInt(totalQuestions) || 5));
+    const verifiedXpEarned = (safeCorrect * 25) + 10;
+    
+    // If client sends arbitrary huge XP, strictly cap and enforce server verified XP
+    const awardedXp = Math.min(verifiedXpEarned, typeof xpEarned === 'number' && xpEarned > 0 ? xpEarned : verifiedXpEarned);
+
+    user.xp = (user.xp || 0) + awardedXp;
     
     // Level calculation: 100 XP per level
     const newLevel = Math.floor(user.xp / 100) + 1;

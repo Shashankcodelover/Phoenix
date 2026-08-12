@@ -50,16 +50,42 @@ function setupPeerSignalingSockets(io) {
       }
     });
 
+    // FIX REJECTION #5: WebRTC Room Authorization Verification
+    // Prevent unauthorized cross-room SDP/ICE candidate injection by verifying socket room membership
     socket.on('webrtc-offer', (data) => {
-      try { socket.to(data.roomId).emit('webrtc-offer', data); } catch (e) {}
+      try {
+        if (!data || !data.roomId) return socket.emit('error', 'Invalid room identifier');
+        if (!socket.rooms.has(data.roomId)) {
+          return socket.emit('error', 'Unauthorized: You have not joined this room.');
+        }
+        socket.to(data.roomId).emit('webrtc-offer', { ...data, senderId: socket.userId || socket.id });
+      } catch (e) {
+        console.error('[WebRTC Offer Error]', e.message);
+      }
     });
 
     socket.on('webrtc-answer', (data) => {
-      try { socket.to(data.roomId).emit('webrtc-answer', data); } catch (e) {}
+      try {
+        if (!data || !data.roomId) return socket.emit('error', 'Invalid room identifier');
+        if (!socket.rooms.has(data.roomId)) {
+          return socket.emit('error', 'Unauthorized: You have not joined this room.');
+        }
+        socket.to(data.roomId).emit('webrtc-answer', { ...data, senderId: socket.userId || socket.id });
+      } catch (e) {
+        console.error('[WebRTC Answer Error]', e.message);
+      }
     });
 
     socket.on('webrtc-ice-candidate', (data) => {
-      try { socket.to(data.roomId).emit('webrtc-ice-candidate', data); } catch (e) {}
+      try {
+        if (!data || !data.roomId) return socket.emit('error', 'Invalid room identifier');
+        if (!socket.rooms.has(data.roomId)) {
+          return socket.emit('error', 'Unauthorized: You have not joined this room.');
+        }
+        socket.to(data.roomId).emit('webrtc-ice-candidate', { ...data, senderId: socket.userId || socket.id });
+      } catch (e) {
+        console.error('[WebRTC ICE Candidate Error]', e.message);
+      }
     });
 
     socket.on('disconnect', () => {

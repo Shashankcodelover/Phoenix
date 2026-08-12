@@ -12,8 +12,19 @@ const signup = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // FIX REJECTION #7: RFC 5322 Email Format Validation
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+    if (!emailRegex.test(String(email).trim())) {
+      return res.status(400).json({ message: "Invalid email address format." });
+    }
+
+    // FIX REJECTION #7: Password Complexity & Length Enforcement (Min 8 chars)
+    if (typeof password !== 'string' || password.length < 8) {
+      return res.status(400).json({ message: "Password must be at least 8 characters long." });
+    }
+
     // Check existing user
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: String(email).trim().toLowerCase() });
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -24,8 +35,8 @@ const signup = async (req, res) => {
 
     // Create user
     const user = await User.create({
-      name,
-      email,
+      name: String(name).trim(),
+      email: String(email).trim().toLowerCase(),
       password: hashedPassword
     });
 

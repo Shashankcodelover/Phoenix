@@ -301,6 +301,36 @@ const modelCardHandler = (req, res) => {
   }
 };
 
+const { defaultMeteringEngine } = require('./tokenMeteringEngine');
+
+// @desc    Deduct token usage from user / organization wallet
+// @route   POST /api/v1/enterprise/metering/deduct
+const meteringDeductHandler = (req, res) => {
+  try {
+    const userId = req.user?._id ? String(req.user._id) : (req.body.userId || 'org-guest');
+    const { tokens = 100, endpoint = 'general' } = req.body;
+    const receipt = defaultMeteringEngine.deductTokens({ userId, tokens, endpoint });
+    if (!receipt.success) {
+      return res.status(402).json(receipt); // 402 Payment Required for quota exceeded
+    }
+    res.json(receipt);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Generate monthly usage & overage billing invoice
+// @route   GET /api/v1/enterprise/metering/invoice
+const meteringInvoiceHandler = (req, res) => {
+  try {
+    const userId = req.user?._id ? String(req.user._id) : (req.query.userId || 'org-guest');
+    const invoice = defaultMeteringEngine.generateUsageInvoice(userId);
+    res.json(invoice);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getCandidates,
   requestAccess,
@@ -313,6 +343,8 @@ module.exports = {
   consentHandler,
   disparateImpactHandler,
   explainabilityHandler,
-  modelCardHandler
+  modelCardHandler,
+  meteringDeductHandler,
+  meteringInvoiceHandler
 };
 

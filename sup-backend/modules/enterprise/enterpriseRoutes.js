@@ -45,4 +45,8 @@ router.post('/ethics/disparate-impact', disparateImpactHandler);
 router.post('/ethics/explainability', explainabilityHandler);
 router.get('/ethics/model-card', modelCardHandler);
 
+// SaaS B2B Usage-Based Metering & Credit Deduction
+router.post('/metering/deduct', meteringDeductHandler);
+router.get('/metering/invoice', meteringInvoiceHandler);
+
 module.exports = router;

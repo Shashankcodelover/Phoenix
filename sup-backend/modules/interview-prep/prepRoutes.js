@@ -326,6 +326,31 @@ router.post('/answers/compare', protect, (req, res) => {
   }
 });
 
+// ═══════════════════════════════════════════════════════════
+// V18 NEW FEATURES: Real-Time WebRTC PCM Voice & Turn-Taking
+// ═══════════════════════════════════════════════════════════
+const { processRealtimeAudioChunk, evaluateTurnTakingCadence } = require('./realtimeVoiceEngine');
+
+// Feature V18-1: Real-Time Audio Chunk Telemetry & Interruption Handler
+router.post('/realtime-voice/chunk', protect, (req, res) => {
+  try {
+    const result = processRealtimeAudioChunk(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V18-2: Turn-Taking & Micro-Pause Cadence Analysis
+router.post('/realtime-voice/turn-cadence', protect, (req, res) => {
+  try {
+    const result = evaluateTurnTakingCadence(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
 
 

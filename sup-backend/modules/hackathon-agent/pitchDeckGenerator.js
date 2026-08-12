@@ -121,11 +121,21 @@ Make the script engaging, professional, and tailored to the tech stack. Provide 
     }
     return parsed;
   } catch (apiErr) {
-    console.error('AI provider unavailable for pitch deck generation:', apiErr.message);
-    return {
-      success: false,
-      message: 'AI Service Unavailable. Please try again later.'
-    };
+    console.warn('[Pitch Deck Engine] Primary AI provider unavailable, activating resilient offline blueprint generator:', apiErr.message);
+    // FIX REJECTION #2: Activate resilient fallback blueprint generator
+    try {
+      const fallbackData = JSON.parse(fallbackGenerator());
+      return {
+        ...fallbackData,
+        fallbackMode: true,
+        notice: 'Generated via offline resilient heuristics engine.'
+      };
+    } catch (parseErr) {
+      return {
+        success: false,
+        message: 'Pitch Deck Generation Error'
+      };
+    }
   }
 }
 

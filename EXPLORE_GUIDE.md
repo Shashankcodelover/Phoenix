@@ -1,16 +1,25 @@
 # 🧭 EXPLORE_GUIDE.md — Guided Codebase Walkthrough
 
-Welcome to **Project Phoenix v17.0**! This guided tour helps new developers and AI agent sessions navigate the full-stack architecture.
+Welcome to **Project Phoenix v18.0**! This guided tour helps new developers and AI agent sessions navigate the world-leading full-stack architecture.
 
 ---
 
-## 📍 Step 1: Start Here — Root & Server Gateway
+## 📍 Step 1: Start Here — Root & Client Router
 1. **[README.md](README.md)** — High-level architectural ecosystem map and feature breakdown.
-2. **[sup-backend/server.js](sup-backend/server.js)** — The Express application entry point, mounting middleware, zero-trust token bucket rate limiters, and route modules.
+2. **[sup-frontend/phoenix-router.js](sup-frontend/phoenix-router.js)** — Client-Side SPA Component Router enabling zero-reload transitions, dynamic component push/pop, and History API state synchronization.
+3. **[sup-backend/server.js](sup-backend/server.js)** — The Express application entry point, mounting middleware, zero-trust token bucket rate limiters, and route modules.
 
 ---
 
-## 📍 Step 2: Enterprise Legal, Privacy & AI Governance
+## 📍 Step 2: Real-Time Audio & Fast Vector Engines
+Path: `sup-backend/modules/`
+1. **[interview-prep/realtimeVoiceEngine.js](sup-backend/modules/interview-prep/realtimeVoiceEngine.js)** — Sub-300ms bidirectional PCM audio stream processing, RMS energy VAD, pitch tremor stress scoring, and conversational interruption handling.
+2. **[hackathon-agent/hnswVectorEngine.js](sup-backend/modules/hackathon-agent/hnswVectorEngine.js)** — O(log N) approximate nearest neighbor (ANN) k-NN vector search with multi-layer HNSW graph indexing.
+3. **[enterprise/tokenMeteringEngine.js](sup-backend/modules/enterprise/tokenMeteringEngine.js)** — Stripe-ready token credit wallet management, tier quotas, and usage-based deduction.
+
+---
+
+## 📍 Step 3: Enterprise Legal, Privacy & AI Governance
 Path: `sup-backend/modules/enterprise/`
 1. **[legalComplianceEngine.js](sup-backend/modules/enterprise/legalComplianceEngine.js)** — GDPR Art. 17/20 & India DPDP Act 2023 compliance engine. Generates machine-readable portability archives and cryptographic erasure receipts.
 2. **[aiEthicsAuditEngine.js](sup-backend/modules/enterprise/aiEthicsAuditEngine.js)** — EEOC 4/5ths Disparate Impact Ratio (DIR) calculator, EU AI Act XAI Explainability breakdowns, and System Model Card registry.
@@ -18,7 +27,7 @@ Path: `sup-backend/modules/enterprise/`
 
 ---
 
-## 📍 Step 3: AI Interview Coaching & Copilot Ecosystem
+## 📍 Step 4: AI Interview Coaching & Copilot Ecosystem
 Path: `sup-backend/modules/interview-prep/`
 1. **[copilotEngine.js](sup-backend/modules/interview-prep/copilotEngine.js)** — Stealth real-time sub-7-word hints with injection sanitizers.
 2. **[agenticInterviewer.js](sup-backend/modules/interview-prep/agenticInterviewer.js)** — Context-aware conversational follow-up questions with sliding-window history.
@@ -30,7 +39,7 @@ Path: `sup-backend/modules/interview-prep/`
 
 ---
 
-## 📍 Step 4: Frontend UI Portals
+## 📍 Step 5: Frontend UI Portals
 Path: `sup-frontend/`
 1. **[sup-frontend/enterprise/legal-center.html](sup-frontend/enterprise/legal-center.html)** — Universal Legal, Privacy & AI Ethics Center with 1-click DSAR portal.
 2. **[sup-frontend/interview-prep/copilot-studio.html](sup-frontend/interview-prep/copilot-studio.html)** — Interactive AI Copilot, Agentic Prober & Pacing Studio.
@@ -39,13 +48,14 @@ Path: `sup-frontend/`
 
 ---
 
-## 📍 Step 5: Native Test Suite
+## 📍 Step 6: Native Test Suite
 Path: `sup-backend/test/`
 Run all tests:
 ```bash
 cd sup-backend
 npm test
 ```
+- **[v18_world_leading_ecosystem.test.js](sup-backend/test/v18_world_leading_ecosystem.test.js)** — Tests for real-time PCM voice, HNSW vector search, B2B token metering, IDOR, and speech density normalization.
 - **[v17_legal_ai_governance.test.js](sup-backend/test/v17_legal_ai_governance.test.js)** — GDPR, DPDP, EEOC 4/5ths, and XAI test suite.
 - **[v16_deep_coaching.test.js](sup-backend/test/v16_deep_coaching.test.js)** — Pattern recognition, pacing, probers, and answer comparator test suite.
 - **[v15_agentic_ecosystem.test.js](sup-backend/test/v15_agentic_ecosystem.test.js)** — Copilot, culture fit, and bias mitigator tests.
