@@ -389,11 +389,110 @@ router.post('/canvas/validate-topology', protect, (req, res) => {
   }
 });
 
-// Feature V19-4: Item Response Theory (IRT) Adaptive Ability Update
-router.post('/adaptive/update-ability', protect, (req, res) => {
+// ═══════════════════════════════════════════════════════════
+// V20 NEW FEATURES: Real-Time Audio Hub, Reranker, Sandbox, Benchmarking
+// ═══════════════════════════════════════════════════════════
+const { realtimeAudioHub } = require('./realtimeAudioHub');
+const { candidateBenchmarkEngine } = require('./candidateBenchmarkEngine');
+const { sandboxedExecutionEngine } = require('../simulator/sandboxedExecutionEngine');
+const { crossEncoderReranker } = require('../hackathon-agent/crossEncoderReranker');
+
+// Feature V20-1: Realtime Audio Hub Session Init
+router.post('/realtime-audio/init', protect, (req, res) => {
   try {
-    const { currentTheta, isCorrect, itemParams } = req.body;
-    const result = defaultIrtEngine.updateAbility(currentTheta, isCorrect, itemParams);
+    const { sessionId = `audio_${Date.now()}`, sampleRate, channels, targetRole } = req.body;
+    const result = realtimeAudioHub.startSession(sessionId, { sampleRate, channels, targetRole, userId: req.user?.id });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V20-2: Realtime Audio Chunk Ingestion
+router.post('/realtime-audio/chunk', protect, (req, res) => {
+  try {
+    const { sessionId, pcmChunk, metadata } = req.body;
+    const result = realtimeAudioHub.ingestAudioChunk(sessionId, pcmChunk, metadata);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V20-3: Realtime Audio Live Transcript Slice
+router.post('/realtime-audio/transcript', protect, (req, res) => {
+  try {
+    const { sessionId, textSlice, confidence } = req.body;
+    const result = realtimeAudioHub.appendTranscriptSlice(sessionId, textSlice, confidence);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V20-4: Realtime Audio Session Finalize
+router.post('/realtime-audio/finalize', protect, (req, res) => {
+  try {
+    const { sessionId } = req.body;
+    const result = realtimeAudioHub.endSession(sessionId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V20-5: Candidate Longitudinal FAANG Percentile Benchmark
+router.post('/benchmark/profile', protect, (req, res) => {
+  try {
+    const result = candidateBenchmarkEngine.benchmarkCandidate(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V20-6: Isolated Sandboxed VM Code Execution
+router.post('/sandbox/execute', protect, (req, res) => {
+  try {
+    const result = sandboxedExecutionEngine.execute(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// V21 NEW FEATURES: Live Collaborative Canvas & Multimodal Judge Defense
+// ═══════════════════════════════════════════════════════════
+const { collaborativeCodeCanvas } = require('./collaborativeCodeCanvas');
+const { multimodalJudgeDefenseEngine } = require('../hackathon-agent/multimodalJudgeDefenseEngine');
+
+// Feature V21-2: Collaborative Code Canvas Join / Init
+router.post('/code-canvas/join', protect, (req, res) => {
+  try {
+    const { roomId = `room_${Date.now()}`, language, problemStatement, initialCode } = req.body;
+    const result = collaborativeCodeCanvas.createOrJoinRoom(roomId, { language, problemStatement, initialCode, userId: req.user?.id || 'candidate' });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V21-3: Collaborative Code Canvas Update & AST Linting
+router.post('/code-canvas/update', protect, (req, res) => {
+  try {
+    const { roomId, update } = req.body;
+    const result = collaborativeCodeCanvas.applyCodeUpdate(roomId, { ...update, userId: req.user?.id });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V21-4: Multimodal AI Judge Defense Simulator
+router.post('/judge-defense/evaluate', protect, (req, res) => {
+  try {
+    const result = multimodalJudgeDefenseEngine.evaluateDefense(req.body);
     res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -401,5 +500,7 @@ router.post('/adaptive/update-ability', protect, (req, res) => {
 });
 
 module.exports = router;
+
+
 
 

@@ -145,13 +145,17 @@ router.post('/integrity/evaluate', (req, res) => {
   catch (e) { res.status(400).json({ success: false, error: e.message }); }
 });
 
-router.post('/security/sast-scan', (req, res) => {
+const { kcetDcetRankEstimator } = require('./kcetDcetRankEstimator');
+
+// Feature V21-1: KCET & DCET Entrance Rank Estimator & College Matcher
+router.post('/entrance/estimate-rank', (req, res) => {
   try {
-    const { codeSnippet, filename } = req.body;
-    res.json(scanCodeForVulnerabilities(codeSnippet, filename));
+    const result = kcetDcetRankEstimator.estimateRank(req.body);
+    res.json(result);
   } catch (e) {
     res.status(400).json({ success: false, error: e.message });
   }
 });
 
 module.exports = router;
+
