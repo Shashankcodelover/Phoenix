@@ -288,6 +288,59 @@ export default function InterviewVaultPage() {
 
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 6: AUTOMATED ATS RESUME DISRUPTOR & MARKDOWN DIFFS
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden mb-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 6 GOOGLE XYZ RESUME DISRUPTOR
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>📄</span> Automated ATS Resume Disruptor & Markdown Diff Engine
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Converts weak passive bullets into Google XYZ Formula (&quot;Accomplished X as measured by Y, by doing Z&quot;) with line-by-line diff tracking.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <div className="text-[10px] text-slate-400">ATS Match Score</div>
+                <div className="text-xl font-mono font-bold text-emerald-400">96 / 100</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Line Diff Transformation Display */}
+          <div className="space-y-3 font-mono text-xs mb-6">
+            <div className="p-4 rounded-xl bg-slate-950/90 border border-red-500/20">
+              <div className="text-red-400 text-[11px] font-bold mb-1">ORIGINAL PASSIVE BULLET (ATS Score: 48)</div>
+              <div className="text-red-300">- Worked on backend API and connected database for student project.</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/90 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[11px] font-bold mb-1">✓ GOOGLE XYZ DISRUPTED BULLET (ATS Score: 96)</div>
+              <div className="text-emerald-300">+ Engineered distributed REST microservices using Node.js and PostgreSQL, reducing p95 API latency by 42% across 25,000 requests/sec.</div>
+              <div className="text-[10px] text-slate-400 mt-2 font-sans">
+                Rule Applied: <span className="text-indigo-300">Replaced &apos;Worked on&apos; with strong action verb &apos;Engineered&apos;, cited 42% latency reduction and 25k RPS scale.</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Missing Keywords Badges */}
+          <div className="border-t border-white/10 pt-4 flex flex-wrap items-center gap-2">
+            <span className="text-xs text-slate-400 font-semibold">Missing Keywords Automatically Injected:</span>
+            {['Distributed Systems', 'LRU Cache', 'Sub-10ms Latency', 'Token Bucket Rate Limiting', 'Pgvector'].map((kw, i) => (
+              <span key={i} className="text-[11px] font-mono text-indigo-300 bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-500/20">
+                + {kw}
+              </span>
+            ))}
+          </div>
+        </div>
+
+
         {/* FEATURE 3: WHITEBOARD TOPOLOGY CRASH SIMULATOR */}
         <div className="glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">

@@ -677,9 +677,14 @@ router.get('/whiteboard/templates', protect, (req, res) => {
   }
 });
 
-router.post('/whiteboard/simulate-chaos', protect, (req, res) => {
+const { atsDisruptorEngine } = require('./atsDisruptorEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 6: Automated ATS Resume Disruptor & Markdown Diff Generator
+// ═══════════════════════════════════════════════════════════
+router.post('/resume/disrupt-ats', protect, (req, res) => {
   try {
-    const result = liveWhiteboardSimulator.simulateChaos(req.body);
+    const result = atsDisruptorEngine.disruptAndOptimize(req.body);
     res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -687,6 +692,7 @@ router.post('/whiteboard/simulate-chaos', protect, (req, res) => {
 });
 
 module.exports = router;
+
 
 
 

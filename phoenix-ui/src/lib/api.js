@@ -54,8 +54,10 @@ export const interviewApi = {
   triggerInterruption: (sessionId, candidateCurrentPoint) => fetchApi('/prep/voice-coach/session/interruption-test', { method: 'POST', body: JSON.stringify({ sessionId, candidateCurrentPoint }) }),
   finalizeVoiceSession: (sessionId, finalAnswerSample) => fetchApi('/prep/voice-coach/session/finalize', { method: 'POST', body: JSON.stringify({ sessionId, finalAnswerSample }) }),
   getWhiteboardTemplates: () => fetchApi('/prep/whiteboard/templates'),
-  simulateChaos: (payload) => fetchApi('/prep/whiteboard/simulate-chaos', { method: 'POST', body: JSON.stringify(payload) })
+  simulateChaos: (payload) => fetchApi('/prep/whiteboard/simulate-chaos', { method: 'POST', body: JSON.stringify(payload) }),
+  disruptAtsResume: (payload) => fetchApi('/prep/resume/disrupt-ats', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 
