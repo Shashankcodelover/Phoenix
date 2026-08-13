@@ -147,10 +147,46 @@ router.post('/integrity/evaluate', (req, res) => {
 
 const { kcetDcetRankEstimator } = require('./kcetDcetRankEstimator');
 
-// Feature V21-1: KCET & DCET Entrance Rank Estimator & College Matcher
-router.post('/entrance/estimate-rank', (req, res) => {
+const { smartScholarshipMatcher } = require('./smartScholarshipMatcher');
+const { mentorExchangeEngine } = require('./mentorExchangeEngine');
+const { domainSkillQuizEngine } = require('./domainSkillQuizEngine');
+
+// Feature V23-1: Smart Scholarship & Fee Waiver Matcher
+router.post('/scholarships/match', (req, res) => {
   try {
-    const result = kcetDcetRankEstimator.estimateRank(req.body);
+    const result = smartScholarshipMatcher.matchScholarships(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+// Feature V23-2: Alumni Mentor Match & AMA Thread
+router.post('/mentors/match-advisor', (req, res) => {
+  try {
+    const { studentGoal } = req.body;
+    const result = mentorExchangeEngine.matchMentor(studentGoal);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+// Feature V23-3: Interactive Domain Readiness Quiz Generate & Evaluate
+router.get('/domain-quiz/generate', (req, res) => {
+  try {
+    const { domainKey } = req.query;
+    const result = domainSkillQuizEngine.generateAssessment(domainKey);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+router.post('/domain-quiz/evaluate', (req, res) => {
+  try {
+    const { domainKey, userAnswers } = req.body;
+    const result = domainSkillQuizEngine.evaluateSubmission(domainKey, userAnswers);
     res.json(result);
   } catch (e) {
     res.status(400).json({ success: false, error: e.message });
@@ -158,4 +194,5 @@ router.post('/entrance/estimate-rank', (req, res) => {
 });
 
 module.exports = router;
+
 

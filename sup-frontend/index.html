@@ -232,20 +232,28 @@
           </div>
         </div>
 
-        <!-- TAB 4: SELECT WORLD -->
+        <!-- TAB 4: SELECT VAULT WORLD -->
         <div class="tab-content" id="tc-4">
-          <h4 class="step-title">Step 4: Choose Destination World</h4>
-          <p class="step-desc">Which accelerator series do you want to unlock?</p>
-          <div class="grid-2 mb-2">
+          <h4 class="step-title">Step 4: Choose Destination Vault</h4>
+          <p class="step-desc">Select which accelerator vault you want to unlock:</p>
+          <div class="vault-triad-grid mb-2">
+            <div class="world-card" id="wcHorizon" onclick="chooseWorld('horizon')">
+              <div class="world-card-icon">🌅</div>
+              <span class="vault-badge vault-badge-horizon">Vault 1</span>
+              <h5 class="world-card-title text-cyan">Horizon Career Pathways</h5>
+              <p class="world-card-desc">PU KCET / Diploma DCET Predictor, Smart Scholarships & Alumni Mentors.</p>
+            </div>
             <div class="world-card selected" id="wcInterview" onclick="chooseWorld('interview')">
               <div class="world-card-icon">💼</div>
-              <h5 class="world-card-title text-cyan">Placement World</h5>
-              <p class="world-card-desc">A-to-Z Placement Syllabus, ATS Resume Disruptor & Peer Mocks.</p>
+              <span class="vault-badge vault-badge-interview">Vault 2</span>
+              <h5 class="world-card-title text-indigo">Placement & Voice AI</h5>
+              <p class="world-card-desc">7-Day Sprints, Voice AI Mock Coach, STAR Matrix & System Design Whiteboard.</p>
             </div>
             <div class="world-card" id="wcHackathon" onclick="chooseWorld('hackathon')">
               <div class="world-card-icon">🏆</div>
-              <h5 class="world-card-title text-coral">Hackathon World</h5>
-              <p class="world-card-desc">Hackathon Series, Multi-Team Roster, Simulator & Pitch Explainer.</p>
+              <span class="vault-badge vault-badge-hackathon">Vault 3</span>
+              <h5 class="world-card-title text-coral">Hackathon OS</h5>
+              <p class="world-card-desc">Team Workspaces, Idea Voting Polls, Split-Chat AI & 3-Min Teleprompter.</p>
             </div>
           </div>
           <div class="nav-btn-row">

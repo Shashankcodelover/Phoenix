@@ -2113,3 +2113,170 @@ a:hover {
   }
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   PHOENIX v23.0 — VAULT TRIAD & SPLIT-CHAT GLASSMORPHIC DESIGN SYSTEM
+   ══════════════════════════════════════════════════════════════════════ */
+
+.vault-triad-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin: 32px 0;
+}
+
+.vault-card {
+  background: var(--bg-card, rgba(22, 27, 34, 0.85));
+  border: 1px solid var(--border-subtle, rgba(240, 246, 252, 0.1));
+  border-radius: var(--radius-lg, 16px);
+  padding: 24px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.vault-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-brand);
+  opacity: 0.8;
+}
+
+.vault-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--cyan, #58a6ff);
+  box-shadow: 0 12px 36px rgba(0, 112, 243, 0.18);
+}
+
+.vault-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full, 9999px);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.vault-badge-horizon { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+.vault-badge-interview { background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
+.vault-badge-hackathon { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+/* ── Split-Chat Dual Pane Workspaces ── */
+.split-chat-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: 600px;
+  background: var(--bg-card, rgba(13, 17, 23, 0.9));
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  border-radius: var(--radius-lg, 16px);
+  padding: 16px;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .split-chat-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+.universal-chat-pane,
+.senior-copilot-pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: rgba(22, 27, 34, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md, 12px);
+  padding: 16px;
+}
+
+.pane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 12px;
+}
+
+.pane-header h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-message-stream {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 4px;
+}
+
+.chat-bubble {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md, 10px);
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.chat-bubble.senior-lead {
+  background: rgba(0, 112, 243, 0.12);
+  border-color: rgba(0, 112, 243, 0.3);
+}
+
+.chat-input-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.chat-input-bar input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm, 8px);
+  padding: 10px 14px;
+  color: var(--text-primary, #fff);
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.chat-input-bar input:focus {
+  border-color: var(--cyan, #0070f3);
+}
+
+/* ── 3-Minute Teleprompter Pace Meter ── */
+.teleprompter-meter-wrap {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-full, 9999px);
+  height: 8px;
+  width: 100%;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.teleprompter-meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #f59e0b 70%, #ef4444 100%);
+  transition: width 1s linear;
+}
+
+

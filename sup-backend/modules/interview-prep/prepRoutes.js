@@ -489,10 +489,140 @@ router.post('/code-canvas/update', protect, (req, res) => {
   }
 });
 
-// Feature V21-4: Multimodal AI Judge Defense Simulator
-router.post('/judge-defense/evaluate', protect, (req, res) => {
+// ═══════════════════════════════════════════════════════════
+// V22 NEW FEATURES: Hackathon Team Server, Idea Polling & Split-Chat OS
+// ═══════════════════════════════════════════════════════════
+const { hackathonTeamServer } = require('../hackathon-agent/hackathonTeamServer');
+
+// Feature V22-1: Create or Join Hackathon Team Workspace
+router.post('/hackathon/team/create', protect, (req, res) => {
   try {
-    const result = multimodalJudgeDefenseEngine.evaluateDefense(req.body);
+    const { teamId = `team_${Date.now()}`, teamName, hackathonEvent, creator } = req.body;
+    const result = hackathonTeamServer.createOrJoinTeam(teamId, {
+      teamName,
+      hackathonEvent,
+      creator: creator || { id: req.user?.id, name: req.user?.name || 'Teammate', role: 'Full Stack Dev' }
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V22-2: Universal Team Chat Message Broadcast
+router.post('/hackathon/team/message', protect, (req, res) => {
+  try {
+    const { teamId, content, senderName } = req.body;
+    const result = hackathonTeamServer.sendTeamMessage(teamId, {
+      userId: req.user?.id,
+      senderName: senderName || req.user?.name || 'Teammate',
+      content
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V22-3: Launch Hackathon Idea Voting Poll
+router.post('/hackathon/team/poll/create', protect, (req, res) => {
+  try {
+    const { teamId, theme, prizeTracks } = req.body;
+    const result = hackathonTeamServer.generateIdeaPoll(teamId, { theme, prizeTracks });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V22-4: Cast Vote in Hackathon Idea Poll
+router.post('/hackathon/team/poll/vote', protect, (req, res) => {
+  try {
+    const { teamId, ideaId } = req.body;
+    const result = hackathonTeamServer.castIdeaVote(teamId, req.user?.id || 'lead_1', ideaId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature V22-5: Decompose Project & Assign Roles from Scratch to Deployment
+router.post('/hackathon/team/decompose', protect, (req, res) => {
+  try {
+    const { teamId, selectedIdea } = req.body;
+    const result = hackathonTeamServer.decomposeAndAssignTasks(teamId, selectedIdea);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// V23 NEW FEATURES: Vault 2 & Vault 3 Next-Level Breakthrough Engines
+// ═══════════════════════════════════════════════════════════
+const { starStoryMatrixEngine } = require('./starStoryMatrixEngine');
+const { whiteboardTopologySimulator } = require('./whiteboardTopologySimulator');
+const { compensationNegotiatorEngine } = require('./compensationNegotiatorEngine');
+const { pitchTeleprompterEngine } = require('../hackathon-agent/pitchTeleprompterEngine');
+const { demoDisasterRecoveryHub } = require('../hackathon-agent/demoDisasterRecoveryHub');
+const { submissionGeneratorEngine } = require('../hackathon-agent/submissionGeneratorEngine');
+
+// Vault 2: STAR Story Matrix Evaluator
+router.post('/star-story/evaluate', protect, (req, res) => {
+  try {
+    const { question, answer } = req.body;
+    const result = starStoryMatrixEngine.evaluateStarAnswer(question, answer);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Vault 2: Live System Design Whiteboard Topology & SPOF Simulator
+router.post('/whiteboard/resilience', protect, (req, res) => {
+  try {
+    const { topology, simulationOptions } = req.body;
+    const result = whiteboardTopologySimulator.simulateResilience(topology, simulationOptions);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Vault 2: Offer Negotiation & Compensation Benchmarking
+router.post('/compensation/evaluate', protect, (req, res) => {
+  try {
+    const result = compensationNegotiatorEngine.evaluateOffer(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Vault 3: Interactive 3-Minute Pitch Teleprompter
+router.post('/pitch/teleprompter', protect, (req, res) => {
+  try {
+    const result = pitchTeleprompterEngine.generateTeleprompter(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Vault 3: Live Demo Disaster Recovery Hub
+router.post('/hackathon/disaster-recovery', protect, (req, res) => {
+  try {
+    const result = demoDisasterRecoveryHub.generateRecoveryPackage(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Vault 3: Automated Devpost Submission & README Generator
+router.post('/hackathon/submission-readme', protect, (req, res) => {
+  try {
+    const result = submissionGeneratorEngine.generateSubmission(req.body);
     res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -500,6 +630,8 @@ router.post('/judge-defense/evaluate', protect, (req, res) => {
 });
 
 module.exports = router;
+
+
 
 
 
