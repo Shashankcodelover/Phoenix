@@ -40,8 +40,11 @@ export const horizonApi = {
   getDomainQuiz: (domainKey) => fetchApi(`/horizon/domain-quiz/generate?domainKey=${domainKey}`),
   evaluateQuiz: (domainKey, userAnswers) => fetchApi('/horizon/domain-quiz/evaluate', { method: 'POST', body: JSON.stringify({ domainKey, userAnswers }) }),
   get360Blueprint: (data) => fetchApi('/horizon/diagnostic/360-blueprint', { method: 'POST', body: JSON.stringify(data) }),
-  forecastKarnatakaMatrix: (data) => fetchApi('/horizon/rank/karnataka-matrix', { method: 'POST', body: JSON.stringify(data) })
+  forecastKarnatakaMatrix: (data) => fetchApi('/horizon/rank/karnataka-matrix', { method: 'POST', body: JSON.stringify(data) }),
+  getMentorsDirectory: () => fetchApi('/horizon/mentors/directory'),
+  dispatchMentorQuestion: (payload) => fetchApi('/horizon/mentors/dispatch-question', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 

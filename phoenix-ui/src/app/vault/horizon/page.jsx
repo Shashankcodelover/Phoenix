@@ -356,11 +356,80 @@ export default function HorizonVaultPage() {
               </div>
             </div>
           </div>
+        </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 10: VERIFIED ALUMNI MENTOR DIRECT DISPATCH HUB
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
+                ⭐ FEATURE 10 VERIFIED ALUMNI MENTOR DIRECT RELAY
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🎓</span> Verified Alumni Mentorship & 1-on-1 Guidance Hub
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Get direct async guidance from verified RVCE, BMSCE, and MSRIT alumni working at Google, Microsoft, and Razorpay.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/20">
+              <div className="flex items-center justify-between mb-2">
+                <div className="font-bold text-white text-xs">Aditya Rao</div>
+                <span className="text-[10px] font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">RVCE • Google</span>
+              </div>
+              <div className="text-[11px] text-slate-300 font-sans leading-relaxed mb-2">
+                &quot;Do not compromise on branch for a college name unless it is RVCE CSE/ISE. Strong fundamentals in OS and NeetCode 150 will get you into Tier-1 product companies.&quot;
+              </div>
+              <div className="text-[10px] text-slate-400">Focus: Placements & KEA Counseling</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/20">
+              <div className="flex items-center justify-between mb-2">
+                <div className="font-bold text-white text-xs">Priya Sharma</div>
+                <span className="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">BMSCE • Microsoft</span>
+              </div>
+              <div className="text-[11px] text-slate-300 font-sans leading-relaxed mb-2">
+                &quot;Hackathons are the fastest shortcut to bypassing resume black holes. Win 2 national hackathons with live deployed prototypes, and recruiters will reach out to you.&quot;
+              </div>
+              <div className="text-[10px] text-slate-400">Focus: Two-Stage RAG & AI Engineering</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/20">
+              <div className="flex items-center justify-between mb-2">
+                <div className="font-bold text-white text-xs">Karthik Bhat</div>
+                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">MSRIT • Razorpay</span>
+              </div>
+              <div className="text-[11px] text-slate-300 font-sans leading-relaxed mb-2">
+                &quot;For DCET diploma students: Focus 70% of your energy on 3rd year engineering mathematics. Your practical coding will give you a massive edge over PU students.&quot;
+              </div>
+              <div className="text-[10px] text-slate-400">Focus: DCET Lateral Entry & Fullstack</div>
+            </div>
+          </div>
+
+          {/* Ask Mentor Direct Input Card */}
+          <div className="p-5 rounded-2xl bg-slate-950/90 border border-white/10">
+            <div className="text-xs font-bold text-white mb-2">Ask a Verified Senior Mentor a Direct Question:</div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                defaultValue="Should I choose RVCE ISE or BMSCE CSE for product placements?"
+                className="flex-1 bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-sky-500"
+              />
+              <button className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs shadow-lg shadow-sky-500/20">
+                📨 Dispatch Question to Mentors
+              </button>
+            </div>
+          </div>
         </div>
 
       </main>
     </div>
   );
 }
+
 

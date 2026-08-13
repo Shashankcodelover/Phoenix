@@ -206,7 +206,30 @@ router.post('/rank/karnataka-matrix', (req, res) => {
   }
 });
 
+const { mentorDispatchHub } = require('./mentorDispatchHub');
+
+// Feature 10: Verified Alumni Mentor Direct Dispatch & Guidance Hub
+router.get('/mentors/directory', (req, res) => {
+  try {
+    const result = mentorDispatchHub.getMentorDirectory();
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+router.post('/mentors/dispatch-question', (req, res) => {
+  try {
+    const result = mentorDispatchHub.dispatchQuestion(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
