@@ -653,10 +653,23 @@ router.post('/voice-coach/session/interruption-test', protect, (req, res) => {
   }
 });
 
-router.post('/voice-coach/session/finalize', protect, (req, res) => {
+const { liveWhiteboardSimulator } = require('./liveWhiteboardSimulator');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 3: Live System Design Whiteboard & Chaos Failure Simulator
+// ═══════════════════════════════════════════════════════════
+router.get('/whiteboard/templates', protect, (req, res) => {
   try {
-    const { sessionId, finalAnswerSample } = req.body;
-    const result = voiceAiCoachEngine.finalizeSession(sessionId, finalAnswerSample);
+    const templates = liveWhiteboardSimulator.getTemplates();
+    res.json({ success: true, templates });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/whiteboard/simulate-chaos', protect, (req, res) => {
+  try {
+    const result = liveWhiteboardSimulator.simulateChaos(req.body);
     res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -664,6 +677,7 @@ router.post('/voice-coach/session/finalize', protect, (req, res) => {
 });
 
 module.exports = router;
+
 
 
 

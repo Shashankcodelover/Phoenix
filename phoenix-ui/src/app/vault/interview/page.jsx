@@ -289,33 +289,76 @@ export default function InterviewVaultPage() {
         </div>
 
         {/* FEATURE 3: WHITEBOARD TOPOLOGY CRASH SIMULATOR */}
-        <div className="glass-card p-6 border-indigo-500/20">
-          <div className="flex items-center justify-between mb-4">
+        <div className="glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-              <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                <span>🛡️</span> System Design Whiteboard & SPOF Failure Simulator
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 3 HIGH CONCURRENCY CHAOS SIMULATOR
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🛡️</span> Live System Design Whiteboard & Chaos Engineering Hub
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">Inject traffic surges and simulate node outages on high-concurrency microservices.</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Inject traffic surges (up to 250,000 RPS), detect SPOFs, and simulate node crash failovers with live p50/p95/p99 SLA tracking.
+              </p>
             </div>
+
             <button
               onClick={handleSimulateResilience}
               disabled={loadingSim}
-              className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition-all shadow-lg shadow-sky-500/20"
+              className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition-all shadow-lg shadow-sky-500/20"
             >
-              {loadingSim ? 'Simulating Traffic...' : '🚀 Run Failure Simulation'}
+              {loadingSim ? 'Simulating Traffic...' : '🚀 Execute Chaos Simulation'}
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {/* Active Topology Nodes */}
+          <div className="mb-6">
+            <div className="text-xs text-slate-400 font-semibold mb-2 uppercase tracking-wider">Active Topology: Global Video Streaming CDN & Transcoder</div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+              <div className="p-2.5 rounded-xl bg-slate-950/70 border border-white/5 text-center">
+                <div className="text-[10px] text-slate-400">Edge CDN</div>
+                <div className="text-xs font-bold text-white mt-0.5">CloudFront</div>
+                <span className="text-[10px] font-mono text-emerald-400">12 PoPs</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-950/70 border border-white/5 text-center">
+                <div className="text-[10px] text-slate-400">Layer 7 LB</div>
+                <div className="text-xs font-bold text-white mt-0.5">Anycast LB</div>
+                <span className="text-[10px] font-mono text-emerald-400">4 Instances</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-950/70 border border-white/5 text-center">
+                <div className="text-[10px] text-slate-400">Auth Tier</div>
+                <div className="text-xs font-bold text-white mt-0.5">Microservice</div>
+                <span className="text-[10px] font-mono text-emerald-400">6 Replicas</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-950/70 border border-white/5 text-center">
+                <div className="text-[10px] text-slate-400">Transcoding</div>
+                <div className="text-xs font-bold text-white mt-0.5">H.264/AV1</div>
+                <span className="text-[10px] font-mono text-emerald-400">16 Workers</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-950/70 border border-white/5 text-center">
+                <div className="text-[10px] text-slate-400">Cache Layer</div>
+                <div className="text-xs font-bold text-white mt-0.5">Redis Cluster</div>
+                <span className="text-[10px] font-mono text-emerald-400">3 Shards</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-950/70 border border-white/5 text-center">
+                <div className="text-[10px] text-slate-400">Database</div>
+                <div className="text-xs font-bold text-white mt-0.5">CockroachDB</div>
+                <span className="text-[10px] font-mono text-emerald-400">3 Regions</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <div className="flex justify-between text-xs text-slate-300 mb-1">
-                <span>Simulated Traffic Load (RPS)</span>
+                <span>Simulated Global Concurrency Load (RPS)</span>
                 <span className="font-mono text-indigo-400 font-bold">{Number(rps).toLocaleString()} RPS</span>
               </div>
               <input
                 type="range"
                 min="5000"
-                max="100000"
+                max="250000"
                 step="5000"
                 value={rps}
                 onChange={(e) => setRps(e.target.value)}
@@ -323,35 +366,42 @@ export default function InterviewVaultPage() {
               />
             </div>
             <div>
-              <label className="text-xs text-slate-300 mb-1 block">Inject Failure Node</label>
+              <label className="text-xs text-slate-300 mb-1 block">Inject Chaos Node Outage</label>
               <select
                 value={failedNode}
                 onChange={(e) => setFailedNode(e.target.value)}
-                className="w-full bg-slate-900/90 border border-white/10 rounded-lg p-2 text-xs text-white outline-none focus:border-indigo-500"
+                className="w-full bg-slate-900/90 border border-white/10 rounded-xl p-2.5 text-xs text-white outline-none focus:border-indigo-500"
               >
-                <option value="none">No Failure (Normal Operations)</option>
-                <option value="primary_db">Crash Primary PostgreSQL DB (Test Replica Failover)</option>
-                <option value="cache">Crash Redis Cache (Test DB Read Saturation)</option>
+                <option value="none">Healthy Topology (Normal Production Operations)</option>
+                <option value="primary_db">Crash Primary DB Node (Assert Multi-Region Raft Failover)</option>
+                <option value="cache">Crash Sharded Redis Cache (Assert Graceful DB Throttling)</option>
                 <option value="app1">Crash App Server Instance 1</option>
               </select>
             </div>
           </div>
 
-          {simResult && (
-            <div className="p-4 rounded-xl bg-slate-900/80 border border-sky-500/30 flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <div className="text-xs font-semibold text-white">{simResult.resilienceRating}</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">{simResult.failureSimulationReport}</div>
+          {/* Simulation Telemetry & Latency Output */}
+          <div className="p-5 rounded-2xl bg-slate-950/80 border border-indigo-500/30">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+              <div className="text-xs font-bold text-white flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                {simResult ? simResult.architectureGrade || simResult.resilienceRating : 'Tier-1 FAANG Architecture (Production Ready)'}
               </div>
-              <div className="flex items-center gap-4 font-mono text-xs">
-                <div>Latency: <span className="text-emerald-400 font-bold">{simResult.simulatedLatencyMs}ms</span></div>
-                <div>SLA: <span className="text-sky-400 font-bold">{simResult.availabilitySLA}</span></div>
+              <div className="flex items-center gap-6 font-mono text-xs">
+                <div>p50: <span className="text-emerald-400 font-bold">{simResult?.latencyProfile?.p50 || '14ms'}</span></div>
+                <div>p95: <span className="text-sky-400 font-bold">{simResult?.latencyProfile?.p95 || '32ms'}</span></div>
+                <div>p99: <span className="text-indigo-400 font-bold">{simResult?.latencyProfile?.p99 || '52ms'}</span></div>
+                <div>SLA: <span className="text-emerald-400 font-bold">{simResult?.availabilitySLA || '99.99%'}</span></div>
               </div>
             </div>
-          )}
+            <div className="text-slate-300 text-xs leading-relaxed">
+              {simResult?.chaosSimulationSummary || simResult?.failureSimulationReport || 'All redundant clusters operating at peak efficiency. Zero dropped packets under 50,000 RPS.'}
+            </div>
+          </div>
         </div>
 
       </main>
     </div>
   );
 }
+

@@ -52,8 +52,11 @@ export const interviewApi = {
   startVoiceSession: (data) => fetchApi('/prep/voice-coach/session/start', { method: 'POST', body: JSON.stringify(data) }),
   processAudioChunk: (sessionId, transcriptSlice, durationSeconds) => fetchApi('/prep/voice-coach/session/chunk', { method: 'POST', body: JSON.stringify({ sessionId, transcriptSlice, durationSeconds }) }),
   triggerInterruption: (sessionId, candidateCurrentPoint) => fetchApi('/prep/voice-coach/session/interruption-test', { method: 'POST', body: JSON.stringify({ sessionId, candidateCurrentPoint }) }),
-  finalizeVoiceSession: (sessionId, finalAnswerSample) => fetchApi('/prep/voice-coach/session/finalize', { method: 'POST', body: JSON.stringify({ sessionId, finalAnswerSample }) })
+  finalizeVoiceSession: (sessionId, finalAnswerSample) => fetchApi('/prep/voice-coach/session/finalize', { method: 'POST', body: JSON.stringify({ sessionId, finalAnswerSample }) }),
+  getWhiteboardTemplates: () => fetchApi('/prep/whiteboard/templates'),
+  simulateChaos: (payload) => fetchApi('/prep/whiteboard/simulate-chaos', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 // Vault 3: Hackathon OS APIs
