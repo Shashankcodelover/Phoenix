@@ -472,10 +472,59 @@ export default function HackathonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 12: AUTOMATED DEVPOST MARKDOWN SUBMISSION & BADGES
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 12 1-CLICK DEVPOST & BADGES EXPORT
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>📝</span> Automated Devpost Project Story & Shield.io Badges
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Generates complete, judge-optimized project documentation with tech stack badges, engineering bottlenecks, and 90-day post-hackathon roadmap.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Word Count: ~420 Words (3 Min Read)
+              </span>
+            </div>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-slate-950/90 border border-emerald-500/25">
+            <div className="flex items-center justify-between mb-3 text-xs">
+              <span className="font-bold text-white">Formatted Devpost Project Story (Ready for 1-Click Copy):</span>
+              <button className="px-3 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/20">
+                📋 Copy Full Devpost Markdown
+              </button>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-900 border border-white/5 font-mono text-xs text-slate-300 leading-relaxed max-h-56 overflow-y-auto">
+              # NexusAudio AI 🚀<br/>
+              &gt; **Sub-300ms Turn-Taking Voice AI Mock Coach &amp; Chaos System Design Simulator**<br/><br/>
+              ![Next.js 15](https://img.shields.io/badge/Next.js_15-0F172A?style=for-the-badge&amp;logo=code&amp;logoColor=38BDF8)
+              ![TailwindCSS v4](https://img.shields.io/badge/TailwindCSS_v4-0F172A?style=for-the-badge&amp;logo=code&amp;logoColor=38BDF8)
+              ![WebRTC](https://img.shields.io/badge/WebRTC-0F172A?style=for-the-badge&amp;logo=code&amp;logoColor=38BDF8)<br/><br/>
+              ### 💡 Inspiration<br/>
+              Engineering students in Tier-2/3 colleges lack access to high-fidelity FAANG mock interviews and judge defense preparation...<br/><br/>
+              ### ⚡ What It Does<br/>
+              • 🎙️ Real-Time Voice AI Coach: Low-latency turn-taking streaming with live WPM prosody gauges.<br/>
+              • 🏛️ Live System Design Whiteboard: Interactive canvas with high-concurrency traffic stress-testing (5,000 to 250,000 RPS).<br/>
+              • ⚖️ 5-Round Judge Defense Grilling: Multimodal simulator mimicking Staff Architects and VC cross-examinations.
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

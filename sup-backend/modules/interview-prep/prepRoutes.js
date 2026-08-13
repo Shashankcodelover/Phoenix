@@ -711,7 +711,23 @@ router.post('/compensation/negotiate-script', protect, (req, res) => {
   }
 });
 
+const { devpostSubmissionEngine } = require('../hackathon-agent/devpostSubmissionEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 12: Automated Devpost Markdown Submission Generator
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/devpost-submission', protect, (req, res) => {
+  try {
+    const result = devpostSubmissionEngine.generateDevpostSubmission(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

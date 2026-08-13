@@ -80,7 +80,9 @@ export const hackathonApi = {
   generate5SlideDeck: (projectData) => fetchApi('/prep/pitch/slide-deck', { method: 'POST', body: JSON.stringify(projectData) }),
   evaluateJudgeDefenseRound: (defenseData) => fetchApi('/prep/hackathon/judge-defense/round', { method: 'POST', body: JSON.stringify(defenseData) }),
   getDisasterRecovery: (projectData) => fetchApi('/prep/hackathon/disaster-recovery', { method: 'POST', body: JSON.stringify(projectData) }),
-  generateSubmissionReadme: (projectData) => fetchApi('/prep/hackathon/submission-readme', { method: 'POST', body: JSON.stringify(projectData) })
+  generateSubmissionReadme: (projectData) => fetchApi('/prep/hackathon/submission-readme', { method: 'POST', body: JSON.stringify(projectData) }),
+  generateDevpostSubmission: (projectData) => fetchApi('/prep/hackathon/devpost-submission', { method: 'POST', body: JSON.stringify(projectData) })
 };
+
 
 
