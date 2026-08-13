@@ -183,10 +183,12 @@ router.get('/domain-quiz/generate', (req, res) => {
   }
 });
 
-router.post('/domain-quiz/evaluate', (req, res) => {
+const { instantDiagnostic360 } = require('./instantDiagnostic360');
+
+// Feature 1: Instant 360° Diagnostic & 10x Career Blueprint
+router.post('/diagnostic/360-blueprint', (req, res) => {
   try {
-    const { domainKey, userAnswers } = req.body;
-    const result = domainSkillQuizEngine.evaluateSubmission(domainKey, userAnswers);
+    const result = instantDiagnostic360.evaluate360(req.body);
     res.json(result);
   } catch (e) {
     res.status(400).json({ success: false, error: e.message });
@@ -194,5 +196,6 @@ router.post('/domain-quiz/evaluate', (req, res) => {
 });
 
 module.exports = router;
+
 
 

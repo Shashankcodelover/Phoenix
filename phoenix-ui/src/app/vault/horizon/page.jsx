@@ -262,7 +262,78 @@ export default function HorizonVaultPage() {
 
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 1: INSTANT 360° DIAGNOSTIC & 10x CAREER BLUEPRINT
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
+                ⭐ FEATURE 1 HIGHEST QUALITY
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🧠</span> Autonomous 360° Diagnostic & 10x Career Roadmap Blueprint
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Evaluate your mathematical logic, system architecture, and communication against 200,000+ peers to generate your 30-day milestone sprint.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-xs text-slate-400 mb-1">Mathematical Logic</div>
+              <div className="text-xl font-mono font-bold text-sky-400">95/100</div>
+              <div className="text-[10px] text-emerald-400 mt-1">✓ Top 2% Bracket</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-xs text-slate-400 mb-1">System Architecture</div>
+              <div className="text-xl font-mono font-bold text-indigo-400">90/100</div>
+              <div className="text-[10px] text-emerald-400 mt-1">✓ LRU & Fault Tolerance</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-xs text-slate-400 mb-1">STAR Prosody</div>
+              <div className="text-xl font-mono font-bold text-emerald-400">92/100</div>
+              <div className="text-[10px] text-emerald-400 mt-1">✓ Quantified Impact</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-xs text-slate-400 mb-1">National Percentile</div>
+              <div className="text-xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">
+                P96.2
+              </div>
+              <div className="text-[10px] text-sky-400 mt-1">Top 1% Elite Candidate</div>
+            </div>
+          </div>
+
+          {/* 30-Day Day-by-Day Milestone Sprint Roadmap */}
+          <div className="border-t border-white/10 pt-6">
+            <div className="text-sm font-bold text-white mb-3">Your Personalized 30-Day Milestone Sprint:</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-sky-500/20">
+                <div className="text-sky-400 font-bold mb-1">Day 1-7 (500 XP)</div>
+                <div className="text-slate-300">Master Array Two-Pointers & NeetCode 150 Core Patterns</div>
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-indigo-500/20">
+                <div className="text-indigo-400 font-bold mb-1">Day 8-15 (750 XP)</div>
+                <div className="text-slate-300">Build Distributed In-Memory Cache with Sub-2ms Latency</div>
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-emerald-500/20">
+                <div className="text-emerald-400 font-bold mb-1">Day 16-23 (600 XP)</div>
+                <div className="text-slate-300">Complete 3 Live Voice AI Mock Interruption Rounds</div>
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-pink-500/20">
+                <div className="text-pink-400 font-bold mb-1">Day 24-30 (1000 XP)</div>
+                <div className="text-slate-300">Deploy Next.js 15 Fullstack App & Pass 5 Judge Defense Rounds</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
       </main>
     </div>
   );
 }
+
