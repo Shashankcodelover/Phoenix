@@ -71,11 +71,25 @@ async function callGemini(prompt, systemInstruction = '', jsonMode = false) {
 }
 
 /**
- * Call Groq API (Ultra-fast inference, Llama 3.3 70B & 8B)
+ * Helper to safely extract multiple keys from comma/pipe-separated environment strings
+ */
+function extractApiKeys(rawEnvStr) {
+  if (!rawEnvStr || typeof rawEnvStr !== 'string') return [];
+  return rawEnvStr
+    .split(/[,||\n]+/)
+    .map(k => k.trim().replace(/^["']|["']$/g, '').trim())
+    .filter(k => k.length > 5 && !k.startsWith('your-') && !k.includes('YOUR_'));
+}
+
+let groqKeyIndex = 0;
+let geminiKeyIndex = 0;
+
+/**
+ * Call Groq API (Ultra-fast inference, Llama 3.3 70B & 8B with automatic multi-key rotation)
  */
 async function callGroq(prompt, systemInstruction = '', jsonMode = false, modelName = null) {
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey || apiKey.startsWith('your-')) {
+  const keys = extractApiKeys(process.env.GROQ_API_KEY);
+  if (keys.length === 0) {
     throw new Error('GROQ_API_KEY not configured');
   }
 
@@ -97,33 +111,52 @@ async function callGroq(prompt, systemInstruction = '', jsonMode = false, modelN
     requestBody.response_format = { type: 'json_object' };
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 12000);
+  let lastError = null;
+  // Try available keys with auto-rotation
+  for (let attempt = 0; attempt < keys.length; attempt++) {
+    const activeKey = keys[(groqKeyIndex + attempt) % keys.length];
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
 
-  try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(requestBody),
-      signal: controller.signal
-    });
+    try {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${activeKey}`
+        },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal
+      });
 
-    clearTimeout(timeout);
+      clearTimeout(timeout);
 
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`Groq ${response.status}: ${errText.substring(0, 200)}`);
+      if (response.status === 429) {
+        // Quota exceeded on this key, rotate to next key
+        groqKeyIndex = (groqKeyIndex + 1) % keys.length;
+        lastError = new Error(`Groq 429: Rate limit hit on key #${(groqKeyIndex)}`);
+        continue;
+      }
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Groq ${response.status}: ${errText.substring(0, 200)}`);
+      }
+
+      const data = await response.json();
+      // Keep using working key
+      groqKeyIndex = (groqKeyIndex + attempt) % keys.length;
+      return data.choices[0].message.content;
+    } catch (err) {
+      clearTimeout(timeout);
+      lastError = err;
+      if (err.name === 'AbortError') {
+        groqKeyIndex = (groqKeyIndex + 1) % keys.length;
+      }
     }
-
-    const data = await response.json();
-    return data.choices[0].message.content;
-  } catch (err) {
-    clearTimeout(timeout);
-    throw err;
   }
+
+  throw lastError || new Error('All Groq keys failed');
 }
 
 /**
