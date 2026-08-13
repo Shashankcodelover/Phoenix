@@ -100,8 +100,9 @@ class CollaborativeCodeCanvas {
     // Detect nested loops for Big-O profiling
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      if (/\b(for|while)\s*\(/.test(line)) {
-        loopNesting += 1;
+      const loopMatches = (line.match(/\b(for|while)\s*\(/g) || []).length;
+      if (loopMatches > 0) {
+        loopNesting += loopMatches;
         if (loopNesting >= 2) {
           detectedComplexity = 'O(N^2) Quadratic';
           warnings.push({ line: i + 1, message: 'Nested loop detected: potential quadratic O(N^2) complexity bottleneck.' });

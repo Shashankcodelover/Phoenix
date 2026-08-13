@@ -21,17 +21,15 @@ const { humanizeText } = require('../utils/humanizer');
 // --- Provider Implementations ---
 
 /**
- * Call Google Gemini API
+ * Call Google Gemini API (With Multi-Key Pool Failover)
  */
 async function callGemini(prompt, systemInstruction = '', jsonMode = false) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY_HERE' || apiKey.startsWith('your-')) {
+  const keys = extractApiKeys(process.env.GEMINI_API_KEY);
+  if (keys.length === 0) {
     throw new Error('GEMINI_API_KEY not configured');
   }
 
-  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
+  const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
   const requestBody = {
     contents: [{ parts: [{ text: prompt }] }]
   };
@@ -44,30 +42,47 @@ async function callGemini(prompt, systemInstruction = '', jsonMode = false) {
     requestBody.generationConfig = { responseMimeType: 'application/json' };
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000);
+  let lastError = null;
+  for (let attempt = 0; attempt < keys.length; attempt++) {
+    const activeKey = keys[(geminiKeyIndex + attempt) % keys.length];
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${activeKey}`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
 
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBody),
-      signal: controller.signal
-    });
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal
+      });
 
-    clearTimeout(timeout);
+      clearTimeout(timeout);
 
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`Gemini ${response.status}: ${errText.substring(0, 200)}`);
+      if (response.status === 429) {
+        geminiKeyIndex = (geminiKeyIndex + 1) % keys.length;
+        lastError = new Error(`Gemini 429: Rate limit hit on key #${geminiKeyIndex}`);
+        continue;
+      }
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Gemini ${response.status}: ${errText.substring(0, 200)}`);
+      }
+
+      const data = await response.json();
+      geminiKeyIndex = (geminiKeyIndex + attempt) % keys.length;
+      return data.candidates[0].content.parts[0].text;
+    } catch (err) {
+      clearTimeout(timeout);
+      lastError = err;
+      if (err.name === 'AbortError') {
+        geminiKeyIndex = (geminiKeyIndex + 1) % keys.length;
+      }
     }
-
-    const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
-  } catch (err) {
-    clearTimeout(timeout);
-    throw err;
   }
+
+  throw lastError || new Error('All Gemini keys failed');
 }
 
 /**
