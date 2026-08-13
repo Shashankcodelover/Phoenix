@@ -453,8 +453,74 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 9: COMPENSATION & EQUITY COUNTER-OFFER LAB
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 9 TOTAL REWARDS & NEGOTIATION LAB
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>💰</span> Compensation & Stock Equity Counter-Offer Generator
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Benchmark job offers against 2026 FAANG L4/L5 percentiles and generate executive word-for-word recruiter counter-offer scripts.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Market Band: P88 Competitive Tier
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">Base Salary Target</div>
+              <div className="text-xl font-mono font-bold text-white">$165,000</div>
+              <div className="text-[10px] text-emerald-400 mt-1">+$15,000 Counter Target</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">Annual RSUs / Equity</div>
+              <div className="text-xl font-mono font-bold text-indigo-400">$100,000 / yr</div>
+              <div className="text-[10px] text-indigo-400 mt-1">+$20,000 / yr ($80k 4-yr Grant)</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">Sign-on Bonus</div>
+              <div className="text-xl font-mono font-bold text-emerald-400">$30,000</div>
+              <div className="text-[10px] text-emerald-400 mt-1">+$10,000 Lump-Sum</div>
+            </div>
+          </div>
+
+          {/* Recruiter Email Counter-Offer Script Box */}
+          <div className="p-5 rounded-2xl bg-slate-950/90 border border-indigo-500/30">
+            <div className="flex items-center justify-between mb-3 text-xs">
+              <span className="font-bold text-white flex items-center gap-2">
+                <span>📧</span> Ready-to-Send Recruiter Email Script (Word-for-Word):
+              </span>
+              <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                Risk: Low / Safe
+              </span>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-900 border border-white/5 font-mono text-xs text-slate-300 leading-relaxed max-h-48 overflow-y-auto">
+              Dear [Recruiter Name],<br/><br/>
+              Thank you very much for extending the offer to join Google as Google L4 / SDE-2. I am genuinely excited about the team&apos;s roadmap, particularly the engineering challenges around distributed systems and low-latency architecture.<br/><br/>
+              After reviewing the total compensation structure and benchmarking against active discussions with peer Tier-1 engineering organizations, I would like to explore adjusting the equity and base package to better reflect market alignment:<br/>
+              • Base Salary: $165,000 (reflecting specialized systems expertise)<br/>
+              • Annual Equity (RSUs): $100,000 / year ($400,000 4-year grant)<br/>
+              • Sign-on Bonus: $30,000<br/><br/>
+              If we can reach total compensation of $295,000, I would be thrilled to sign immediately and decline all other active interview pipelines.
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 

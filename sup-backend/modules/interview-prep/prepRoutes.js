@@ -697,7 +697,23 @@ router.post('/hackathon/judge-defense/round', protect, (req, res) => {
   }
 });
 
+const { compensationNegotiatorEngine } = require('./compensationNegotiatorEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 9: Compensation & Stock Equity Negotiation Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/compensation/negotiate-script', protect, (req, res) => {
+  try {
+    const result = compensationNegotiatorEngine.evaluateAndGenerateScript(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

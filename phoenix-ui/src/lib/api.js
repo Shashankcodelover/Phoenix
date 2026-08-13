@@ -57,8 +57,10 @@ export const interviewApi = {
   finalizeVoiceSession: (sessionId, finalAnswerSample) => fetchApi('/prep/voice-coach/session/finalize', { method: 'POST', body: JSON.stringify({ sessionId, finalAnswerSample }) }),
   getWhiteboardTemplates: () => fetchApi('/prep/whiteboard/templates'),
   simulateChaos: (payload) => fetchApi('/prep/whiteboard/simulate-chaos', { method: 'POST', body: JSON.stringify(payload) }),
-  disruptAtsResume: (payload) => fetchApi('/prep/resume/disrupt-ats', { method: 'POST', body: JSON.stringify(payload) })
+  disruptAtsResume: (payload) => fetchApi('/prep/resume/disrupt-ats', { method: 'POST', body: JSON.stringify(payload) }),
+  generateCompensationScript: (payload) => fetchApi('/prep/compensation/negotiate-script', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 

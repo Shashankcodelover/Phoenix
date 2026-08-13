@@ -1,58 +1,108 @@
 /**
- * Phoenix v23.0: Offer Negotiation & Compensation Benchmarking Simulator
+ * Phoenix Apex Ultra: Feature 9 — Compensation & Stock Equity Counter-Offer Negotiation Script Generator
+ * 
+ * Benchmarks candidate offers against Tier-1 FAANG compensation bands, calculates market percentile,
+ * and drafts executive-grade, word-for-word counter-offer negotiation scripts.
  */
 
-const MARKET_BENCHMARKS = {
-  SDE1: { p25: 1200000, p50: 1800000, p75: 2600000, p90: 3800000 },
-  SDE2: { p25: 2400000, p50: 3400000, p75: 4800000, p90: 6500000 },
-  LEAD: { p25: 4500000, p50: 6000000, p75: 8500000, p90: 12000000 }
+const FAANG_COMP_BANDS = {
+  'google_l4': { title: 'Google L4 / Amazon SDE-2', baseRange: [140000, 185000], rsuRange: [75000, 130000], signonRange: [15000, 45000], targetTC: 280000 },
+  'google_l5': { title: 'Google L5 / Senior Software Engineer', baseRange: [190000, 240000], rsuRange: [140000, 220000], signonRange: [30000, 75000], targetTC: 420000 },
+  'startup_lead': { title: 'High-Growth Tech Unicorn Lead', baseRange: [160000, 210000], rsuRange: [50000, 120000], signonRange: [10000, 35000], targetTC: 310000 }
 };
 
 class CompensationNegotiatorEngine {
   /**
-   * Evaluates a job offer against Bangalore/Tier-1 India tech market percentiles and drafts counter-offer scripts.
+   * Evaluates job offer, calculates market percentile, and generates counter-offer scripts.
    */
-  evaluateOffer(offer = {}) {
+  evaluateAndGenerateScript(offerPayload = {}) {
     const {
-      roleLevel = 'SDE1',
-      baseSalary = 1800000,
-      joiningBonus = 200000,
-      stocksEsopsYearly = 400000,
-      hasCompetingOffer = false,
-      competingTotal = 0
-    } = offer;
+      company = 'Google',
+      roleLevel = 'google_l4',
+      baseSalary = 150000,
+      annualStockGrant = 80000,
+      signonBonus = 20000,
+      hasCompetingOffer = true,
+      competingCompany = 'Microsoft',
+      competingTC = 275000
+    } = offerPayload;
 
-    const totalCTC = baseSalary + joiningBonus + stocksEsopsYearly;
-    const benchmarks = MARKET_BENCHMARKS[roleLevel.toUpperCase()] || MARKET_BENCHMARKS.SDE1;
+    const band = FAANG_COMP_BANDS[roleLevel] || FAANG_COMP_BANDS['google_l4'];
+    const currentTotalComp = Number(baseSalary) + Number(annualStockGrant) + Number(signonBonus);
 
-    let marketPercentile = 50;
-    if (totalCTC >= benchmarks.p90) marketPercentile = 92;
-    else if (totalCTC >= benchmarks.p75) marketPercentile = 78;
-    else if (totalCTC >= benchmarks.p50) marketPercentile = 55;
-    else marketPercentile = 30;
+    // Calculate Market Percentile
+    let percentile = 72;
+    if (currentTotalComp >= band.targetTC * 1.15) percentile = 96;
+    else if (currentTotalComp >= band.targetTC) percentile = 88;
+    else if (currentTotalComp >= band.targetTC * 0.9) percentile = 78;
+    else if (currentTotalComp < band.targetTC * 0.8) percentile = 54;
 
-    let counterOfferTarget = Math.round(totalCTC * 1.18);
-    if (hasCompetingOffer && competingTotal > totalCTC) {
-      counterOfferTarget = Math.round(competingTotal * 1.10);
-    }
+    // Counter-Offer Targets
+    const counterBaseTarget = Math.round(Number(baseSalary) * 1.10);
+    const counterRsuTarget = Math.round(Number(annualStockGrant) * 1.25);
+    const counterSignonTarget = Math.round(Number(signonBonus) * 1.50);
+    const counterTotalComp = counterBaseTarget + counterRsuTarget + counterSignonTarget;
+    const additionalAnnualValue = counterTotalComp - currentTotalComp;
 
-    const script = `Hi [Recruiter Name],\n\nThank you very much for extending this offer for the ${roleLevel} role. I am extremely excited about the team's mission and engineering challenges. After reviewing the complete compensation structure and considering market benchmarks for Tier-1 engineering talent${hasCompetingOffer ? ' as well as a competing offer at ₹' + (competingTotal/100000) + ' LPA' : ''}, I would like to discuss adjusting the base salary to ₹${Math.round(counterOfferTarget * 0.7 / 100000)} LPA or expanding the joining bonus. If we can reach common ground on this figure, I am prepared to sign immediately.\n\nBest regards,\n[Your Name]`;
+    // Executive Word-for-Word Email Script
+    const emailTemplate = `Subject: Following up on Offer & Total Rewards — [Your Name]
+
+Dear [Recruiter Name],
+
+Thank you very much for extending the offer to join ${company} as ${band.title}. I am genuinely excited about the team's roadmap, particularly the engineering challenges around distributed systems and low-latency architecture.
+
+After reviewing the total compensation structure and benchmarking against active discussions with ${hasCompetingOffer ? competingCompany : 'peer Tier-1 engineering organizations'}, I would like to explore adjusting the equity and base package to better reflect market alignment.
+
+Specifically, I am targeting:
+• Base Salary: $${counterBaseTarget.toLocaleString()} (reflecting specialized systems expertise)
+• Annual Equity (RSUs): $${counterRsuTarget.toLocaleString()} / year ($${(counterRsuTarget * 4).toLocaleString()} 4-year grant)
+• Sign-on Bonus: $${counterSignonTarget.toLocaleString()}
+
+If we can reach total compensation of $${counterTotalComp.toLocaleString()}, I would be thrilled to sign immediately and decline all other active interview pipelines.
+
+Thank you again for your partnership throughout this process. I look forward to your thoughts!
+
+Warm regards,
+[Your Name]`;
+
+    // Phone Negotiation Strategy
+    const phoneTalkingPoints = [
+      'Lead with enthusiasm: Reiterate that this company is your #1 top choice.',
+      `Anchor high on equity: "I am confident in ${company}'s long-term stock trajectory, so I prefer higher RSU weighting."`,
+      hasCompetingOffer
+        ? `Leverage competing offer politely: "I have a competing offer from ${competingCompany} offering $${competingTC.toLocaleString()} total comp, but I prefer your team culture."`
+        : 'Emphasize immediate sign: "If we can bridge the gap on annual equity, I will sign the agreement within 24 hours."'
+    ];
 
     return {
-      roleLevel,
-      currentTotalCTC: `₹${(totalCTC/100000).toFixed(1)} LPA`,
-      marketPercentile: `P${marketPercentile}`,
-      recommendedCounterTarget: `₹${(counterOfferTarget/100000).toFixed(1)} LPA`,
-      negotiationLeverage: hasCompetingOffer ? 'High Leverage (Competing Offer Active)' : (marketPercentile >= 75 ? 'Moderate Leverage (Strong Initial Offer)' : 'High Leverage (Below Market 75th Percentile)'),
-      counterOfferScript: script,
-      keyNegotiationRules: [
-        'Never negotiate over text or email if you can get on a 5-minute phone call.',
-        'Always express strong enthusiasm for the role before bringing up numbers.',
-        'Trade equity for base salary if you are risk-averse, or maximize RSUs for high-growth tech firms.'
-      ]
+      success: true,
+      company,
+      roleLevel: band.title,
+      currentOffer: {
+        base: `$${Number(baseSalary).toLocaleString()}`,
+        equity: `$${Number(annualStockGrant).toLocaleString()}/yr`,
+        signon: `$${Number(signonBonus).toLocaleString()}`,
+        totalFirstYearComp: `$${currentTotalComp.toLocaleString()}`
+      },
+      marketBenchmark: {
+        percentile: `P${percentile}`,
+        evaluation: percentile >= 85 ? 'Competitive Offer (Top 15% Band)' : 'Under-Benchmarked (High Negotiation Leverage)'
+      },
+      counterOfferRecommendation: {
+        recommendedBase: `$${counterBaseTarget.toLocaleString()}`,
+        recommendedEquity: `$${counterRsuTarget.toLocaleString()}/yr`,
+        recommendedSignon: `$${counterSignonTarget.toLocaleString()}`,
+        recommendedTotalComp: `$${counterTotalComp.toLocaleString()}`,
+        potentialUpside: `+$${additionalAnnualValue.toLocaleString()} / year`
+      },
+      negotiationArtifacts: {
+        recruiterEmailTemplate: emailTemplate,
+        phoneNegotiationKeypoints: phoneTalkingPoints,
+        riskLevel: 'LOW / SAFE (Standard Industry Counter-Offer Window)'
+      }
     };
   }
 }
 
 const compensationNegotiatorEngine = new CompensationNegotiatorEngine();
-module.exports = { CompensationNegotiatorEngine, compensationNegotiatorEngine, MARKET_BENCHMARKS };
+module.exports = { CompensationNegotiatorEngine, compensationNegotiatorEngine };
