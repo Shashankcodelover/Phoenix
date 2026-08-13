@@ -48,8 +48,13 @@ export const interviewApi = {
   evaluateStarAnswer: (question, answer) => fetchApi('/prep/star-story/evaluate', { method: 'POST', body: JSON.stringify({ question, answer }) }),
   simulateWhiteboardResilience: (topology, simulationOptions) => fetchApi('/prep/whiteboard/resilience', { method: 'POST', body: JSON.stringify({ topology, simulationOptions }) }),
   evaluateCompensation: (offerData) => fetchApi('/prep/compensation/evaluate', { method: 'POST', body: JSON.stringify(offerData) }),
-  benchmarkCandidate: (metrics) => fetchApi('/prep/benchmark/profile', { method: 'POST', body: JSON.stringify(metrics) })
+  benchmarkCandidate: (metrics) => fetchApi('/prep/benchmark/profile', { method: 'POST', body: JSON.stringify(metrics) }),
+  startVoiceSession: (data) => fetchApi('/prep/voice-coach/session/start', { method: 'POST', body: JSON.stringify(data) }),
+  processAudioChunk: (sessionId, transcriptSlice, durationSeconds) => fetchApi('/prep/voice-coach/session/chunk', { method: 'POST', body: JSON.stringify({ sessionId, transcriptSlice, durationSeconds }) }),
+  triggerInterruption: (sessionId, candidateCurrentPoint) => fetchApi('/prep/voice-coach/session/interruption-test', { method: 'POST', body: JSON.stringify({ sessionId, candidateCurrentPoint }) }),
+  finalizeVoiceSession: (sessionId, finalAnswerSample) => fetchApi('/prep/voice-coach/session/finalize', { method: 'POST', body: JSON.stringify({ sessionId, finalAnswerSample }) })
 };
+
 
 // Vault 3: Hackathon OS APIs
 export const hackathonApi = {

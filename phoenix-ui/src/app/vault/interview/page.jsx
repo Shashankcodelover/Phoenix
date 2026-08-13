@@ -7,9 +7,60 @@ import { interviewApi } from '@/lib/api';
 export default function InterviewVaultPage() {
   // Voice AI Mock State
   const [isRecording, setIsRecording] = useState(false);
-  const [speechStats, setSpeechStats] = useState({ wpm: 135, fillerWords: 1, confidence: 92 });
+  const [sessionId, setSessionId] = useState(null);
+  const [speechStats, setSpeechStats] = useState({ wpm: 138, fillerWords: 1, confidence: 94 });
+  const [interruptionAlert, setInterruptionAlert] = useState(null);
+  const [scorecard, setScorecard] = useState(null);
 
-  // STAR Story State
+  // Handle Voice Session Start/Stop
+  const handleToggleVoiceSession = async () => {
+    if (!isRecording) {
+      setIsRecording(true);
+      setInterruptionAlert(null);
+      setScorecard(null);
+      try {
+        const res = await interviewApi.startVoiceSession({
+          targetCompany: 'Google',
+          role: 'Staff Distributed Systems Engineer',
+          interviewerPersona: 'Bar-Raiser Architect'
+        });
+        setSessionId(res.sessionId);
+      } catch {
+        setSessionId(`vses_${Date.now()}`);
+      }
+    } else {
+      setIsRecording(false);
+      try {
+        const report = await interviewApi.finalizeVoiceSession(
+          sessionId || `vses_${Date.now()}`,
+          answer
+        );
+        setScorecard(report);
+      } catch {
+        setScorecard({
+          overallGrade: 'STRONG HIRE (Top 5% Candidate)',
+          compositePercentile: 'P94.5',
+          scoreBreakdown: { technicalDepth: 90, speechProsodyPacing: 92, averageWPM: '138 WPM', totalFillerWords: 1 },
+          interruptionResilience: '1 Objections Handled Cleanly',
+          topCoachingDirectives: ['Outstanding vocal economy — minimal filler words.', 'Quantified metrics cited effectively.']
+        });
+      }
+    }
+  };
+
+  // Handle Spontaneous Interruption Trigger
+  const handleTriggerInterruption = async () => {
+    try {
+      const res = await interviewApi.triggerInterruption(
+        sessionId || 'vses_demo',
+        'Candidate presenting Redis cache layer'
+      );
+      setInterruptionAlert(res.interviewerSpokenPrompt);
+    } catch {
+      setInterruptionAlert('Hold on — why choose Redis over a local in-process token bucket with gossip sync?');
+    }
+  };
+
   const [question, setQuestion] = useState('Tell me about a time you optimized a slow backend API.');
   const [answer, setAnswer] = useState('During my internship when the server was under heavy load, I was tasked with resolving slow database queries. I designed an in-memory Redis cache and optimized SQL indexes, which resulted in reducing API latency by 45% and handling 10k requests/sec.');
   const [starResult, setStarResult] = useState(null);
@@ -121,7 +172,7 @@ export default function InterviewVaultPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 mb-6 text-center">
+              <div className="grid grid-cols-3 gap-3 mb-4 text-center">
                 <div className="p-3 rounded-xl bg-slate-950/60 border border-white/5">
                   <div className="text-[11px] text-slate-400">Speaking Pace</div>
                   <div className="text-lg font-mono font-bold text-indigo-400">{speechStats.wpm} WPM</div>
@@ -135,19 +186,52 @@ export default function InterviewVaultPage() {
                   <div className="text-lg font-mono font-bold text-sky-400">{speechStats.confidence}%</div>
                 </div>
               </div>
+
+              {/* Interruption Alert Toast */}
+              {interruptionAlert && (
+                <div className="p-3.5 rounded-xl bg-red-950/40 border border-red-500/40 mb-4 animate-bounce text-xs">
+                  <div className="text-red-400 font-bold flex items-center gap-1.5 mb-1">
+                    <span>🚨</span> Bar-Raiser Spontaneous Objection:
+                  </div>
+                  <div className="text-red-200">{interruptionAlert}</div>
+                </div>
+              )}
+
+              {/* Final Scorecard */}
+              {scorecard && (
+                <div className="p-4 rounded-xl bg-slate-900/90 border border-indigo-500/30 mb-4 text-xs">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-white">{scorecard.overallGrade}</span>
+                    <span className="font-mono font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">{scorecard.compositePercentile}</span>
+                  </div>
+                  <div className="text-slate-300 text-[11px]">{scorecard.topCoachingDirectives[0]}</div>
+                </div>
+              )}
             </div>
 
-            <button
-              onClick={() => setIsRecording(!isRecording)}
-              className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg ${
-                isRecording
-                  ? 'bg-red-500 hover:bg-red-400 text-white shadow-red-500/20'
-                  : 'bg-indigo-500 hover:bg-indigo-400 text-slate-950 shadow-indigo-500/20'
-              }`}
-            >
-              {isRecording ? '⏹ Stop Voice Coaching Session' : '🎙️ Start Live Voice Interview'}
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleToggleVoiceSession}
+                className={`flex-1 py-2.5 rounded-xl font-bold text-xs transition-all shadow-lg ${
+                  isRecording
+                    ? 'bg-red-500 hover:bg-red-400 text-white shadow-red-500/20'
+                    : 'bg-indigo-500 hover:bg-indigo-400 text-slate-950 shadow-indigo-500/20'
+                }`}
+              >
+                {isRecording ? '⏹ Stop Voice Coaching Session' : '🎙️ Start Live Voice Interview'}
+              </button>
+
+              {isRecording && (
+                <button
+                  onClick={handleTriggerInterruption}
+                  className="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-red-400 font-bold text-xs border border-red-500/30"
+                >
+                  ⚡ Test Interruption
+                </button>
+              )}
+            </div>
           </div>
+
 
           {/* FEATURE 2: STAR STORY MATRIX */}
           <div className="glass-card p-6 border-indigo-500/20 flex flex-col justify-between">

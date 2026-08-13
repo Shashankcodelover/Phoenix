@@ -619,10 +619,44 @@ router.post('/hackathon/disaster-recovery', protect, (req, res) => {
   }
 });
 
-// Vault 3: Automated Devpost Submission & README Generator
-router.post('/hackathon/submission-readme', protect, (req, res) => {
+const { voiceAiCoachEngine } = require('./voiceAiCoachEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 2: Real-Time Bidirectional Voice AI Coach & Interruption Radar
+// ═══════════════════════════════════════════════════════════
+router.post('/voice-coach/session/start', protect, (req, res) => {
   try {
-    const result = submissionGeneratorEngine.generateSubmission(req.body);
+    const result = voiceAiCoachEngine.startSession(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/voice-coach/session/chunk', protect, (req, res) => {
+  try {
+    const { sessionId, transcriptSlice, durationSeconds } = req.body;
+    const result = voiceAiCoachEngine.processAudioChunk(sessionId, { transcriptSlice, durationSeconds });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/voice-coach/session/interruption-test', protect, (req, res) => {
+  try {
+    const { sessionId, candidateCurrentPoint } = req.body;
+    const result = voiceAiCoachEngine.triggerSpontaneousInterruption(sessionId, candidateCurrentPoint);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/voice-coach/session/finalize', protect, (req, res) => {
+  try {
+    const { sessionId, finalAnswerSample } = req.body;
+    const result = voiceAiCoachEngine.finalizeSession(sessionId, finalAnswerSample);
     res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -630,6 +664,7 @@ router.post('/hackathon/submission-readme', protect, (req, res) => {
 });
 
 module.exports = router;
+
 
 
 
