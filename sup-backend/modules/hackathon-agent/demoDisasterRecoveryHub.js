@@ -1,15 +1,17 @@
 /**
- * Phoenix v23.0: Live Demo Disaster Recovery & Mock Server Fallback Hub
+ * Phoenix Apex Ultra: Feature 11 — Live Demo Disaster Recovery & Mock Server Fallback Hub
+ * 
+ * Generates offline mock data fixtures, spoken judge pivot scripts, emergency demo checklists,
+ * and a standalone ready-to-run mockServer.js to ensure 100% demo uptime even during venue WiFi blackouts.
  */
 
 class DemoDisasterRecoveryHub {
   /**
-   * Generates mock fallback payloads and an instant presentation recovery script
-   * in case live APIs or internet fail during judge rounds.
+   * Generates mock fallback payloads, spoken pivot scripts, and executable local server code.
    */
   generateRecoveryPackage(project = {}) {
     const {
-      title = 'Phoenix Platform',
+      title = 'NexusAudio Platform',
       endpoints = ['/api/v1/prep/audio-stream/init', '/api/v1/prep/sandbox/execute', '/api/v1/prep/rag/cross-encode']
     } = project;
 
@@ -22,7 +24,22 @@ class DemoDisasterRecoveryHub {
       ]
     };
 
-    const disasterSpeechScript = `Judges, while our production server is handling heavy live demo traffic, our architecture incorporates zero-downtime offline procedural fallbacks. As you can see on this backup pipeline, our local AST and heuristic engines process the exact same payload in under 5 milliseconds.`;
+    const disasterSpeechScript = `Judges, while the hackathon venue Wi-Fi is experiencing an intermittent drop, our architecture was built offline-first. Notice as our local in-memory fallback server and Web Audio pipeline process the exact same payload in sub-5ms with zero dropped transactions.`;
+
+    const mockServerCode = `// Standalone Emergency Mock Server (Zero Dependencies)
+const http = require('http');
+
+const PORT = process.env.PORT || 5001;
+const MOCK_DB = ${JSON.stringify(mockDataset, null, 2)};
+
+const server = http.createServer((req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.writeHead(200);
+  res.end(JSON.stringify({ success: true, offlineFallback: true, data: MOCK_DB }));
+});
+
+server.listen(PORT, () => console.log(\`[Emergency Mock Server] Running at http://localhost:\${PORT}\`));`;
 
     return {
       title,
@@ -30,10 +47,11 @@ class DemoDisasterRecoveryHub {
       offlineMockPayloads: mockDataset,
       monitoredEndpoints: endpoints,
       spokenRecoveryScript: disasterSpeechScript,
+      standaloneMockServerCode: mockServerCode,
       disasterPreventionChecklist: [
         'Record a clean 60-second backup demo video on Loom/MP4 and keep tab open.',
-        'Pre-seed browser localStorage with valid auth tokens so login never hangs.',
-        'Use local mock server endpoints if WiFi at hackathon venue drops.'
+        'Pre-seed browser localStorage with valid mock tokens so login never hangs on venue Wi-Fi.',
+        'Run `node mockServer.js` on port 5001 as instant offline localhost fallback.'
       ]
     };
   }

@@ -417,9 +417,65 @@ export default function HackathonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 11: LIVE DEMO DISASTER RECOVERY & MOCK SERVER LAB
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 11 100% DEMO UPTIME CONTINGENCY
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🛡️</span> Live Demo Disaster Recovery & Local Mock Server
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Zero-downtime offline fallback suite. If hackathon venue Wi-Fi drops, switch seamlessly with pre-recorded mock payloads and spoken pivot scripts.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Status: Zero-Internet Fallback Ready
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {/* Spoken Judge Pivot Script */}
+            <div className="p-5 rounded-2xl bg-slate-950/80 border border-white/10">
+              <div className="text-xs font-bold text-white mb-2 flex items-center gap-2">
+                <span>🎙️</span> Spoken Judge Pivot Script (WiFi Drop):
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-900 border border-white/5 font-sans text-xs text-slate-200 leading-relaxed">
+                &quot;Judges, while the hackathon venue Wi-Fi is experiencing an intermittent drop, our architecture was built offline-first. Notice as our local in-memory fallback server and Web Audio pipeline process the exact same payload in sub-5ms with zero dropped transactions.&quot;
+              </div>
+            </div>
+
+            {/* Standalone mockServer.js generator preview */}
+            <div className="p-5 rounded-2xl bg-slate-950/80 border border-white/10">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-white flex items-center gap-2">
+                  <span>⚡</span> Emergency Standalone <code className="text-emerald-400 text-[11px]">mockServer.js</code>
+                </span>
+                <span className="text-[10px] font-mono text-slate-400">Zero Dependencies</span>
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-900 border border-white/5 font-mono text-[11px] text-emerald-300 leading-relaxed max-h-28 overflow-y-auto">
+                const http = require(&apos;http&apos;);<br/>
+                const server = http.createServer((req, res) =&gt; &#123;<br/>
+                &nbsp;&nbsp;res.setHeader(&apos;Content-Type&apos;, &apos;application/json&apos;);<br/>
+                &nbsp;&nbsp;res.end(JSON.stringify(&#123; success: true, offlineFallback: true &#125;));<br/>
+                &#125;);<br/>
+                server.listen(5001);
+              </div>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
