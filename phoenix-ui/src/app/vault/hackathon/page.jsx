@@ -124,8 +124,49 @@ export default function HackathonVaultPage() {
           </div>
         </div>
 
+        {/* SECTION 1.5: ROLE-BASED TASK DECOMPOSITION MATRIX */}
+        <div className="glass-card p-6 border-emerald-500/20 mb-8 bg-slate-900/80">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <span>🛠️</span> Autonomous Role-Based Task Decomposition (Scratch to Deploy)
+            </h3>
+            <span className="text-xs text-slate-400 font-mono">4 Modular Milestones Assigned</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-sky-500/20">
+              <div className="text-[11px] font-bold text-sky-400 uppercase tracking-wider mb-1">Role 1: Frontend Lead</div>
+              <div className="font-semibold text-white text-xs mb-2">Glassmorphic SPA & Canvas</div>
+              <div className="text-[11px] text-slate-400 leading-relaxed mb-3">Build zero-reload UI, CSS tokens, and Web Audio waveform graph.</div>
+              <div className="text-[10px] font-mono text-sky-300 bg-sky-500/10 px-2 py-0.5 rounded inline-block">Next.js 15 • Tailwind v4</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-indigo-500/20">
+              <div className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">Role 2: Backend Architect</div>
+              <div className="font-semibold text-white text-xs mb-2">Event-Loop REST & LRU Cache</div>
+              <div className="text-[11px] text-slate-400 leading-relaxed mb-3">Configure token buckets, Express router, and &lt;2ms in-memory cache.</div>
+              <div className="text-[10px] font-mono text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded inline-block">Node.js V8 • Express • Redis</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-emerald-500/20">
+              <div className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider mb-1">Role 3: AI & RAG Engineer</div>
+              <div className="font-semibold text-white text-xs mb-2">Two-Stage Vector RAG & Keys</div>
+              <div className="text-[11px] text-slate-400 leading-relaxed mb-3">Implement 768-dim embeddings with multi-key pool auto-failover.</div>
+              <div className="text-[10px] font-mono text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded inline-block">Gemini AI • Groq 70B • RRF</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-pink-500/20">
+              <div className="text-[11px] font-bold text-pink-400 uppercase tracking-wider mb-1">Role 4: Product & Pitch Lead</div>
+              <div className="font-semibold text-white text-xs mb-2">5-Slide Deck & Judge Defense</div>
+              <div className="text-[11px] text-slate-400 leading-relaxed mb-3">Prepare 3-minute presenter teleprompter script and defense grilling.</div>
+              <div className="text-[10px] font-mono text-pink-300 bg-pink-500/10 px-2 py-0.5 rounded inline-block">Teleprompter • Loom • Devpost</div>
+            </div>
+          </div>
+        </div>
+
         {/* SECTION 2: DUAL-PANE SPLIT-CHAT PIPELINE */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
           
           {/* PANE 1: UNIVERSAL TEAM CHAT */}
           <div className="glass-card p-6 border-emerald-500/20 flex flex-col h-[480px]">
