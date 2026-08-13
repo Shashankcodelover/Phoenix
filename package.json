@@ -1,10 +1,13 @@
 {
   "name": "phoenix-interview-prep-root",
-  "version": "3.5.0",
-  "description": "Project Phoenix - Ultimate Career & Hackathon Engine",
+  "version": "23.0.0",
+  "description": "Project Phoenix - Autonomous Career, Placement & Hackathon OS (Next.js 15 & React 19)",
   "scripts": {
     "test": "npm --prefix sup-backend test",
-    "start": "npm --prefix sup-backend start"
+    "start": "npm --prefix sup-backend start",
+    "dev:backend": "npm --prefix sup-backend start",
+    "dev:frontend": "npm --prefix phoenix-ui dev",
+    "build:frontend": "npm --prefix phoenix-ui build"
   },
   "private": true
 }

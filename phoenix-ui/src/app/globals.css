@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --font-sans: 'Inter', sans-serif;
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --bg-space: #070B14;
+  --bg-card: rgba(15, 23, 42, 0.75);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  
+  --glow-horizon: rgba(56, 189, 248, 0.2);
+  --glow-interview: rgba(99, 102, 241, 0.2);
+  --glow-hackathon: rgba(16, 185, 129, 0.2);
+}
+
+body {
+  background-color: var(--bg-space);
+  color: #F8FAFC;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}
+
+/* Glassmorphic Layer Utilities */
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
+  border-radius: 1rem;
+}
+
+.glass-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
+.glow-horizon:hover {
+  box-shadow: 0 0 30px var(--glow-horizon);
+  border-color: #38bdf8;
+}
+
+.glow-interview:hover {
+  box-shadow: 0 0 30px var(--glow-interview);
+  border-color: #818cf8;
+}
+
+.glow-hackathon:hover {
+  box-shadow: 0 0 30px var(--glow-hackathon);
+  border-color: #34d399;
+}
+
+/* Background Ambient Radiance */
+.ambient-radiance {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: 
+    radial-gradient(circle at 20% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 25%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 50%);
+}
+
+/* 3-Minute Teleprompter Meter */
+.teleprompter-meter-wrap {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 9999px;
+  height: 8px;
+  width: 100%;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.teleprompter-meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #f59e0b 70%, #ef4444 100%);
+  transition: width 1s linear;
+}

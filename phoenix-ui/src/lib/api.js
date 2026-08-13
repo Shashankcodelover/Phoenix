@@ -1,0 +1,63 @@
+/**
+ * Phoenix v23.0: Unified Next.js Client API Gateway
+ * Communicates with sup-backend (Express / Node.js API on port 5000)
+ */
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+
+export async function fetchApi(endpoint, options = {}) {
+  const url = `${API_BASE}${endpoint}`;
+  const defaultHeaders = {
+    'Content-Type': 'application/json',
+  };
+
+  try {
+    const res = await fetch(url, {
+      ...options,
+      headers: {
+        ...defaultHeaders,
+        ...options.headers,
+      },
+    });
+
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error(errBody.message || errBody.error || `HTTP ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.warn(`[Phoenix API Client] Request to "${endpoint}" failed, using offline fallback:`, err.message);
+    throw err;
+  }
+}
+
+// Vault 1: Horizon APIs
+export const horizonApi = {
+  estimateRank: (data) => fetchApi('/horizon/entrance/estimate-rank', { method: 'POST', body: JSON.stringify(data) }),
+  matchScholarships: (data) => fetchApi('/horizon/scholarships/match', { method: 'POST', body: JSON.stringify(data) }),
+  matchMentors: (studentGoal) => fetchApi('/horizon/mentors/match-advisor', { method: 'POST', body: JSON.stringify({ studentGoal }) }),
+  getDomainQuiz: (domainKey) => fetchApi(`/horizon/domain-quiz/generate?domainKey=${domainKey}`),
+  evaluateQuiz: (domainKey, userAnswers) => fetchApi('/horizon/domain-quiz/evaluate', { method: 'POST', body: JSON.stringify({ domainKey, userAnswers }) })
+};
+
+// Vault 2: Placement & Voice AI APIs
+export const interviewApi = {
+  evaluateStarAnswer: (question, answer) => fetchApi('/prep/star-story/evaluate', { method: 'POST', body: JSON.stringify({ question, answer }) }),
+  simulateWhiteboardResilience: (topology, simulationOptions) => fetchApi('/prep/whiteboard/resilience', { method: 'POST', body: JSON.stringify({ topology, simulationOptions }) }),
+  evaluateCompensation: (offerData) => fetchApi('/prep/compensation/evaluate', { method: 'POST', body: JSON.stringify(offerData) }),
+  benchmarkCandidate: (metrics) => fetchApi('/prep/benchmark/profile', { method: 'POST', body: JSON.stringify(metrics) })
+};
+
+// Vault 3: Hackathon OS APIs
+export const hackathonApi = {
+  createTeam: (data) => fetchApi('/prep/hackathon/team/create', { method: 'POST', body: JSON.stringify(data) }),
+  sendTeamMessage: (teamId, content, senderName) => fetchApi('/prep/hackathon/team/message', { method: 'POST', body: JSON.stringify({ teamId, content, senderName }) }),
+  generateIdeaPoll: (teamId, theme, prizeTracks) => fetchApi('/prep/hackathon/team/poll/create', { method: 'POST', body: JSON.stringify({ teamId, theme, prizeTracks }) }),
+  castVote: (teamId, ideaId) => fetchApi('/prep/hackathon/team/poll/vote', { method: 'POST', body: JSON.stringify({ teamId, ideaId }) }),
+  decomposeProject: (teamId, selectedIdea) => fetchApi('/prep/hackathon/team/decompose', { method: 'POST', body: JSON.stringify({ teamId, selectedIdea }) }),
+  getSplitChatAdvice: (teamId, userQuery) => fetchApi('/prep/hackathon/team/split-chat', { method: 'POST', body: JSON.stringify({ teamId, userQuery }) }),
+  generateTeleprompter: (projectData) => fetchApi('/prep/pitch/teleprompter', { method: 'POST', body: JSON.stringify(projectData) }),
+  getDisasterRecovery: (projectData) => fetchApi('/prep/hackathon/disaster-recovery', { method: 'POST', body: JSON.stringify(projectData) }),
+  generateSubmissionReadme: (projectData) => fetchApi('/prep/hackathon/submission-readme', { method: 'POST', body: JSON.stringify(projectData) })
+};
