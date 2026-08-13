@@ -184,6 +184,7 @@ router.get('/domain-quiz/generate', (req, res) => {
 });
 
 const { instantDiagnostic360 } = require('./instantDiagnostic360');
+const { karnatakaRankMatrixEngine } = require('./karnatakaRankMatrixEngine');
 
 // Feature 1: Instant 360° Diagnostic & 10x Career Blueprint
 router.post('/diagnostic/360-blueprint', (req, res) => {
@@ -195,7 +196,19 @@ router.post('/diagnostic/360-blueprint', (req, res) => {
   }
 });
 
+// Feature 8: Karnataka KCET & DCET Rank Matrix & Seat Forecaster
+router.post('/rank/karnataka-matrix', (req, res) => {
+  try {
+    const result = karnatakaRankMatrixEngine.forecastRankAndColleges(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

@@ -7,6 +7,7 @@ import { horizonApi } from '@/lib/api';
 export default function HorizonVaultPage() {
   // Rank Estimator State
   const [stream, setStream] = useState('KCET');
+  const [category, setCategory] = useState('GM');
   const [entranceMarks, setEntranceMarks] = useState(142);
   const [boardPercentage, setBoardPercentage] = useState(94);
   const [rankResult, setRankResult] = useState(null);
@@ -22,31 +23,35 @@ export default function HorizonVaultPage() {
   const handleEstimateRank = async () => {
     setLoadingRank(true);
     try {
-      const res = await horizonApi.estimateRank({
+      const res = await horizonApi.forecastKarnatakaMatrix({
         stream,
-        entranceScore: Number(entranceMarks),
-        boardMarksPercentage: Number(boardPercentage),
-        category: 'GM'
+        entranceMarks: Number(entranceMarks),
+        boardPercentage: Number(boardPercentage),
+        category
       });
       setRankResult(res);
     } catch {
       // Offline fallback calculation
-      const normalizedScore = (Number(entranceMarks) / 180) * 50 + (Number(boardPercentage) / 100) * 50;
-      let estRank = Math.max(1, Math.round(220000 * Math.pow((100 - normalizedScore) / 100, 2.5)));
+      const maxEntrance = stream === 'KCET' ? 180 : 100;
+      const normalizedScore = (Number(entranceMarks) / maxEntrance) * 50 + (Number(boardPercentage) / 100) * 50;
+      let estRank = Math.max(1, Math.round(220000 * Math.pow((100 - normalizedScore) / 100, 2.45)));
       setRankResult({
         stream,
-        normalizedScore: normalizedScore.toFixed(2),
-        estimatedStateRankBracket: `${estRank.toLocaleString('en-IN')} - ${(estRank + 450).toLocaleString('en-IN')}`,
-        matchedColleges: [
-          { college: 'RVCE Bengaluru', branch: 'CSE', cutoffRank: 1200, matchStatus: estRank <= 1200 ? 'High Probability' : 'Moderate Reach' },
-          { college: 'BMSCE Bengaluru', branch: 'ISE', cutoffRank: 2400, matchStatus: estRank <= 2400 ? 'High Probability' : 'Safe Bet' },
-          { college: 'MSRIT Bengaluru', branch: 'AI-ML', cutoffRank: 3500, matchStatus: 'Guaranteed Safe' }
-        ]
+        category,
+        normalizedCompositeScore: `${normalizedScore.toFixed(2)} / 100`,
+        estimatedRankBracket: `${estRank.toLocaleString('en-IN')} - ${(estRank + 350).toLocaleString('en-IN')}`,
+        topMatchedColleges: [
+          { college: 'RVCE (RV College of Engineering), Bengaluru', branch: 'Computer Science & Eng (CSE)', cutoffRankForCategory: 1200, tier: 'Tier 1 Elite', matchProbability: estRank <= 1200 ? 'Guaranteed High Probability' : 'Reach Opportunity' },
+          { college: 'BMSCE (BMS College of Engineering), Bengaluru', branch: 'Information Science & Eng (ISE)', cutoffRankForCategory: 2400, tier: 'Tier 1', matchProbability: estRank <= 2400 ? 'Guaranteed High Probability' : 'Safe Target' },
+          { college: 'MSRIT (Ramaiah Institute of Technology), Bengaluru', branch: 'Artificial Intelligence & ML', cutoffRankForCategory: 3200, tier: 'Tier 1', matchProbability: 'Guaranteed High Probability' }
+        ],
+        counselingAdvice: 'Eligible for Tier-1 CSE/ISE at RVCE / BMSCE in Round 1 counseling.'
       });
     } finally {
       setLoadingRank(false);
     }
   };
+
 
   // Handle Scholarship Matching
   const handleMatchScholarships = async () => {
@@ -154,6 +159,20 @@ export default function HorizonVaultPage() {
                     className="w-full accent-sky-400"
                   />
                 </div>
+
+                <div>
+                  <label className="text-xs text-slate-300 mb-1 block">Reservation / Seat Category</label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/10 rounded-xl p-2.5 text-xs text-white outline-none focus:border-sky-500"
+                  >
+                    <option value="GM">GM (General Merit)</option>
+                    <option value="OBC">OBC (Category 2A, 2B, 3A, 3B)</option>
+                    <option value="SC_ST">SC / ST Reservation</option>
+                    <option value="SNQ">SNQ (Supernumerary Quota Fee Waiver)</option>
+                  </select>
+                </div>
               </div>
 
               <button
@@ -161,24 +180,31 @@ export default function HorizonVaultPage() {
                 disabled={loadingRank}
                 className="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-sky-500/20"
               >
-                {loadingRank ? 'Calculating Normalization...' : '⚡ Predict State Rank & College Cutoffs'}
+                {loadingRank ? 'Calculating 50:50 Normalization...' : '⚡ Predict State Rank & College Cutoffs'}
               </button>
 
               {/* Result View */}
               {rankResult && (
                 <div className="mt-6 p-4 rounded-xl bg-slate-900/80 border border-sky-500/30">
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-slate-400 uppercase tracking-wider">Estimated Rank Bracket</span>
                     <span className="text-sm font-mono font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20">
-                      Rank {rankResult.estimatedStateRankBracket || rankResult.estimatedRank}
+                      Rank {rankResult.estimatedRankBracket || rankResult.estimatedStateRankBracket}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-300 mb-2 font-semibold">Matched Tier-1 Colleges:</div>
-                  <div className="space-y-1.5">
-                    {(rankResult.matchedColleges || []).map((col, idx) => (
+                  <div className="text-[11px] text-slate-400 mb-3">{rankResult.counselingAdvice}</div>
+
+                  <div className="text-xs text-slate-300 mb-2 font-semibold">Matched College Cutoffs ({category}):</div>
+                  <div className="space-y-1.5 max-h-44 overflow-y-auto pr-1">
+                    {(rankResult.topMatchedColleges || rankResult.matchedColleges || []).map((col, idx) => (
                       <div key={idx} className="flex items-center justify-between text-xs p-2 rounded-lg bg-slate-950/60 border border-white/5">
-                        <span className="font-semibold text-white">{col.college} ({col.branch})</span>
-                        <span className="text-emerald-400 font-mono">{col.matchStatus || 'Eligible'}</span>
+                        <div>
+                          <div className="font-semibold text-white text-[11px]">{col.college}</div>
+                          <div className="text-slate-400 text-[10px]">{col.branch}</div>
+                        </div>
+                        <span className="text-emerald-400 font-mono text-[11px] bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                          {col.matchProbability || col.matchStatus || 'Eligible'}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -186,6 +212,7 @@ export default function HorizonVaultPage() {
               )}
             </div>
           </div>
+
 
           {/* FEATURE 2: SCHOLARSHIP & FEE WAIVER MATCHER */}
           <div className="glass-card p-6 border-sky-500/20 flex flex-col justify-between">

@@ -39,8 +39,10 @@ export const horizonApi = {
   matchMentors: (studentGoal) => fetchApi('/horizon/mentors/match-advisor', { method: 'POST', body: JSON.stringify({ studentGoal }) }),
   getDomainQuiz: (domainKey) => fetchApi(`/horizon/domain-quiz/generate?domainKey=${domainKey}`),
   evaluateQuiz: (domainKey, userAnswers) => fetchApi('/horizon/domain-quiz/evaluate', { method: 'POST', body: JSON.stringify({ domainKey, userAnswers }) }),
-  get360Blueprint: (data) => fetchApi('/horizon/diagnostic/360-blueprint', { method: 'POST', body: JSON.stringify(data) })
+  get360Blueprint: (data) => fetchApi('/horizon/diagnostic/360-blueprint', { method: 'POST', body: JSON.stringify(data) }),
+  forecastKarnatakaMatrix: (data) => fetchApi('/horizon/rank/karnataka-matrix', { method: 'POST', body: JSON.stringify(data) })
 };
+
 
 
 // Vault 2: Placement & Voice AI APIs
