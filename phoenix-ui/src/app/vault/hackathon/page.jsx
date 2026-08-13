@@ -356,8 +356,70 @@ export default function HackathonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 7: MULTIMODAL AI JUDGE DEFENSE GRILLING SIMULATOR
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 7 5-ROUND JUDGE GRILLING DEFENSE
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>⚖️</span> Live Multimodal AI Judge Defense Simulator
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Survive 5 progressive cross-examination rounds from Staff Architects and Tier-1 VCs to secure the 1st Place Podium trophy.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Round 1 of 5: Technical Moat
+              </span>
+            </div>
+          </div>
+
+          {/* Current Judge Cross-Examination Card */}
+          <div className="p-5 rounded-2xl bg-slate-950/80 border border-emerald-500/25 mb-6">
+            <div className="flex items-center justify-between mb-3 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-base">👨‍⚖️</span>
+                <span className="font-bold text-white">Dr. Marcus Vance (Staff Architect, Judge #1)</span>
+              </div>
+              <span className="text-[10px] font-mono text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">Skepticism: High</span>
+            </div>
+
+            <div className="text-sm text-slate-200 leading-relaxed font-sans mb-4 p-3.5 rounded-xl bg-slate-900 border border-white/5">
+              &quot;How does NexusAudio guarantee sub-300ms response times when 10,000 users connect simultaneously during a network partition? Walk me through your database failover.&quot;
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs text-slate-300 font-semibold block">Candidate Spoken / Written Architecture Defense:</label>
+              <textarea
+                rows="3"
+                defaultValue="We guarantee sub-300ms latency by using WebRTC audio datachannels, an in-memory Redis cluster that caches AST complexity trees, sharding our distributed database, and eliminating single points of failure with multi-key auto-failover."
+                className="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-emerald-500"
+              />
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-4 text-xs font-mono">
+                <div>Tech Depth: <span className="text-emerald-400 font-bold">92/100</span></div>
+                <div>Moat Defensibility: <span className="text-sky-400 font-bold">88/100</span></div>
+                <div>Verdict: <span className="text-emerald-400 font-bold">Grand Prize Contender</span></div>
+              </div>
+
+              <button className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20">
+                ⚡ Submit Defense to Panel ➔
+              </button>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 

@@ -682,9 +682,15 @@ const { atsDisruptorEngine } = require('./atsDisruptorEngine');
 // ═══════════════════════════════════════════════════════════
 // Feature 6: Automated ATS Resume Disruptor & Markdown Diff Generator
 // ═══════════════════════════════════════════════════════════
-router.post('/resume/disrupt-ats', protect, (req, res) => {
+const { MultimodalJudgeDefenseEngine } = require('../hackathon-agent/multimodalJudgeDefenseEngine');
+const judgeDefenseEngine = new MultimodalJudgeDefenseEngine();
+
+// ═══════════════════════════════════════════════════════════
+// Feature 7: Live Multimodal AI Judge Defense Grilling Simulator
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/judge-defense/round', protect, (req, res) => {
   try {
-    const result = atsDisruptorEngine.disruptAndOptimize(req.body);
+    const result = judgeDefenseEngine.evaluateDefense(req.body);
     res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -692,6 +698,7 @@ router.post('/resume/disrupt-ats', protect, (req, res) => {
 });
 
 module.exports = router;
+
 
 
 

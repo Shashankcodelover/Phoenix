@@ -71,7 +71,9 @@ export const hackathonApi = {
   getSplitChatAdvice: (teamId, userQuery) => fetchApi('/prep/hackathon/team/split-chat', { method: 'POST', body: JSON.stringify({ teamId, userQuery }) }),
   generateTeleprompter: (projectData) => fetchApi('/prep/pitch/teleprompter', { method: 'POST', body: JSON.stringify(projectData) }),
   generate5SlideDeck: (projectData) => fetchApi('/prep/pitch/slide-deck', { method: 'POST', body: JSON.stringify(projectData) }),
+  evaluateJudgeDefenseRound: (defenseData) => fetchApi('/prep/hackathon/judge-defense/round', { method: 'POST', body: JSON.stringify(defenseData) }),
   getDisasterRecovery: (projectData) => fetchApi('/prep/hackathon/disaster-recovery', { method: 'POST', body: JSON.stringify(projectData) }),
   generateSubmissionReadme: (projectData) => fetchApi('/prep/hackathon/submission-readme', { method: 'POST', body: JSON.stringify(projectData) })
 };
+
 
