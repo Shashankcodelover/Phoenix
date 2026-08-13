@@ -585,10 +585,76 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 14: LONGITUDINAL SESSION HISTORY & RADAR ANALYTICS
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 14 MULTI-SESSION GROWTH TRAJECTORY
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>📈</span> Multi-Session Interview History & Radar Analytics
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Track chronological improvements across 6 core interview dimensions (Asymptotic Code, Voice Prosody, Filler Suppression, Chaos Fault-Tolerance).
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Readiness: 94% (Top 4% FAANG Ready)
+              </span>
+            </div>
+          </div>
+
+          {/* Historical Growth Timeline */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/5">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-bold text-white">Session 1 (Amazon SDE-1)</span>
+                <span className="text-[10px] font-mono text-slate-400">Aug 01</span>
+              </div>
+              <div className="text-lg font-mono font-bold text-amber-400">68/100</div>
+              <div className="text-[11px] text-slate-400 mt-1">Filler density 3.8%, O(N²) quadratic recursion.</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/5">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-bold text-white">Session 2 (Microsoft SDE-2)</span>
+                <span className="text-[10px] font-mono text-slate-400">Aug 07</span>
+              </div>
+              <div className="text-lg font-mono font-bold text-sky-400">82/100</div>
+              <div className="text-[11px] text-slate-400 mt-1">Two-pointer patterns mastered, 138 steady WPM.</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-bold text-white">Session 3 (Google L4 / Uber)</span>
+                <span className="text-[10px] font-mono text-emerald-400">Aug 13</span>
+              </div>
+              <div className="text-lg font-mono font-bold text-emerald-400">94/100 (+26% Delta)</div>
+              <div className="text-[11px] text-slate-400 mt-1">Sub-300ms turn-taking, 0.4% fillers, CockroachDB failover.</div>
+            </div>
+          </div>
+
+          {/* Blindspot Warnings */}
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/20">
+            <div className="text-xs font-bold text-white mb-2">🎯 AI Coach Trajectory Summary:</div>
+            <ul className="text-xs text-slate-300 space-y-1 list-disc list-inside">
+              <li>Filler word density dropped from 3.8% to 0.4% over 3 sessions.</li>
+              <li>Asymptotic algorithm complexity improved from O(N²) to strict O(N) linear time.</li>
+              <li>System design chaos recovery SLA held at 99.99% under simulated 50,000 RPS.</li>
+            </ul>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

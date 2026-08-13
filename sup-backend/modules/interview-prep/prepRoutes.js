@@ -739,7 +739,32 @@ router.post('/code/profile-ast', protect, (req, res) => {
   }
 });
 
+const { interviewAnalyticsHub } = require('./interviewAnalyticsHub');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 14: Comprehensive AI Mock Interview History & Analytics
+// ═══════════════════════════════════════════════════════════
+router.get('/analytics/session-history', protect, (req, res) => {
+  try {
+    const result = interviewAnalyticsHub.getSessionHistory(req.user?.id);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/analytics/record-session', protect, (req, res) => {
+  try {
+    const result = interviewAnalyticsHub.recordSession(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
