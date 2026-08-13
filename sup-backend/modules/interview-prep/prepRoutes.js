@@ -599,7 +599,7 @@ router.post('/compensation/evaluate', protect, (req, res) => {
   }
 });
 
-// Vault 3: Interactive 3-Minute Pitch Teleprompter
+// Vault 3: Interactive 3-Minute Pitch Teleprompter & 5-Slide Deck
 router.post('/pitch/teleprompter', protect, (req, res) => {
   try {
     const result = pitchTeleprompterEngine.generateTeleprompter(req.body);
@@ -608,6 +608,16 @@ router.post('/pitch/teleprompter', protect, (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+router.post('/pitch/slide-deck', protect, (req, res) => {
+  try {
+    const result = pitchTeleprompterEngine.generate5SlideDeck(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 // Vault 3: Live Demo Disaster Recovery Hub
 router.post('/hackathon/disaster-recovery', protect, (req, res) => {

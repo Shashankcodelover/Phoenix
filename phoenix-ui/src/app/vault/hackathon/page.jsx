@@ -252,48 +252,106 @@ export default function HackathonVaultPage() {
 
         </div>
 
-        {/* SECTION 3: 3-MINUTE PITCH TELEPROMPTER */}
-        <div className="glass-card p-6 border-emerald-500/20">
-          <div className="flex items-center justify-between mb-4">
+        {/* SECTION 3: 3-MINUTE PITCH TELEPROMPTER & 5-SLIDE DECK */}
+        <div className="glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-              <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                <span>⏱️</span> 3-Minute Live Hackathon Pitch Teleprompter
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 5 3-MINUTE PITCH STAGE & SLIDE DECK
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>⏱️</span> Live 3-Minute Pitch Teleprompter & 5-Slide Presenter
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">Pacing alarm countdowns: Hook (45s), Live Demo (60s), Architecture (45s), Moat & Q&A (30s).</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Pacing alarms with target WPM indicators across Hook (45s), Demo (60s), Architecture (45s), and Moat & Q&A (30s).
+              </p>
             </div>
-            <button
-              onClick={() => setTeleprompterActive(!teleprompterActive)}
-              className={`px-4 py-2 rounded-xl font-bold text-xs transition-all ${
-                teleprompterActive ? 'bg-red-500 text-white' : 'bg-emerald-500 text-slate-950'
-              }`}
-            >
-              {teleprompterActive ? '⏹ Reset Teleprompter' : '▶ Start 3-Min Pitch Timer'}
-            </button>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => setTeleprompterActive(!teleprompterActive)}
+                className={`px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-lg ${
+                  teleprompterActive ? 'bg-red-500 text-white shadow-red-500/20' : 'bg-emerald-500 text-slate-950 shadow-emerald-500/20'
+                }`}
+              >
+                {teleprompterActive ? '⏹ Stop Teleprompter' : '▶ Start 3-Min Pitch Stage'}
+              </button>
+            </div>
           </div>
 
           <div className="teleprompter-meter-wrap">
             <div
               className="teleprompter-meter-fill"
-              style={{ width: teleprompterActive ? '65%' : '15%' }}
+              style={{ width: teleprompterActive ? '70%' : '20%' }}
             />
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center mt-4">
-            <div className="p-3 rounded-xl bg-slate-950/60 border border-emerald-500/20">
+          {/* Active Teleprompter Script Card */}
+          <div className="p-5 rounded-2xl bg-slate-950/80 border border-emerald-500/25 my-6">
+            <div className="flex items-center justify-between mb-3 text-xs">
+              <span className="font-bold text-emerald-400 uppercase tracking-wider">Active Teleprompter Stage: Phase 2 Live Demo (0:45 - 1:45)</span>
+              <span className="font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20">Target: 140 WPM</span>
+            </div>
+            <div className="text-sm text-slate-200 leading-relaxed font-sans mb-3">
+              &quot;Judges, let us demonstrate how NexusAudio functions in real time. Notice as we stream WebRTC audio coaching, our AST parser simultaneously profiles Big-O algorithmic complexity with zero dropped frames. Our in-memory LRU cache guarantees sub-2ms response latency.&quot;
+            </div>
+            <div className="text-[11px] text-slate-400 font-mono">
+              Visual Cue: <span className="text-emerald-400">Switch screen to live interactive WebRTC canvas demo.</span>
+            </div>
+          </div>
+
+          {/* 4 Phase Breakdown */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center mb-6">
+            <div className="p-3.5 rounded-xl bg-slate-950/60 border border-emerald-500/20">
               <div className="text-[11px] text-slate-400">1. Hook & Problem</div>
-              <div className="text-sm font-bold text-emerald-400">0:00 - 0:45</div>
+              <div className="text-xs font-bold text-emerald-400 mt-0.5">0:00 - 0:45 (130 WPM)</div>
             </div>
-            <div className="p-3 rounded-xl bg-slate-950/60 border border-emerald-500/20">
-              <div className="text-[11px] text-slate-400">2. Live Interactive Demo</div>
-              <div className="text-sm font-bold text-emerald-400">0:45 - 1:45</div>
+            <div className="p-3.5 rounded-xl bg-slate-950/60 border border-emerald-500/20">
+              <div className="text-[11px] text-slate-400">2. Live Product Demo</div>
+              <div className="text-xs font-bold text-emerald-400 mt-0.5">0:45 - 1:45 (140 WPM)</div>
             </div>
-            <div className="p-3 rounded-xl bg-slate-950/60 border border-emerald-500/20">
+            <div className="p-3.5 rounded-xl bg-slate-950/60 border border-emerald-500/20">
               <div className="text-[11px] text-slate-400">3. Technical Architecture</div>
-              <div className="text-sm font-bold text-emerald-400">1:45 - 2:30</div>
+              <div className="text-xs font-bold text-emerald-400 mt-0.5">1:45 - 2:30 (135 WPM)</div>
             </div>
-            <div className="p-3 rounded-xl bg-slate-950/60 border border-emerald-500/20">
+            <div className="p-3.5 rounded-xl bg-slate-950/60 border border-emerald-500/20">
               <div className="text-[11px] text-slate-400">4. Business Moat & Q&A</div>
-              <div className="text-sm font-bold text-emerald-400">2:30 - 3:00</div>
+              <div className="text-xs font-bold text-emerald-400 mt-0.5">2:30 - 3:00 (130 WPM)</div>
+            </div>
+          </div>
+
+          {/* 5-Slide Pitch Deck Preview */}
+          <div className="border-t border-white/10 pt-6">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold text-white">Exportable 5-Slide Pitch Deck (Ready for Marp / Slidev):</span>
+              <span className="text-[11px] font-mono text-emerald-400">5/5 Slides Formatted</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5 text-left text-xs">
+              <div className="p-3 rounded-xl bg-slate-950/70 border border-white/5">
+                <div className="text-[10px] text-emerald-400 font-bold mb-1">Slide 1</div>
+                <div className="font-semibold text-white text-[11px]">The Hook & TAM</div>
+                <div className="text-slate-400 text-[10px] mt-1">$14B Developer EdTech Market</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-950/70 border border-white/5">
+                <div className="text-[10px] text-emerald-400 font-bold mb-1">Slide 2</div>
+                <div className="font-semibold text-white text-[11px]">Core Problem</div>
+                <div className="text-slate-400 text-[10px] mt-1">Fragmented Mock Practice</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-950/70 border border-white/5">
+                <div className="text-[10px] text-emerald-400 font-bold mb-1">Slide 3</div>
+                <div className="font-semibold text-white text-[11px]">Product Demo</div>
+                <div className="text-slate-400 text-[10px] mt-1">&lt;300ms Voice Stream & AST</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-950/70 border border-white/5">
+                <div className="text-[10px] text-emerald-400 font-bold mb-1">Slide 4</div>
+                <div className="font-semibold text-white text-[11px]">Architecture</div>
+                <div className="text-slate-400 text-[10px] mt-1">Multi-Key RAG & Failover</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-950/70 border border-white/5">
+                <div className="text-[10px] text-emerald-400 font-bold mb-1">Slide 5</div>
+                <div className="font-semibold text-white text-[11px]">Unit Economics</div>
+                <div className="text-slate-400 text-[10px] mt-1">B2B SaaS ₹1,500/Student</div>
+              </div>
             </div>
           </div>
         </div>
@@ -302,3 +360,4 @@ export default function HackathonVaultPage() {
     </div>
   );
 }
+
