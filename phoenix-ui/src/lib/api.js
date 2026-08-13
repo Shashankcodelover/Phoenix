@@ -61,8 +61,10 @@ export const interviewApi = {
   getWhiteboardTemplates: () => fetchApi('/prep/whiteboard/templates'),
   simulateChaos: (payload) => fetchApi('/prep/whiteboard/simulate-chaos', { method: 'POST', body: JSON.stringify(payload) }),
   disruptAtsResume: (payload) => fetchApi('/prep/resume/disrupt-ats', { method: 'POST', body: JSON.stringify(payload) }),
-  generateCompensationScript: (payload) => fetchApi('/prep/compensation/negotiate-script', { method: 'POST', body: JSON.stringify(payload) })
+  generateCompensationScript: (payload) => fetchApi('/prep/compensation/negotiate-script', { method: 'POST', body: JSON.stringify(payload) }),
+  profileAstCode: (payload) => fetchApi('/prep/code/profile-ast', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 

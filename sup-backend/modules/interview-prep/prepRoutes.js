@@ -725,7 +725,23 @@ router.post('/hackathon/devpost-submission', protect, (req, res) => {
   }
 });
 
+const { astComplexityProfiler } = require('./astComplexityProfiler');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 13: Live AST Complexity & Big-O Real-Time Profiler
+// ═══════════════════════════════════════════════════════════
+router.post('/code/profile-ast', protect, (req, res) => {
+  try {
+    const result = astComplexityProfiler.profileCode(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
