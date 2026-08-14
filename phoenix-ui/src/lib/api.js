@@ -97,8 +97,11 @@ export const interviewApi = {
   analyzeBlindSpotRadar: (payload) => fetchApi('/prep/blind-spots/analyze-radar', { method: 'POST', body: JSON.stringify(payload) }),
   createPeerMockRoom: (payload) => fetchApi('/prep/peer-mock/create-room', { method: 'POST', body: JSON.stringify(payload) }),
   triggerAiTakeover: (payload) => fetchApi('/prep/peer-mock/ai-takeover-trigger', { method: 'POST', body: JSON.stringify(payload) }),
-  generateLldScaffold: (payload) => fetchApi('/prep/lld/generate-scaffold', { method: 'POST', body: JSON.stringify(payload) })
+  generateLldScaffold: (payload) => fetchApi('/prep/lld/generate-scaffold', { method: 'POST', body: JSON.stringify(payload) }),
+  calculateAggregateMatrix: (payload) => fetchApi('/prep/mock-aggregate/calculate-matrix', { method: 'POST', body: JSON.stringify(payload) })
 };
+
+
 
 
 

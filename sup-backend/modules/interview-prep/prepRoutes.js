@@ -1011,7 +1011,23 @@ router.post('/hackathon/judge-objections/generate-counter-defense', protect, (re
   }
 });
 
+const { aggregateMatrixEngine } = require('./aggregateMatrixEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 40: Multi-Round Aggregate Performance Matrix
+// ═══════════════════════════════════════════════════════════
+router.post('/mock-aggregate/calculate-matrix', protect, (req, res) => {
+  try {
+    const result = aggregateMatrixEngine.calculateAggregateMatrix(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

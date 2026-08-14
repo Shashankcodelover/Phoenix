@@ -1270,10 +1270,68 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 40: MULTI-ROUND AGGREGATE PERFORMANCE MATRIX
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 40 MULTI-ROUND AGGREGATE PERFORMANCE MATRIX
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>📊</span> 4-Round Performance Matrix &amp; Dimensional Weakness Heatmap
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Longitudinal score aggregation across DSA, Distributed Systems, LLD, and Bar-Raiser Crisis rounds.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Composite: 88.0% (STRONG HIRE L5/L6)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-slate-400 text-[10px]">ROUND 1 • DSA</div>
+              <div className="text-emerald-400 font-bold text-base mt-1">92%</div>
+              <div className="text-emerald-400 text-[10px] mt-0.5">EXCELLENT • No Blinds</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="text-slate-400 text-[10px]">ROUND 2 • HLD SYS DESIGN</div>
+              <div className="text-sky-400 font-bold text-base mt-1">86%</div>
+              <div className="text-sky-400 text-[10px] mt-0.5">STRONG • SLA High</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="text-slate-400 text-[10px]">ROUND 3 • LLD MACHINE CODE</div>
+              <div className="text-sky-400 font-bold text-base mt-1">89%</div>
+              <div className="text-sky-400 text-[10px] mt-0.5">STRONG • SOLID High</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-slate-400 text-[10px]">ROUND 4 • BAR-RAISER BEHAVIORAL</div>
+              <div className="text-purple-400 font-bold text-base mt-1">85%</div>
+              <div className="text-purple-400 text-[10px] mt-0.5">GOOD • STAR Caliber</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-emerald-500/20 text-xs">
+            <span className="text-slate-300 font-sans">
+              🏆 <strong>Hiring Committee Verdict:</strong> <strong>STRONG HIRE</strong>. Exceptional algorithmic agility and distributed architectural intuition with crisp STAR behavioral delivery under P0 crisis pressure.
+            </span>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
