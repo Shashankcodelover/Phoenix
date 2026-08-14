@@ -708,10 +708,74 @@ export default function HackathonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 28: TRACK & SPONSOR BOUNTY MATCHING OPTIMIZER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-purple-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/15 text-purple-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-purple-500/30">
+                ⭐ FEATURE 28 SPONSOR BOUNTY MATCHING OPTIMIZER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🎯</span> Track &amp; Sponsor Bounty Matching Optimizer
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Scans project architecture against $5,000+ sponsor tracks (Gemini AI, Redis Cache, WebRTC) with automated compliance rubrics.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Total Addressable Bounty Pool: $12,000 USD
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-xs">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-mono text-purple-400 text-[10px] uppercase font-bold">Google Gemini AI</span>
+                <span className="text-emerald-400 font-mono font-bold">$5,000 USD</span>
+              </div>
+              <div className="font-bold text-white mt-1">Best Production Gemini 2.5 Real-Time App</div>
+              <div className="text-[11px] text-slate-400 mt-1">✓ Match: Sub-300ms turn-taking streaming audio engine</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-rose-500/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-mono text-rose-400 text-[10px] uppercase font-bold">Redis Platform</span>
+                <span className="text-emerald-400 font-mono font-bold">$3,000 USD</span>
+              </div>
+              <div className="font-bold text-white mt-1">Best Low-Latency Cache &amp; Chaos Resilience</div>
+              <div className="text-[11px] text-slate-400 mt-1">✓ Match: Sharded Redis LRU cache with 50,000 RPS benchmarks</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-mono text-sky-400 text-[10px] uppercase font-bold">WebRTC &amp; Audio</span>
+                <span className="text-emerald-400 font-mono font-bold">$4,000 USD</span>
+              </div>
+              <div className="font-bold text-white mt-1">Best Low-Latency Interactive Experience</div>
+              <div className="text-[11px] text-slate-400 mt-1">✓ Match: 16 kHz WebRTC raw audio equalizer spectrum</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-purple-500/20 text-xs">
+            <div className="font-bold text-white mb-2">📋 Sponsor Submission Compliance Protocol:</div>
+            <ul className="text-slate-300 space-y-1 list-disc list-inside">
+              <li>Explicitly list SDK dependencies in <code>package.json</code>.</li>
+              <li>Include dedicated <code>#sponsor-integration</code> markdown section in README.md.</li>
+              <li>Attach 30-second video demo clip demonstrating sponsor API in action.</li>
+            </ul>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

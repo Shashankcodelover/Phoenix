@@ -903,7 +903,23 @@ router.post('/crisis/simulate-scenario', protect, (req, res) => {
   }
 });
 
+const { sponsorBountyMatcherEngine } = require('../hackathon-agent/sponsorBountyMatcherEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 28: Hackathon Track & Sponsor Bounty Matcher
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/sponsor-bounties/match', protect, (req, res) => {
+  try {
+    const result = sponsorBountyMatcherEngine.matchBounties(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
