@@ -861,6 +861,11 @@ const { pitchTimerBuzzerEngine } = require('../hackathon-agent/pitchTimerBuzzerE
 // ═══════════════════════════════════════════════════════════
 // Feature 23: Stage-Ready 180s Pitch Timer & Audio Buzzer
 // ═══════════════════════════════════════════════════════════
+const { pitchTimerBuzzerEngine } = require('../hackathon-agent/pitchTimerBuzzerEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 23: Stage-Ready 180s Pitch Timer & Audio Buzzer
+// ═══════════════════════════════════════════════════════════
 router.post('/pitch/timer-config', protect, (req, res) => {
   try {
     const result = pitchTimerBuzzerEngine.getTimerConfiguration(req.body);
@@ -870,7 +875,23 @@ router.post('/pitch/timer-config', protect, (req, res) => {
   }
 });
 
+const { systemCostSlaEngine } = require('./systemCostSlaEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 24: Distributed System Cloud Cost & 99.99% SLA
+// ═══════════════════════════════════════════════════════════
+router.post('/system-design/cost-sla-estimate', protect, (req, res) => {
+  try {
+    const result = systemCostSlaEngine.calculateCostAndSla(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

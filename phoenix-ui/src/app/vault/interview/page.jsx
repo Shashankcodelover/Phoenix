@@ -922,10 +922,86 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 24: DISTRIBUTED SYSTEM CLOUD COST & SLA ESTIMATE
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 24 DISTRIBUTED CLOUD COST &amp; SLA ENGINE
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>💰</span> Distributed Architecture Cloud Cost &amp; 99.99% SLA Calculator
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Line-by-line monthly infrastructure spend (AWS/GCP in INR/USD) and composite multi-region availability calculation.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Composite Uptime: 99.995% SLA (2.16 min/mo Max)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">Target Traffic</div>
+              <div className="text-xl font-mono font-bold text-white">50,000 RPS</div>
+              <div className="text-[10px] text-sky-400 mt-1">Multi-Region Active-Active</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">Monthly Cost (USD)</div>
+              <div className="text-xl font-mono font-bold text-emerald-400">$3,750 / mo</div>
+              <div className="text-[10px] text-emerald-400 mt-1">AWS &amp; Cloudflare Enterprise</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">Monthly Cost (INR)</div>
+              <div className="text-xl font-mono font-bold text-indigo-400">₹3,28,125 / mo</div>
+              <div className="text-[10px] text-indigo-400 mt-1">Calculated at ₹87.5 / USD</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">Max Allowable Downtime</div>
+              <div className="text-xl font-mono font-bold text-emerald-400">2.16 mins</div>
+              <div className="text-[10px] text-emerald-400 mt-1">✓ Tier-1 FAANG High Availability</div>
+            </div>
+          </div>
+
+          {/* Line-item table */}
+          <div className="p-5 rounded-2xl bg-slate-950/90 border border-emerald-500/20 text-xs">
+            <div className="font-bold text-white mb-3">Infrastructure Cost Line-Item Breakdown:</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
+                <div className="text-slate-400 text-[10px]">Compute (EKS / ARM64)</div>
+                <div className="font-bold text-white mt-0.5">12 Nodes</div>
+                <div className="text-emerald-400 font-mono mt-1 font-bold">$2,340 / mo</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
+                <div className="text-slate-400 text-[10px]">CockroachDB Multi-AZ</div>
+                <div className="font-bold text-white mt-0.5">3x AZ Replicas</div>
+                <div className="text-emerald-400 font-mono mt-1 font-bold">$680 / mo</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
+                <div className="text-slate-400 text-[10px]">Redis LRU Caching</div>
+                <div className="font-bold text-white mt-0.5">6 Node Cluster</div>
+                <div className="text-emerald-400 font-mono mt-1 font-bold">$420 / mo</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
+                <div className="text-slate-400 text-[10px]">Cloudflare CDN &amp; Egress</div>
+                <div className="font-bold text-white mt-0.5">50,000 RPS Stream</div>
+                <div className="text-emerald-400 font-mono mt-1 font-bold">$310 / mo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

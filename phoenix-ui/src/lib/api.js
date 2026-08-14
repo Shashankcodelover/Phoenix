@@ -73,8 +73,10 @@ export const interviewApi = {
   generateAssessment: (payload) => fetchApi('/prep/assessment/generate', { method: 'POST', body: JSON.stringify(payload) }),
   submitAssessment: (payload) => fetchApi('/prep/assessment/submit', { method: 'POST', body: JSON.stringify(payload) }),
   analyzeAudioWaveform: (payload) => fetchApi('/prep/audio/waveform-analyze', { method: 'POST', body: JSON.stringify(payload) }),
-  refineStarStory: (payload) => fetchApi('/prep/star/refine-story', { method: 'POST', body: JSON.stringify(payload) })
+  refineStarStory: (payload) => fetchApi('/prep/star/refine-story', { method: 'POST', body: JSON.stringify(payload) }),
+  estimateSystemCostSla: (payload) => fetchApi('/prep/system-design/cost-sla-estimate', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 
