@@ -1081,7 +1081,23 @@ router.post('/concurrency/analyze-deadlock', protect, (req, res) => {
   }
 });
 
+const { prototypeStressTestEngine } = require('../hackathon-agent/prototypeStressTestEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 48: Hackathon Prototype Stress-Tester & Video Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/prototype/stress-test', protect, (req, res) => {
+  try {
+    const result = prototypeStressTestEngine.runBenchmarkAndVideoCue(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
