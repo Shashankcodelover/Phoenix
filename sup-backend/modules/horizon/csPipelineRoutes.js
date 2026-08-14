@@ -401,7 +401,21 @@ router.post('/colleges/autonomous-freedom-matrix', (req, res) => {
   }
 });
 
+const { karnatakaStudyCertificateEngine } = require('./karnatakaStudyCertificateEngine');
+
+// Feature 51: Karnataka Study Certificate 7-Year Continuous Validator
+router.post('/verification/validate-study-certificate', (req, res) => {
+  try {
+    const result = karnatakaStudyCertificateEngine.validateStudyHistory(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

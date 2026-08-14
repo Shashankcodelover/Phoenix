@@ -1182,10 +1182,69 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 51: 7-YEAR STUDY CERTIFICATE & BEO TRACKER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 51 7-YEAR STUDY CERTIFICATE TRACKER
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>📑</span> KEA Clause-A 7-Year Continuous Study &amp; BEO Seal Auditor
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Audits multi-school timelines, cross-district transfers, and Block Education Officer (BEO) countersignatures.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                KEA Clause-A Fully Validated ✓
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">TOTAL STUDY YEARS</div>
+              <div className="text-white font-bold text-sm mt-1">12 Years in KA</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Floor: 7 Years Minimum</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">SCHOOL BLOCKS</div>
+              <div className="text-white font-bold text-sm mt-1">3 Distinct Schools</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Mysore &amp; Bangalore</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="text-sky-400 text-[10px] font-bold">BEO ENDORSEMENT</div>
+              <div className="text-emerald-400 font-bold text-sm mt-1">100% Countersigned</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">0 Missing Seals</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">VERIFICATION TIER</div>
+              <div className="text-white font-bold text-sm mt-1">Online Node Ready</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">KEA Direct Cleared</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-emerald-500/20 text-xs">
+            <div className="font-bold text-white mb-1">📋 KEA Document Verification Rule Note:</div>
+            <p className="text-slate-300">
+              If a candidate changed schools between 1st and 10th standard across different educational taluks, each separate study certificate MUST be individually countersigned by the respective jurisdiction Block Education Officer (BEO).
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
