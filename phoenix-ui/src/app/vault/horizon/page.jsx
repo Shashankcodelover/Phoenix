@@ -493,10 +493,68 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 21: KCET & DCET CHOICE FILLING SIMULATOR
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 21 KEA CHOICE FILLING OPTION-ENTRY SIMULATOR
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🎯</span> KCET &amp; DCET Choice Filling &amp; Seat Allotment Mock Run
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Simulate official 3-round Karnataka Examination Authority (KEA) seat allocation, preference re-ordering, and Choice 1-4 decision strategies.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Simulated Rank: 2,140 (GM Quota)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Round 1 Outcome */}
+            <div className="p-5 rounded-2xl bg-slate-950/80 border border-white/10">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-white">Round 1 Allotment Outcome:</span>
+                <span className="text-[10px] font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">Allotted (Option #2)</span>
+              </div>
+              <div className="p-4 rounded-xl bg-slate-900 border border-white/5 mb-3">
+                <div className="text-base font-bold text-white">BMSCE — Computer Science (CSE)</div>
+                <div className="text-xs text-slate-400 mt-0.5">Round 1 Cutoff: 3,200 • Your Rank: 2,140</div>
+              </div>
+              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300">
+                💡 <strong>KEA Strategy:</strong> Select <strong>Choice 2</strong> (Hold BMSCE CSE seat as backup, pay fee token, and enter Round 2 for Option #1 RVCE upgrade).
+              </div>
+            </div>
+
+            {/* Round 2 Upgrade Outcome */}
+            <div className="p-5 rounded-2xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-white">Round 2 Upgrade Simulation:</span>
+                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">UPGRADED (Option #1)</span>
+              </div>
+              <div className="p-4 rounded-xl bg-slate-900 border border-emerald-500/20 mb-3">
+                <div className="text-base font-bold text-emerald-400">RVCE — Computer Science (CSE)</div>
+                <div className="text-xs text-slate-400 mt-0.5">Round 2 Cutoff: 2,250 • Upgraded from BMSCE!</div>
+              </div>
+              <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-300">
+                🎉 <strong>Decision:</strong> Select <strong>Choice 1</strong> (Freeze RVCE CSE seat, download final admission order, report to campus).
+              </div>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

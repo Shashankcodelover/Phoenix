@@ -239,7 +239,21 @@ router.post('/vernacular/guidance', (req, res) => {
   }
 });
 
+const { choiceFillingSimulatorEngine } = require('./choiceFillingSimulatorEngine');
+
+// Feature 21: KCET & DCET Choice Filling Option-Entry Simulator
+router.post('/option-entry/simulate-allotment', (req, res) => {
+  try {
+    const result = choiceFillingSimulatorEngine.simulateSeatAllotment(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
