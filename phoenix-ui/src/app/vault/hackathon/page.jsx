@@ -640,10 +640,79 @@ export default function HackathonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 23: STAGE-READY 180S PITCH COUNTDOWN & BUZZER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-amber-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-amber-500/30">
+                ⭐ FEATURE 23 STAGE-READY 180S COUNTDOWN TIMER &amp; BUZZER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>⏱️</span> Stage-Ready 180s Pitch Timer &amp; Audio Tone Buzzer
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Synchronized 4-phase hackathon pitch clock with automated 30s wrap-up chimes (880 Hz / 440 Hz) and 60s judge Q&amp;A defense counter.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                Current Phase: Phase 2 (Live Demo)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {/* Big Countdown Timer */}
+            <div className="p-6 rounded-2xl bg-slate-950 border border-amber-500/30 flex flex-col items-center justify-center text-center">
+              <div className="text-[11px] font-mono text-slate-400 uppercase tracking-widest mb-1">Time Remaining</div>
+              <div className="text-5xl font-mono font-black text-amber-400 tracking-tight">02:15</div>
+              <div className="text-xs text-emerald-400 mt-2 font-mono">Phase 2 of 4 Active</div>
+            </div>
+
+            {/* 4-Phase Progress Timeline */}
+            <div className="md:col-span-2 p-5 rounded-2xl bg-slate-950/80 border border-white/5 flex flex-col justify-between">
+              <div className="text-xs font-bold text-white mb-3">Pitch Phase Synchronization:</div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+                <div className="p-2.5 rounded-xl bg-slate-900 border border-emerald-500/30">
+                  <div className="text-[10px] text-emerald-400">00:00 - 00:30</div>
+                  <div className="text-white font-bold mt-0.5 text-[11px]">The Hook</div>
+                  <div className="text-[9px] text-slate-400 mt-0.5">✓ Completed</div>
+                </div>
+                <div className="p-2.5 rounded-xl bg-slate-900 border border-amber-500/50 bg-amber-500/5">
+                  <div className="text-[10px] text-amber-400">00:30 - 01:30</div>
+                  <div className="text-white font-bold mt-0.5 text-[11px]">Live Demo</div>
+                  <div className="text-[9px] text-amber-400 mt-0.5">▶ Presenting</div>
+                </div>
+                <div className="p-2.5 rounded-xl bg-slate-900 border border-white/5">
+                  <div className="text-[10px] text-slate-400">01:30 - 02:30</div>
+                  <div className="text-white font-bold mt-0.5 text-[11px]">Traction &amp; TAM</div>
+                  <div className="text-[9px] text-slate-400 mt-0.5">Up Next</div>
+                </div>
+                <div className="p-2.5 rounded-xl bg-slate-900 border border-white/5">
+                  <div className="text-[10px] text-slate-400">02:30 - 03:00</div>
+                  <div className="text-white font-bold mt-0.5 text-[11px]">The Ask</div>
+                  <div className="text-[9px] text-slate-400 mt-0.5">30s Chime</div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/5 text-xs">
+                <span className="text-slate-300">Tone Audio Synthesis: <strong className="text-emerald-400">Active (880 Hz Chime)</strong></span>
+                <button className="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20">
+                  🔔 Test Stage Tone Buzzer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
