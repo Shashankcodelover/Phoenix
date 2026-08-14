@@ -425,7 +425,21 @@ router.post('/reservations/article-371j-quota', (req, res) => {
   }
 });
 
+const { sportsQuotaEngine } = require('./sportsQuotaEngine');
+
+// Feature 57: Karnataka Engineering Sports, Cultural & NCC Quota
+router.post('/reservations/sports-cultural-quota', (req, res) => {
+  try {
+    const result = sportsQuotaEngine.evaluateQuota(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

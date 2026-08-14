@@ -1298,10 +1298,69 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 57: SPORTS, CULTURAL & NCC SPECIAL QUOTA
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-rose-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 text-rose-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-rose-500/30">
+                ⭐ FEATURE 57 SPORTS &amp; NCC SPECIAL QUOTA
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🏅</span> KEA Sports, NCC &amp; Scouts/Guides Supernumerary Quota Radar
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Priority order evaluation for National/State medalists, NCC &apos;C&apos; certificate holders, and Rashtrapati Scouts awards.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-rose-400 bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">
+                KEA Priority 2 • 85 Merit Points
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-rose-500/30">
+              <div className="text-rose-400 text-[10px] font-bold">CATEGORY TYPE</div>
+              <div className="text-white font-bold text-sm mt-1">National Sports</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Athletics / Games</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30">
+              <div className="text-amber-400 text-[10px] font-bold">ACHIEVEMENT</div>
+              <div className="text-white font-bold text-sm mt-1">National Medalist</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Gold / Silver / Bronze</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">SEAT PROBABILITY</div>
+              <div className="text-emerald-400 font-bold text-sm mt-1">Very High in Top 5</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">RVCE, BMSCE, UVCE</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">VERIFICATION</div>
+              <div className="text-white font-bold text-sm mt-1">Physical Verification</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">KEA Malleshwaram</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-rose-500/20 text-xs">
+            <div className="font-bold text-white mb-1">📋 KEA Special Category Quota Invariant:</div>
+            <p className="text-slate-300">
+              Sports and NCC quota seats are strictly supernumerary and allocated during dedicated Special Category Round 1 allotment without consuming general merit category seats.
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

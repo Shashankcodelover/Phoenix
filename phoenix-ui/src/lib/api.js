@@ -59,8 +59,10 @@ export const horizonApi = {
   evaluateFirstGenConcession: (payload) => fetchApi('/horizon/first-gen/evaluate-concession', { method: 'POST', body: JSON.stringify(payload) }),
   getAutonomousFreedomMatrix: (payload) => fetchApi('/horizon/colleges/autonomous-freedom-matrix', { method: 'POST', body: JSON.stringify(payload) }),
   validateStudyCertificate: (payload) => fetchApi('/horizon/verification/validate-study-certificate', { method: 'POST', body: JSON.stringify(payload) }),
-  evaluateArticle371jQuota: (payload) => fetchApi('/horizon/reservations/article-371j-quota', { method: 'POST', body: JSON.stringify(payload) })
+  evaluateArticle371jQuota: (payload) => fetchApi('/horizon/reservations/article-371j-quota', { method: 'POST', body: JSON.stringify(payload) }),
+  evaluateSportsCulturalQuota: (payload) => fetchApi('/horizon/reservations/sports-cultural-quota', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 
