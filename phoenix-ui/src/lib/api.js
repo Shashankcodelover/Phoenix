@@ -56,8 +56,10 @@ export const horizonApi = {
   convertVtuCgpa: (payload) => fetchApi('/horizon/vtu/cgpa-converter', { method: 'POST', body: JSON.stringify(payload) }),
   evaluateKarnatakaReservations: (payload) => fetchApi('/horizon/reservations/evaluate-quota', { method: 'POST', body: JSON.stringify(payload) }),
   getHostelCommuteIntel: (payload) => fetchApi('/horizon/campus-life/hostel-commute-intel', { method: 'POST', body: JSON.stringify(payload) }),
-  evaluateFirstGenConcession: (payload) => fetchApi('/horizon/first-gen/evaluate-concession', { method: 'POST', body: JSON.stringify(payload) })
+  evaluateFirstGenConcession: (payload) => fetchApi('/horizon/first-gen/evaluate-concession', { method: 'POST', body: JSON.stringify(payload) }),
+  getAutonomousFreedomMatrix: (payload) => fetchApi('/horizon/colleges/autonomous-freedom-matrix', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 

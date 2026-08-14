@@ -1125,10 +1125,68 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 49: AUTONOMOUS VS AFFILIATED FREEDOM MATRIX
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-violet-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/15 text-violet-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-violet-500/30">
+                ⭐ FEATURE 49 AUTONOMOUS FREEDOM MATRIX
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>⚖️</span> Autonomous vs Affiliated College Academic Agility Radar
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Compares relative grading curves (+0.55 CGPA), summer makeup fast-track terms, and agile tech electives.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-violet-400 bg-violet-500/10 px-3 py-1 rounded-full border border-violet-500/20">
+                Freedom Score: 94/100 (Autonomous)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-violet-500/30">
+              <div className="text-violet-400 text-[10px] font-bold">CURRICULUM AGILITY</div>
+              <div className="text-white font-bold text-sm mt-1">Annual Refresh</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Industry Advisory Board</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">CGPA ADVANTAGE</div>
+              <div className="text-emerald-400 font-bold text-sm mt-1">+0.55 CGPA Boost</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Relative grading curve</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="text-sky-400 text-[10px] font-bold">SUMMER FAST-TRACK</div>
+              <div className="text-white font-bold text-sm mt-1">16 Credits Makeup</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">No academic year loss</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-rose-500/30">
+              <div className="text-rose-400 text-[10px] font-bold">ADVANCED ELECTIVES</div>
+              <div className="text-white font-bold text-sm mt-1">45% of Degree</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">GenAI, Cloud, Distributed</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-violet-500/20 text-xs">
+            <span className="text-slate-300 font-sans">
+              💡 <strong>Alumni Placement Strategy:</strong> Autonomous institutes provide massive advantages in campus placement drives because their agile grading and fast-track makeup terms prevent backlog delays during 7th semester company interviews.
+            </span>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

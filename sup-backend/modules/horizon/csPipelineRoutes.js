@@ -389,7 +389,21 @@ router.post('/first-gen/evaluate-concession', (req, res) => {
   }
 });
 
+const { autonomousAffiliationEngine } = require('./autonomousAffiliationEngine');
+
+// Feature 49: Autonomous vs Affiliated Academic Freedom Matrix
+router.post('/colleges/autonomous-freedom-matrix', (req, res) => {
+  try {
+    const result = autonomousAffiliationEngine.evaluateAcademicFreedom(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
