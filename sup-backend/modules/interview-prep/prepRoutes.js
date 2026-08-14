@@ -982,7 +982,24 @@ router.post('/peer-mock/ai-takeover-trigger', protect, (req, res) => {
   }
 });
 
+
+const { lldScaffoldEngine } = require('./lldScaffoldEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 37: Low-Level System Design (LLD) Scaffold Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/lld/generate-scaffold', protect, (req, res) => {
+  try {
+    const result = lldScaffoldEngine.generateScaffold(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

@@ -1207,10 +1207,74 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 37: LOW-LEVEL DESIGN (LLD) SCAFFOLD GENERATOR
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-cyan-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-cyan-500/30">
+                ⭐ FEATURE 37 LOW-LEVEL DESIGN (LLD) SCAFFOLD
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🏗️</span> Low-Level System Design (LLD) Scaffold &amp; SOLID Generator
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Object-oriented machine coding scaffolds implementing GoF patterns (Strategy, Factory, Observer, State) for SDE-2/3 rounds.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">
+                Problem: Smart Parking Lot System
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-xs font-mono">
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-cyan-500/30">
+              <div className="text-cyan-400 text-[10px] font-bold">GOF DESIGN PATTERNS</div>
+              <ul className="text-white mt-1.5 space-y-1 list-disc list-inside">
+                <li>Strategy (Pricing/Allocation)</li>
+                <li>Factory (Vehicle Slots)</li>
+                <li>Singleton (Parking Manager)</li>
+              </ul>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">SOLID PRINCIPLES</div>
+              <ul className="text-white mt-1.5 space-y-1 list-disc list-inside">
+                <li>Single Responsibility (SRP)</li>
+                <li>Open-Closed Principle (OCP)</li>
+                <li>Interface Segregation (ISP)</li>
+              </ul>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">CORE ENTITY CLASSES</div>
+              <ul className="text-white mt-1.5 space-y-1 list-disc list-inside">
+                <li><code>ParkingLot</code> (Root)</li>
+                <li><code>ParkingFloor</code></li>
+                <li><code>PricingStrategy</code></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-cyan-500/20 text-xs">
+            <div className="font-bold text-white mb-2">⭐ Staff Bar-Raiser LLD Evaluation Rubric:</div>
+            <ul className="text-slate-300 space-y-1 list-disc list-inside">
+              <li>Clean separation of concerns with zero multi-responsibility god classes.</li>
+              <li>Thread-safety considerations and mutex lock annotations on concurrent spot allocation.</li>
+              <li>Extensibility for new vehicle/payment types without modifying existing class definitions.</li>
+            </ul>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
