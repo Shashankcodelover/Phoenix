@@ -717,10 +717,80 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 31: BRANCH SUITABILITY AI DIAGNOSTIC
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
+                ⭐ FEATURE 31 BRANCH SUITABILITY AI DIAGNOSTIC
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🧬</span> Engineering Branch Suitability Diagnostic (CSE vs ISE vs AIML vs ECE)
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Cognitive trait matching evaluating mathematical foundations, systems architecture, and probability traits against university curricula.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Top Match: Computer Science (94%)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-white">Pure CSE</span>
+                <span className="text-emerald-400 font-mono font-bold text-sm">94%</span>
+              </div>
+              <div className="text-slate-400 text-[11px] mt-1">Algorithms, OS, Distributed Systems, Compilers</div>
+              <div className="text-emerald-400 font-mono text-[10px] mt-2">★ Recommended Choice</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-white">Information Sci (ISE)</span>
+                <span className="text-sky-400 font-mono font-bold text-sm">94%</span>
+              </div>
+              <div className="text-slate-400 text-[11px] mt-1">Full-Stack Architecture, Cloud, DB Systems</div>
+              <div className="text-sky-400 font-mono text-[10px] mt-2">★ Top Alternative</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-white">AI &amp; ML (AIML)</span>
+                <span className="text-indigo-400 font-mono font-bold text-sm">88%</span>
+              </div>
+              <div className="text-slate-400 text-[11px] mt-1">Deep Learning, Statistics, Computer Vision</div>
+              <div className="text-indigo-400 font-mono text-[10px] mt-2">Specialized Track</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-white">Electronics (ECE)</span>
+                <span className="text-purple-400 font-mono font-bold text-sm">68%</span>
+              </div>
+              <div className="text-slate-400 text-[11px] mt-1">VLSI, Embedded Systems, Signal Processing</div>
+              <div className="text-slate-400 font-mono text-[10px] mt-2">Hardware Track</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-sky-500/20 text-xs">
+            <span className="text-slate-300 font-sans">
+              🎯 <strong>AI Counselor Verdict:</strong> High cognitive affinity for discrete logic and distributed systems. Prioritize <strong>RVCE / BMSCE CSE</strong> followed closely by <strong>ISE</strong> for optimal Tier-1 product placement leverage.
+            </span>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

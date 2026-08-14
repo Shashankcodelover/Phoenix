@@ -305,7 +305,21 @@ router.post('/diploma/math-bridge-evaluate', (req, res) => {
   }
 });
 
+const { branchSuitabilityEngine } = require('./branchSuitabilityEngine');
+
+// Feature 31: Branch Suitability AI Diagnostic (CSE vs ISE vs AIML vs ECE)
+router.post('/branch/suitability-diagnostic', (req, res) => {
+  try {
+    const result = branchSuitabilityEngine.evaluateBranchSuitability(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
