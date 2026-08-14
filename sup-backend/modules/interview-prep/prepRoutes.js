@@ -1067,7 +1067,23 @@ router.post('/code/analyze-memory-leaks', protect, (req, res) => {
   }
 });
 
+const { concurrencyDeadlockEngine } = require('./concurrencyDeadlockEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 47: Concurrency & Multi-Threading Deadlock Radar
+// ═══════════════════════════════════════════════════════════
+router.post('/concurrency/analyze-deadlock', protect, (req, res) => {
+  try {
+    const result = concurrencyDeadlockEngine.analyzeDeadlock(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

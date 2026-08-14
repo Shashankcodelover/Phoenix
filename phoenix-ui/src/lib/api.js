@@ -107,8 +107,10 @@ export const interviewApi = {
   generateLldScaffold: (payload) => fetchApi('/prep/lld/generate-scaffold', { method: 'POST', body: JSON.stringify(payload) }),
   calculateAggregateMatrix: (payload) => fetchApi('/prep/mock-aggregate/calculate-matrix', { method: 'POST', body: JSON.stringify(payload) }),
   generateEdgeCases: (payload) => fetchApi('/prep/code/generate-edge-cases', { method: 'POST', body: JSON.stringify(payload) }),
-  analyzeMemoryLeaks: (payload) => fetchApi('/prep/code/analyze-memory-leaks', { method: 'POST', body: JSON.stringify(payload) })
+  analyzeMemoryLeaks: (payload) => fetchApi('/prep/code/analyze-memory-leaks', { method: 'POST', body: JSON.stringify(payload) }),
+  analyzeConcurrencyDeadlock: (payload) => fetchApi('/prep/concurrency/analyze-deadlock', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 
