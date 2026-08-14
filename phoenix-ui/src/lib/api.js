@@ -116,8 +116,10 @@ export const hackathonApi = {
   exportMarpDeck: (projectData) => fetchApi('/prep/pitch/marp-export', { method: 'POST', body: JSON.stringify(projectData) }),
   analyzeTeamSynergy: (teamData) => fetchApi('/prep/hackathon/team/synergy-analyze', { method: 'POST', body: JSON.stringify(teamData) }),
   getPitchTimerConfig: (timerPayload) => fetchApi('/prep/pitch/timer-config', { method: 'POST', body: JSON.stringify(timerPayload || {}) }),
-  matchSponsorBounties: (payload) => fetchApi('/prep/hackathon/sponsor-bounties/match', { method: 'POST', body: JSON.stringify(payload) })
+  matchSponsorBounties: (payload) => fetchApi('/prep/hackathon/sponsor-bounties/match', { method: 'POST', body: JSON.stringify(payload) }),
+  searchWinningSolutionsRag: (payload) => fetchApi('/prep/hackathon/solutions/rag-search', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 

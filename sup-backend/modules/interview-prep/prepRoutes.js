@@ -917,7 +917,23 @@ router.post('/hackathon/sponsor-bounties/match', protect, (req, res) => {
   }
 });
 
+const { winningSolutionsRagEngine } = require('../hackathon-agent/winningSolutionsRagEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 30: Winning Hackathon Solutions RAG Vector Archive
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/solutions/rag-search', protect, (req, res) => {
+  try {
+    const result = winningSolutionsRagEngine.searchWinningArchive(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
