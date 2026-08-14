@@ -955,10 +955,65 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 41: KARNATAKA RURAL & KANNADA MEDIUM RESERVATIONS
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-rose-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 text-rose-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-rose-500/30">
+                ⭐ FEATURE 41 KARNATAKA RURAL &amp; KANNADA MEDIUM QUOTA
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🌾</span> Karnataka 15% Rural &amp; 5% Kannada Medium Quota Evaluator
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                KEA horizontal quota verification engine with 2.2x rank cutoff multiplier modeling and BEO document audit.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Raw Rank 4500 → Equivalent Rank 2045 (2.2x Benefit)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-rose-500/30">
+              <div className="text-rose-400 text-[10px] font-bold">15% RURAL QUOTA (RC)</div>
+              <div className="text-white font-bold text-sm mt-1">10 Years Rural Study</div>
+              <div className="text-slate-400 text-[11px] mt-1">1st to 10th Standard Verified</div>
+              <div className="text-emerald-400 text-[10px] mt-2">✓ Eligible (Form-1 BEO Signed)</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30">
+              <div className="text-amber-400 text-[10px] font-bold">5% KANNADA MEDIUM (KMC)</div>
+              <div className="text-white font-bold text-sm mt-1">Kannada Medium Instruction</div>
+              <div className="text-slate-400 text-[11px] mt-1">10 Full Academic Years</div>
+              <div className="text-emerald-400 text-[10px] mt-2">✓ Eligible (Countersigned)</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="text-sky-400 text-[10px] font-bold">ARTICLE 371J (HK QUOTA)</div>
+              <div className="text-white font-bold text-sm mt-1">Kalyana Karnataka</div>
+              <div className="text-slate-400 text-[11px] mt-1">Assistant Commissioner Cert</div>
+              <div className="text-slate-500 text-[10px] mt-2">Optional (Non-HK Region)</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-rose-500/20 text-xs">
+            <span className="text-slate-300 font-sans">
+              📋 <strong>Mandatory KEA Document Verification:</strong> Form-1 Rural Study Certificate countersigned by the Block Education Officer (BEO) + 7-year continuous Karnataka study certificate.
+            </span>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

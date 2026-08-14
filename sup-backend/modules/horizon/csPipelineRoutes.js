@@ -353,7 +353,21 @@ router.post('/vtu/cgpa-converter', (req, res) => {
   }
 });
 
+const { karnatakaReservationEngine } = require('./karnatakaReservationEngine');
+
+// Feature 41: Karnataka Rural & Kannada Medium Reservation Engine
+router.post('/reservations/evaluate-quota', (req, res) => {
+  try {
+    const result = karnatakaReservationEngine.evaluateQuotaEligibility(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
