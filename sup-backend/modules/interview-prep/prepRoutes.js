@@ -1177,8 +1177,6 @@ router.post('/system-design/simulate-rate-limiter', protect, (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
-
 const { postMortemAnalyticsEngine } = require('../hackathon-agent/postMortemAnalyticsEngine');
 
 // ═══════════════════════════════════════════════════════════
@@ -1193,7 +1191,37 @@ router.post('/hackathon/post-mortem/generate-analytics', protect, (req, res) => 
   }
 });
 
+const { audioNoiseFilterEngine } = require('./audioNoiseFilterEngine');
+
+
+// ═══════════════════════════════════════════════════════════
+// Feature 62: WebAssembly Audio Noise Suppression & Pitch Jitter Compensator
+// ═══════════════════════════════════════════════════════════
+router.post('/audio/noise-filter-compensate', protect, (req, res) => {
+  try {
+    const result = audioNoiseFilterEngine.processAudioStream(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+const { pwaOfflineTeleprompterEngine } = require('../hackathon-agent/pwaOfflineTeleprompterEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 63: PWA Offline-First Pitch Teleprompter & Local Cache Sync Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/offline/generate-pwa-bundle', protect, (req, res) => {
+  try {
+    const result = pwaOfflineTeleprompterEngine.generateOfflineBundle(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
 
 
 

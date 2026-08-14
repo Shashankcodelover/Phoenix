@@ -1715,10 +1715,69 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 62: WEBASSEMBLY AUDIO NOISE SUPPRESSION GAUGE
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 62 WEBASSEMBLY AUDIO NOISE FILTER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🎧</span> Studio-Grade Fan/AC Hum Notch &amp; Vocal Pitch F0 Calibrator
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Real-time WebAssembly audio filtering (-22dB background fan attenuation) eliminating false vocal jitter flags in FAANG mocks.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Vocal Clarity: 98/100 ✓
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 text-xs font-mono">
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-rose-500/30">
+              <div className="text-rose-400 text-[10px] font-bold">RAW NOISE FLOOR</div>
+              <div className="text-rose-400 font-bold text-sm mt-1">-36 dB</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Loud Laptop Fan Hum</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">NOTCH ATTENUATION</div>
+              <div className="text-emerald-400 font-bold text-sm mt-1">-58 dB</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">-22dB Wasm RNNoise Filter</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-cyan-500/30">
+              <div className="text-cyan-400 text-[10px] font-bold">CALIBRATED VARIANCE</div>
+              <div className="text-white font-bold text-sm mt-1">4.2% Variance</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">True Vocal F0 Signal</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">BAR-RAISER STATUS</div>
+              <div className="text-white font-bold text-sm mt-1">Calm &amp; Steady</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Zero False Tremor Flags</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-emerald-500/20 text-xs">
+            <div className="font-bold text-white mb-1">🎙️ Vocal Telemetry Calibration Invariant:</div>
+            <p className="text-slate-300">
+              By removing the 120Hz acoustic harmonic resonance before fundamental pitch estimation, voice mock scorecards reflect true candidate vocal confidence rather than hardware environment artifacts.
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

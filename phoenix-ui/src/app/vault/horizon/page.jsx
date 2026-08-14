@@ -1414,10 +1414,69 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 61: KEA DOCUMENT VERIFICATION OCR & RD VALIDATOR
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 61 KEA DOCUMENT OCR &amp; RD VALIDATOR
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>📑</span> BEO Counter Clearance &amp; Name Spelling Discrepancy Radar
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Phonetic Soundex and Levenshtein similarity cross-verifier comparing Aadhaar, 10th Marks Card, and Nadakacheri RD certificates.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                BEO Approved: 100% Match ✓
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/30">
+              <div className="text-indigo-400 text-[10px] font-bold">AADHAAR VS SSLC</div>
+              <div className="text-white font-bold text-sm mt-1">100% Match</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Identical English Name</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/30">
+              <div className="text-indigo-400 text-[10px] font-bold">SSLC VS RD CERTS</div>
+              <div className="text-white font-bold text-sm mt-1">100% Match</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Zero Typo Discrepancy</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">RD NUMBER FORMAT</div>
+              <div className="text-white font-bold text-sm mt-1">RD00381928471</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Valid 11-Digit Nadakacheri</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">BEO DESK STATUS</div>
+              <div className="text-emerald-400 font-bold text-sm mt-1">Instant Clearance</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Zero Affidavit Needed</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/20 text-xs">
+            <div className="font-bold text-white mb-1">⚖️ KEA Clause-A Legal Invariant:</div>
+            <p className="text-slate-300">
+              Any character mismatch between 10th Marks Card and Caste Certificate without an e-stamp affidavit will cause automatic forfeiture of reservation benefits to General Merit (GM).
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

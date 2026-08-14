@@ -61,31 +61,9 @@ export const horizonApi = {
   validateStudyCertificate: (payload) => fetchApi('/horizon/verification/validate-study-certificate', { method: 'POST', body: JSON.stringify(payload) }),
   evaluateArticle371jQuota: (payload) => fetchApi('/horizon/reservations/article-371j-quota', { method: 'POST', body: JSON.stringify(payload) }),
   evaluateSportsCulturalQuota: (payload) => fetchApi('/horizon/reservations/sports-cultural-quota', { method: 'POST', body: JSON.stringify(payload) }),
-  matchIncubatorGrants: (payload) => fetchApi('/horizon/startup/match-incubator-grant', { method: 'POST', body: JSON.stringify(payload) })
+  matchIncubatorGrants: (payload) => fetchApi('/horizon/startup/match-incubator-grant', { method: 'POST', body: JSON.stringify(payload) }),
+  validateKeaDocumentOcr: (payload) => fetchApi('/horizon/verification/validate-document-ocr', { method: 'POST', body: JSON.stringify(payload) })
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Vault 2: Placement & Voice AI APIs
 export const interviewApi = {
@@ -122,33 +100,9 @@ export const interviewApi = {
   resolveBehavioralConflict: (payload) => fetchApi('/prep/behavioral/resolve-conflict', { method: 'POST', body: JSON.stringify(payload) }),
   optimizeSqlQuery: (payload) => fetchApi('/prep/database/optimize-sql', { method: 'POST', body: JSON.stringify(payload) }),
   scanOwaspSecurity: (payload) => fetchApi('/prep/security/scan-owasp-vulnerabilities', { method: 'POST', body: JSON.stringify(payload) }),
-  simulateRateLimiter: (payload) => fetchApi('/prep/system-design/simulate-rate-limiter', { method: 'POST', body: JSON.stringify(payload) })
+  simulateRateLimiter: (payload) => fetchApi('/prep/system-design/simulate-rate-limiter', { method: 'POST', body: JSON.stringify(payload) }),
+  compensateAudioNoiseFilter: (payload) => fetchApi('/prep/audio/noise-filter-compensate', { method: 'POST', body: JSON.stringify(payload) })
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Vault 3: Hackathon OS APIs
 export const hackathonApi = {
@@ -175,12 +129,9 @@ export const hackathonApi = {
   runPrototypeStressTest: (payload) => fetchApi('/prep/hackathon/prototype/stress-test', { method: 'POST', body: JSON.stringify(payload) }),
   generateIpGovernancePackage: (payload) => fetchApi('/prep/hackathon/governance/generate-ip-package', { method: 'POST', body: JSON.stringify(payload) }),
   whisperJudgeDefense: (payload) => fetchApi('/prep/hackathon/judge/realtime-whisper', { method: 'POST', body: JSON.stringify(payload) }),
-  generatePostMortemAnalytics: (payload) => fetchApi('/prep/hackathon/post-mortem/generate-analytics', { method: 'POST', body: JSON.stringify(payload) })
+  generatePostMortemAnalytics: (payload) => fetchApi('/prep/hackathon/post-mortem/generate-analytics', { method: 'POST', body: JSON.stringify(payload) }),
+  generatePwaOfflineBundle: (payload) => fetchApi('/prep/hackathon/offline/generate-pwa-bundle', { method: 'POST', body: JSON.stringify(payload) })
 };
-
-
-
-
 
 
 

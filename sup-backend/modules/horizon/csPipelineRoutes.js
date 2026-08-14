@@ -449,7 +449,21 @@ router.post('/startup/match-incubator-grant', (req, res) => {
   }
 });
 
+const { keaDocumentOcrEngine } = require('./keaDocumentOcrEngine');
+
+// Feature 61: KEA Document Verification OCR & RD Number Cross-Validator
+router.post('/verification/validate-document-ocr', (req, res) => {
+  try {
+    const result = keaDocumentOcrEngine.validateDocuments(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
