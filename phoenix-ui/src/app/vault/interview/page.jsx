@@ -1537,10 +1537,71 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 52: SQL QUERY OPTIMIZER & INDEX TUNING ENGINE
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-teal-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/15 text-teal-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-teal-500/30">
+                ⭐ FEATURE 52 SQL OPTIMIZER &amp; INDEX TUNER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🗄️</span> EXPLAIN Query Plan &amp; Composite B-Tree Index Tuner
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Eliminates 10M row table Seq Scans with covering indexes (INCLUDE) and leftmost prefix equality rules.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Speedup: 17,640x (Cost: 148k → 8.4)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-rose-500/30">
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-bold text-white text-sm">Unoptimized Execution</span>
+                <span className="text-rose-400 font-mono text-[10px]">Seq Scan</span>
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1">
+                <code>Cost: 148,200 (10,000,000 Rows Scanned)</code>
+              </div>
+              <div className="p-2 rounded bg-rose-500/10 text-rose-200 text-[11px] mt-2">
+                ⚠️ Full table disk scan causing high disk I/O and lock contention.
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-bold text-white text-sm">Optimized B-Tree Scan</span>
+                <span className="text-emerald-400 font-mono text-[10px]">Index Scan</span>
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1">
+                <code>Cost: 8.4 (17,640x Faster Execution)</code>
+              </div>
+              <div className="p-2 rounded bg-emerald-500/10 text-emerald-200 text-[11px] mt-2">
+                ✓ Zero heap lookups via Covering Index with INCLUDE clause.
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-teal-500/20 text-xs font-mono">
+            <div className="font-bold text-white mb-1">⚡ Recommended Composite B-Tree Index DDL:</div>
+            <code className="text-emerald-400">
+              CREATE INDEX idx_users_status_created_at ON users (status, created_at DESC) INCLUDE (user_id, email);
+            </code>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

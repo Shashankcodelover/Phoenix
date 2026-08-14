@@ -1109,7 +1109,23 @@ router.post('/behavioral/resolve-conflict', protect, (req, res) => {
   }
 });
 
+const { sqlOptimizerEngine } = require('./sqlOptimizerEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 52: SQL Query Optimizer & Index Tuning Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/database/optimize-sql', protect, (req, res) => {
+  try {
+    const result = sqlOptimizerEngine.optimizeQuery(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
