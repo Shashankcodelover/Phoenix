@@ -329,7 +329,21 @@ router.post('/scholarships/match-eligibility', (req, res) => {
   }
 });
 
+const { managementQuotaFeeEngine } = require('./managementQuotaFeeEngine');
+
+// Feature 36: Management Quota Fee & 4-Year COA Forecaster
+router.post('/management-quota/calculate-fees', (req, res) => {
+  try {
+    const result = managementQuotaFeeEngine.calculateCostOfAttendance(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

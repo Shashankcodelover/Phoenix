@@ -51,8 +51,10 @@ export const horizonApi = {
   getDiplomaMathBridge: () => fetchApi('/horizon/diploma/math-bridge-curriculum'),
   evaluateDiplomaBridge: (payload) => fetchApi('/horizon/diploma/math-bridge-evaluate', { method: 'POST', body: JSON.stringify(payload) }),
   evaluateBranchSuitability: (payload) => fetchApi('/horizon/branch/suitability-diagnostic', { method: 'POST', body: JSON.stringify(payload) }),
-  matchScholarships: (payload) => fetchApi('/horizon/scholarships/match-eligibility', { method: 'POST', body: JSON.stringify(payload) })
+  matchScholarships: (payload) => fetchApi('/horizon/scholarships/match-eligibility', { method: 'POST', body: JSON.stringify(payload) }),
+  calculateManagementQuotaFees: (payload) => fetchApi('/horizon/management-quota/calculate-fees', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 

@@ -844,10 +844,68 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 36: MANAGEMENT QUOTA DIRECT FEE & COA FORECASTER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-amber-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-amber-500/30">
+                ⭐ FEATURE 36 MANAGEMENT QUOTA FEE &amp; COA FORECASTER
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🏛️</span> Management Quota Direct Fee &amp; 4-Year COA Forecaster
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Transparent 4-year institutional investment modeling (donation, tuition, Bangalore living) with post-grad salary ROI payback periods.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                RVCE CSE: ₹45.2L Total 4-Yr COA
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/10">
+              <div className="text-slate-400 text-[10px]">ONE-TIME DONATION</div>
+              <div className="text-amber-400 font-bold text-base mt-1">₹20,00,000</div>
+              <div className="text-slate-500 text-[10px] mt-0.5">Development Trust Fund</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/10">
+              <div className="text-slate-400 text-[10px]">4-YR TUITION FEES</div>
+              <div className="text-sky-400 font-bold text-base mt-1">₹18,00,000</div>
+              <div className="text-slate-500 text-[10px] mt-0.5">₹4.5L / year VTU Quota</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/10">
+              <div className="text-slate-400 text-[10px]">4-YR LIVING &amp; HOSTEL</div>
+              <div className="text-purple-400 font-bold text-base mt-1">₹7,20,000</div>
+              <div className="text-slate-500 text-[10px] mt-0.5">Bangalore Tech Corridor</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px]">ESTIMATED PAYBACK</div>
+              <div className="text-emerald-400 font-bold text-base mt-1">4.6 Years</div>
+              <div className="text-emerald-400 text-[10px] mt-0.5">★ 16.5 LPA Placement Avg</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-amber-500/20 text-xs">
+            <span className="text-slate-300 font-sans">
+              📊 <strong>Financial Viability Verdict:</strong> High ROI. 4.6-year investment amortization supported by top-tier Tier-1 campus placement drives (Google, Atlassian, Cisco, PhonePe visiting RVCE CSE).
+            </span>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
