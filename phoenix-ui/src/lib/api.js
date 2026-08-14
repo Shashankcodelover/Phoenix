@@ -94,8 +94,10 @@ export const hackathonApi = {
   getDisasterRecovery: (projectData) => fetchApi('/prep/hackathon/disaster-recovery', { method: 'POST', body: JSON.stringify(projectData) }),
   generateSubmissionReadme: (projectData) => fetchApi('/prep/hackathon/submission-readme', { method: 'POST', body: JSON.stringify(projectData) }),
   generateDevpostSubmission: (projectData) => fetchApi('/prep/hackathon/devpost-submission', { method: 'POST', body: JSON.stringify(projectData) }),
-  exportMarpDeck: (projectData) => fetchApi('/prep/pitch/marp-export', { method: 'POST', body: JSON.stringify(projectData) })
+  exportMarpDeck: (projectData) => fetchApi('/prep/pitch/marp-export', { method: 'POST', body: JSON.stringify(projectData) }),
+  analyzeTeamSynergy: (teamData) => fetchApi('/prep/hackathon/team/synergy-analyze', { method: 'POST', body: JSON.stringify(teamData) })
 };
+
 
 
 

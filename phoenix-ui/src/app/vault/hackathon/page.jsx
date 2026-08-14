@@ -575,10 +575,76 @@ export default function HackathonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 19: HACKATHON TEAM ROLE SYNERGY RECOMMENDER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
+                ⭐ FEATURE 19 4-ARCHETYPE TEAM SYNERGY MATRIX
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🤝</span> Team Role Synergy &amp; Skill Complementarity
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Evaluates team balance across 4 winning hackathon archetypes (Frontend Storyteller, Distributed Architect, AI Specialist, Pitch Lead).
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Synergy Score: 100/100 (Grand Prize Podium Contender)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/5">
+              <div className="text-[10px] font-mono text-sky-400 uppercase tracking-wider mb-1">Archetype 1</div>
+              <div className="text-xs font-bold text-white">Frontend Storyteller</div>
+              <div className="text-[11px] text-emerald-400 font-mono mt-1">✓ Assigned: Alex</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">Next.js 15, Tailwind v4, Audio UI</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/5">
+              <div className="text-[10px] font-mono text-indigo-400 uppercase tracking-wider mb-1">Archetype 2</div>
+              <div className="text-xs font-bold text-white">Distributed Architect</div>
+              <div className="text-[11px] text-emerald-400 font-mono mt-1">✓ Assigned: David</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">Redis LRU, CockroachDB Failover</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/5">
+              <div className="text-[10px] font-mono text-purple-400 uppercase tracking-wider mb-1">Archetype 3</div>
+              <div className="text-xs font-bold text-white">AI / ML Specialist</div>
+              <div className="text-[11px] text-emerald-400 font-mono mt-1">✓ Assigned: Priya</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">Two-Stage RAG &amp; AST Profiler</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/5">
+              <div className="text-[10px] font-mono text-emerald-400 uppercase tracking-wider mb-1">Archetype 4</div>
+              <div className="text-xs font-bold text-white">Pitch Lead &amp; Moat</div>
+              <div className="text-[11px] text-emerald-400 font-mono mt-1">✓ Assigned: Sneha</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">Marp Slides, TAM, Judge Defense</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-sky-500/20 text-xs">
+            <div className="font-bold text-white mb-2">🚀 Recommended 24-Hour Sprint Task Allocations:</div>
+            <ul className="text-slate-300 space-y-1 list-disc list-inside">
+              <li><strong>Alex:</strong> Ship Glassmorphic interactive Next.js 15 client with live visualizer gauges.</li>
+              <li><strong>David:</strong> Mount sharded Redis LRU cache with multi-key failover and 50,000 RPS chaos tests.</li>
+              <li><strong>Priya:</strong> Fine-tune Two-Stage Vector RAG retriever and static AST Big-O profiler.</li>
+              <li><strong>Sneha:</strong> Rehearse 180s teleprompter pitch and compile Marp 5-slide deck PDF.</li>
+            </ul>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

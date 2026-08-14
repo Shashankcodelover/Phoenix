@@ -814,7 +814,23 @@ router.post('/assessment/submit', protect, (req, res) => {
   }
 });
 
+const { teamSynergyEngine } = require('../hackathon-agent/teamSynergyEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 19: Hackathon Team Role Synergy & Skill Recommender
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/team/synergy-analyze', protect, (req, res) => {
+  try {
+    const result = teamSynergyEngine.evaluateTeamSynergy(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
