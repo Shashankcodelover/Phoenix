@@ -520,10 +520,66 @@ export default function HackathonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 16: AUTOMATED MARP 5-SLIDE PITCH DECK & HTML EXPORT
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 16 MARP / SLIDEV & HTML DECK EXPORTER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>📑</span> Automated Marp 5-Slide Pitch Deck &amp; HTML Presenter
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Zero-setup offline presentation suite. Exports standard Marp Markdown for CLI PDF export, or generates a standalone HTML presenter with keyboard navigation.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Format: 5 Slides (Marp + Standalone HTML)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/10 flex flex-col justify-between">
+              <div>
+                <div className="text-xs font-bold text-white mb-1 flex items-center gap-2">
+                  <span>📄</span> Raw Marp Frontmatter Markdown
+                </div>
+                <p className="text-[11px] text-slate-400 mb-3">
+                  Ready to compile into PDF via <code className="text-emerald-400 font-mono">npx @marp-team/marp-cli deck.md --pdf</code>
+                </p>
+              </div>
+              <button className="w-full py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/20">
+                📋 Copy Marp Markdown
+              </button>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/10 flex flex-col justify-between">
+              <div>
+                <div className="text-xs font-bold text-white mb-1 flex items-center gap-2">
+                  <span>🌐</span> Standalone Offline HTML Presenter
+                </div>
+                <p className="text-[11px] text-slate-400 mb-3">
+                  Single-file offline HTML deck. Open in any browser during live judge demos with keyboard slide control.
+                </p>
+              </div>
+              <button className="w-full py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs shadow-md shadow-sky-500/20">
+                ⚡ Copy Standalone HTML
+              </button>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
