@@ -365,7 +365,21 @@ router.post('/reservations/evaluate-quota', (req, res) => {
   }
 });
 
+const { campusHostelCommuteEngine } = require('./campusHostelCommuteEngine');
+
+// Feature 44: Karnataka Campus Hostel, Mess & Commute Intelligence
+router.post('/campus-life/hostel-commute-intel', (req, res) => {
+  try {
+    const result = campusHostelCommuteEngine.getHostelCommuteProfile(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

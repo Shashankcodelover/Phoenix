@@ -1009,10 +1009,68 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 44: CAMPUS HOSTEL, MESS & METRO COMMUTE INTEL
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 44 CAMPUS HOSTEL &amp; METRO COMMUTE INTEL
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🏢</span> Bangalore Engineering Hostel vs PG &amp; Namma Metro Pass Radar
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Transparent living economics, food mess ratings, biometric curfews, and Namma Metro Purple/Green line transit passes.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Hostel Saves ₹50,000/yr vs PG
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/30">
+              <div className="text-indigo-400 text-[10px] font-bold">CAMPUS HOSTEL</div>
+              <div className="text-white font-bold text-sm mt-1">₹1,25,000 / year</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Mess + 1 Gbps LAN incl.</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">NEARBY 2-SHARE PG</div>
+              <div className="text-white font-bold text-sm mt-1">₹1,75,000 / year</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">AC + Wi-Fi Tech Corridor</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="text-sky-400 text-[10px] font-bold">NAMMA METRO TRANSIT</div>
+              <div className="text-white font-bold text-sm mt-1">₹1,450 / month</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">RVCE Station (Purple Line)</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30">
+              <div className="text-amber-400 text-[10px] font-bold">BIOMETRIC CURFEW</div>
+              <div className="text-white font-bold text-sm mt-1">9:30 PM In-Time</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Mess Rating: 4.4 / 5.0</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/20 text-xs">
+            <span className="text-slate-300 font-sans">
+              🚇 <strong>Campus Commuter Verdict:</strong> Students living along the Purple Line (Majestic, Indiranagar, Whitefield) can save ~₹1.1L/year by opting for Namma Metro daily commute instead of private hostel rentals.
+            </span>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
