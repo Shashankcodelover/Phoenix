@@ -84,50 +84,70 @@ export default function HorizonVaultPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col">
+    <div className="relative min-h-screen flex flex-col selection:bg-sky-500/30 selection:text-sky-200">
       <div className="ambient-radiance" />
       <Navbar activeVault="horizon" />
 
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-10 w-full">
-        {/* Header Badge */}
-        <div className="flex items-center gap-3 mb-2">
-          <span className="text-3xl">🌅</span>
-          <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 border border-sky-500/30">
-            Vault 1: Horizon Pathways
-          </span>
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-8 py-10 w-full">
+        {/* Header Hero Section */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
+          <div>
+            <div className="flex items-center gap-3 mb-2.5">
+              <span className="text-3xl">🌅</span>
+              <span className="text-xs font-mono font-extrabold uppercase tracking-widest px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 border border-sky-500/35 shadow-sm">
+                VAULT 1: HORIZON CAREER OS • 21 ENGINES
+              </span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight font-heading">
+              Academic Strategy, Cutoffs &amp; State Quota Radar
+            </h1>
+            <p className="text-slate-300 text-sm max-w-3xl mt-2 leading-relaxed">
+              Bridge the Karnataka engineering journey with algorithmic rank normalizers, BEO document OCR verifiers, Article 371(J) quota engines, and ₹25L DST incubator grants.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-2xl bg-slate-900/90 border border-sky-500/30 text-right font-mono">
+              <div className="text-[10px] text-slate-400 uppercase">Engine Status</div>
+              <div className="text-sm font-bold text-sky-400">21 / 21 Online ✓</div>
+            </div>
+          </div>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-2">
-          Entrance Exams, Scholarships & Career Guidance
-        </h1>
-        <p className="text-slate-400 text-sm mb-8">
-          Bridge the Pre-University / Diploma knowledge gap with normalized state rank calculations, verified RVCE/BMSCE alumni mentorship, and government fee waiver matching.
-        </p>
 
         {/* Feature Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
           {/* FEATURE 1: RANK CALCULATOR */}
-          <div className="glass-card p-6 border-sky-500/20 flex flex-col justify-between">
+          <div className="glass-card p-7 border-sky-500/25 flex flex-col justify-between bg-slate-900/85">
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-xl font-bold text-white flex items-center gap-2 font-heading">
                   <span>📊</span> KCET / DCET State Rank Estimator
                 </h3>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setStream('KCET')}
-                    className={`px-3 py-1 rounded-lg text-xs font-semibold ${stream === 'KCET' ? 'bg-sky-500 text-white' : 'bg-slate-800 text-slate-400'}`}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+                      stream === 'KCET'
+                        ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/30'
+                        : 'bg-slate-800 text-slate-400 hover:text-white'
+                    }`}
                   >
                     PU (KCET)
                   </button>
                   <button
                     onClick={() => setStream('DCET')}
-                    className={`px-3 py-1 rounded-lg text-xs font-semibold ${stream === 'DCET' ? 'bg-sky-500 text-white' : 'bg-slate-800 text-slate-400'}`}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+                      stream === 'DCET'
+                        ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/30'
+                        : 'bg-slate-800 text-slate-400 hover:text-white'
+                    }`}
                   >
                     Diploma (DCET)
                   </button>
                 </div>
               </div>
+
 
               <div className="space-y-4 mb-6">
                 <div>

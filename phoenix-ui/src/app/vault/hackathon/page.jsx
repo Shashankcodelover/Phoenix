@@ -70,24 +70,36 @@ export default function HackathonVaultPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col">
+    <div className="relative min-h-screen flex flex-col selection:bg-emerald-500/30 selection:text-emerald-200">
       <div className="ambient-radiance" />
       <Navbar activeVault="hackathon" />
 
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-10 w-full">
-        {/* Header Badge */}
-        <div className="flex items-center gap-3 mb-2">
-          <span className="text-3xl">🏆</span>
-          <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-            Vault 3: Hackathon OS
-          </span>
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-8 py-10 w-full">
+        {/* Header Hero Section */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
+          <div>
+            <div className="flex items-center gap-3 mb-2.5">
+              <span className="text-3xl">🏆</span>
+              <span className="text-xs font-mono font-extrabold uppercase tracking-widest px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/35 shadow-sm">
+                VAULT 3: HACKATHON OS &amp; IP • 21 ENGINES
+              </span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight font-heading">
+              Team Workspaces, Pitch HUD &amp; IP Governance
+            </h1>
+            <p className="text-slate-300 text-sm max-w-3xl mt-2 leading-relaxed">
+              Build grand prize winning hackathon solutions with Discord-style Split-Chat AI copilots, PWA offline stage teleprompters, real-time judge trap whisperers, and YC SAFE note packages.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-2xl bg-slate-900/90 border border-emerald-500/30 text-right font-mono">
+              <div className="text-[10px] text-slate-400 uppercase">Engine Status</div>
+              <div className="text-sm font-bold text-emerald-400">21 / 21 Online ✓</div>
+            </div>
+          </div>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-2">
-          Team Workspaces, Idea Polling & Split-Chat AI Pipeline
-        </h1>
-        <p className="text-slate-400 text-sm mb-8">
-          Collaborate in Discord-style team rooms, vote on winning RAG blueprints, and get private 24/7 Senior Staff Engineer guidance through the dual-pane Split-Chat pipeline.
-        </p>
+
 
         {/* SECTION 1: IDEA VOTING POLL */}
         <div className="glass-card p-6 border-emerald-500/20 mb-8">

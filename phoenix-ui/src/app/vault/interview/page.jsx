@@ -122,24 +122,35 @@ export default function InterviewVaultPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col">
+    <div className="relative min-h-screen flex flex-col selection:bg-indigo-500/30 selection:text-indigo-200">
       <div className="ambient-radiance" />
       <Navbar activeVault="interview" />
 
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-10 w-full">
-        {/* Header Badge */}
-        <div className="flex items-center gap-3 mb-2">
-          <span className="text-3xl">💼</span>
-          <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
-            Vault 2: Placement & Voice AI
-          </span>
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-8 py-10 w-full">
+        {/* Header Hero Section */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
+          <div>
+            <div className="flex items-center gap-3 mb-2.5">
+              <span className="text-3xl">💼</span>
+              <span className="text-xs font-mono font-extrabold uppercase tracking-widest px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 border border-indigo-500/35 shadow-sm">
+                VAULT 2: PLACEMENT &amp; VOICE AI • 21 ENGINES
+              </span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight font-heading">
+              Real-Time Voice Coaching, AST Profilers &amp; System Design
+            </h1>
+            <p className="text-slate-300 text-sm max-w-3xl mt-2 leading-relaxed">
+              Master senior L5/L6 software engineering interviews with sub-300ms WebRTC voice simulation, Wasm noise filtering, 17,640x SQL covering index optimizers, and atomic Redis rate limiters.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-2xl bg-slate-900/90 border border-indigo-500/30 text-right font-mono">
+              <div className="text-[10px] text-slate-400 uppercase">Engine Status</div>
+              <div className="text-sm font-bold text-indigo-400">21 / 21 Online ✓</div>
+            </div>
+          </div>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-2">
-          Real-Time Voice Coaching, STAR Matrix & System Architecture
-        </h1>
-        <p className="text-slate-400 text-sm mb-8">
-          Accelerate your placement sprint with sub-300ms live prosody voice evaluations, automated STAR quantified impact analysis, and fault-tolerant system design topology simulations.
-        </p>
 
         {/* Feature Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
