@@ -1495,10 +1495,53 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 50: FAANG BEHAVIORAL CONFLICT MEDIATION ENGINE
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 50 FAANG BEHAVIORAL CONFLICT MEDIATOR
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🤝</span> Amazon LP 14 Disagree &amp; Commit &amp; Cross-Functional Radar
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                De-escalation frameworks for Security vs Launch deadlines, Tech Debt vs Feature speed, and scope creep mediation.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
+                Googliness: 97/100 (Exceptional Backbone)
+              </span>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/30 mb-6 text-xs font-mono">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-white font-bold text-sm">Security Vulnerability P0 vs Q4 Launch Deadline</span>
+              <span className="text-indigo-400 font-mono text-[10px]">LP: Customer Obsession</span>
+            </div>
+            <p className="text-slate-300 font-sans text-xs">
+              <strong>De-escalation Strategy:</strong> Feature-flag 2 unauthenticated GraphQL endpoints to safely hit marketing launch milestone, scheduling a 48-hr isolated hotfix for the remaining endpoints without compromising customer trust.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/20 text-xs">
+            <div className="font-bold text-white mb-1">⭐ Executive STAR Delivery Script:</div>
+            <p className="text-slate-300 italic font-serif">
+              &quot;I aligned with Product and InfoSec leads by presenting a data-backed risk matrix. Rather than cancelling the launch, we scoped down 2 non-essential queries behind gatekeepers, protecting customer trust while meeting the business milestone.&quot;
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

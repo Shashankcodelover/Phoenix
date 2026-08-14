@@ -1095,7 +1095,23 @@ router.post('/hackathon/prototype/stress-test', protect, (req, res) => {
   }
 });
 
+const { behavioralConflictEngine } = require('./behavioralConflictEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 50: FAANG Behavioral Conflict & Mediation Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/behavioral/resolve-conflict', protect, (req, res) => {
+  try {
+    const result = behavioralConflictEngine.resolveConflict(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

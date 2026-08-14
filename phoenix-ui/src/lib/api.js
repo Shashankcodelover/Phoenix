@@ -110,8 +110,10 @@ export const interviewApi = {
   calculateAggregateMatrix: (payload) => fetchApi('/prep/mock-aggregate/calculate-matrix', { method: 'POST', body: JSON.stringify(payload) }),
   generateEdgeCases: (payload) => fetchApi('/prep/code/generate-edge-cases', { method: 'POST', body: JSON.stringify(payload) }),
   analyzeMemoryLeaks: (payload) => fetchApi('/prep/code/analyze-memory-leaks', { method: 'POST', body: JSON.stringify(payload) }),
-  analyzeConcurrencyDeadlock: (payload) => fetchApi('/prep/concurrency/analyze-deadlock', { method: 'POST', body: JSON.stringify(payload) })
+  analyzeConcurrencyDeadlock: (payload) => fetchApi('/prep/concurrency/analyze-deadlock', { method: 'POST', body: JSON.stringify(payload) }),
+  resolveBehavioralConflict: (payload) => fetchApi('/prep/behavioral/resolve-conflict', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 
