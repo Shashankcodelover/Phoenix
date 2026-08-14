@@ -43,9 +43,23 @@ class EquityTaxArbitrageEngine {
         // Year 2-4 Recurring Comp = Base + Annual RSU
         const recurringAnnualCompLPA = baseSalaryLPA + annualRsuLPA;
 
-        // Approximate income tax (~30% new tax regime for top bracket)
-        const estimatedTaxYear1LPA = parseFloat((year1TotalCompLPA * 0.28).toFixed(2));
+        // Progressive Multi-Slab Tax Model (Indian New Tax Regime Standard)
+        // 0-3L: 0%, 3-7L: 5%, 7-10L: 10%, 10-12L: 15%, 12-15L: 20%, >15L: 30%
+        let estimatedTaxYear1LPA = 0;
+        if (year1TotalCompLPA > 15) {
+            estimatedTaxYear1LPA = 1.5 + (year1TotalCompLPA - 15) * 0.30;
+        } else if (year1TotalCompLPA > 12) {
+            estimatedTaxYear1LPA = 0.9 + (year1TotalCompLPA - 12) * 0.20;
+        } else if (year1TotalCompLPA > 10) {
+            estimatedTaxYear1LPA = 0.6 + (year1TotalCompLPA - 10) * 0.15;
+        } else if (year1TotalCompLPA > 7) {
+            estimatedTaxYear1LPA = 0.3 + (year1TotalCompLPA - 7) * 0.10;
+        } else if (year1TotalCompLPA > 3) {
+            estimatedTaxYear1LPA = (year1TotalCompLPA - 3) * 0.05;
+        }
+        estimatedTaxYear1LPA = parseFloat(estimatedTaxYear1LPA.toFixed(2));
         const postTaxCashflowYear1LPA = parseFloat((year1TotalCompLPA - estimatedTaxYear1LPA).toFixed(2));
+
 
         // PPP Adjustment
         const pppFactor = this.pppFactors[city.toUpperCase()] || 1.0;
