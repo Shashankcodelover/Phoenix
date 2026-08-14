@@ -317,7 +317,21 @@ router.post('/branch/suitability-diagnostic', (req, res) => {
   }
 });
 
+const { scholarshipMatcherEngine } = require('./scholarshipMatcherEngine');
+
+// Feature 34: Karnataka State Scholarship (SSP / NSP) Matcher
+router.post('/scholarships/match-eligibility', (req, res) => {
+  try {
+    const result = scholarshipMatcherEngine.matchScholarships(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

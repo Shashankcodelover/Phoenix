@@ -50,8 +50,11 @@ export const horizonApi = {
   evaluateSnqEligibility: (payload) => fetchApi('/horizon/snq/evaluate-eligibility', { method: 'POST', body: JSON.stringify(payload) }),
   getDiplomaMathBridge: () => fetchApi('/horizon/diploma/math-bridge-curriculum'),
   evaluateDiplomaBridge: (payload) => fetchApi('/horizon/diploma/math-bridge-evaluate', { method: 'POST', body: JSON.stringify(payload) }),
-  evaluateBranchSuitability: (payload) => fetchApi('/horizon/branch/suitability-diagnostic', { method: 'POST', body: JSON.stringify(payload) })
+  evaluateBranchSuitability: (payload) => fetchApi('/horizon/branch/suitability-diagnostic', { method: 'POST', body: JSON.stringify(payload) }),
+  matchScholarships: (payload) => fetchApi('/horizon/scholarships/match-eligibility', { method: 'POST', body: JSON.stringify(payload) })
 };
+
+
 
 
 

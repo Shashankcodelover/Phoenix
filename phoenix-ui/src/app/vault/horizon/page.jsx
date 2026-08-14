@@ -786,10 +786,69 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 34: KARNATAKA SSP / NSP SCHOLARSHIP MATCHER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 34 KARNATAKA STATE SCHOLARSHIP (SSP/NSP) MATCHER
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🎓</span> Karnataka State Scholarship (SSP / NSP) Matcher &amp; Vault
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Automated eligibility matching across Karnataka BCWD, Social Welfare SC/ST fee waiver, and AICTE Pragati schemes (₹25k - ₹75k/yr).
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Total Grant Matched: ₹85,000 / Year
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-xs">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-white text-sm">Karnataka SSP Post-Matric (BCWD)</span>
+                <span className="text-emerald-400 font-mono font-bold">₹35,000 / yr</span>
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1">
+                Direct DBT Bank transfer for Cat-1, 2A, 2B, 3A, 3B students with annual family income &lt; ₹2.5 LPA.
+              </div>
+              <div className="mt-2 text-[10px] text-emerald-400 font-mono">✓ NPCI Bank Seeding: Verified</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-white text-sm">AICTE Pragati Scholarship for Women</span>
+                <span className="text-purple-400 font-mono font-bold">₹50,000 / yr</span>
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1">
+                Central government grant for female engineering candidates admitted through state quota counseling.
+              </div>
+              <div className="mt-2 text-[10px] text-purple-400 font-mono">✓ Category: Open to All Categories</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-emerald-500/20 text-xs">
+            <div className="font-bold text-white mb-2">📋 Mandatory SSP Portal Submission Checklist:</div>
+            <ul className="text-slate-300 space-y-1 list-disc list-inside">
+              <li>Revenue Department (RD Number) Caste &amp; Income Certificate.</li>
+              <li>Aadhaar-seeded bank account with active NPCI mapping (Avoid DBT transaction failures).</li>
+              <li>VTU University Seat Number (USN) &amp; College Admission Fee Receipt.</li>
+            </ul>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
