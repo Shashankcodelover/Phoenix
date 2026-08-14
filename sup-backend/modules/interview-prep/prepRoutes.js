@@ -1137,7 +1137,23 @@ router.post('/hackathon/governance/generate-ip-package', protect, (req, res) => 
   }
 });
 
+const { owaspSecurityScannerEngine } = require('./owaspSecurityScannerEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 55: OWASP Top 10 Security & SSRF / XSS Scanner Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/security/scan-owasp-vulnerabilities', protect, (req, res) => {
+  try {
+    const result = owaspSecurityScannerEngine.scanCodeSnippet(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

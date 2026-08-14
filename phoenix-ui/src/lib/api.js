@@ -116,8 +116,10 @@ export const interviewApi = {
   analyzeMemoryLeaks: (payload) => fetchApi('/prep/code/analyze-memory-leaks', { method: 'POST', body: JSON.stringify(payload) }),
   analyzeConcurrencyDeadlock: (payload) => fetchApi('/prep/concurrency/analyze-deadlock', { method: 'POST', body: JSON.stringify(payload) }),
   resolveBehavioralConflict: (payload) => fetchApi('/prep/behavioral/resolve-conflict', { method: 'POST', body: JSON.stringify(payload) }),
-  optimizeSqlQuery: (payload) => fetchApi('/prep/database/optimize-sql', { method: 'POST', body: JSON.stringify(payload) })
+  optimizeSqlQuery: (payload) => fetchApi('/prep/database/optimize-sql', { method: 'POST', body: JSON.stringify(payload) }),
+  scanOwaspSecurity: (payload) => fetchApi('/prep/security/scan-owasp-vulnerabilities', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 

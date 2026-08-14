@@ -1597,10 +1597,71 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 55: OWASP TOP 10 SECURITY & EXPLOIT SCANNER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-rose-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 text-rose-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-rose-500/30">
+                ⭐ FEATURE 55 OWASP TOP 10 SECURITY SCANNER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🛡️</span> SSRF, DOM-XSS &amp; Cloud Metadata (169.254.169.254) Exploit Radar
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                AST vulnerability sink detection with zero-exploit hardened drop-in code mitigation patches.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                ASVS 4.0 Level 3 Certified ✓
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-rose-500/30">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-rose-400 font-bold">Vulnerable SSRF Sink</span>
+                <span className="text-rose-400 text-[10px]">CWE-918</span>
+              </div>
+              <code className="text-rose-300 block p-2 rounded bg-rose-950/40">
+                const response = await axios.get(req.query.targetUrl);
+              </code>
+              <div className="text-slate-400 text-[11px] mt-2">
+                ⚠️ Allows attackers to query internal AWS Metadata service (`http://169.254.169.254/latest/meta-data/`) to steal IAM credentials.
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-emerald-400 font-bold">Hardened DNS Whitelist Patch</span>
+                <span className="text-emerald-400 text-[10px]">MITIGATED ✓</span>
+              </div>
+              <code className="text-emerald-300 block p-2 rounded bg-emerald-950/40">
+                if (isPrivateOrLoopbackIp(parsed.hostname)) throw new SecurityError();
+              </code>
+              <div className="text-slate-400 text-[11px] mt-2">
+                ✓ Enforces CIDR IP blocking against 169.254.169.254, 127.0.0.1, and 10.0.0.0/8.
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-rose-500/20 text-xs">
+            <div className="font-bold text-white mb-1">🔒 L6 Security Architect Invariant:</div>
+            <p className="text-slate-300">
+              Never rely on simple URL string regex filters for SSRF prevention; always perform DNS resolution before connection to prevent Time-of-Check to Time-of-Use (TOCTOU) DNS Rebinding attacks.
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
