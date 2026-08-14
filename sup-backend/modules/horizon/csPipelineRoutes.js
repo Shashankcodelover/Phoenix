@@ -284,7 +284,30 @@ router.post('/snq/evaluate-eligibility', (req, res) => {
   }
 });
 
+const { diplomaMathBridgeEngine } = require('./diplomaMathBridgeEngine');
+
+// Feature 29: Polytechnic Diploma Lateral Entry 14-Day Math Bridge
+router.get('/diploma/math-bridge-curriculum', (req, res) => {
+  try {
+    const result = diplomaMathBridgeEngine.getBridgeCurriculum();
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+router.post('/diploma/math-bridge-evaluate', (req, res) => {
+  try {
+    const result = diplomaMathBridgeEngine.evaluateBridgeDiagnostic(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

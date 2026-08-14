@@ -658,10 +658,70 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 29: POLYTECHNIC DIPLOMA 14-DAY MATH BRIDGE
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 29 POLYTECHNIC DIPLOMA LATERAL ENTRY MATH BRIDGE
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>📐</span> Polytechnic Diploma Lateral Entry 14-Day Math Bridge
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Intensive remedial curriculum for Karnataka DCET lateral entrants transitioning into VTU 3rd-Semester Engineering Mathematics (21MAT31).
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Readiness: 92/100 (Low Dropout Risk)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-6 text-xs font-mono">
+            <div className="p-3 rounded-xl bg-slate-950/80 border border-white/10">
+              <div className="text-indigo-400 text-[10px]">DAY 01 - 03</div>
+              <div className="font-bold text-white mt-1">Matrix Eigenvalues</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Cayley-Hamilton Theorem</div>
+            </div>
+            <div className="p-3 rounded-xl bg-slate-950/80 border border-white/10">
+              <div className="text-indigo-400 text-[10px]">DAY 04 - 06</div>
+              <div className="font-bold text-white mt-1">Higher-Order ODE</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Linear Diff Equations</div>
+            </div>
+            <div className="p-3 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px]">DAY 07 - 09</div>
+              <div className="font-bold text-white mt-1">Laplace Transforms</div>
+              <div className="text-emerald-400 text-[10px] mt-0.5">★ 25% VTU Exam Weight</div>
+            </div>
+            <div className="p-3 rounded-xl bg-slate-950/80 border border-white/10">
+              <div className="text-indigo-400 text-[10px]">DAY 10 - 12</div>
+              <div className="font-bold text-white mt-1">Fourier Series</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Harmonic Filtering</div>
+            </div>
+            <div className="p-3 rounded-xl bg-slate-950/80 border border-white/10">
+              <div className="text-indigo-400 text-[10px]">DAY 13 - 14</div>
+              <div className="font-bold text-white mt-1">Vector Calculus</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Stokes Theorem Proofs</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/20 text-xs">
+            <span className="text-slate-300 font-sans">
+              💡 <strong>Lateral Entry Advice:</strong> Focus on <strong>Laplace Transforms</strong> on Days 7–9 as it carries highest score weightage in 3rd-semester university exams.
+            </span>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
