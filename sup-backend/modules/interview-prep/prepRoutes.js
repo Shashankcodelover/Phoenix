@@ -1179,7 +1179,23 @@ router.post('/system-design/simulate-rate-limiter', protect, (req, res) => {
   }
 });
 
+const { postMortemAnalyticsEngine } = require('../hackathon-agent/postMortemAnalyticsEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 59: Hackathon Post-Mortem Analytics & Moat Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/post-mortem/generate-analytics', protect, (req, res) => {
+  try {
+    const result = postMortemAnalyticsEngine.generatePostMortem(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
