@@ -377,7 +377,21 @@ router.post('/campus-life/hostel-commute-intel', (req, res) => {
   }
 });
 
+const { firstGenGraduateEngine } = require('./firstGenGraduateEngine');
+
+// Feature 46: First-Generation Graduate Toolkit & Fee Concession
+router.post('/first-gen/evaluate-concession', (req, res) => {
+  try {
+    const result = firstGenGraduateEngine.evaluateFirstGenProfile(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

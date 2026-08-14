@@ -1066,10 +1066,70 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 46: FIRST-GENERATION GRADUATE TOOLKIT
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-teal-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/15 text-teal-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-teal-500/30">
+                ⭐ FEATURE 46 FIRST-GEN GRADUATE TOOLKIT
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🎓</span> First-Generation Engineering Graduate Concession &amp; Roadmap
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Tahsildar verification checklist, 4-year ₹1,00,000 tuition fee concession, and 1-on-1 alumni onboarding.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-teal-400 bg-teal-500/10 px-3 py-1 rounded-full border border-teal-500/20">
+                Total Savings: ₹1,00,000 / 4-Yrs
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-teal-500/30">
+              <div className="text-teal-400 text-[10px] font-bold">ANNUAL TUITION WAIVER</div>
+              <div className="text-white font-bold text-sm mt-1">₹25,000 / year</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">KEA First-Gen Concession</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-teal-500/30">
+              <div className="text-teal-400 text-[10px] font-bold">4-YEAR TOTAL BENEFIT</div>
+              <div className="text-emerald-400 font-bold text-sm mt-1">₹1,00,000 Total</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Direct tuition fee rebate</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="text-sky-400 text-[10px] font-bold">TAHSILDAR AUDIT</div>
+              <div className="text-white font-bold text-sm mt-1">RD No. Verified</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Family Tree Affidavit</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">MENTOR PAIRING</div>
+              <div className="text-white font-bold text-sm mt-1">Tier-1 Alumnus</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Sem 1-8 Guidance</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-teal-500/20 text-xs">
+            <div className="font-bold text-white mb-1">📜 Required Revenue Department (RD) Documents:</div>
+            <ul className="text-slate-300 space-y-1 list-disc list-inside">
+              <li>First-Graduate Certificate from local Tahsildar / Revenue Inspector (Form RD-FG).</li>
+              <li>Family Tree / Vamshavruksha affidavit certifying no sibling holds an engineering or professional degree.</li>
+            </ul>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
