@@ -1356,10 +1356,69 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 60: COLLEGE INCUBATOR SEED GRANTS & PATENTS
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-teal-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/15 text-teal-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-teal-500/30">
+                ⭐ FEATURE 60 INCUBATOR SEED GRANTS &amp; PATENTS
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🚀</span> DST NIDHI-TBI Seed Grants &amp; Karnataka Patent Subsidy
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                College-specific startup funding matches (₹10L - ₹25L Elevate 100) and 100% patent filing fee reimbursements.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-teal-400 bg-teal-500/10 px-3 py-1 rounded-full border border-teal-500/20">
+                ₹10,00,000 DST NIDHI-EIR Pool
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-teal-500/30">
+              <div className="text-teal-400 text-[10px] font-bold">COLLEGE INCUBATOR</div>
+              <div className="text-white font-bold text-sm mt-1">RVCE CIIL</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Centre for Innovation</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">ELEVATE 100 GRANT</div>
+              <div className="text-emerald-400 font-bold text-sm mt-1">₹25,00,000</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">100% Equity-Free</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">PATENT SUBSIDY</div>
+              <div className="text-white font-bold text-sm mt-1">₹2,00,000</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">KITS State Policy</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30">
+              <div className="text-amber-400 text-[10px] font-bold">EQUITY CAP</div>
+              <div className="text-amber-400 font-bold text-sm mt-1">0% Dilution</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Non-dilutive student term</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-teal-500/20 text-xs">
+            <div className="font-bold text-white mb-1">💡 Karnataka Startup Policy 2022-2027 Invariant:</div>
+            <p className="text-slate-300">
+              Undergrad engineering founders filing IP via college TBI retain 100% student equity ownership with zero sovereign debt liability.
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

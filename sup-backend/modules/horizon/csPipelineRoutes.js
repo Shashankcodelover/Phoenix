@@ -437,7 +437,21 @@ router.post('/reservations/sports-cultural-quota', (req, res) => {
   }
 });
 
+const { incubatorGrantEngine } = require('./incubatorGrantEngine');
+
+// Feature 60: Karnataka College Incubator Grants & Patent Subsidy
+router.post('/startup/match-incubator-grant', (req, res) => {
+  try {
+    const result = incubatorGrantEngine.matchGrants(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
