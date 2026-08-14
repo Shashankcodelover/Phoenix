@@ -413,7 +413,21 @@ router.post('/verification/validate-study-certificate', (req, res) => {
   }
 });
 
+const { article371JEngine } = require('./article371JEngine');
+
+// Feature 54: Article 371(J) Kalyana-Karnataka Reservation Quota
+router.post('/reservations/article-371j-quota', (req, res) => {
+  try {
+    const result = article371JEngine.evaluateEligibility(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

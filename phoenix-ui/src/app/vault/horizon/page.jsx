@@ -1240,10 +1240,69 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 54: ARTICLE 371(J) KALYANA-KARNATAKA QUOTA
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-orange-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/15 text-orange-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-orange-500/30">
+                ⭐ FEATURE 54 ARTICLE 371(J) HK QUOTA
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🏛️</span> Article 371(J) Kalyana-Karnataka Seat Reservation Radar
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                70% regional quota in 7 HK districts (Kalaburagi, Bidar, Raichur) and 8% statewide quota in Bangalore Tier-1 colleges.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-orange-400 bg-orange-500/10 px-3 py-1 rounded-full border border-orange-500/20">
+                Rank Multiplier: 3.8x Advantage
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-orange-500/30">
+              <div className="text-orange-400 text-[10px] font-bold">STATEWIDE TIER-1</div>
+              <div className="text-white font-bold text-sm mt-1">8% Reserved</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">RVCE, BMSCE, MSRIT</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30">
+              <div className="text-amber-400 text-[10px] font-bold">REGIONAL LOCAL</div>
+              <div className="text-white font-bold text-sm mt-1">70% Reserved</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">7 Kalyana Districts</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">EFFECTIVE RANK</div>
+              <div className="text-emerald-400 font-bold text-sm mt-1">15.2k → ~4,000 GM</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Massive cutoff expansion</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">REQUIRED FORM</div>
+              <div className="text-white font-bold text-sm mt-1">Form-E (AC Office)</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Revenue Sub-Division</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-orange-500/20 text-xs">
+            <div className="font-bold text-white mb-1">📍 7 Eligible Kalyana-Karnataka Districts:</div>
+            <p className="text-slate-300 font-mono">
+              Kalaburagi (Gulbarga) • Bidar • Yadgir • Raichur • Koppal • Ballari (Bellary) • Vijayanagara
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
