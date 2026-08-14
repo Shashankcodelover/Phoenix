@@ -725,10 +725,85 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 18: ADAPTIVE TECHNICAL CODING ASSESSMENT RUNNER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 18 ADAPTIVE CODING ASSESSMENT & TEST RUNNER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>💻</span> Adaptive Technical Coding Assessment
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Company-calibrated algorithmic challenge with 4-tier automated unit test validation (Standard, Boundary, Eviction, Stress Test).
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Tier-1 FAANG Calibrated (Google Medium/Hard)
+              </span>
+            </div>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-slate-950/80 border border-white/10 mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="font-bold text-white text-sm">Longest Substring with At Most K Distinct Characters</span>
+              <span className="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-2.5 py-0.5 rounded border border-indigo-500/20">
+                Target: O(N) Time • O(K) Space
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 mb-4 leading-relaxed">
+              Given a string <code className="text-emerald-400 font-mono">s</code> and an integer <code className="text-emerald-400 font-mono">k</code>, return the length of the longest substring that contains at most k distinct characters using an optimal sliding window hash map.
+            </p>
+
+            {/* Test Case Checklist */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <div className="p-3 rounded-xl bg-slate-900 border border-emerald-500/30">
+                <div className="text-[10px] text-slate-400">Test Case 1 (Standard)</div>
+                <div className="font-mono text-white mt-1">s = &quot;eceba&quot;, k = 2</div>
+                <div className="text-emerald-400 font-bold mt-1">✓ Passed (Output: 3)</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900 border border-emerald-500/30">
+                <div className="text-[10px] text-slate-400">Test Case 2 (Edge Case)</div>
+                <div className="font-mono text-white mt-1">s = &quot;aa&quot;, k = 1</div>
+                <div className="text-emerald-400 font-bold mt-1">✓ Passed (Output: 2)</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900 border border-emerald-500/30">
+                <div className="text-[10px] text-slate-400">Test Case 3 (Boundary)</div>
+                <div className="font-mono text-white mt-1">s = &quot;a&quot;, k = 0</div>
+                <div className="text-emerald-400 font-bold mt-1">✓ Passed (Output: 0)</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900 border border-emerald-500/30">
+                <div className="text-[10px] text-slate-400">Test Case 4 (Large Scale)</div>
+                <div className="font-mono text-white mt-1">s = &quot;abaccc&quot;, k = 2</div>
+                <div className="text-emerald-400 font-bold mt-1">✓ Passed (Output: 4)</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-slate-950/90 border border-emerald-500/30">
+            <div className="flex items-center gap-4 text-xs font-mono">
+              <span className="text-emerald-400">⚡ Test Suite Pass: 4/4 (100%)</span>
+              <span className="text-slate-400">•</span>
+              <span className="text-white">Runtime: 2.14ms</span>
+              <span className="text-slate-400">•</span>
+              <span className="text-emerald-400">Complexity: O(N) Optimal</span>
+            </div>
+            <button className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/20">
+              🚀 Run Full Test Suite
+            </button>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

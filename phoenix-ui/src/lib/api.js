@@ -67,8 +67,11 @@ export const interviewApi = {
   profileAstCode: (payload) => fetchApi('/prep/code/profile-ast', { method: 'POST', body: JSON.stringify(payload) }),
   getSessionHistory: () => fetchApi('/prep/analytics/session-history'),
   recordMockSession: (payload) => fetchApi('/prep/analytics/record-session', { method: 'POST', body: JSON.stringify(payload) }),
-  getInstitutionalTelemetry: () => fetchApi('/prep/telemetry/institutional-dashboard')
+  getInstitutionalTelemetry: () => fetchApi('/prep/telemetry/institutional-dashboard'),
+  generateAssessment: (payload) => fetchApi('/prep/assessment/generate', { method: 'POST', body: JSON.stringify(payload) }),
+  submitAssessment: (payload) => fetchApi('/prep/assessment/submit', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 

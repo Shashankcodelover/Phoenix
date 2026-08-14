@@ -790,7 +790,32 @@ router.get('/telemetry/institutional-dashboard', protect, (req, res) => {
   }
 });
 
+const { adaptiveCodingAssessmentEngine } = require('./adaptiveCodingAssessmentEngine');
+
+
+// ═══════════════════════════════════════════════════════════
+// Feature 18: Adaptive Technical Coding Assessment Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/assessment/generate', protect, (req, res) => {
+  try {
+    const result = adaptiveCodingAssessmentEngine.generateAssessment(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/assessment/submit', protect, (req, res) => {
+  try {
+    const result = adaptiveCodingAssessmentEngine.evaluateSubmission(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
 
 
 
