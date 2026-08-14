@@ -1327,10 +1327,69 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 42: LEETCODE EDGE CASE GENERATOR & EXPLORER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-amber-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-amber-500/30">
+                ⭐ FEATURE 42 LEETCODE EDGE CASE GENERATOR
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🛡️</span> Hidden Test Case &amp; Boundary Edge Case Explorer
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Synthesizes extreme integer overflow triggers, empty arrays, duplicate collisions, and stack depth stress tests.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                Target: Two Sum / Array Pair
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-xs">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30">
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-bold text-white text-sm">Boundary &amp; Signed Overflow</span>
+                <span className="text-amber-400 font-mono text-[10px]">Test Suite 1</span>
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1">
+                <code>nums = [-10^9, 10^9], target = 0</code>
+              </div>
+              <div className="p-2 rounded bg-amber-500/10 text-amber-200 text-[11px] mt-2">
+                ⚠️ Prevents 32-bit signed integer overflow in summation logic.
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-rose-500/30">
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-bold text-white text-sm">Duplicate Key Collisions</span>
+                <span className="text-rose-400 font-mono text-[10px]">Test Suite 2</span>
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1">
+                <code>nums = [3, 3, 3, 3], target = 6</code>
+              </div>
+              <div className="p-2 rounded bg-rose-500/10 text-rose-200 text-[11px] mt-2">
+                ⚠️ Catches hash map overwrites when multiple identical elements exist.
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-amber-500/20 text-xs font-mono">
+            <div className="font-bold text-white mb-1">🛡️ Recommended Production Guard Clause:</div>
+            <code className="text-emerald-400">if (!nums || nums.length &lt; 2) return [];</code>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

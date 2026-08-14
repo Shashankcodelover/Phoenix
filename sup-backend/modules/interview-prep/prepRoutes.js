@@ -1025,7 +1025,23 @@ router.post('/mock-aggregate/calculate-matrix', protect, (req, res) => {
   }
 });
 
+const { edgeCaseExplorerEngine } = require('./edgeCaseExplorerEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 42: LeetCode Edge Case Generator & Explorer Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/code/generate-edge-cases', protect, (req, res) => {
+  try {
+    const result = edgeCaseExplorerEngine.generateEdgeCases(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
