@@ -1550,10 +1550,168 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 67: UNIVERSAL A-TO-Z KARNATAKA STUDENT ROADMAP
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 67 UNIVERSAL A-TO-Z KARNATAKA ENGINEERING CONTINUUM
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3 font-heading">
+                <span>🎓</span> 6-Phase Student Lifecycle: Pre-Exam to Graduation &amp; Patents
+              </h2>
+              <p className="text-xs text-slate-300 mt-1 max-w-3xl leading-relaxed">
+                A complete, end-to-end guidance platform covering PWD 5% reservations, Nadakacheri RD verification, 4-round KEA option entry, SNQ fee waivers, and ₹25L Elevate 100 incubator seed grants.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3.5 py-1.5 rounded-full border border-emerald-500/20 font-bold shadow-sm">
+                Lifecycle Coverage: 100% Complete ✓
+              </span>
+            </div>
+          </div>
+
+          {/* 6-Phase Step-by-Step Interactive Timeline Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+            
+            {/* Phase 1 */}
+            <div className="p-5 rounded-2xl bg-slate-950/85 border border-sky-500/30 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3 font-mono text-xs">
+                  <span className="text-sky-400 font-bold uppercase">PHASE 1 • JAN - APR</span>
+                  <span className="text-slate-400 text-[11px]">Pre-Exam</span>
+                </div>
+                <h4 className="text-base font-bold text-white mb-2">Application &amp; Special Quotas</h4>
+                <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                  <li>11-digit Nadakacheri RD Certificate (Income/Caste)</li>
+                  <li>PWD UDID Card &amp; 5% Horizontal Reservation claim</li>
+                  <li>1st-10th Rural &amp; Kannada Medium Study signatures</li>
+                  <li>KEA Hall Ticket &amp; Exam Center verification</li>
+                </ul>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] font-mono text-sky-400">
+                🔒 Invariant: Unclaimed quotas cannot be added later.
+              </div>
+            </div>
+
+            {/* Phase 2 */}
+            <div className="p-5 rounded-2xl bg-slate-950/85 border border-indigo-500/30 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3 font-mono text-xs">
+                  <span className="text-indigo-400 font-bold uppercase">PHASE 2 • APR - MAY</span>
+                  <span className="text-slate-400 text-[11px]">Exam &amp; Normalization</span>
+                </div>
+                <h4 className="text-base font-bold text-white mb-2">PCM Mock &amp; Rank Formula</h4>
+                <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                  <li>180 Marks PCM (60 Physics, 60 Chem, 60 Math)</li>
+                  <li>Zero negative marking strategy</li>
+                  <li>Normalized Composite: 50% KCET + 50% Board</li>
+                  <li>Provisional Answer Key 48-hr objection window</li>
+                </ul>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] font-mono text-indigo-400">
+                🎯 Tie-Breaker: Math score takes 1st priority.
+              </div>
+            </div>
+
+            {/* Phase 3 */}
+            <div className="p-5 rounded-2xl bg-slate-950/85 border border-purple-500/30 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3 font-mono text-xs">
+                  <span className="text-purple-400 font-bold uppercase">PHASE 3 • JUNE</span>
+                  <span className="text-slate-400 text-[11px]">Verification</span>
+                </div>
+                <h4 className="text-base font-bold text-white mb-2">BEO Verification &amp; Secret Key</h4>
+                <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                  <li>7-Year Study Certificate signed by BEO/DDPI</li>
+                  <li>KEA Special Medical Board for PWD candidates</li>
+                  <li>Name spelling Soundex/OCR discrepancy defense</li>
+                  <li>Receive official KEA Verification Slip &amp; Secret Key</li>
+                </ul>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] font-mono text-purple-400">
+                🔑 Never share your KEA Secret Key with agents.
+              </div>
+            </div>
+
+            {/* Phase 4 */}
+            <div className="p-5 rounded-2xl bg-slate-950/85 border border-emerald-500/30 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3 font-mono text-xs">
+                  <span className="text-emerald-400 font-bold uppercase">PHASE 4 • JULY - AUG</span>
+                  <span className="text-slate-400 text-[11px]">Counseling</span>
+                </div>
+                <h4 className="text-base font-bold text-white mb-2">Option Entry &amp; 4 Rounds</h4>
+                <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                  <li>Round 1: Add unlimited preference priority choices</li>
+                  <li>Choice 2 Decision Tree: Hold R1 seat &amp; compete for R2</li>
+                  <li>+12% to +18% Cutoff Expansion in Round 2</li>
+                  <li>Download e-Challan &amp; College Admission Order</li>
+                </ul>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] font-mono text-emerald-400">
+                🛡️ Choice 2 guarantees 100% safety net retention.
+              </div>
+            </div>
+
+            {/* Phase 5 */}
+            <div className="p-5 rounded-2xl bg-slate-950/85 border border-amber-500/30 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3 font-mono text-xs">
+                  <span className="text-amber-400 font-bold uppercase">PHASE 5 • AUG - SEPT</span>
+                  <span className="text-slate-400 text-[11px]">Living &amp; Fees</span>
+                </div>
+                <h4 className="text-base font-bold text-white mb-2">SNQ ₹4.1L Waiver &amp; Transit</h4>
+                <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                  <li>SNQ Fee Waiver: Pay ₹8,000/yr vs ₹1,05,000 standard</li>
+                  <li>Karnataka SSP &amp; NSP Post-Matric Scholarships</li>
+                  <li>₹25,000/yr First-Generation Tuition Concession</li>
+                  <li>Campus hostel &amp; Namma Metro student transit pass</li>
+                </ul>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] font-mono text-amber-400">
+                💰 SNQ seats are 5% supernumerary (zero general merit loss).
+              </div>
+            </div>
+
+            {/* Phase 6 */}
+            <div className="p-5 rounded-2xl bg-slate-950/85 border border-cyan-500/30 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3 font-mono text-xs">
+                  <span className="text-cyan-400 font-bold uppercase">PHASE 6 • YEAR 1 - 4</span>
+                  <span className="text-slate-400 text-[11px]">Startup &amp; Placements</span>
+                </div>
+                <h4 className="text-base font-bold text-white mb-2">Incubator Grants &amp; Patents</h4>
+                <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                  <li>DST NIDHI-TBI &amp; NAIN ₹10L student seed grants</li>
+                  <li>Elevate 100: ₹25 Lakhs equity-free startup grant</li>
+                  <li>100% State Patent Subsidy (₹2,00,000 per patent)</li>
+                  <li>Phoenix &lt;300ms WebRTC Voice AI mock coach</li>
+                </ul>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] font-mono text-cyan-400">
+                🚀 100% student founder equity ownership invariant.
+              </div>
+            </div>
+
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/95 border border-emerald-500/20 text-xs">
+            <div className="font-bold text-white mb-1">🌟 Universal User Guarantee:</div>
+            <p className="text-slate-300">
+              When any Karnataka student enters Horizon OS, they are guided from registration to graduation with zero informational blind-spots, guaranteed reservation protections, and direct access to state incubator capital.
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

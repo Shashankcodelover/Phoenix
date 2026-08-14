@@ -63,8 +63,10 @@ export const horizonApi = {
   evaluateSportsCulturalQuota: (payload) => fetchApi('/horizon/reservations/sports-cultural-quota', { method: 'POST', body: JSON.stringify(payload) }),
   matchIncubatorGrants: (payload) => fetchApi('/horizon/startup/match-incubator-grant', { method: 'POST', body: JSON.stringify(payload) }),
   validateKeaDocumentOcr: (payload) => fetchApi('/horizon/verification/validate-document-ocr', { method: 'POST', body: JSON.stringify(payload) }),
-  evaluateSeatRetentionStrategy: (payload) => fetchApi('/horizon/reservations/seat-retention-strategy', { method: 'POST', body: JSON.stringify(payload) })
+  evaluateSeatRetentionStrategy: (payload) => fetchApi('/horizon/reservations/seat-retention-strategy', { method: 'POST', body: JSON.stringify(payload) }),
+  generateStudentRoadmap: (payload) => fetchApi('/horizon/journey/complete-roadmap', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 // Vault 2: Placement & Voice AI APIs
 export const interviewApi = {

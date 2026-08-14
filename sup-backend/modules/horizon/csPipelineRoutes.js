@@ -473,7 +473,21 @@ router.post('/reservations/seat-retention-strategy', (req, res) => {
   }
 });
 
+const { karnatakaStudentJourneyEngine } = require('./karnatakaStudentJourneyEngine');
+
+// Feature 67: Karnataka Engineering Student A-to-Z Universal Roadmap
+router.post('/journey/complete-roadmap', (req, res) => {
+  try {
+    const result = karnatakaStudentJourneyEngine.generateCompleteRoadmap(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
