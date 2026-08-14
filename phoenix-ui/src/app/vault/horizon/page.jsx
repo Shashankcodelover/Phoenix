@@ -427,9 +427,76 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 15: REGIONAL LANGUAGE VOICE COACH (KANNADA/HINDI)
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
+                ⭐ FEATURE 15 VERNACULAR AUDIO COACH (KANNADA & HINDI)
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🗣️</span> ಪ್ರಾದೇಶಿಕ ಭಾಷಾ ಮಾರ್ಗದರ್ಶನ • Regional Voice Coach
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Bilingual voice coaching for Karnataka Pre-University and Rural Diploma candidates with real-time technical vocabulary bridging.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Active: ಕನ್ನಡ (Kannada)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Vernacular Audio & Translation */}
+            <div className="p-5 rounded-2xl bg-slate-950/80 border border-sky-500/20">
+              <div className="flex items-center justify-between mb-3 text-xs">
+                <span className="font-bold text-white flex items-center gap-2">
+                  <span>🎙️</span> ಕನ್ನಡ ಆಡಿಯೋ ಪ್ರಾಂಪ್ಟ್ (KCET Counseling Guidance):
+                </span>
+                <span className="text-[10px] font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">92% Vernacular Comprehension</span>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-slate-900 border border-white/5 font-sans text-xs text-slate-200 leading-relaxed mb-3">
+                &quot;ನಮಸ್ಕಾರ! ನಿಮ್ಮ KCET ರ್ಯಾಂಕ್ 2,000 ರ ಒಳಗಿದ್ದರೆ, ಮೊದಲ ಸುತ್ತಿನಲ್ಲಿ RVCE ಕಂಪ್ಯೂಟರ್ ಸೈನ್ಸ್ (CSE) ಅಥವಾ ಮಾಹಿತಿ ವಿಜ್ಞಾನ (ISE) ಅನ್ನು ಮೊದಲ ಆದ್ಯತೆಯಾಗಿ (Option #1) ಇರಿಸಿ. ಎರಡನೇ ಆಯ್ಕೆಯಾಗಿ BMSCE CSE ಆಯ್ಕೆಮಾಡಿ.&quot;
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-900/60 border border-white/5 text-[11px] text-slate-400">
+                <span className="font-semibold text-sky-400">English Bridge:</span> &quot;Hello! If your KCET rank is within 2,000, place RVCE CSE or ISE as Option #1 in Round 1. Place BMSCE CSE as Option #2.&quot;
+              </div>
+            </div>
+
+            {/* Technical Vocabulary Bridge */}
+            <div className="p-5 rounded-2xl bg-slate-950/80 border border-sky-500/20">
+              <div className="text-xs font-bold text-white mb-3 flex items-center gap-2">
+                <span>📚</span> Cross-Lingual Technical Vocabulary Bridge:
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-white/5 text-xs">
+                  <span className="font-semibold text-white">ಆಯ್ಕೆ ನಮೂದು</span>
+                  <span className="text-emerald-400 font-mono text-[11px]">Option Entry (KEA Portal)</span>
+                </div>
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-white/5 text-xs">
+                  <span className="font-semibold text-white">ಮೊದಲ ಸುತ್ತಿನ ಕೌನ್ಸೆಲಿಂಗ್</span>
+                  <span className="text-sky-400 font-mono text-[11px]">Round 1 Seat Allotment</span>
+                </div>
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-white/5 text-xs">
+                  <span className="font-semibold text-white">ಶುಲ್ಕ ವಿನಾಯಿತಿ (SNQ)</span>
+                  <span className="text-emerald-400 font-mono text-[11px]">Supernumerary Quota Fee Waiver</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 

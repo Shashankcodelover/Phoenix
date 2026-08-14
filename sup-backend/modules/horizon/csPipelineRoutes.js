@@ -227,7 +227,21 @@ router.post('/mentors/dispatch-question', (req, res) => {
   }
 });
 
+const { regionalVoiceCoachEngine } = require('./regionalVoiceCoachEngine');
+
+// Feature 15: Regional Language Voice & Guidance Coach (Kannada & Hindi)
+router.post('/vernacular/guidance', (req, res) => {
+  try {
+    const result = regionalVoiceCoachEngine.processVernacularGuidance(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
