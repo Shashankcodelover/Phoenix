@@ -8,6 +8,12 @@ const fs = require('fs');
 // FIX REJECTION #4: Do NOT write to the filesystem on boot.
 // In read-only containers (K8s, Docker, Fargate), fs.appendFileSync crashes the process.
 // Instead, generate secrets in-memory only and warn the operator.
+// Enforce production security invariants
+if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+  console.error('[FATAL SECURITY ERROR]: JWT_SECRET must be explicitly defined in production environment.');
+  process.exit(1);
+}
+
 if (!process.env.JWT_SECRET) {
   process.env.JWT_SECRET = crypto.randomBytes(32).toString('hex');
   console.warn('[Security Warning]: JWT_SECRET not found in .env. Generated ephemeral secret (will not persist across restarts). Set JWT_SECRET in your environment.');
@@ -17,6 +23,7 @@ if (!process.env.WEBHOOK_SECRET) {
   process.env.WEBHOOK_SECRET = crypto.randomBytes(32).toString('hex');
   console.warn('[Security Warning]: WEBHOOK_SECRET not found in .env. Generated ephemeral secret.');
 }
+
 
 const connectDB = require('./config/db');
 
@@ -165,12 +172,16 @@ const { sastPayloadGuard } = require('./middleware/sastPayloadGuard');
 const aiRateLimiter = createRateLimiter({ windowMs: 60000, maxRequests: 15, message: 'AI endpoint rate limit exceeded. Max 15 requests per minute.' });
 const tokenBucketLimiter = createTokenBucketLimiter({ capacity: 60, refillRatePerSec: 5, keyPrefix: 'api' });
 
-// Google-Standard Security Headers
+// Google-Standard Security Headers & CSP
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' ws: wss:; font-src 'self' https://fonts.gstatic.com; object-src 'none';"
+  );
   next();
 });
 
@@ -181,32 +192,42 @@ app.use('/api', createPromptShield({ maxPayloadBytes: 50 * 1024, sanitize: true,
 app.use('/api/v1/prep', sastPayloadGuard);
 app.use('/api/v1/horizon/security', sastPayloadGuard);
 
-// Health & Telemetry Status Endpoint
+// Cached Health & Telemetry Status Endpoint (5-second TTL to prevent L7 CPU DoS)
+let cachedHealthTelemetry = null;
+let lastHealthCheckTimestamp = 0;
+
 const getHealthStatus = (req, res) => {
-  res.json({
-    status: 'HEALTHY',
-    version: '16.0.0',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    memoryUsage: process.memoryUsage(),
-    activeArchitecture: {
-      triPillar: [
-        'Pillar 1: Placement & Interview Preparation OS',
-        'Pillar 2: Hackathon Builder Defense Engine',
-        'Pillar 3: Phoenix Horizon Universal Career Foundation'
-      ],
-      securityGuards: [
-        'Token Bucket Rate Limiter with Memory Leak Safeguard',
-        'Automated SAST Security Payload Scanner',
-        'Code Playback & Reasoning Integrity Inspector',
-        'Zero-Trust Input Injection Shield'
-      ]
-    }
-  });
+  const now = Date.now();
+  if (!cachedHealthTelemetry || now - lastHealthCheckTimestamp > 5000) {
+    cachedHealthTelemetry = {
+      status: 'HEALTHY',
+      version: '16.0.0',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      memoryUsage: process.memoryUsage(),
+      activeArchitecture: {
+        triPillar: [
+          'Pillar 1: Placement & Interview Preparation OS',
+          'Pillar 2: Hackathon Builder Defense Engine',
+          'Pillar 3: Phoenix Horizon Universal Career Foundation'
+        ],
+        securityGuards: [
+          'Token Bucket Rate Limiter with Memory Leak Safeguard',
+          'Automated SAST Security Payload Scanner',
+          'Code Playback & Reasoning Integrity Inspector',
+          'Zero-Trust Input Injection Shield',
+          'SSRF-Protected Outbound Webhook Relay'
+        ]
+      }
+    };
+    lastHealthCheckTimestamp = now;
+  }
+  res.json(cachedHealthTelemetry);
 };
 
 app.get('/api/v1/health', getHealthStatus);
 app.get('/api/health', getHealthStatus);
+
 
 // API Versioning
 app.use('/api/v1/hackathons', hackathonRoutes);
