@@ -859,10 +859,74 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 22: AI BEHAVIORAL STAR STORY REFINER & METRICS
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 22 AI BEHAVIORAL STAR STORY REFINER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🌟</span> AI Behavioral STAR Story Refiner &amp; Power Metric Injector
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Converts unstructured project anecdotes into executive-grade STAR narratives with auto-injected quantifiable engineering metrics.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Impact Score: 95/100 (FAANG High-Impact)
+              </span>
+            </div>
+          </div>
+
+          {/* 4-Pillar STAR Breakdown */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/5">
+              <div className="text-xs font-mono text-sky-400 font-bold uppercase mb-1">📍 Situation (Scale &amp; Context)</div>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                During peak festive traffic, our distributed payment microservice experienced high latency (420ms P99) and database connection pool exhaustion under 45,000 requests/minute.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/5">
+              <div className="text-xs font-mono text-indigo-400 font-bold uppercase mb-1">🎯 Task (Architectural Mandate)</div>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                As the backend lead, I was tasked with eliminating database bottlenecks and restoring sub-100ms response times without increasing cloud compute costs.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/5">
+              <div className="text-xs font-mono text-purple-400 font-bold uppercase mb-1">⚡ Action (Engineering Interventions)</div>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                I architected a two-tier in-memory Redis LRU caching layer with connection pooling, automated stale-while-revalidate invalidation, and circuit breaker fallbacks.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-xs font-mono text-emerald-400 font-bold uppercase mb-1">🏆 Result (Quantified Power Metrics)</div>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Reduced P99 API latency by 76% (from 420ms to 98ms), eliminated database deadlocks (0% dropped transactions), and sustained 60,000 RPS at 99.99% availability.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/20 text-xs">
+            <div className="font-bold text-white mb-2">💡 Voice Coach Executive Delivery Tip:</div>
+            <p className="text-slate-300">
+              &quot;Lead with the metric in the Result phase (e.g., &apos;The direct outcome was a 76% reduction in P99 latency...&apos;) to immediately capture executive recruiter attention.&quot;
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

@@ -842,7 +842,23 @@ router.post('/audio/waveform-analyze', protect, (req, res) => {
   }
 });
 
+const { starStoryRefinerEngine } = require('./starStoryRefinerEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 22: AI Behavioral STAR Story Refiner & Metric Injector
+// ═══════════════════════════════════════════════════════════
+router.post('/star/refine-story', protect, (req, res) => {
+  try {
+    const result = starStoryRefinerEngine.refineBehavioralStory(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
