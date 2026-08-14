@@ -133,8 +133,10 @@ export const hackathonApi = {
   getPitchTimerConfig: (timerPayload) => fetchApi('/prep/pitch/timer-config', { method: 'POST', body: JSON.stringify(timerPayload || {}) }),
   matchSponsorBounties: (payload) => fetchApi('/prep/hackathon/sponsor-bounties/match', { method: 'POST', body: JSON.stringify(payload) }),
   searchWinningSolutionsRag: (payload) => fetchApi('/prep/hackathon/solutions/rag-search', { method: 'POST', body: JSON.stringify(payload) }),
-  generateStageDemoScript: (payload) => fetchApi('/prep/hackathon/stage-demo/generate-script', { method: 'POST', body: JSON.stringify(payload) })
+  generateStageDemoScript: (payload) => fetchApi('/prep/hackathon/stage-demo/generate-script', { method: 'POST', body: JSON.stringify(payload) }),
+  generateJudgeCounterDefense: (payload) => fetchApi('/prep/hackathon/judge-objections/generate-counter-defense', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 

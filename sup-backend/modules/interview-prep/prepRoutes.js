@@ -997,7 +997,23 @@ router.post('/lld/generate-scaffold', protect, (req, res) => {
   }
 });
 
+const { judgeObjectionEngine } = require('../hackathon-agent/judgeObjectionEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 38: Live Judge Q&A Objection & Counter-Defense
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/judge-objections/generate-counter-defense', protect, (req, res) => {
+  try {
+    const result = judgeObjectionEngine.generateCounterDefense(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
