@@ -550,10 +550,67 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 25: 5-YEAR KARNATAKA COLLEGE CUTOFF EXPLORER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
+                ⭐ FEATURE 25 5-YEAR COLLEGE CUTOFF EXPLORER &amp; FORECASTER
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🏛️</span> Tier-1/2/3 Karnataka 5-Year Cutoff Explorer (2022–2026)
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Explore longitudinal KCET closing rank shifts across RVCE, BMSCE, MSRIT, PES, and UVCE with Safe/Target/Reach probability bands.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-sky-400 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20">
+                Institution: RV College of Engineering (Tier-1 Elite)
+              </span>
+            </div>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-slate-950/80 border border-white/10 mb-6">
+            <div className="text-xs font-bold text-white mb-3">5-Year Closing Rank Shift (RVCE):</div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div className="p-3.5 rounded-xl bg-slate-900 border border-white/5">
+                <div className="text-slate-400 text-[10px] uppercase font-mono">Computer Science (CSE)</div>
+                <div className="text-lg font-mono font-bold text-emerald-400 mt-1">1,850 Closing</div>
+                <div className="text-[10px] text-slate-400 mt-1">History: 1420 ➔ 1580 ➔ 1690 ➔ 1850</div>
+                <div className="text-[10px] text-emerald-400 font-mono mt-0.5">Tightening (+6.8% YoY)</div>
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-900 border border-white/5">
+                <div className="text-slate-400 text-[10px] uppercase font-mono">Information Science (ISE)</div>
+                <div className="text-lg font-mono font-bold text-sky-400 mt-1">2,800 Closing</div>
+                <div className="text-[10px] text-slate-400 mt-1">History: 2200 ➔ 2450 ➔ 2600 ➔ 2800</div>
+                <div className="text-[10px] text-sky-400 font-mono mt-0.5">High Demand Tier</div>
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-900 border border-white/5">
+                <div className="text-slate-400 text-[10px] uppercase font-mono">Electronics (ECE)</div>
+                <div className="text-lg font-mono font-bold text-purple-400 mt-1">4,200 Closing</div>
+                <div className="text-[10px] text-slate-400 mt-1">History: 3400 ➔ 3700 ➔ 3950 ➔ 4200</div>
+                <div className="text-[10px] text-purple-400 font-mono mt-0.5">Stable Benchmark</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-sky-500/20 flex items-center justify-between text-xs">
+            <span className="text-slate-300">Your Rank (2,140) Probability for RVCE ISE:</span>
+            <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold border border-emerald-500/30">
+              Safe / High Probability (98% Direct Round 1)
+            </span>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

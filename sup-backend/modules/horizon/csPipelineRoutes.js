@@ -251,7 +251,30 @@ router.post('/option-entry/simulate-allotment', (req, res) => {
   }
 });
 
+const { collegeCutoffExplorerEngine } = require('./collegeCutoffExplorerEngine');
+
+// Feature 25: 5-Year Karnataka College Cutoff Explorer & Trend Forecaster
+router.get('/colleges/cutoff-trends', (req, res) => {
+  try {
+    const result = collegeCutoffExplorerEngine.getCutoffTrends(req.query.collegeCode);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
+router.post('/colleges/predict-admission-chances', (req, res) => {
+  try {
+    const result = collegeCutoffExplorerEngine.predictAdmissionChances(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
