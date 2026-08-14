@@ -931,7 +931,23 @@ router.post('/hackathon/solutions/rag-search', protect, (req, res) => {
   }
 });
 
+const { blindSpotRadarEngine } = require('./blindSpotRadarEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 32: Algorithm Blind-Spot Radar & Diagnostic Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/blind-spots/analyze-radar', protect, (req, res) => {
+  try {
+    const result = blindSpotRadarEngine.analyzeBlindSpotRadar(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

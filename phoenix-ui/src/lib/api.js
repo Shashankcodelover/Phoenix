@@ -86,8 +86,10 @@ export const interviewApi = {
   analyzeAudioWaveform: (payload) => fetchApi('/prep/audio/waveform-analyze', { method: 'POST', body: JSON.stringify(payload) }),
   refineStarStory: (payload) => fetchApi('/prep/star/refine-story', { method: 'POST', body: JSON.stringify(payload) }),
   estimateSystemCostSla: (payload) => fetchApi('/prep/system-design/cost-sla-estimate', { method: 'POST', body: JSON.stringify(payload) }),
-  simulateCrisisScenario: (payload) => fetchApi('/prep/crisis/simulate-scenario', { method: 'POST', body: JSON.stringify(payload) })
+  simulateCrisisScenario: (payload) => fetchApi('/prep/crisis/simulate-scenario', { method: 'POST', body: JSON.stringify(payload) }),
+  analyzeBlindSpotRadar: (payload) => fetchApi('/prep/blind-spots/analyze-radar', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 

@@ -1065,10 +1065,90 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 32: ALGORITHM BLIND-SPOT RADAR & WEAK PATTERNS
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-rose-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 text-rose-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-rose-500/30">
+                ⭐ FEATURE 32 ALGORITHM BLIND-SPOT RADAR
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🎯</span> Algorithm Blind-Spot Radar &amp; Weak Pattern Diagnostic
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Monitors candidate mastery across 10 core algorithmic paradigms to eliminate high-risk blind spots before FAANG coding loops.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-rose-400 bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">
+                2 Critical Blind Spots Flagged
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 text-xs font-mono">
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-white font-bold">Sliding Window</span>
+                <span className="text-emerald-400 font-bold">95%</span>
+              </div>
+              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-emerald-400 h-full w-[95%]"></div>
+              </div>
+              <div className="text-[10px] text-emerald-400 mt-1">✓ FAANG Mastered</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-white font-bold">Dijkstra Shortest</span>
+                <span className="text-emerald-400 font-bold">85%</span>
+              </div>
+              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-emerald-400 h-full w-[85%]"></div>
+              </div>
+              <div className="text-[10px] text-emerald-400 mt-1">✓ High Proficiency</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-rose-500/50 bg-rose-500/5">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-white font-bold">Bitmask DP</span>
+                <span className="text-rose-400 font-bold">42%</span>
+              </div>
+              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-rose-400 h-full w-[42%]"></div>
+              </div>
+              <div className="text-[10px] text-rose-400 mt-1">🚨 Critical Blind Spot</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-rose-500/50 bg-rose-500/5">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-white font-bold">Segment Trees</span>
+                <span className="text-rose-400 font-bold">38%</span>
+              </div>
+              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-rose-400 h-full w-[38%]"></div>
+              </div>
+              <div className="text-[10px] text-rose-400 mt-1">🚨 Critical Blind Spot</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-rose-500/20 text-xs">
+            <div className="font-bold text-white mb-2">🚀 Targeted Remediation Practice Protocol:</div>
+            <ul className="text-slate-300 space-y-1 list-disc list-inside">
+              <li><strong>Bitmask DP:</strong> Solve <em>LeetCode 847: Shortest Path Visiting All Nodes</em> (Prune redundant vertex sets).</li>
+              <li><strong>Segment Trees:</strong> Solve <em>LeetCode 307: Range Sum Query - Mutable</em> ($O(\log N)$ interval updates).</li>
+            </ul>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
