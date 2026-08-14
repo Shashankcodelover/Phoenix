@@ -1204,8 +1204,6 @@ router.post('/audio/noise-filter-compensate', protect, (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
-
 const { pwaOfflineTeleprompterEngine } = require('../hackathon-agent/pwaOfflineTeleprompterEngine');
 
 // ═══════════════════════════════════════════════════════════
@@ -1220,7 +1218,37 @@ router.post('/hackathon/offline/generate-pwa-bundle', protect, (req, res) => {
   }
 });
 
+const { eventDrivenOutboxEngine } = require('./eventDrivenOutboxEngine');
+
+
+// ═══════════════════════════════════════════════════════════
+// Feature 65: Event-Driven Transactional Outbox & Idempotency Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/system-design/simulate-transactional-outbox', protect, (req, res) => {
+  try {
+    const result = eventDrivenOutboxEngine.simulateOutboxRelay(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+const { pitchStoryboardEngine } = require('../hackathon-agent/pitchStoryboardEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 66: AI Pitch Video Storyboard & WebVTT Subtitle Generator
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/video/generate-pitch-storyboard', protect, (req, res) => {
+  try {
+    const result = pitchStoryboardEngine.generateStoryboard(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
 
 
 

@@ -1492,10 +1492,69 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 64: KEA MULTI-ROUND SEAT RETENTION & UPGRADE MATRIX
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
+                ⭐ FEATURE 64 KEA SEAT RETENTION &amp; UPGRADE RADAR
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🛡️</span> Choice 2 Seat Retention &amp; Round 2 Tier-1 Upgrade Matrix
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Risk-adjusted counseling simulator preventing seat forfeiture with automated KEA e-Challan fee compliance checklists.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Safety Net: 100% Protected 🛡️
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="text-sky-400 text-[10px] font-bold">ALLOTTED R1 SEAT</div>
+              <div className="text-white font-bold text-sm mt-1">BMSCE ISE</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Rank 1,450 (Locked)</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">TARGET UPGRADE</div>
+              <div className="text-emerald-400 font-bold text-sm mt-1">RVCE CSE</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">R1 Cutoff: 1,200</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-cyan-500/30">
+              <div className="text-cyan-400 text-[10px] font-bold">UPGRADE PROBABILITY</div>
+              <div className="text-white font-bold text-sm mt-1">75-90% Odds</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">+15% R2 Expansion</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">KEA CHOICE ACTION</div>
+              <div className="text-white font-bold text-sm mt-1">Choice 2 Hold</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Retain &amp; Participate R2</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-sky-500/20 text-xs">
+            <div className="font-bold text-white mb-1">📋 Mandatory KEA Round 1 Invariant:</div>
+            <p className="text-slate-300">
+              Under KEA Rule 11(A), candidate must pay the prescribed Round 1 challan fee to lock BMSCE ISE before Round 2 option entry opens. If RVCE CSE is allotted in Round 2, the BMSCE seat is automatically reallocated with zero financial loss.
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

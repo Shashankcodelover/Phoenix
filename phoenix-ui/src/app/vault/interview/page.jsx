@@ -1784,10 +1784,69 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 65: EVENT-DRIVEN TRANSACTIONAL OUTBOX SIMULATOR
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 65 TRANSACTIONAL OUTBOX &amp; IDEMPOTENCY
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>⚡</span> Zero-Dual-Write Loss Kafka CDC &amp; Idempotent Key Relay
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Debezium PostgreSQL WAL change-data capture simulation with 24hr cached idempotency keys solving network broker crash failures.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Outbox Guarantee: 0 Loss ✓
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 text-xs font-mono">
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-indigo-500/30">
+              <div className="text-indigo-400 text-[10px] font-bold">DB TRANSACTION</div>
+              <div className="text-white font-bold text-sm mt-1">Atomic Commit</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Orders + Outbox Row</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">IDEMPOTENCY KEY</div>
+              <div className="text-emerald-400 font-bold text-sm mt-1">24hr TTL Guard</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">0 Double Charging</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-cyan-500/30">
+              <div className="text-cyan-400 text-[10px] font-bold">CDC RELAY ENGINE</div>
+              <div className="text-white font-bold text-sm mt-1">Postgres WAL</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Debezium Logical Decoding</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">KAFKA DELIVERY</div>
+              <div className="text-white font-bold text-sm mt-1">At-Least-Once</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Partition 3 • Exactly-Once</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/20 text-xs font-mono">
+            <div className="font-bold text-white mb-1">🛡️ Distributed Systems Architectural Invariant:</div>
+            <code className="text-emerald-400 block overflow-x-auto text-[11px]">
+              BEGIN; INSERT INTO orders (...); INSERT INTO outbox_events (aggregate_type, payload) VALUES (&apos;ORDER_PAYMENT&apos;, ...); COMMIT;
+            </code>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

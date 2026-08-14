@@ -461,7 +461,20 @@ router.post('/verification/validate-document-ocr', (req, res) => {
   }
 });
 
+const { seatRetentionStrategyEngine } = require('./seatRetentionStrategyEngine');
+
+// Feature 64: KEA Multi-Round Seat Retention vs Upgrade Strategy
+router.post('/reservations/seat-retention-strategy', (req, res) => {
+  try {
+    const result = seatRetentionStrategyEngine.evaluateRetentionStrategy(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
 
 
 

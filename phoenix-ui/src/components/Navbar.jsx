@@ -14,10 +14,10 @@ export default function Navbar({ activeVault = null }) {
           </div>
           <div>
             <div className="font-heading font-extrabold text-lg text-white flex items-center gap-2 tracking-tight">
-              PHOENIX <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-400 border border-sky-500/30 font-bold">APEX v24.0</span>
+              PHOENIX <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-400 border border-sky-500/30 font-bold">APEX v25.0</span>
             </div>
             <div className="text-[10px] font-mono text-slate-400 tracking-wider flex items-center gap-1.5">
-              <span>63 ENGINES</span>
+              <span>66 ENGINES</span>
               <span className="text-slate-600">•</span>
               <span className="text-emerald-400">3 PILLARS</span>
             </div>
@@ -35,7 +35,7 @@ export default function Navbar({ activeVault = null }) {
             }`}
           >
             <span className="text-sm">🌅</span> Vault 1: Horizon
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">21</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">22</span>
           </Link>
 
           <Link
@@ -47,7 +47,7 @@ export default function Navbar({ activeVault = null }) {
             }`}
           >
             <span className="text-sm">💼</span> Vault 2: Placement AI
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">21</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">22</span>
           </Link>
 
           <Link
@@ -59,9 +59,10 @@ export default function Navbar({ activeVault = null }) {
             }`}
           >
             <span className="text-sm">🏆</span> Vault 3: Hackathon OS
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">21</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">22</span>
           </Link>
         </nav>
+
 
         {/* Real-Time Live Status Pill */}
         <div className="flex items-center gap-3">
