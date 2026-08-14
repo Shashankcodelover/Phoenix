@@ -828,7 +828,23 @@ router.post('/hackathon/team/synergy-analyze', protect, (req, res) => {
   }
 });
 
+const { audioWaveformPitchEngine } = require('./audioWaveformPitchEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 20: WebRTC Audio Waveform & Vocal Pitch Gauge
+// ═══════════════════════════════════════════════════════════
+router.post('/audio/waveform-analyze', protect, (req, res) => {
+  try {
+    const result = audioWaveformPitchEngine.analyzeWaveformTelemetry(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
