@@ -945,7 +945,23 @@ router.post('/blind-spots/analyze-radar', protect, (req, res) => {
   }
 });
 
+const { demoScriptFallbackEngine } = require('../hackathon-agent/demoScriptFallbackEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 33: Stage Demo Click-Through Script & Fallback
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/stage-demo/generate-script', protect, (req, res) => {
+  try {
+    const result = demoScriptFallbackEngine.generateDemoScript(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

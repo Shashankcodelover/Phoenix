@@ -833,10 +833,71 @@ export default function HackathonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 33: STAGE DEMO CLICK-THROUGH SCRIPT & FALLBACK
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-amber-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-amber-500/30">
+                ⭐ FEATURE 33 STAGE DEMO CLICK-THROUGH SCRIPT
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🎬</span> Stage Demo Click-Through Script &amp; Live Fallback Automator
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Synchronized 7-beat stage presentation click sequence with fail-safe zero-latency offline mock triggers.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                7 Beats • 180s Total Stage Duration
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 text-xs">
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-white/10">
+              <div className="text-amber-400 font-mono text-[10px]">BEAT 1 • 0:00 - 0:25</div>
+              <div className="text-white font-bold mt-1">Persona Pain Hook</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Landing page problem statement</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-white/10">
+              <div className="text-amber-400 font-mono text-[10px]">BEAT 2 • 0:25 - 0:55</div>
+              <div className="text-white font-bold mt-1">Live AI Voice Action</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Sub-300ms speech synthesis test</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 font-mono text-[10px]">BEAT 3 • 0:55 - 1:30</div>
+              <div className="text-white font-bold mt-1">AST Technical WOW Moat</div>
+              <div className="text-emerald-400 text-[11px] mt-0.5">★ Real-time O(N^3) warning flash</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 font-mono text-[10px]">BEAT 4 • 1:30 - 2:00</div>
+              <div className="text-white font-bold mt-1">Chaos Resiliency Demo</div>
+              <div className="text-purple-400 text-[11px] mt-0.5">Kill server node live on stage</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-amber-500/20 text-xs">
+            <div className="font-bold text-white mb-2">🛡️ Zero-Latency Fail-Safe Fallbacks:</div>
+            <ul className="text-slate-300 space-y-1 list-disc list-inside">
+              <li><strong>Wi-Fi Drops:</strong> Auto-route to <code>localhost:5000</code> in-memory cache (0ms latency).</li>
+              <li><strong>API 429 Throttle:</strong> Fall back immediately to deterministic local multi-key round-robin rules.</li>
+              <li><strong>Projector Glitch:</strong> Activate pre-rendered 60fps WebP animated session walkthrough.</li>
+            </ul>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

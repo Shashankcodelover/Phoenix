@@ -121,8 +121,10 @@ export const hackathonApi = {
   analyzeTeamSynergy: (teamData) => fetchApi('/prep/hackathon/team/synergy-analyze', { method: 'POST', body: JSON.stringify(teamData) }),
   getPitchTimerConfig: (timerPayload) => fetchApi('/prep/pitch/timer-config', { method: 'POST', body: JSON.stringify(timerPayload || {}) }),
   matchSponsorBounties: (payload) => fetchApi('/prep/hackathon/sponsor-bounties/match', { method: 'POST', body: JSON.stringify(payload) }),
-  searchWinningSolutionsRag: (payload) => fetchApi('/prep/hackathon/solutions/rag-search', { method: 'POST', body: JSON.stringify(payload) })
+  searchWinningSolutionsRag: (payload) => fetchApi('/prep/hackathon/solutions/rag-search', { method: 'POST', body: JSON.stringify(payload) }),
+  generateStageDemoScript: (payload) => fetchApi('/prep/hackathon/stage-demo/generate-script', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 
