@@ -341,7 +341,21 @@ router.post('/management-quota/calculate-fees', (req, res) => {
   }
 });
 
+const { vtuCgpaCalculatorEngine } = require('./vtuCgpaCalculatorEngine');
+
+// Feature 39: VTU CBCS CGPA to Percentage & Eligibility Converter
+router.post('/vtu/cgpa-converter', (req, res) => {
+  try {
+    const result = vtuCgpaCalculatorEngine.convertCgpa(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

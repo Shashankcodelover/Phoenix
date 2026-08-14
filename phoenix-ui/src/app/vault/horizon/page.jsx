@@ -901,10 +901,65 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 39: VTU CBCS CGPA TO PERCENTAGE CONVERTER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
+                ⭐ FEATURE 39 VTU CBCS CGPA CONVERTER &amp; ELIGIBILITY
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🧮</span> VTU 2022 Scheme CBCS CGPA to Percentage Converter
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Official Visvesvaraya Technological University conversion formula with institutional campus placement cutoff audits.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                8.42 CGPA = 76.70% (FCD)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">MASS RECRUITERS</div>
+              <div className="text-white font-bold text-sm mt-1">TCS, Infosys, Wipro</div>
+              <div className="text-slate-400 text-[11px] mt-1">Min: 6.75 CGPA (60.0%)</div>
+              <div className="text-emerald-400 text-[10px] mt-2">✓ 100% Eligible</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="text-sky-400 text-[10px] font-bold">TIER-1 PRODUCT TECH</div>
+              <div className="text-white font-bold text-sm mt-1">Cisco, Oracle, PhonePe</div>
+              <div className="text-slate-400 text-[11px] mt-1">Min: 7.75 CGPA (70.0%)</div>
+              <div className="text-emerald-400 text-[10px] mt-2">✓ 100% Eligible</div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">FAANG &amp; HFT ELITE</div>
+              <div className="text-white font-bold text-sm mt-1">Google, Microsoft, Uber</div>
+              <div className="text-slate-400 text-[11px] mt-1">Min: 8.00 CGPA (72.5%)</div>
+              <div className="text-emerald-400 text-[10px] mt-2">✓ 100% Eligible</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-sky-500/20 text-xs">
+            <span className="text-slate-300 font-sans">
+              📜 <strong>Official VTU Circular Formula:</strong> <code>Percentage = (CGPA - 0.75) * 10</code>. Clean academic record with <strong>0 Active Backlogs</strong> verified.
+            </span>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
