@@ -1657,10 +1657,69 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 58: DISTRIBUTED RATE LIMITER & TOKEN BUCKET
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-cyan-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-cyan-500/30">
+                ⭐ FEATURE 58 DISTRIBUTED RATE LIMITER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>⏱️</span> Sliding Window Counter &amp; Token Bucket Simulator
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Atomic Redis Lua script generator with HTTP 429 Retry-After calculators and race-condition free token refill models.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">
+                Limit: 100 req/s • Burst: 150
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 text-xs font-mono">
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-cyan-500/30">
+              <div className="text-cyan-400 text-[10px] font-bold">ALGORITHM</div>
+              <div className="text-white font-bold text-sm mt-1">Sliding Window</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Redis Sorted Sets</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-amber-500/30">
+              <div className="text-amber-400 text-[10px] font-bold">TRAFFIC SURGE</div>
+              <div className="text-amber-400 font-bold text-sm mt-1">280 RPS</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Spike over capacity</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-rose-500/30">
+              <div className="text-rose-400 text-[10px] font-bold">RATE LIMIT STATUS</div>
+              <div className="text-rose-400 font-bold text-sm mt-1">HTTP 429 🛑</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Retry-After: 1s</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">FORWARDED / DROPPED</div>
+              <div className="text-emerald-400 font-bold text-sm mt-1">100 / 180 RPS</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Zero downstream outage</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-cyan-500/20 text-xs font-mono">
+            <div className="font-bold text-white mb-1">⚡ Atomic Redis Lua Execution Invariant:</div>
+            <code className="text-emerald-400 block overflow-x-auto text-[11px]">
+              redis.call(&apos;ZREMRANGEBYSCORE&apos;, KEYS[1], &apos;-inf&apos;, window_start);
+            </code>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

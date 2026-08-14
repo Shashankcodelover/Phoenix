@@ -119,8 +119,10 @@ export const interviewApi = {
   analyzeConcurrencyDeadlock: (payload) => fetchApi('/prep/concurrency/analyze-deadlock', { method: 'POST', body: JSON.stringify(payload) }),
   resolveBehavioralConflict: (payload) => fetchApi('/prep/behavioral/resolve-conflict', { method: 'POST', body: JSON.stringify(payload) }),
   optimizeSqlQuery: (payload) => fetchApi('/prep/database/optimize-sql', { method: 'POST', body: JSON.stringify(payload) }),
-  scanOwaspSecurity: (payload) => fetchApi('/prep/security/scan-owasp-vulnerabilities', { method: 'POST', body: JSON.stringify(payload) })
+  scanOwaspSecurity: (payload) => fetchApi('/prep/security/scan-owasp-vulnerabilities', { method: 'POST', body: JSON.stringify(payload) }),
+  simulateRateLimiter: (payload) => fetchApi('/prep/system-design/simulate-rate-limiter', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 

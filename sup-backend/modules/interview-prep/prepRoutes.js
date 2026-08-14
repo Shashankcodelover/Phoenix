@@ -1165,7 +1165,23 @@ router.post('/hackathon/judge/realtime-whisper', protect, (req, res) => {
   }
 });
 
+const { rateLimiterVisualizerEngine } = require('./rateLimiterVisualizerEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 58: Rate Limiting & Sliding Window Token Bucket
+// ═══════════════════════════════════════════════════════════
+router.post('/system-design/simulate-rate-limiter', protect, (req, res) => {
+  try {
+    const result = rateLimiterVisualizerEngine.simulateLimiter(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
