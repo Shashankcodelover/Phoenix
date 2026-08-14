@@ -1053,7 +1053,23 @@ router.post('/hackathon/sdk-quickstart/generate', protect, (req, res) => {
   }
 });
 
+const { codeMemoryLeakEngine } = require('./codeMemoryLeakEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 45: AST Code Flaw & Memory Leak Visualizer Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/code/analyze-memory-leaks', protect, (req, res) => {
+  try {
+    const result = codeMemoryLeakEngine.analyzeMemoryLeaks(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

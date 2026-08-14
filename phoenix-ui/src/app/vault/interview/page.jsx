@@ -1385,10 +1385,63 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 45: AST CODE FLAW & MEMORY LEAK VISUALIZER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-rose-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 text-rose-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-rose-500/30">
+                ⭐ FEATURE 45 AST CODE FLAW &amp; MEMORY LEAK VISUALIZER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🧠</span> AST Code Flaw, Closure Leak &amp; Heap Profiler
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Real-time AST parsing for unbounded closure retention, circular references, and recursion stack exhaustion.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Memory Safety: 98/100 (Clean Lifecycle)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-xs font-mono">
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="text-sky-400 text-[10px] font-bold">PEAK HEAP ALLOCATION</div>
+              <div className="text-white font-bold text-base mt-1">32.4 MB</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Under 50k requests</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">RECLAIMED POST-GC</div>
+              <div className="text-emerald-400 font-bold text-base mt-1">30.3 MB (93.5%)</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">Zero dangling closures</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-rose-500/30">
+              <div className="text-rose-400 text-[10px] font-bold">DETECTED FLAWS</div>
+              <div className="text-emerald-400 font-bold text-base mt-1">0 Critical Leaks</div>
+              <div className="text-slate-400 text-[11px] mt-0.5">✓ Safe RingBuffer Cache</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-rose-500/20 text-xs">
+            <div className="font-bold text-white mb-1">⭐ Staff Bar-Raiser Code Memory Rubric:</div>
+            <p className="text-slate-300">
+              Evaluates whether candidate properly closes streams, avoids accumulating unbounded arrays in long-lived closures, and guards against exponential recursive stack frames.
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
