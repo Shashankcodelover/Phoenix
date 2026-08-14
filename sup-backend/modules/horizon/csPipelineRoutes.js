@@ -272,7 +272,21 @@ router.post('/colleges/predict-admission-chances', (req, res) => {
   }
 });
 
+const { snqFeeWaiverEngine } = require('./snqFeeWaiverEngine');
+
+// Feature 26: Supernumerary Quota (SNQ) & Tuition Fee Waiver Matcher
+router.post('/snq/evaluate-eligibility', (req, res) => {
+  try {
+    const result = snqFeeWaiverEngine.evaluateSnqEligibility(req.body);
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

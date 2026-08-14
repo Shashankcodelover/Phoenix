@@ -606,10 +606,63 @@ export default function HorizonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 26: SUPERNUMERARY QUOTA (SNQ) FEE WAIVER MATCHER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="mt-10 glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
+                ⭐ FEATURE 26 SUPERNUMERARY QUOTA (SNQ) FEE WAIVER
+              </div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🎓</span> Supernumerary Quota (SNQ) &amp; 100% Tuition Fee Waiver Matcher
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                KEA 5% reserved quota for candidates with family income &lt; ₹8.0 LPA. Saves ₹4,00,000+ across 4 years of engineering tuition.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Income: ₹2.40 LPA (Eligible • ₹4.10L Savings)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">Standard KCET Fee</div>
+              <div className="text-xl font-mono font-bold text-rose-400">₹1,07,000 / yr</div>
+              <div className="text-[10px] text-slate-400 mt-1">Total 4-Yr Cost: ₹4,28,000</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">SNQ Reduced Fee</div>
+              <div className="text-xl font-mono font-bold text-emerald-400">₹4,500 / yr</div>
+              <div className="text-[10px] text-emerald-400 mt-1">100% Tuition Waived by Govt</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-emerald-500/20">
+              <div className="text-[11px] text-slate-400 mb-1">Total 4-Year Savings</div>
+              <div className="text-xl font-mono font-bold text-emerald-400">₹4,10,000 Saved</div>
+              <div className="text-[10px] text-emerald-400 mt-1">✓ Direct Bank Benefit</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-emerald-500/20 text-xs">
+            <div className="font-bold text-white mb-2">📋 Mandatory KEA SNQ Verification Checklist:</div>
+            <ul className="text-slate-300 space-y-1 list-disc list-inside">
+              <li>Revenue Department (RD Number) Income Certificate issued by Tahsildar (&lt; ₹8.0 LPA).</li>
+              <li>7 Years Karnataka Study Certificate signed by BEO / DDPU.</li>
+              <li>Option Entry Portal: Automatic SNQ seat eligibility toggle enabled.</li>
+            </ul>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

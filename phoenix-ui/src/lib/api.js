@@ -46,8 +46,10 @@ export const horizonApi = {
   getVernacularGuidance: (payload) => fetchApi('/horizon/vernacular/guidance', { method: 'POST', body: JSON.stringify(payload) }),
   simulateChoiceFilling: (payload) => fetchApi('/horizon/option-entry/simulate-allotment', { method: 'POST', body: JSON.stringify(payload) }),
   getCutoffTrends: (collegeCode) => fetchApi(`/horizon/colleges/cutoff-trends?collegeCode=${collegeCode || 'RVCE'}`),
-  predictAdmissionChances: (payload) => fetchApi('/horizon/colleges/predict-admission-chances', { method: 'POST', body: JSON.stringify(payload) })
+  predictAdmissionChances: (payload) => fetchApi('/horizon/colleges/predict-admission-chances', { method: 'POST', body: JSON.stringify(payload) }),
+  evaluateSnqEligibility: (payload) => fetchApi('/horizon/snq/evaluate-eligibility', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 
