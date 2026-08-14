@@ -1039,7 +1039,23 @@ router.post('/code/generate-edge-cases', protect, (req, res) => {
   }
 });
 
+const { sponsorSdkQuickstartEngine } = require('../hackathon-agent/sponsorSdkQuickstartEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 43: Hackathon Sponsor SDK Quickstart Generator
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/sdk-quickstart/generate', protect, (req, res) => {
+  try {
+    const result = sponsorSdkQuickstartEngine.generateQuickstart(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 
