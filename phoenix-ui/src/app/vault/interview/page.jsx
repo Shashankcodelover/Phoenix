@@ -1144,10 +1144,74 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 35: PEER MOCK INTERVIEW ROOM & AI AUTO-TAKEOVER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 35 PEER MOCK INTERVIEW ROOM &amp; AI TAKEOVER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>👥</span> Peer Mock Video Room &amp; Autonomous AI Takeover
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Synchronous 1-on-1 peer mock interview room with autonomous Voice AI Bar-Raiser takeover if peer interviewer disconnects.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                AI Auto-Takeover: Armed (20s Silence Failsafe)
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-xs">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-white text-sm">Room Session: PEER-ROOM-98X4</span>
+                <span className="text-indigo-400 font-mono font-bold text-[10px]">Active Room</span>
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1">
+                <strong>Topic:</strong> Distributed Systems &amp; Hard Dynamic Programming
+              </div>
+              <div className="flex items-center gap-2 mt-3 text-[11px]">
+                <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono">Candidate: Connected</span>
+                <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-mono">Interviewer: Peer Active</span>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-white text-sm">Fail-Safe AI Takeover Radar</span>
+                <span className="text-amber-400 font-mono font-bold text-[10px]">Sub-240ms Switch</span>
+              </div>
+              <div className="text-[11px] text-slate-400 mt-1">
+                If peer disconnects or stalls, Google L6 Bar-Raiser Voice AI seamlessly continues the mock interview without breaking rhythm.
+              </div>
+              <div className="mt-3">
+                <button className="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[11px]">
+                  🤖 Simulate Peer Drop &amp; Trigger AI Takeover
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/20 text-xs">
+            <div className="font-bold text-white mb-2">⭐ Dual Assessment Ground Truth Scorecard:</div>
+            <p className="text-slate-300">
+              Captures peer qualitative remarks side-by-side with objective Phoenix Voice AI prosody, filler word count, and AST code complexity metrics.
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 

@@ -959,7 +959,32 @@ router.post('/hackathon/stage-demo/generate-script', protect, (req, res) => {
   }
 });
 
+const { peerMockRoomEngine } = require('./peerMockRoomEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 35: Peer Mock Interview Room & AI Auto-Takeover
+// ═══════════════════════════════════════════════════════════
+router.post('/peer-mock/create-room', protect, (req, res) => {
+  try {
+    const result = peerMockRoomEngine.createMockRoom(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/peer-mock/ai-takeover-trigger', protect, (req, res) => {
+  try {
+    const result = peerMockRoomEngine.triggerAiTakeover(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

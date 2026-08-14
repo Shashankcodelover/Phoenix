@@ -90,8 +90,12 @@ export const interviewApi = {
   refineStarStory: (payload) => fetchApi('/prep/star/refine-story', { method: 'POST', body: JSON.stringify(payload) }),
   estimateSystemCostSla: (payload) => fetchApi('/prep/system-design/cost-sla-estimate', { method: 'POST', body: JSON.stringify(payload) }),
   simulateCrisisScenario: (payload) => fetchApi('/prep/crisis/simulate-scenario', { method: 'POST', body: JSON.stringify(payload) }),
-  analyzeBlindSpotRadar: (payload) => fetchApi('/prep/blind-spots/analyze-radar', { method: 'POST', body: JSON.stringify(payload) })
+  analyzeBlindSpotRadar: (payload) => fetchApi('/prep/blind-spots/analyze-radar', { method: 'POST', body: JSON.stringify(payload) }),
+  createPeerMockRoom: (payload) => fetchApi('/prep/peer-mock/create-room', { method: 'POST', body: JSON.stringify(payload) }),
+  triggerAiTakeover: (payload) => fetchApi('/prep/peer-mock/ai-takeover-trigger', { method: 'POST', body: JSON.stringify(payload) })
 };
+
+
 
 
 
