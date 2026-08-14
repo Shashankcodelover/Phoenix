@@ -1236,18 +1236,86 @@ router.post('/system-design/simulate-transactional-outbox', protect, (req, res) 
 const { pitchStoryboardEngine } = require('../hackathon-agent/pitchStoryboardEngine');
 
 // ═══════════════════════════════════════════════════════════
-// Feature 66: AI Pitch Video Storyboard & WebVTT Subtitle Generator
+// Feature 68: WebRTC Peer-to-Peer Mock Interview Mesh & AI Sentinel
 // ═══════════════════════════════════════════════════════════
-router.post('/hackathon/video/generate-pitch-storyboard', protect, (req, res) => {
+const peerInterviewMeshGateway = require('./peerInterviewMeshGateway');
+router.post('/mesh/create-room', protect, (req, res) => {
   try {
-    const result = pitchStoryboardEngine.generateStoryboard(req.body);
-    res.json(result);
+    const { interviewerId, candidateId, interviewDomain, roundType } = req.body;
+    const room = peerInterviewMeshGateway.createInterviewRoom(interviewerId || req.user.id, candidateId || 'CANDIDATE', interviewDomain, roundType);
+    res.json(room);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/mesh/ai-sentinel-probe', protect, (req, res) => {
+  try {
+    const { roomId, candidateAnswer } = req.body;
+    const probe = peerInterviewMeshGateway.generateAISentinelProbe(roomId, candidateAnswer || '');
+    res.json(probe);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// Feature 69: Distributed CRDT Real-Time Collaborative Canvas
+// ═══════════════════════════════════════════════════════════
+const crdtCollaborativeCanvas = require('./crdtCollaborativeCanvas');
+router.post('/crdt/apply-delta', protect, (req, res) => {
+  try {
+    const { roomId, newCode, clientClock } = req.body;
+    const update = crdtCollaborativeCanvas.applyCodeDelta(roomId, req.user.id, newCode, clientClock);
+    res.json(update);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// Feature 70: AI Adaptive Knowledge Prober & Deep-Dive Generator
+// ═══════════════════════════════════════════════════════════
+const aiAdaptiveKnowledgeProber = require('./aiAdaptiveKnowledgeProber');
+router.post('/ai/adaptive-probe', protect, (req, res) => {
+  try {
+    const { topic, candidateAnswer } = req.body;
+    const followUp = aiAdaptiveKnowledgeProber.generateAdaptiveFollowUp(topic || 'DISTRIBUTED_SYSTEMS', candidateAnswer || '');
+    res.json(followUp);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// Feature 71: Equity Tax & Compensation Arbitrage Engine
+// ═══════════════════════════════════════════════════════════
+const equityTaxArbitrageEngine = require('./equityTaxArbitrageEngine');
+router.post('/compensation/evaluate-offer', protect, (req, res) => {
+  try {
+    const report = equityTaxArbitrageEngine.evaluateOfferPackage(req.body);
+    res.json(report);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// Feature 72: Hackathon Teammate Matching & Skill Synergy Engine
+// ═══════════════════════════════════════════════════════════
+const hackathonTeamSynergyEngine = require('./hackathonTeamSynergyEngine');
+router.post('/hackathon/assemble-squad', protect, (req, res) => {
+  try {
+    const { hackerPool } = req.body;
+    const squad = hackathonTeamSynergyEngine.assembleOptimalSquad(hackerPool || []);
+    res.json(squad);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
 module.exports = router;
+
 
 
 
