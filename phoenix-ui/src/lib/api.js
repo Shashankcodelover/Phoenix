@@ -162,8 +162,10 @@ export const hackathonApi = {
   generateStageDemoScript: (payload) => fetchApi('/prep/hackathon/stage-demo/generate-script', { method: 'POST', body: JSON.stringify(payload) }),
   generateJudgeCounterDefense: (payload) => fetchApi('/prep/hackathon/judge-objections/generate-counter-defense', { method: 'POST', body: JSON.stringify(payload) }),
   generateSponsorSdkQuickstart: (payload) => fetchApi('/prep/hackathon/sdk-quickstart/generate', { method: 'POST', body: JSON.stringify(payload) }),
-  runPrototypeStressTest: (payload) => fetchApi('/prep/hackathon/prototype/stress-test', { method: 'POST', body: JSON.stringify(payload) })
+  runPrototypeStressTest: (payload) => fetchApi('/prep/hackathon/prototype/stress-test', { method: 'POST', body: JSON.stringify(payload) }),
+  generateIpGovernancePackage: (payload) => fetchApi('/prep/hackathon/governance/generate-ip-package', { method: 'POST', body: JSON.stringify(payload) })
 };
+
 
 
 

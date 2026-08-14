@@ -1123,7 +1123,23 @@ router.post('/database/optimize-sql', protect, (req, res) => {
   }
 });
 
+const { ipGovernanceEngine } = require('../hackathon-agent/ipGovernanceEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 53: Hackathon IP Governance & SAFE Note Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/governance/generate-ip-package', protect, (req, res) => {
+  try {
+    const result = ipGovernanceEngine.generateIpPackage(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

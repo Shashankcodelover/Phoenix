@@ -1070,10 +1070,69 @@ export default function HackathonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 53: HACKATHON IP GOVERNANCE & SAFE NOTE ENGINE
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 53 IP GOVERNANCE &amp; SAFE NOTE SCAFFOLDER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>⚖️</span> Open-Source License, Founder Vesting &amp; YC SAFE Note
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Apache-2.0 patent protection, 4-year linear founder vesting (1-yr cliff), and $1.5M valuation cap SAFE note templates.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
+                Incubator Ready: YC / Techstars Cleared
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 text-xs font-mono">
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-indigo-500/30">
+              <div className="text-indigo-400 text-[10px] font-bold">LICENSE TYPE</div>
+              <div className="text-white font-bold text-sm mt-1">Apache-2.0</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Explicit Patent Grant</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-emerald-400 text-[10px] font-bold">FOUNDER SPLIT</div>
+              <div className="text-emerald-400 font-bold text-sm mt-1">25.0% Equal Split</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">4-Way Team Parity</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="text-sky-400 text-[10px] font-bold">VESTING SCHEDULE</div>
+              <div className="text-white font-bold text-sm mt-1">4-Year / 1-Yr Cliff</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">Month 12: 25% Unlock</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-purple-400 text-[10px] font-bold">YC SAFE NOTE</div>
+              <div className="text-white font-bold text-sm mt-1">$1,500,000 Cap</div>
+              <div className="text-slate-400 text-[10px] mt-0.5">20% Round Discount</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/20 text-xs">
+            <div className="font-bold text-white mb-1">📜 Irreversible IP Assignment Clause:</div>
+            <p className="text-slate-300 font-mono text-[11px]">
+              &quot;All hackathon code, ML weights, telemetry graphs, and UI designs created during the event are irreversibly assigned to the corporate entity, preventing ex-contributor ownership disputes.&quot;
+            </p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
