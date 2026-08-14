@@ -1151,7 +1151,23 @@ router.post('/security/scan-owasp-vulnerabilities', protect, (req, res) => {
   }
 });
 
+const { judgeWhispererEngine } = require('../hackathon-agent/judgeWhispererEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 56: Hackathon Live Judge Voice Q&A Whisperer Engine
+// ═══════════════════════════════════════════════════════════
+router.post('/hackathon/judge/realtime-whisper', protect, (req, res) => {
+  try {
+    const result = judgeWhispererEngine.generateWhisper(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

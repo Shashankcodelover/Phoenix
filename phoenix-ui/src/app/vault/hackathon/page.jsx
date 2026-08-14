@@ -1128,10 +1128,58 @@ export default function HackathonVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 56: LIVE JUDGE VOICE Q&A REAL-TIME WHISPERER
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-cyan-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-cyan-500/30">
+                ⭐ FEATURE 56 LIVE JUDGE Q&amp;A WHISPERER
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🎙️</span> Sub-50ms Stage Teleprompter &amp; Judge Trap Rebuttal HUD
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Real-time audio transcription interceptor generating 15-second crisp counter-rebuttal scripts for LLM wrapper and scaling traps.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">
+                Podium Confidence: 98/100
+              </span>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/80 border border-cyan-500/30 mb-6 text-xs font-mono">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-white font-bold text-sm">Intercepted Judge Question:</span>
+              <span className="text-cyan-400 font-mono text-[10px]">TRAP: LLM Wrapper</span>
+            </div>
+            <p className="text-amber-300 font-serif italic text-xs mb-3">
+              &quot;Isn&apos;t this just a thin wrapper over OpenAI or Gemini APIs?&quot;
+            </p>
+            <div className="p-3 rounded-lg bg-cyan-950/40 border border-cyan-500/20 text-slate-200 font-sans text-xs">
+              <strong>🎙️ 15s Stage Earpiece Whisper Script:</strong> &quot;We use local AST parsing, deterministic state machines, and a multi-provider fallback cascade with zero-cost Groq/Gemini routing. If OpenAI goes down, our local rules engine continues running with 0ms downtime and $0 cloud spend.&quot;
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-cyan-500/20 text-xs font-mono flex flex-wrap justify-between items-center gap-2">
+            <div>
+              <span className="text-cyan-400 font-bold">Target Delivery Duration:</span> 12 - 15 Seconds (Punchy &amp; Authoritative)
+            </div>
+            <div className="text-emerald-400">
+              ✓ Eye Contact Maintained • Technical Moat Demonstrated
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
