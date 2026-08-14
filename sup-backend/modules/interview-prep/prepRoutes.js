@@ -764,7 +764,6 @@ router.post('/analytics/record-session', protect, (req, res) => {
 
 const { marpPitchDeckEngine } = require('../hackathon-agent/marpPitchDeckEngine');
 
-
 // ═══════════════════════════════════════════════════════════
 // Feature 16: Automated Marp 5-Slide Pitch Deck Engine
 // ═══════════════════════════════════════════════════════════
@@ -777,7 +776,23 @@ router.post('/pitch/marp-export', protect, (req, res) => {
   }
 });
 
+const { placementTelemetryDashboard } = require('./placementTelemetryDashboard');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 17: Placement Readiness Institutional Telemetry
+// ═══════════════════════════════════════════════════════════
+router.get('/telemetry/institutional-dashboard', protect, (req, res) => {
+  try {
+    const result = placementTelemetryDashboard.getInstitutionalMetrics();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

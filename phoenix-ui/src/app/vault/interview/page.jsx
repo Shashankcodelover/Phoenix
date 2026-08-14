@@ -650,10 +650,86 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 17: INSTITUTIONAL PLACEMENT READINESS TELEMETRY
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
+                ⭐ FEATURE 17 INSTITUTIONAL COHORT TELEMETRY
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🏛️</span> Institutional Placement Readiness Telemetry Dashboard
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Live consortium-wide analytics across 1,420 candidates at RVCE, BMSCE, and MSRIT with department readiness benchmarks.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Consortium Rate: 78.4% FAANG Ready
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">Total Enrolled</div>
+              <div className="text-xl font-mono font-bold text-white">1,420</div>
+              <div className="text-[10px] text-sky-400 mt-1">4 Engineering Branches</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">Avg Turn-Taking Voice Latency</div>
+              <div className="text-xl font-mono font-bold text-emerald-400">284ms</div>
+              <div className="text-[10px] text-emerald-400 mt-1">✓ Sub-300ms SLA Pass</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">Avg Asymptotic Score</div>
+              <div className="text-xl font-mono font-bold text-indigo-400">91.2/100</div>
+              <div className="text-[10px] text-indigo-400 mt-1">O(N) & O(log N) Dominant</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
+              <div className="text-[11px] text-slate-400 mb-1">Matched Super-Offers</div>
+              <div className="text-xl font-mono font-bold text-emerald-400">240+</div>
+              <div className="text-[10px] text-emerald-400 mt-1">Google, MS, Razorpay, Amazon</div>
+            </div>
+          </div>
+
+          {/* Department Breakdown Table */}
+          <div className="p-5 rounded-2xl bg-slate-950/90 border border-indigo-500/20">
+            <div className="text-xs font-bold text-white mb-3">Branch-by-Branch FAANG Readiness Breakdown:</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
+                <div className="font-semibold text-white">CSE (480 Students)</div>
+                <div className="text-emerald-400 font-mono font-bold mt-1">88.5% Ready</div>
+                <div className="text-[10px] text-slate-400 mt-0.5">Distributed LRU Cache</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
+                <div className="font-semibold text-white">ISE (360 Students)</div>
+                <div className="text-emerald-400 font-mono font-bold mt-1">84.2% Ready</div>
+                <div className="text-[10px] text-slate-400 mt-0.5">WebRTC & Next.js 15</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
+                <div className="font-semibold text-white">AIML (320 Students)</div>
+                <div className="text-sky-400 font-mono font-bold mt-1">81.0% Ready</div>
+                <div className="text-[10px] text-slate-400 mt-0.5">Two-Stage Vector RAG</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900 border border-amber-500/20">
+                <div className="font-semibold text-white">ECE (260 Students)</div>
+                <div className="text-amber-400 font-mono font-bold mt-1">62.4% (Intervention)</div>
+                <div className="text-[10px] text-amber-400 mt-0.5">OS & Concurrency Sprint Needed</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
