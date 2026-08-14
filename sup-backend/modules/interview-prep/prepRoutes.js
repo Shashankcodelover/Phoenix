@@ -889,7 +889,23 @@ router.post('/system-design/cost-sla-estimate', protect, (req, res) => {
   }
 });
 
+const { crisisPressureSimulatorEngine } = require('./crisisPressureSimulatorEngine');
+
+// ═══════════════════════════════════════════════════════════
+// Feature 27: FAANG Bar-Raiser Behavioral Pressure & P0 Crisis
+// ═══════════════════════════════════════════════════════════
+router.post('/crisis/simulate-scenario', protect, (req, res) => {
+  try {
+    const result = crisisPressureSimulatorEngine.simulateCrisisScenario(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

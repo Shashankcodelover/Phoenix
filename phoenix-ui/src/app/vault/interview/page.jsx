@@ -997,10 +997,79 @@ export default function InterviewVaultPage() {
           </div>
         </div>
 
+        {/* ══════════════════════════════════════════════════════════
+            FEATURE 27: FAANG BAR-RAISER P0 OUTAGE CRISIS SIMULATOR
+            ══════════════════════════════════════════════════════════ */}
+        <div className="glass-card p-8 border-rose-500/30 bg-slate-900/90 relative overflow-hidden mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 text-rose-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-rose-500/30">
+                ⭐ FEATURE 27 P0 OUTAGE CRISIS PRESSURE SIMULATOR
+              </div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span>🚨</span> FAANG Bar-Raiser P0 Production Outage Crisis Simulator
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                High-pressure crisis leadership drill evaluating immediate blast radius containment, distributed telemetry triaging, and blameless post-mortems.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Composure: 96/100 (Executive Incident Commander)
+              </span>
+            </div>
+          </div>
+
+          {/* Active Alert Banner */}
+          <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 mb-6 flex items-center justify-between">
+            <div>
+              <div className="text-xs font-bold text-rose-400 uppercase tracking-wide">SEV-1 Critical Blast Radius Alert</div>
+              <div className="text-sm font-semibold text-white mt-0.5">Payment Microservice: 45% Error Rate Spike ($450k/min GMV at risk)</div>
+            </div>
+            <span className="px-3 py-1 rounded-lg bg-rose-500 text-slate-950 font-mono font-bold text-xs">
+              Incident Active
+            </span>
+          </div>
+
+          {/* 4-Phase Triage Playbook */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 text-xs">
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+              <div className="text-[10px] text-emerald-400 font-mono font-bold">PHASE 1: CONTAINMENT</div>
+              <div className="text-white font-semibold mt-1">Blast Radius Drain</div>
+              <div className="text-slate-400 text-[11px] mt-1">Trip circuit breaker fast-fail and drain non-essential queue jobs.</div>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-sky-500/30">
+              <div className="text-[10px] text-sky-400 font-mono font-bold">PHASE 2: TRIAGING</div>
+              <div className="text-white font-semibold mt-1">Telemetry Trace</div>
+              <div className="text-slate-400 text-[11px] mt-1">Trace unindexed lock contention queries on transactions table.</div>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-indigo-500/30">
+              <div className="text-[10px] text-indigo-400 font-mono font-bold">PHASE 3: REMEDIATION</div>
+              <div className="text-white font-semibold mt-1">Dynamic Hot-Patch</div>
+              <div className="text-slate-400 text-[11px] mt-1">Route reads to read-replicas and dynamically increase pool size.</div>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-purple-500/30">
+              <div className="text-[10px] text-purple-400 font-mono font-bold">PHASE 4: POST-MORTEM</div>
+              <div className="text-white font-semibold mt-1">Blameless 5 Whys</div>
+              <div className="text-slate-400 text-[11px] mt-1">Synthetic load testing gates and automated SLO breach alarms.</div>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/90 border border-rose-500/20 text-xs">
+            <div className="font-bold text-white mb-2">⭐ Staff Bar-Raiser Evaluation:</div>
+            <ul className="text-slate-300 space-y-1 list-disc list-inside">
+              <li>Demonstrated strong <strong>Bias for Action</strong> by prioritizing containment over root-cause speculation.</li>
+              <li>Maintained calm executive cadence on incident bridge without panic.</li>
+            </ul>
+          </div>
+        </div>
+
       </main>
     </div>
   );
 }
+
 
 
 
