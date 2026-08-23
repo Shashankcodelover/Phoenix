@@ -587,6 +587,8 @@ const generateSystemDesignQuestion = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
 // @desc    Evaluate candidate response to crisis curveball under pressure
 // @route   POST /api/v1/prep/behavioral-pressure
 const analyzeBehavioralPressureEndpoint = async (req, res) => {

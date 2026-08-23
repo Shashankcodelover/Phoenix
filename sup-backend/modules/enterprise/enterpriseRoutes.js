@@ -11,12 +11,14 @@ const {
   consentHandler,
   disparateImpactHandler,
   explainabilityHandler,
-  modelCardHandler
+  modelCardHandler,
+  meteringDeductHandler,
+  meteringInvoiceHandler
 } = require('./enterpriseController');
 const { runSecurityAudit } = require('./cyberSecurityShield');
 
 const { protect } = require('../../middleware/authMiddleware');
-const { tokenBucketLimiter } = require('../../middleware/rateLimitMiddleware');
+const { tokenBucketLimiter } = require('../../middleware/tokenBucketRateLimiter');
 
 const router = express.Router();
 

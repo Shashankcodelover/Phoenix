@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar({ activeVault = null }) {
   return (
@@ -63,13 +64,16 @@ export default function Navbar({ activeVault = null }) {
           </Link>
         </nav>
 
+        {/* Actions Bar */}
+        <div className="flex items-center gap-2.5">
+          <ThemeToggle />
 
-        {/* Real-Time Live Status Pill */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-[11px] text-emerald-400 bg-emerald-500/10 px-3.5 py-1.5 rounded-full border border-emerald-500/25 font-mono shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span className="font-semibold">84/84 Tests 100% Pass</span>
-          </div>
+          <Link
+            href="/onboarding"
+            className="hidden sm:flex px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/5 hover:bg-white/10 border border-white/15 text-slate-200 hover:text-white transition-all items-center gap-1.5 shadow-sm"
+          >
+            <span>⚙️</span> Profile
+          </Link>
 
           <Link
             href="/"
@@ -83,3 +87,4 @@ export default function Navbar({ activeVault = null }) {
     </header>
   );
 }
+

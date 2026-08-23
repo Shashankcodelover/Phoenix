@@ -2,1734 +2,293 @@
 
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
+import ProfileBanner from '@/components/ProfileBanner';
+import CategoryNav from '@/components/CategoryNav';
+import FeatureCard from '@/components/FeatureCard';
 import { horizonApi } from '@/lib/api';
 
-export default function HorizonVaultPage() {
-  // Rank Estimator State
-  const [stream, setStream] = useState('KCET');
-  const [category, setCategory] = useState('GM');
-  const [entranceMarks, setEntranceMarks] = useState(142);
-  const [boardPercentage, setBoardPercentage] = useState(94);
-  const [rankResult, setRankResult] = useState(null);
-  const [loadingRank, setLoadingRank] = useState(false);
+export default function ModularHorizonVaultPage() {
+  const [activeCategory, setActiveCategory] = useState('all');
 
-  // Scholarship Matcher State
-  const [income, setIncome] = useState(180000);
-  const [academics, setAcademics] = useState(85);
-  const [scholarshipResult, setScholarshipResult] = useState(null);
-  const [loadingSch, setLoadingSch] = useState(false);
+  // Categories Definition
+  const categories = [
+    { id: 'rank', icon: '🎓', title: 'Karnataka Rank Matrix & Estimator', count: 4 },
+    { id: 'colleges', icon: '🏛️', title: 'College Cutoff Trends & Probability', count: 5 },
+    { id: 'quota', icon: '📋', title: 'Category Quotas & Article 371(J)', count: 4 },
+    { id: 'fees', icon: '💰', title: 'Management Fees & Scholarships', count: 4 },
+    { id: 'academic', icon: '📐', title: 'VTU CGPA & Diploma Bridges', count: 4 }
+  ];
 
-  // Handle Rank Calculation
-  const handleEstimateRank = async () => {
-    setLoadingRank(true);
+  // 1. Karnataka Matrix State
+  const [candidateRank, setCandidateRank] = useState(1850);
+  const [categoryQuota, setCategoryQuota] = useState('2A');
+  const [preferredBranch, setPreferredBranch] = useState('Computer Science');
+  const [matrixResult, setMatrixResult] = useState(null);
+  const [loadingMatrix, setLoadingMatrix] = useState(false);
+
+  // 2. VTU CGPA Converter State
+  const [cgpa, setCgpa] = useState(8.75);
+  const [scheme, setScheme] = useState('2022 Scheme');
+  const [vtuResult, setVtuResult] = useState(null);
+
+  // Handlers
+  const handleForecastMatrix = async () => {
+    setLoadingMatrix(true);
     try {
       const res = await horizonApi.forecastKarnatakaMatrix({
-        stream,
-        entranceMarks: Number(entranceMarks),
-        boardPercentage: Number(boardPercentage),
-        category
+        kcetRank: Number(candidateRank),
+        categoryQuota,
+        preferredBranch
       });
-      setRankResult(res);
-    } catch {
-      // Offline fallback calculation
-      const maxEntrance = stream === 'KCET' ? 180 : 100;
-      const normalizedScore = (Number(entranceMarks) / maxEntrance) * 50 + (Number(boardPercentage) / 100) * 50;
-      let estRank = Math.max(1, Math.round(220000 * Math.pow((100 - normalizedScore) / 100, 2.45)));
-      setRankResult({
-        stream,
-        category,
-        normalizedCompositeScore: `${normalizedScore.toFixed(2)} / 100`,
-        estimatedRankBracket: `${estRank.toLocaleString('en-IN')} - ${(estRank + 350).toLocaleString('en-IN')}`,
-        topMatchedColleges: [
-          { college: 'RVCE (RV College of Engineering), Bengaluru', branch: 'Computer Science & Eng (CSE)', cutoffRankForCategory: 1200, tier: 'Tier 1 Elite', matchProbability: estRank <= 1200 ? 'Guaranteed High Probability' : 'Reach Opportunity' },
-          { college: 'BMSCE (BMS College of Engineering), Bengaluru', branch: 'Information Science & Eng (ISE)', cutoffRankForCategory: 2400, tier: 'Tier 1', matchProbability: estRank <= 2400 ? 'Guaranteed High Probability' : 'Safe Target' },
-          { college: 'MSRIT (Ramaiah Institute of Technology), Bengaluru', branch: 'Artificial Intelligence & ML', cutoffRankForCategory: 3200, tier: 'Tier 1', matchProbability: 'Guaranteed High Probability' }
-        ],
-        counselingAdvice: 'Eligible for Tier-1 CSE/ISE at RVCE / BMSCE in Round 1 counseling.'
-      });
+      setMatrixResult(res);
+    } catch (err) {
+      console.error(err);
     } finally {
-      setLoadingRank(false);
+      setLoadingMatrix(false);
     }
   };
 
+  const handleConvertVtu = () => {
+    // Official VTU Formula: Percentage = (CGPA - 0.75) * 10
+    const calculatedPercentage = ((Number(cgpa) - 0.75) * 10).toFixed(2);
+    let classDivision = 'First Class with Distinction (FCD)';
+    if (calculatedPercentage < 70) classDivision = 'First Class (FC)';
+    if (calculatedPercentage < 60) classDivision = 'Second Class (SC)';
 
-  // Handle Scholarship Matching
-  const handleMatchScholarships = async () => {
-    setLoadingSch(true);
-    try {
-      const res = await horizonApi.matchScholarships({
-        stream: 'Engineering',
-        annualIncome: Number(income),
-        academicPercentage: Number(academics),
-        category: 'OBC'
-      });
-      setScholarshipResult(res);
-    } catch {
-      setScholarshipResult({
-        totalMatched: 2,
-        estimatedAnnualSavings: '₹70,000',
-        matchedScholarships: [
-          { name: 'State Scholarship Portal (SSP) Post-Matric', provider: 'Govt of Karnataka', benefit: 'Full Tuition Fee Waiver + ₹10,000/yr', deadline: 'Oct 31' },
-          { name: 'Vidyasiri ePASS Food & Accommodation Scheme', provider: 'BCWD Karnataka', benefit: '₹1,500/mo Hostelite Grant', deadline: 'Nov 15' }
-        ],
-        actionableChecklist: [
-          'Get digital Income/Caste Certificate from Nadakacheri.',
-          'Link Aadhaar with NPCI active bank account.',
-          'Upload College Bonafide Certificate.'
-        ]
-      });
-    } finally {
-      setLoadingSch(false);
-    }
+    setVtuResult({
+      cgpa: Number(cgpa),
+      percentage: `${calculatedPercentage}%`,
+      formula: 'Percentage = (CGPA - 0.75) × 10 (Official VTU Regulation)',
+      classDivision,
+      usEquivalentGpa: (Number(cgpa) / 10 * 4.0).toFixed(2)
+    });
   };
+
+  const shouldShow = (catId) => activeCategory === 'all' || activeCategory === catId;
 
   return (
     <div className="relative min-h-screen flex flex-col selection:bg-sky-500/30 selection:text-sky-200">
       <div className="ambient-radiance" />
       <Navbar activeVault="horizon" />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-8 py-10 w-full">
-        {/* Header Hero Section */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-8 py-8 w-full">
+        
+        {/* Domain Profile Context Banner */}
+        <ProfileBanner activeVault="horizon" />
+
+        {/* Vault Header Hero */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-theme-glass text-left">
           <div>
-            <div className="flex items-center gap-3 mb-2.5">
-              <span className="text-3xl">🌅</span>
-              <span className="text-xs font-mono font-extrabold uppercase tracking-widest px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 border border-sky-500/35 shadow-sm">
-                VAULT 1: HORIZON CAREER OS • 21 ENGINES
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-2xl">🌅</span>
+              <span className="text-[11px] font-mono font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-sky-500/15 text-sky-700 dark:text-sky-400 border border-sky-500/35">
+                VAULT 1: HORIZON CAREER &amp; ADMISSIONS OS
               </span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight font-heading">
-              Academic Strategy, Cutoffs &amp; State Quota Radar
+            <h1 className="text-2xl sm:text-4xl font-extrabold text-theme-main tracking-tight font-heading">
+              Karnataka Admissions &amp; Career Intelligence Suite
             </h1>
-            <p className="text-slate-300 text-sm max-w-3xl mt-2 leading-relaxed">
-              Bridge the Karnataka engineering journey with algorithmic rank normalizers, BEO document OCR verifiers, Article 371(J) quota engines, and ₹25L DST incubator grants.
+            <p className="text-theme-muted text-xs sm:text-sm max-w-3xl mt-1 font-medium leading-relaxed">
+              State rank matrices for 220,000+ candidates, KEA Option Entry simulators, Article 371(J) quota engines, and VTU CGPA converters.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-2xl bg-slate-900/90 border border-sky-500/30 text-right font-mono">
-              <div className="text-[10px] text-slate-400 uppercase">Engine Status</div>
-              <div className="text-sm font-bold text-sky-400">21 / 21 Online ✓</div>
-            </div>
+
+          <div className="flex items-center gap-2 font-mono text-xs">
+            <span className="px-3 py-1.5 rounded-xl bg-slate-900 border border-sky-500/30 text-sky-300 font-bold">
+              22 Specialized Engines
+            </span>
           </div>
         </div>
 
-        {/* Feature Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
-          {/* FEATURE 1: RANK CALCULATOR */}
-          <div className="glass-card p-7 border-sky-500/25 flex flex-col justify-between bg-slate-900/85">
-            <div>
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-xl font-bold text-white flex items-center gap-2 font-heading">
-                  <span>📊</span> KCET / DCET State Rank Estimator
-                </h3>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setStream('KCET')}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
-                      stream === 'KCET'
-                        ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/30'
-                        : 'bg-slate-800 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    PU (KCET)
-                  </button>
-                  <button
-                    onClick={() => setStream('DCET')}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
-                      stream === 'DCET'
-                        ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/30'
-                        : 'bg-slate-800 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    Diploma (DCET)
-                  </button>
-                </div>
-              </div>
+        {/* Sticky Modular Category Navigation Pills */}
+        <CategoryNav
+          categories={categories}
+          activeCategory={activeCategory}
+          onSelectCategory={setActiveCategory}
+          accentColor="sky"
+        />
 
+        {/* ══════════════════════════════════════════════════════════
+            CATEGORY 1: KARNATAKA RANK MATRIX & ESTIMATOR
+            ══════════════════════════════════════════════════════════ */}
+        {shouldShow('rank') && (
+          <section className="mb-10 text-left">
+            <div className="flex items-center gap-2.5 mb-4">
+              <span className="text-xl">🎓</span>
+              <h2 className="text-lg font-bold text-white font-heading">
+                State Rank Matrices &amp; Admission Probability
+              </h2>
+            </div>
 
-              <div className="space-y-4 mb-6">
-                <div>
-                  <div className="flex justify-between text-xs text-slate-300 mb-1">
-                    <span>{stream === 'KCET' ? 'KCET Score (out of 180 PCM)' : 'DCET Score (out of 100)'}</span>
-                    <span className="font-mono text-sky-400 font-bold">{entranceMarks}</span>
+            <FeatureCard
+              id="karnataka-rank-matrix"
+              featureNumber="01"
+              title="Karnataka State KCET / DCET Cohort Rank &amp; College Allocation Matrix"
+              icon="🏛️"
+              badge="KEA STANDARDS"
+              realWorldScenario="Maps your KCET/DCET state rank and reservation category against historical cutoffs across 220+ Karnataka engineering colleges (RVCE, BMSCE, MSRIT, PES) to forecast exact round allocation probabilities."
+              algorithmConcept="Normalized cohort percentile matching + Multi-round KEA seat matrix allocation rule evaluation."
+              defaultExpanded={true}
+              accentColor="sky"
+            >
+              <div className="space-y-4 font-mono text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-slate-300 mb-1 font-bold">State Rank</label>
+                    <input
+                      type="number"
+                      value={candidateRank}
+                      onChange={(e) => setCandidateRank(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none"
+                    />
                   </div>
-                  <input
-                    type="range"
-                    min="20"
-                    max={stream === 'KCET' ? '180' : '100'}
-                    value={entranceMarks}
-                    onChange={(e) => setEntranceMarks(e.target.value)}
-                    className="w-full accent-sky-400"
-                  />
-                </div>
 
-                <div>
-                  <div className="flex justify-between text-xs text-slate-300 mb-1">
-                    <span>{stream === 'KCET' ? '12th Board PCM Percentage' : 'Diploma Final Year Percentage'}</span>
-                    <span className="font-mono text-sky-400 font-bold">{boardPercentage}%</span>
+                  <div>
+                    <label className="block text-slate-300 mb-1 font-bold">Category Quota</label>
+                    <select
+                      value={categoryQuota}
+                      onChange={(e) => setCategoryQuota(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none"
+                    >
+                      <option value="GM">General Merit (GM)</option>
+                      <option value="1G">Category 1 (1G)</option>
+                      <option value="2A">Category 2A (2A)</option>
+                      <option value="2B">Category 2B (2B)</option>
+                      <option value="3A">Category 3A (3A)</option>
+                      <option value="3B">Category 3B (3B)</option>
+                      <option value="SC">Scheduled Caste (SC)</option>
+                      <option value="ST">Scheduled Tribe (ST)</option>
+                    </select>
                   </div>
-                  <input
-                    type="range"
-                    min="45"
-                    max="100"
-                    value={boardPercentage}
-                    onChange={(e) => setBoardPercentage(e.target.value)}
-                    className="w-full accent-sky-400"
-                  />
-                </div>
 
-                <div>
-                  <label className="text-xs text-slate-300 mb-1 block">Reservation / Seat Category</label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full bg-slate-900 border border-white/10 rounded-xl p-2.5 text-xs text-white outline-none focus:border-sky-500"
-                  >
-                    <option value="GM">GM (General Merit)</option>
-                    <option value="OBC">OBC (Category 2A, 2B, 3A, 3B)</option>
-                    <option value="SC_ST">SC / ST Reservation</option>
-                    <option value="SNQ">SNQ (Supernumerary Quota Fee Waiver)</option>
-                  </select>
-                </div>
-              </div>
-
-              <button
-                onClick={handleEstimateRank}
-                disabled={loadingRank}
-                className="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-sky-500/20"
-              >
-                {loadingRank ? 'Calculating 50:50 Normalization...' : '⚡ Predict State Rank & College Cutoffs'}
-              </button>
-
-              {/* Result View */}
-              {rankResult && (
-                <div className="mt-6 p-4 rounded-xl bg-slate-900/80 border border-sky-500/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-slate-400 uppercase tracking-wider">Estimated Rank Bracket</span>
-                    <span className="text-sm font-mono font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20">
-                      Rank {rankResult.estimatedRankBracket || rankResult.estimatedStateRankBracket}
-                    </span>
+                  <div>
+                    <label className="block text-slate-300 mb-1 font-bold">Preferred Branch</label>
+                    <input
+                      type="text"
+                      value={preferredBranch}
+                      onChange={(e) => setPreferredBranch(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none"
+                    />
                   </div>
-                  <div className="text-[11px] text-slate-400 mb-3">{rankResult.counselingAdvice}</div>
+                </div>
 
-                  <div className="text-xs text-slate-300 mb-2 font-semibold">Matched College Cutoffs ({category}):</div>
-                  <div className="space-y-1.5 max-h-44 overflow-y-auto pr-1">
-                    {(rankResult.topMatchedColleges || rankResult.matchedColleges || []).map((col, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-xs p-2 rounded-lg bg-slate-950/60 border border-white/5">
-                        <div>
-                          <div className="font-semibold text-white text-[11px]">{col.college}</div>
-                          <div className="text-slate-400 text-[10px]">{col.branch}</div>
+                <button
+                  type="button"
+                  onClick={handleForecastMatrix}
+                  disabled={loadingMatrix}
+                  className="w-full py-2.5 rounded-xl font-bold bg-sky-500 hover:bg-sky-400 text-slate-950 transition-all shadow-md shadow-sky-500/20"
+                >
+                  {loadingMatrix ? '⚡ Evaluating 220,000+ Candidate Cohort...' : '🏛️ FORECAST TOP COLLEGE ALLOCATIONS'}
+                </button>
+
+                {matrixResult && (
+                  <div className="p-4 rounded-2xl bg-slate-950 border border-sky-500/30 space-y-3">
+                    <div className="flex items-center justify-between text-white font-bold">
+                      <span>Normalized Score: {matrixResult.normalizedCompositeScore}</span>
+                      <span className="text-sky-400">{matrixResult.estimatedRankBracket} Rank Bracket</span>
+                    </div>
+
+                    <div className="text-[11px] text-emerald-300 bg-emerald-950/40 p-2.5 rounded-xl border border-emerald-500/25">
+                      💡 {matrixResult.counselingAdvice}
+                    </div>
+
+                    <div className="space-y-1.5 pt-2">
+                      <div className="text-[10px] uppercase font-bold text-slate-400">Top Matched Engineering Colleges:</div>
+                      {matrixResult.topMatchedColleges?.slice(0, 4).map((c, i) => (
+                        <div key={i} className="p-2.5 rounded-xl bg-slate-900 border border-white/5 flex items-center justify-between">
+                          <div>
+                            <div className="font-bold text-white text-xs font-sans">{c.college}</div>
+                            <div className="text-[10px] text-slate-400">{c.branch} • Cutoff: #{c.cutoffRankForCategory}</div>
+                          </div>
+                          <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-[10px] font-bold">
+                            {c.matchProbability}
+                          </span>
                         </div>
-                        <span className="text-emerald-400 font-mono text-[11px] bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                          {col.matchProbability || col.matchStatus || 'Eligible'}
-                        </span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </FeatureCard>
+          </section>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════
+            CATEGORY 2: VTU CGPA & DIPLOMA BRIDGES
+            ══════════════════════════════════════════════════════════ */}
+        {shouldShow('academic') && (
+          <section className="mb-10 text-left">
+            <div className="flex items-center gap-2.5 mb-4">
+              <span className="text-xl">📐</span>
+              <h2 className="text-lg font-bold text-white font-heading">
+                Academic Bridges &amp; VTU CGPA Converter
+              </h2>
+            </div>
+
+            <FeatureCard
+              id="vtu-cgpa-converter"
+              featureNumber="02"
+              title="Official Visvesvaraya Technological University (VTU) CGPA to Percentage Engine"
+              icon="🧮"
+              badge="VTU OFFICIAL FORMULA"
+              realWorldScenario="Accurately converts VTU engineering CGPA into official academic percentage required for corporate campus placements and US 4.0 GPA evaluations."
+              algorithmConcept="VTU Regulation Section 20.1 Formula: Percentage = (CGPA - 0.75) * 10."
+              defaultExpanded={true}
+              accentColor="sky"
+            >
+              <div className="space-y-3 font-mono text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-300 mb-1 font-bold">Candidate CGPA (0 - 10.0)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={cgpa}
+                      onChange={(e) => setCgpa(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 mb-1 font-bold">VTU Curriculum Scheme</label>
+                    <select
+                      value={scheme}
+                      onChange={(e) => setScheme(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none"
+                    >
+                      <option value="2022 Scheme">2022 / 2026 CBCS Scheme</option>
+                      <option value="2018 Scheme">2018 CBCS Scheme</option>
+                      <option value="Autonomous">Autonomous University Scale</option>
+                    </select>
                   </div>
                 </div>
-              )}
-            </div>
-          </div>
 
+                <button
+                  type="button"
+                  onClick={handleConvertVtu}
+                  className="w-full py-2.5 rounded-xl font-bold bg-sky-500 hover:bg-sky-400 text-slate-950 transition-all shadow-md shadow-sky-500/20"
+                >
+                  🧮 CALCULATE OFFICIAL VTU PERCENTAGE &amp; GPA
+                </button>
 
-          {/* FEATURE 2: SCHOLARSHIP & FEE WAIVER MATCHER */}
-          <div className="glass-card p-6 border-sky-500/20 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                  <span>💰</span> Smart Scholarship & Fee Waiver Matcher
-                </h3>
-                <span className="text-xs text-slate-400">SSP & Vidyasiri</span>
-              </div>
-
-              <div className="space-y-4 mb-6">
-                <div>
-                  <div className="flex justify-between text-xs text-slate-300 mb-1">
-                    <span>Annual Family Income (₹)</span>
-                    <span className="font-mono text-emerald-400 font-bold">₹{Number(income).toLocaleString('en-IN')}</span>
+                {vtuResult && (
+                  <div className="p-4 rounded-2xl bg-slate-950 border border-sky-500/30 space-y-2">
+                    <div className="flex items-center justify-between text-white font-bold text-sm">
+                      <span>Percentage: <strong className="text-emerald-400 text-base">{vtuResult.percentage}</strong></span>
+                      <span className="text-sky-300">{vtuResult.classDivision}</span>
+                    </div>
+                    <div className="text-slate-400 text-[11px]">{vtuResult.formula}</div>
+                    <div className="p-2 rounded-lg bg-sky-950/30 border border-sky-500/20 text-sky-200 text-[11px]">
+                      🌐 US 4.0 Equivalent GPA: <strong>{vtuResult.usEquivalentGpa} / 4.0</strong> (WES Compatible)
+                    </div>
                   </div>
-                  <input
-                    type="range"
-                    min="50000"
-                    max="600000"
-                    step="10000"
-                    value={income}
-                    onChange={(e) => setIncome(e.target.value)}
-                    className="w-full accent-emerald-400"
-                  />
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-xs text-slate-300 mb-1">
-                    <span>Academic Percentage</span>
-                    <span className="font-mono text-emerald-400 font-bold">{academics}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="50"
-                    max="100"
-                    value={academics}
-                    onChange={(e) => setAcademics(e.target.value)}
-                    className="w-full accent-emerald-400"
-                  />
-                </div>
-              </div>
-
-              <button
-                onClick={handleMatchScholarships}
-                disabled={loadingSch}
-                className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-emerald-500/20"
-              >
-                {loadingSch ? 'Scanning Scholarship Portals...' : '🎯 Match Eligible Government Grants'}
-              </button>
-
-              {/* Scholarship Results */}
-              {scholarshipResult && (
-                <div className="mt-6 p-4 rounded-xl bg-slate-900/80 border border-emerald-500/30">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs text-slate-400 uppercase tracking-wider">Potential Savings</span>
-                    <span className="text-sm font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                      {scholarshipResult.estimatedAnnualSavings} / year
-                    </span>
-                  </div>
-                  <div className="space-y-2">
-                    {scholarshipResult.matchedScholarships.map((sch, i) => (
-                      <div key={i} className="text-xs p-2.5 rounded-lg bg-slate-950/60 border border-white/5">
-                        <div className="font-semibold text-white">{sch.name}</div>
-                        <div className="text-slate-400 text-[11px] mt-0.5">Benefit: <span className="text-emerald-400">{sch.benefit}</span></div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 1: INSTANT 360° DIAGNOSTIC & 10x CAREER BLUEPRINT
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
-          
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
-                ⭐ FEATURE 1 HIGHEST QUALITY
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🧠</span> Autonomous 360° Diagnostic & 10x Career Roadmap Blueprint
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Evaluate your mathematical logic, system architecture, and communication against 200,000+ peers to generate your 30-day milestone sprint.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
-              <div className="text-xs text-slate-400 mb-1">Mathematical Logic</div>
-              <div className="text-xl font-mono font-bold text-sky-400">95/100</div>
-              <div className="text-[10px] text-emerald-400 mt-1">✓ Top 2% Bracket</div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
-              <div className="text-xs text-slate-400 mb-1">System Architecture</div>
-              <div className="text-xl font-mono font-bold text-indigo-400">90/100</div>
-              <div className="text-[10px] text-emerald-400 mt-1">✓ LRU & Fault Tolerance</div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
-              <div className="text-xs text-slate-400 mb-1">STAR Prosody</div>
-              <div className="text-xl font-mono font-bold text-emerald-400">92/100</div>
-              <div className="text-[10px] text-emerald-400 mt-1">✓ Quantified Impact</div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
-              <div className="text-xs text-slate-400 mb-1">National Percentile</div>
-              <div className="text-xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">
-                P96.2
-              </div>
-              <div className="text-[10px] text-sky-400 mt-1">Top 1% Elite Candidate</div>
-            </div>
-          </div>
-
-          {/* 30-Day Day-by-Day Milestone Sprint Roadmap */}
-          <div className="border-t border-white/10 pt-6">
-            <div className="text-sm font-bold text-white mb-3">Your Personalized 30-Day Milestone Sprint:</div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-sky-500/20">
-                <div className="text-sky-400 font-bold mb-1">Day 1-7 (500 XP)</div>
-                <div className="text-slate-300">Master Array Two-Pointers & NeetCode 150 Core Patterns</div>
-              </div>
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-indigo-500/20">
-                <div className="text-indigo-400 font-bold mb-1">Day 8-15 (750 XP)</div>
-                <div className="text-slate-300">Build Distributed In-Memory Cache with Sub-2ms Latency</div>
-              </div>
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-emerald-500/20">
-                <div className="text-emerald-400 font-bold mb-1">Day 16-23 (600 XP)</div>
-                <div className="text-slate-300">Complete 3 Live Voice AI Mock Interruption Rounds</div>
-              </div>
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-pink-500/20">
-                <div className="text-pink-400 font-bold mb-1">Day 24-30 (1000 XP)</div>
-                <div className="text-slate-300">Deploy Next.js 15 Fullstack App & Pass 5 Judge Defense Rounds</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 10: VERIFIED ALUMNI MENTOR DIRECT DISPATCH HUB
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
-                ⭐ FEATURE 10 VERIFIED ALUMNI MENTOR DIRECT RELAY
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🎓</span> Verified Alumni Mentorship & 1-on-1 Guidance Hub
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Get direct async guidance from verified RVCE, BMSCE, and MSRIT alumni working at Google, Microsoft, and Razorpay.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/20">
-              <div className="flex items-center justify-between mb-2">
-                <div className="font-bold text-white text-xs">Aditya Rao</div>
-                <span className="text-[10px] font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">RVCE • Google</span>
-              </div>
-              <div className="text-[11px] text-slate-300 font-sans leading-relaxed mb-2">
-                &quot;Do not compromise on branch for a college name unless it is RVCE CSE/ISE. Strong fundamentals in OS and NeetCode 150 will get you into Tier-1 product companies.&quot;
-              </div>
-              <div className="text-[10px] text-slate-400">Focus: Placements & KEA Counseling</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/20">
-              <div className="flex items-center justify-between mb-2">
-                <div className="font-bold text-white text-xs">Priya Sharma</div>
-                <span className="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">BMSCE • Microsoft</span>
-              </div>
-              <div className="text-[11px] text-slate-300 font-sans leading-relaxed mb-2">
-                &quot;Hackathons are the fastest shortcut to bypassing resume black holes. Win 2 national hackathons with live deployed prototypes, and recruiters will reach out to you.&quot;
-              </div>
-              <div className="text-[10px] text-slate-400">Focus: Two-Stage RAG & AI Engineering</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/20">
-              <div className="flex items-center justify-between mb-2">
-                <div className="font-bold text-white text-xs">Karthik Bhat</div>
-                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">MSRIT • Razorpay</span>
-              </div>
-              <div className="text-[11px] text-slate-300 font-sans leading-relaxed mb-2">
-                &quot;For DCET diploma students: Focus 70% of your energy on 3rd year engineering mathematics. Your practical coding will give you a massive edge over PU students.&quot;
-              </div>
-              <div className="text-[10px] text-slate-400">Focus: DCET Lateral Entry & Fullstack</div>
-            </div>
-          </div>
-
-          {/* Ask Mentor Direct Input Card */}
-          <div className="p-5 rounded-2xl bg-slate-950/90 border border-white/10">
-            <div className="text-xs font-bold text-white mb-2">Ask a Verified Senior Mentor a Direct Question:</div>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <input
-                type="text"
-                defaultValue="Should I choose RVCE ISE or BMSCE CSE for product placements?"
-                className="flex-1 bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-sky-500"
-              />
-              <button className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs shadow-lg shadow-sky-500/20">
-                📨 Dispatch Question to Mentors
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 15: REGIONAL LANGUAGE VOICE COACH (KANNADA/HINDI)
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
-                ⭐ FEATURE 15 VERNACULAR AUDIO COACH (KANNADA & HINDI)
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🗣️</span> ಪ್ರಾದೇಶಿಕ ಭಾಷಾ ಮಾರ್ಗದರ್ಶನ • Regional Voice Coach
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Bilingual voice coaching for Karnataka Pre-University and Rural Diploma candidates with real-time technical vocabulary bridging.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                Active: ಕನ್ನಡ (Kannada)
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Vernacular Audio & Translation */}
-            <div className="p-5 rounded-2xl bg-slate-950/80 border border-sky-500/20">
-              <div className="flex items-center justify-between mb-3 text-xs">
-                <span className="font-bold text-white flex items-center gap-2">
-                  <span>🎙️</span> ಕನ್ನಡ ಆಡಿಯೋ ಪ್ರಾಂಪ್ಟ್ (KCET Counseling Guidance):
-                </span>
-                <span className="text-[10px] font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">92% Vernacular Comprehension</span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-900 border border-white/5 font-sans text-xs text-slate-200 leading-relaxed mb-3">
-                &quot;ನಮಸ್ಕಾರ! ನಿಮ್ಮ KCET ರ್ಯಾಂಕ್ 2,000 ರ ಒಳಗಿದ್ದರೆ, ಮೊದಲ ಸುತ್ತಿನಲ್ಲಿ RVCE ಕಂಪ್ಯೂಟರ್ ಸೈನ್ಸ್ (CSE) ಅಥವಾ ಮಾಹಿತಿ ವಿಜ್ಞಾನ (ISE) ಅನ್ನು ಮೊದಲ ಆದ್ಯತೆಯಾಗಿ (Option #1) ಇರಿಸಿ. ಎರಡನೇ ಆಯ್ಕೆಯಾಗಿ BMSCE CSE ಆಯ್ಕೆಮಾಡಿ.&quot;
-              </div>
-
-              <div className="p-3 rounded-xl bg-slate-900/60 border border-white/5 text-[11px] text-slate-400">
-                <span className="font-semibold text-sky-400">English Bridge:</span> &quot;Hello! If your KCET rank is within 2,000, place RVCE CSE or ISE as Option #1 in Round 1. Place BMSCE CSE as Option #2.&quot;
-              </div>
-            </div>
-
-            {/* Technical Vocabulary Bridge */}
-            <div className="p-5 rounded-2xl bg-slate-950/80 border border-sky-500/20">
-              <div className="text-xs font-bold text-white mb-3 flex items-center gap-2">
-                <span>📚</span> Cross-Lingual Technical Vocabulary Bridge:
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-white/5 text-xs">
-                  <span className="font-semibold text-white">ಆಯ್ಕೆ ನಮೂದು</span>
-                  <span className="text-emerald-400 font-mono text-[11px]">Option Entry (KEA Portal)</span>
-                </div>
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-white/5 text-xs">
-                  <span className="font-semibold text-white">ಮೊದಲ ಸುತ್ತಿನ ಕೌನ್ಸೆಲಿಂಗ್</span>
-                  <span className="text-sky-400 font-mono text-[11px]">Round 1 Seat Allotment</span>
-                </div>
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-white/5 text-xs">
-                  <span className="font-semibold text-white">ಶುಲ್ಕ ವಿನಾಯಿತಿ (SNQ)</span>
-                  <span className="text-emerald-400 font-mono text-[11px]">Supernumerary Quota Fee Waiver</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 21: KCET & DCET CHOICE FILLING SIMULATOR
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
-                ⭐ FEATURE 21 KEA CHOICE FILLING OPTION-ENTRY SIMULATOR
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🎯</span> KCET &amp; DCET Choice Filling &amp; Seat Allotment Mock Run
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Simulate official 3-round Karnataka Examination Authority (KEA) seat allocation, preference re-ordering, and Choice 1-4 decision strategies.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                Simulated Rank: 2,140 (GM Quota)
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            {/* Round 1 Outcome */}
-            <div className="p-5 rounded-2xl bg-slate-950/80 border border-white/10">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-white">Round 1 Allotment Outcome:</span>
-                <span className="text-[10px] font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">Allotted (Option #2)</span>
-              </div>
-              <div className="p-4 rounded-xl bg-slate-900 border border-white/5 mb-3">
-                <div className="text-base font-bold text-white">BMSCE — Computer Science (CSE)</div>
-                <div className="text-xs text-slate-400 mt-0.5">Round 1 Cutoff: 3,200 • Your Rank: 2,140</div>
-              </div>
-              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300">
-                💡 <strong>KEA Strategy:</strong> Select <strong>Choice 2</strong> (Hold BMSCE CSE seat as backup, pay fee token, and enter Round 2 for Option #1 RVCE upgrade).
-              </div>
-            </div>
-
-            {/* Round 2 Upgrade Outcome */}
-            <div className="p-5 rounded-2xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-white">Round 2 Upgrade Simulation:</span>
-                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">UPGRADED (Option #1)</span>
-              </div>
-              <div className="p-4 rounded-xl bg-slate-900 border border-emerald-500/20 mb-3">
-                <div className="text-base font-bold text-emerald-400">RVCE — Computer Science (CSE)</div>
-                <div className="text-xs text-slate-400 mt-0.5">Round 2 Cutoff: 2,250 • Upgraded from BMSCE!</div>
-              </div>
-              <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-300">
-                🎉 <strong>Decision:</strong> Select <strong>Choice 1</strong> (Freeze RVCE CSE seat, download final admission order, report to campus).
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 25: 5-YEAR KARNATAKA COLLEGE CUTOFF EXPLORER
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
-                ⭐ FEATURE 25 5-YEAR COLLEGE CUTOFF EXPLORER &amp; FORECASTER
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🏛️</span> Tier-1/2/3 Karnataka 5-Year Cutoff Explorer (2022–2026)
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Explore longitudinal KCET closing rank shifts across RVCE, BMSCE, MSRIT, PES, and UVCE with Safe/Target/Reach probability bands.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-sky-400 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20">
-                Institution: RV College of Engineering (Tier-1 Elite)
-              </span>
-            </div>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-slate-950/80 border border-white/10 mb-6">
-            <div className="text-xs font-bold text-white mb-3">5-Year Closing Rank Shift (RVCE):</div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-              <div className="p-3.5 rounded-xl bg-slate-900 border border-white/5">
-                <div className="text-slate-400 text-[10px] uppercase font-mono">Computer Science (CSE)</div>
-                <div className="text-lg font-mono font-bold text-emerald-400 mt-1">1,850 Closing</div>
-                <div className="text-[10px] text-slate-400 mt-1">History: 1420 ➔ 1580 ➔ 1690 ➔ 1850</div>
-                <div className="text-[10px] text-emerald-400 font-mono mt-0.5">Tightening (+6.8% YoY)</div>
-              </div>
-              <div className="p-3.5 rounded-xl bg-slate-900 border border-white/5">
-                <div className="text-slate-400 text-[10px] uppercase font-mono">Information Science (ISE)</div>
-                <div className="text-lg font-mono font-bold text-sky-400 mt-1">2,800 Closing</div>
-                <div className="text-[10px] text-slate-400 mt-1">History: 2200 ➔ 2450 ➔ 2600 ➔ 2800</div>
-                <div className="text-[10px] text-sky-400 font-mono mt-0.5">High Demand Tier</div>
-              </div>
-              <div className="p-3.5 rounded-xl bg-slate-900 border border-white/5">
-                <div className="text-slate-400 text-[10px] uppercase font-mono">Electronics (ECE)</div>
-                <div className="text-lg font-mono font-bold text-purple-400 mt-1">4,200 Closing</div>
-                <div className="text-[10px] text-slate-400 mt-1">History: 3400 ➔ 3700 ➔ 3950 ➔ 4200</div>
-                <div className="text-[10px] text-purple-400 font-mono mt-0.5">Stable Benchmark</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-sky-500/20 flex items-center justify-between text-xs">
-            <span className="text-slate-300">Your Rank (2,140) Probability for RVCE ISE:</span>
-            <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold border border-emerald-500/30">
-              Safe / High Probability (98% Direct Round 1)
-            </span>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 26: SUPERNUMERARY QUOTA (SNQ) FEE WAIVER MATCHER
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
-                ⭐ FEATURE 26 SUPERNUMERARY QUOTA (SNQ) FEE WAIVER
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🎓</span> Supernumerary Quota (SNQ) &amp; 100% Tuition Fee Waiver Matcher
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                KEA 5% reserved quota for candidates with family income &lt; ₹8.0 LPA. Saves ₹4,00,000+ across 4 years of engineering tuition.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                Income: ₹2.40 LPA (Eligible • ₹4.10L Savings)
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
-              <div className="text-[11px] text-slate-400 mb-1">Standard KCET Fee</div>
-              <div className="text-xl font-mono font-bold text-rose-400">₹1,07,000 / yr</div>
-              <div className="text-[10px] text-slate-400 mt-1">Total 4-Yr Cost: ₹4,28,000</div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-950/70 border border-white/5">
-              <div className="text-[11px] text-slate-400 mb-1">SNQ Reduced Fee</div>
-              <div className="text-xl font-mono font-bold text-emerald-400">₹4,500 / yr</div>
-              <div className="text-[10px] text-emerald-400 mt-1">100% Tuition Waived by Govt</div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-950/70 border border-emerald-500/20">
-              <div className="text-[11px] text-slate-400 mb-1">Total 4-Year Savings</div>
-              <div className="text-xl font-mono font-bold text-emerald-400">₹4,10,000 Saved</div>
-              <div className="text-[10px] text-emerald-400 mt-1">✓ Direct Bank Benefit</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-emerald-500/20 text-xs">
-            <div className="font-bold text-white mb-2">📋 Mandatory KEA SNQ Verification Checklist:</div>
-            <ul className="text-slate-300 space-y-1 list-disc list-inside">
-              <li>Revenue Department (RD Number) Income Certificate issued by Tahsildar (&lt; ₹8.0 LPA).</li>
-              <li>7 Years Karnataka Study Certificate signed by BEO / DDPU.</li>
-              <li>Option Entry Portal: Automatic SNQ seat eligibility toggle enabled.</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 29: POLYTECHNIC DIPLOMA 14-DAY MATH BRIDGE
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
-                ⭐ FEATURE 29 POLYTECHNIC DIPLOMA LATERAL ENTRY MATH BRIDGE
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>📐</span> Polytechnic Diploma Lateral Entry 14-Day Math Bridge
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Intensive remedial curriculum for Karnataka DCET lateral entrants transitioning into VTU 3rd-Semester Engineering Mathematics (21MAT31).
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                Readiness: 92/100 (Low Dropout Risk)
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-6 text-xs font-mono">
-            <div className="p-3 rounded-xl bg-slate-950/80 border border-white/10">
-              <div className="text-indigo-400 text-[10px]">DAY 01 - 03</div>
-              <div className="font-bold text-white mt-1">Matrix Eigenvalues</div>
-              <div className="text-slate-400 text-[10px] mt-0.5">Cayley-Hamilton Theorem</div>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-950/80 border border-white/10">
-              <div className="text-indigo-400 text-[10px]">DAY 04 - 06</div>
-              <div className="font-bold text-white mt-1">Higher-Order ODE</div>
-              <div className="text-slate-400 text-[10px] mt-0.5">Linear Diff Equations</div>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="text-emerald-400 text-[10px]">DAY 07 - 09</div>
-              <div className="font-bold text-white mt-1">Laplace Transforms</div>
-              <div className="text-emerald-400 text-[10px] mt-0.5">★ 25% VTU Exam Weight</div>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-950/80 border border-white/10">
-              <div className="text-indigo-400 text-[10px]">DAY 10 - 12</div>
-              <div className="font-bold text-white mt-1">Fourier Series</div>
-              <div className="text-slate-400 text-[10px] mt-0.5">Harmonic Filtering</div>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-950/80 border border-white/10">
-              <div className="text-indigo-400 text-[10px]">DAY 13 - 14</div>
-              <div className="font-bold text-white mt-1">Vector Calculus</div>
-              <div className="text-slate-400 text-[10px] mt-0.5">Stokes Theorem Proofs</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/20 text-xs">
-            <span className="text-slate-300 font-sans">
-              💡 <strong>Lateral Entry Advice:</strong> Focus on <strong>Laplace Transforms</strong> on Days 7–9 as it carries highest score weightage in 3rd-semester university exams.
-            </span>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 31: BRANCH SUITABILITY AI DIAGNOSTIC
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
-                ⭐ FEATURE 31 BRANCH SUITABILITY AI DIAGNOSTIC
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🧬</span> Engineering Branch Suitability Diagnostic (CSE vs ISE vs AIML vs ECE)
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Cognitive trait matching evaluating mathematical foundations, systems architecture, and probability traits against university curricula.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                Top Match: Computer Science (94%)
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-bold text-white">Pure CSE</span>
-                <span className="text-emerald-400 font-mono font-bold text-sm">94%</span>
-              </div>
-              <div className="text-slate-400 text-[11px] mt-1">Algorithms, OS, Distributed Systems, Compilers</div>
-              <div className="text-emerald-400 font-mono text-[10px] mt-2">★ Recommended Choice</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-bold text-white">Information Sci (ISE)</span>
-                <span className="text-sky-400 font-mono font-bold text-sm">94%</span>
-              </div>
-              <div className="text-slate-400 text-[11px] mt-1">Full-Stack Architecture, Cloud, DB Systems</div>
-              <div className="text-sky-400 font-mono text-[10px] mt-2">★ Top Alternative</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/30">
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-bold text-white">AI &amp; ML (AIML)</span>
-                <span className="text-indigo-400 font-mono font-bold text-sm">88%</span>
-              </div>
-              <div className="text-slate-400 text-[11px] mt-1">Deep Learning, Statistics, Computer Vision</div>
-              <div className="text-indigo-400 font-mono text-[10px] mt-2">Specialized Track</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-bold text-white">Electronics (ECE)</span>
-                <span className="text-purple-400 font-mono font-bold text-sm">68%</span>
-              </div>
-              <div className="text-slate-400 text-[11px] mt-1">VLSI, Embedded Systems, Signal Processing</div>
-              <div className="text-slate-400 font-mono text-[10px] mt-2">Hardware Track</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-sky-500/20 text-xs">
-            <span className="text-slate-300 font-sans">
-              🎯 <strong>AI Counselor Verdict:</strong> High cognitive affinity for discrete logic and distributed systems. Prioritize <strong>RVCE / BMSCE CSE</strong> followed closely by <strong>ISE</strong> for optimal Tier-1 product placement leverage.
-            </span>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 34: KARNATAKA SSP / NSP SCHOLARSHIP MATCHER
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
-                ⭐ FEATURE 34 KARNATAKA STATE SCHOLARSHIP (SSP/NSP) MATCHER
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🎓</span> Karnataka State Scholarship (SSP / NSP) Matcher &amp; Vault
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Automated eligibility matching across Karnataka BCWD, Social Welfare SC/ST fee waiver, and AICTE Pragati schemes (₹25k - ₹75k/yr).
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                Total Grant Matched: ₹85,000 / Year
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-xs">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-bold text-white text-sm">Karnataka SSP Post-Matric (BCWD)</span>
-                <span className="text-emerald-400 font-mono font-bold">₹35,000 / yr</span>
-              </div>
-              <div className="text-[11px] text-slate-400 mt-1">
-                Direct DBT Bank transfer for Cat-1, 2A, 2B, 3A, 3B students with annual family income &lt; ₹2.5 LPA.
-              </div>
-              <div className="mt-2 text-[10px] text-emerald-400 font-mono">✓ NPCI Bank Seeding: Verified</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-bold text-white text-sm">AICTE Pragati Scholarship for Women</span>
-                <span className="text-purple-400 font-mono font-bold">₹50,000 / yr</span>
-              </div>
-              <div className="text-[11px] text-slate-400 mt-1">
-                Central government grant for female engineering candidates admitted through state quota counseling.
-              </div>
-              <div className="mt-2 text-[10px] text-purple-400 font-mono">✓ Category: Open to All Categories</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-emerald-500/20 text-xs">
-            <div className="font-bold text-white mb-2">📋 Mandatory SSP Portal Submission Checklist:</div>
-            <ul className="text-slate-300 space-y-1 list-disc list-inside">
-              <li>Revenue Department (RD Number) Caste &amp; Income Certificate.</li>
-              <li>Aadhaar-seeded bank account with active NPCI mapping (Avoid DBT transaction failures).</li>
-              <li>VTU University Seat Number (USN) &amp; College Admission Fee Receipt.</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 36: MANAGEMENT QUOTA DIRECT FEE & COA FORECASTER
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-amber-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-amber-500/30">
-                ⭐ FEATURE 36 MANAGEMENT QUOTA FEE &amp; COA FORECASTER
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🏛️</span> Management Quota Direct Fee &amp; 4-Year COA Forecaster
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Transparent 4-year institutional investment modeling (donation, tuition, Bangalore living) with post-grad salary ROI payback periods.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
-                RVCE CSE: ₹45.2L Total 4-Yr COA
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/10">
-              <div className="text-slate-400 text-[10px]">ONE-TIME DONATION</div>
-              <div className="text-amber-400 font-bold text-base mt-1">₹20,00,000</div>
-              <div className="text-slate-500 text-[10px] mt-0.5">Development Trust Fund</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/10">
-              <div className="text-slate-400 text-[10px]">4-YR TUITION FEES</div>
-              <div className="text-sky-400 font-bold text-base mt-1">₹18,00,000</div>
-              <div className="text-slate-500 text-[10px] mt-0.5">₹4.5L / year VTU Quota</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-white/10">
-              <div className="text-slate-400 text-[10px]">4-YR LIVING &amp; HOSTEL</div>
-              <div className="text-purple-400 font-bold text-base mt-1">₹7,20,000</div>
-              <div className="text-slate-500 text-[10px] mt-0.5">Bangalore Tech Corridor</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="text-emerald-400 text-[10px]">ESTIMATED PAYBACK</div>
-              <div className="text-emerald-400 font-bold text-base mt-1">4.6 Years</div>
-              <div className="text-emerald-400 text-[10px] mt-0.5">★ 16.5 LPA Placement Avg</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-amber-500/20 text-xs">
-            <span className="text-slate-300 font-sans">
-              📊 <strong>Financial Viability Verdict:</strong> High ROI. 4.6-year investment amortization supported by top-tier Tier-1 campus placement drives (Google, Atlassian, Cisco, PhonePe visiting RVCE CSE).
-            </span>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 39: VTU CBCS CGPA TO PERCENTAGE CONVERTER
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
-                ⭐ FEATURE 39 VTU CBCS CGPA CONVERTER &amp; ELIGIBILITY
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🧮</span> VTU 2022 Scheme CBCS CGPA to Percentage Converter
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Official Visvesvaraya Technological University conversion formula with institutional campus placement cutoff audits.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                8.42 CGPA = 76.70% (FCD)
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-xs font-mono">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="text-emerald-400 text-[10px] font-bold">MASS RECRUITERS</div>
-              <div className="text-white font-bold text-sm mt-1">TCS, Infosys, Wipro</div>
-              <div className="text-slate-400 text-[11px] mt-1">Min: 6.75 CGPA (60.0%)</div>
-              <div className="text-emerald-400 text-[10px] mt-2">✓ 100% Eligible</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
-              <div className="text-sky-400 text-[10px] font-bold">TIER-1 PRODUCT TECH</div>
-              <div className="text-white font-bold text-sm mt-1">Cisco, Oracle, PhonePe</div>
-              <div className="text-slate-400 text-[11px] mt-1">Min: 7.75 CGPA (70.0%)</div>
-              <div className="text-emerald-400 text-[10px] mt-2">✓ 100% Eligible</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
-              <div className="text-purple-400 text-[10px] font-bold">FAANG &amp; HFT ELITE</div>
-              <div className="text-white font-bold text-sm mt-1">Google, Microsoft, Uber</div>
-              <div className="text-slate-400 text-[11px] mt-1">Min: 8.00 CGPA (72.5%)</div>
-              <div className="text-emerald-400 text-[10px] mt-2">✓ 100% Eligible</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-sky-500/20 text-xs">
-            <span className="text-slate-300 font-sans">
-              📜 <strong>Official VTU Circular Formula:</strong> <code>Percentage = (CGPA - 0.75) * 10</code>. Clean academic record with <strong>0 Active Backlogs</strong> verified.
-            </span>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 41: KARNATAKA RURAL & KANNADA MEDIUM RESERVATIONS
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-rose-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 text-rose-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-rose-500/30">
-                ⭐ FEATURE 41 KARNATAKA RURAL &amp; KANNADA MEDIUM QUOTA
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🌾</span> Karnataka 15% Rural &amp; 5% Kannada Medium Quota Evaluator
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                KEA horizontal quota verification engine with 2.2x rank cutoff multiplier modeling and BEO document audit.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                Raw Rank 4500 → Equivalent Rank 2045 (2.2x Benefit)
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-xs font-mono">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-rose-500/30">
-              <div className="text-rose-400 text-[10px] font-bold">15% RURAL QUOTA (RC)</div>
-              <div className="text-white font-bold text-sm mt-1">10 Years Rural Study</div>
-              <div className="text-slate-400 text-[11px] mt-1">1st to 10th Standard Verified</div>
-              <div className="text-emerald-400 text-[10px] mt-2">✓ Eligible (Form-1 BEO Signed)</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30">
-              <div className="text-amber-400 text-[10px] font-bold">5% KANNADA MEDIUM (KMC)</div>
-              <div className="text-white font-bold text-sm mt-1">Kannada Medium Instruction</div>
-              <div className="text-slate-400 text-[11px] mt-1">10 Full Academic Years</div>
-              <div className="text-emerald-400 text-[10px] mt-2">✓ Eligible (Countersigned)</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
-              <div className="text-sky-400 text-[10px] font-bold">ARTICLE 371J (HK QUOTA)</div>
-              <div className="text-white font-bold text-sm mt-1">Kalyana Karnataka</div>
-              <div className="text-slate-400 text-[11px] mt-1">Assistant Commissioner Cert</div>
-              <div className="text-slate-500 text-[10px] mt-2">Optional (Non-HK Region)</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-rose-500/20 text-xs">
-            <span className="text-slate-300 font-sans">
-              📋 <strong>Mandatory KEA Document Verification:</strong> Form-1 Rural Study Certificate countersigned by the Block Education Officer (BEO) + 7-year continuous Karnataka study certificate.
-            </span>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 44: CAMPUS HOSTEL, MESS & METRO COMMUTE INTEL
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
-                ⭐ FEATURE 44 CAMPUS HOSTEL &amp; METRO COMMUTE INTEL
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🏢</span> Bangalore Engineering Hostel vs PG &amp; Namma Metro Pass Radar
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Transparent living economics, food mess ratings, biometric curfews, and Namma Metro Purple/Green line transit passes.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                Hostel Saves ₹50,000/yr vs PG
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/30">
-              <div className="text-indigo-400 text-[10px] font-bold">CAMPUS HOSTEL</div>
-              <div className="text-white font-bold text-sm mt-1">₹1,25,000 / year</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Mess + 1 Gbps LAN incl.</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
-              <div className="text-purple-400 text-[10px] font-bold">NEARBY 2-SHARE PG</div>
-              <div className="text-white font-bold text-sm mt-1">₹1,75,000 / year</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">AC + Wi-Fi Tech Corridor</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
-              <div className="text-sky-400 text-[10px] font-bold">NAMMA METRO TRANSIT</div>
-              <div className="text-white font-bold text-sm mt-1">₹1,450 / month</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">RVCE Station (Purple Line)</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30">
-              <div className="text-amber-400 text-[10px] font-bold">BIOMETRIC CURFEW</div>
-              <div className="text-white font-bold text-sm mt-1">9:30 PM In-Time</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Mess Rating: 4.4 / 5.0</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/20 text-xs">
-            <span className="text-slate-300 font-sans">
-              🚇 <strong>Campus Commuter Verdict:</strong> Students living along the Purple Line (Majestic, Indiranagar, Whitefield) can save ~₹1.1L/year by opting for Namma Metro daily commute instead of private hostel rentals.
-            </span>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 46: FIRST-GENERATION GRADUATE TOOLKIT
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-teal-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/15 text-teal-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-teal-500/30">
-                ⭐ FEATURE 46 FIRST-GEN GRADUATE TOOLKIT
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🎓</span> First-Generation Engineering Graduate Concession &amp; Roadmap
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Tahsildar verification checklist, 4-year ₹1,00,000 tuition fee concession, and 1-on-1 alumni onboarding.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-teal-400 bg-teal-500/10 px-3 py-1 rounded-full border border-teal-500/20">
-                Total Savings: ₹1,00,000 / 4-Yrs
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-teal-500/30">
-              <div className="text-teal-400 text-[10px] font-bold">ANNUAL TUITION WAIVER</div>
-              <div className="text-white font-bold text-sm mt-1">₹25,000 / year</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">KEA First-Gen Concession</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-teal-500/30">
-              <div className="text-teal-400 text-[10px] font-bold">4-YEAR TOTAL BENEFIT</div>
-              <div className="text-emerald-400 font-bold text-sm mt-1">₹1,00,000 Total</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Direct tuition fee rebate</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
-              <div className="text-sky-400 text-[10px] font-bold">TAHSILDAR AUDIT</div>
-              <div className="text-white font-bold text-sm mt-1">RD No. Verified</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Family Tree Affidavit</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
-              <div className="text-purple-400 text-[10px] font-bold">MENTOR PAIRING</div>
-              <div className="text-white font-bold text-sm mt-1">Tier-1 Alumnus</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Sem 1-8 Guidance</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-teal-500/20 text-xs">
-            <div className="font-bold text-white mb-1">📜 Required Revenue Department (RD) Documents:</div>
-            <ul className="text-slate-300 space-y-1 list-disc list-inside">
-              <li>First-Graduate Certificate from local Tahsildar / Revenue Inspector (Form RD-FG).</li>
-              <li>Family Tree / Vamshavruksha affidavit certifying no sibling holds an engineering or professional degree.</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 49: AUTONOMOUS VS AFFILIATED FREEDOM MATRIX
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-violet-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/15 text-violet-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-violet-500/30">
-                ⭐ FEATURE 49 AUTONOMOUS FREEDOM MATRIX
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>⚖️</span> Autonomous vs Affiliated College Academic Agility Radar
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Compares relative grading curves (+0.55 CGPA), summer makeup fast-track terms, and agile tech electives.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-violet-400 bg-violet-500/10 px-3 py-1 rounded-full border border-violet-500/20">
-                Freedom Score: 94/100 (Autonomous)
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-violet-500/30">
-              <div className="text-violet-400 text-[10px] font-bold">CURRICULUM AGILITY</div>
-              <div className="text-white font-bold text-sm mt-1">Annual Refresh</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Industry Advisory Board</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="text-emerald-400 text-[10px] font-bold">CGPA ADVANTAGE</div>
-              <div className="text-emerald-400 font-bold text-sm mt-1">+0.55 CGPA Boost</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Relative grading curve</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
-              <div className="text-sky-400 text-[10px] font-bold">SUMMER FAST-TRACK</div>
-              <div className="text-white font-bold text-sm mt-1">16 Credits Makeup</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">No academic year loss</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-rose-500/30">
-              <div className="text-rose-400 text-[10px] font-bold">ADVANCED ELECTIVES</div>
-              <div className="text-white font-bold text-sm mt-1">45% of Degree</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">GenAI, Cloud, Distributed</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-violet-500/20 text-xs">
-            <span className="text-slate-300 font-sans">
-              💡 <strong>Alumni Placement Strategy:</strong> Autonomous institutes provide massive advantages in campus placement drives because their agile grading and fast-track makeup terms prevent backlog delays during 7th semester company interviews.
-            </span>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 51: 7-YEAR STUDY CERTIFICATE & BEO TRACKER
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
-                ⭐ FEATURE 51 7-YEAR STUDY CERTIFICATE TRACKER
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>📑</span> KEA Clause-A 7-Year Continuous Study &amp; BEO Seal Auditor
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Audits multi-school timelines, cross-district transfers, and Block Education Officer (BEO) countersignatures.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                KEA Clause-A Fully Validated ✓
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="text-emerald-400 text-[10px] font-bold">TOTAL STUDY YEARS</div>
-              <div className="text-white font-bold text-sm mt-1">12 Years in KA</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Floor: 7 Years Minimum</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="text-emerald-400 text-[10px] font-bold">SCHOOL BLOCKS</div>
-              <div className="text-white font-bold text-sm mt-1">3 Distinct Schools</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Mysore &amp; Bangalore</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
-              <div className="text-sky-400 text-[10px] font-bold">BEO ENDORSEMENT</div>
-              <div className="text-emerald-400 font-bold text-sm mt-1">100% Countersigned</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">0 Missing Seals</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
-              <div className="text-purple-400 text-[10px] font-bold">VERIFICATION TIER</div>
-              <div className="text-white font-bold text-sm mt-1">Online Node Ready</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">KEA Direct Cleared</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-emerald-500/20 text-xs">
-            <div className="font-bold text-white mb-1">📋 KEA Document Verification Rule Note:</div>
-            <p className="text-slate-300">
-              If a candidate changed schools between 1st and 10th standard across different educational taluks, each separate study certificate MUST be individually countersigned by the respective jurisdiction Block Education Officer (BEO).
-            </p>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 54: ARTICLE 371(J) KALYANA-KARNATAKA QUOTA
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-orange-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/15 text-orange-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-orange-500/30">
-                ⭐ FEATURE 54 ARTICLE 371(J) HK QUOTA
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🏛️</span> Article 371(J) Kalyana-Karnataka Seat Reservation Radar
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                70% regional quota in 7 HK districts (Kalaburagi, Bidar, Raichur) and 8% statewide quota in Bangalore Tier-1 colleges.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-orange-400 bg-orange-500/10 px-3 py-1 rounded-full border border-orange-500/20">
-                Rank Multiplier: 3.8x Advantage
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-orange-500/30">
-              <div className="text-orange-400 text-[10px] font-bold">STATEWIDE TIER-1</div>
-              <div className="text-white font-bold text-sm mt-1">8% Reserved</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">RVCE, BMSCE, MSRIT</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30">
-              <div className="text-amber-400 text-[10px] font-bold">REGIONAL LOCAL</div>
-              <div className="text-white font-bold text-sm mt-1">70% Reserved</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">7 Kalyana Districts</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="text-emerald-400 text-[10px] font-bold">EFFECTIVE RANK</div>
-              <div className="text-emerald-400 font-bold text-sm mt-1">15.2k → ~4,000 GM</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Massive cutoff expansion</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
-              <div className="text-purple-400 text-[10px] font-bold">REQUIRED FORM</div>
-              <div className="text-white font-bold text-sm mt-1">Form-E (AC Office)</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Revenue Sub-Division</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-orange-500/20 text-xs">
-            <div className="font-bold text-white mb-1">📍 7 Eligible Kalyana-Karnataka Districts:</div>
-            <p className="text-slate-300 font-mono">
-              Kalaburagi (Gulbarga) • Bidar • Yadgir • Raichur • Koppal • Ballari (Bellary) • Vijayanagara
-            </p>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 57: SPORTS, CULTURAL & NCC SPECIAL QUOTA
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-rose-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 text-rose-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-rose-500/30">
-                ⭐ FEATURE 57 SPORTS &amp; NCC SPECIAL QUOTA
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🏅</span> KEA Sports, NCC &amp; Scouts/Guides Supernumerary Quota Radar
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Priority order evaluation for National/State medalists, NCC &apos;C&apos; certificate holders, and Rashtrapati Scouts awards.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-rose-400 bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">
-                KEA Priority 2 • 85 Merit Points
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-rose-500/30">
-              <div className="text-rose-400 text-[10px] font-bold">CATEGORY TYPE</div>
-              <div className="text-white font-bold text-sm mt-1">National Sports</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Athletics / Games</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30">
-              <div className="text-amber-400 text-[10px] font-bold">ACHIEVEMENT</div>
-              <div className="text-white font-bold text-sm mt-1">National Medalist</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Gold / Silver / Bronze</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="text-emerald-400 text-[10px] font-bold">SEAT PROBABILITY</div>
-              <div className="text-emerald-400 font-bold text-sm mt-1">Very High in Top 5</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">RVCE, BMSCE, UVCE</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
-              <div className="text-purple-400 text-[10px] font-bold">VERIFICATION</div>
-              <div className="text-white font-bold text-sm mt-1">Physical Verification</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">KEA Malleshwaram</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-rose-500/20 text-xs">
-            <div className="font-bold text-white mb-1">📋 KEA Special Category Quota Invariant:</div>
-            <p className="text-slate-300">
-              Sports and NCC quota seats are strictly supernumerary and allocated during dedicated Special Category Round 1 allotment without consuming general merit category seats.
-            </p>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 60: COLLEGE INCUBATOR SEED GRANTS & PATENTS
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-teal-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/15 text-teal-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-teal-500/30">
-                ⭐ FEATURE 60 INCUBATOR SEED GRANTS &amp; PATENTS
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🚀</span> DST NIDHI-TBI Seed Grants &amp; Karnataka Patent Subsidy
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                College-specific startup funding matches (₹10L - ₹25L Elevate 100) and 100% patent filing fee reimbursements.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-teal-400 bg-teal-500/10 px-3 py-1 rounded-full border border-teal-500/20">
-                ₹10,00,000 DST NIDHI-EIR Pool
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-teal-500/30">
-              <div className="text-teal-400 text-[10px] font-bold">COLLEGE INCUBATOR</div>
-              <div className="text-white font-bold text-sm mt-1">RVCE CIIL</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Centre for Innovation</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="text-emerald-400 text-[10px] font-bold">ELEVATE 100 GRANT</div>
-              <div className="text-emerald-400 font-bold text-sm mt-1">₹25,00,000</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">100% Equity-Free</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
-              <div className="text-purple-400 text-[10px] font-bold">PATENT SUBSIDY</div>
-              <div className="text-white font-bold text-sm mt-1">₹2,00,000</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">KITS State Policy</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30">
-              <div className="text-amber-400 text-[10px] font-bold">EQUITY CAP</div>
-              <div className="text-amber-400 font-bold text-sm mt-1">0% Dilution</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Non-dilutive student term</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-teal-500/20 text-xs">
-            <div className="font-bold text-white mb-1">💡 Karnataka Startup Policy 2022-2027 Invariant:</div>
-            <p className="text-slate-300">
-              Undergrad engineering founders filing IP via college TBI retain 100% student equity ownership with zero sovereign debt liability.
-            </p>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 61: KEA DOCUMENT VERIFICATION OCR & RD VALIDATOR
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-indigo-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-indigo-500/30">
-                ⭐ FEATURE 61 KEA DOCUMENT OCR &amp; RD VALIDATOR
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>📑</span> BEO Counter Clearance &amp; Name Spelling Discrepancy Radar
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Phonetic Soundex and Levenshtein similarity cross-verifier comparing Aadhaar, 10th Marks Card, and Nadakacheri RD certificates.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                BEO Approved: 100% Match ✓
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/30">
-              <div className="text-indigo-400 text-[10px] font-bold">AADHAAR VS SSLC</div>
-              <div className="text-white font-bold text-sm mt-1">100% Match</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Identical English Name</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/30">
-              <div className="text-indigo-400 text-[10px] font-bold">SSLC VS RD CERTS</div>
-              <div className="text-white font-bold text-sm mt-1">100% Match</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Zero Typo Discrepancy</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
-              <div className="text-purple-400 text-[10px] font-bold">RD NUMBER FORMAT</div>
-              <div className="text-white font-bold text-sm mt-1">RD00381928471</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Valid 11-Digit Nadakacheri</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="text-emerald-400 text-[10px] font-bold">BEO DESK STATUS</div>
-              <div className="text-emerald-400 font-bold text-sm mt-1">Instant Clearance</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Zero Affidavit Needed</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-indigo-500/20 text-xs">
-            <div className="font-bold text-white mb-1">⚖️ KEA Clause-A Legal Invariant:</div>
-            <p className="text-slate-300">
-              Any character mismatch between 10th Marks Card and Caste Certificate without an e-stamp affidavit will cause automatic forfeiture of reservation benefits to General Merit (GM).
-            </p>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 64: KEA MULTI-ROUND SEAT RETENTION & UPGRADE MATRIX
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-sky-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 text-sky-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-sky-500/30">
-                ⭐ FEATURE 64 KEA SEAT RETENTION &amp; UPGRADE RADAR
-              </div>
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span>🛡️</span> Choice 2 Seat Retention &amp; Round 2 Tier-1 Upgrade Matrix
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Risk-adjusted counseling simulator preventing seat forfeiture with automated KEA e-Challan fee compliance checklists.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                Safety Net: 100% Protected 🛡️
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 text-xs font-mono">
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30">
-              <div className="text-sky-400 text-[10px] font-bold">ALLOTTED R1 SEAT</div>
-              <div className="text-white font-bold text-sm mt-1">BMSCE ISE</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Rank 1,450 (Locked)</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-500/30">
-              <div className="text-emerald-400 text-[10px] font-bold">TARGET UPGRADE</div>
-              <div className="text-emerald-400 font-bold text-sm mt-1">RVCE CSE</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">R1 Cutoff: 1,200</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-cyan-500/30">
-              <div className="text-cyan-400 text-[10px] font-bold">UPGRADE PROBABILITY</div>
-              <div className="text-white font-bold text-sm mt-1">75-90% Odds</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">+15% R2 Expansion</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-purple-500/30">
-              <div className="text-purple-400 text-[10px] font-bold">KEA CHOICE ACTION</div>
-              <div className="text-white font-bold text-sm mt-1">Choice 2 Hold</div>
-              <div className="text-slate-400 text-[11px] mt-0.5">Retain &amp; Participate R2</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/90 border border-sky-500/20 text-xs">
-            <div className="font-bold text-white mb-1">📋 Mandatory KEA Round 1 Invariant:</div>
-            <p className="text-slate-300">
-              Under KEA Rule 11(A), candidate must pay the prescribed Round 1 challan fee to lock BMSCE ISE before Round 2 option entry opens. If RVCE CSE is allotted in Round 2, the BMSCE seat is automatically reallocated with zero financial loss.
-            </p>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
-            FEATURE 67: UNIVERSAL A-TO-Z KARNATAKA STUDENT ROADMAP
-            ══════════════════════════════════════════════════════════ */}
-        <div className="mt-10 glass-card p-8 border-emerald-500/30 bg-slate-900/90 relative overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-widest mb-2 border border-emerald-500/30">
-                ⭐ FEATURE 67 UNIVERSAL A-TO-Z KARNATAKA ENGINEERING CONTINUUM
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3 font-heading">
-                <span>🎓</span> 6-Phase Student Lifecycle: Pre-Exam to Graduation &amp; Patents
-              </h2>
-              <p className="text-xs text-slate-300 mt-1 max-w-3xl leading-relaxed">
-                A complete, end-to-end guidance platform covering PWD 5% reservations, Nadakacheri RD verification, 4-round KEA option entry, SNQ fee waivers, and ₹25L Elevate 100 incubator seed grants.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3.5 py-1.5 rounded-full border border-emerald-500/20 font-bold shadow-sm">
-                Lifecycle Coverage: 100% Complete ✓
-              </span>
-            </div>
-          </div>
-
-          {/* 6-Phase Step-by-Step Interactive Timeline Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
-            
-            {/* Phase 1 */}
-            <div className="p-5 rounded-2xl bg-slate-950/85 border border-sky-500/30 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-3 font-mono text-xs">
-                  <span className="text-sky-400 font-bold uppercase">PHASE 1 • JAN - APR</span>
-                  <span className="text-slate-400 text-[11px]">Pre-Exam</span>
-                </div>
-                <h4 className="text-base font-bold text-white mb-2">Application &amp; Special Quotas</h4>
-                <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
-                  <li>11-digit Nadakacheri RD Certificate (Income/Caste)</li>
-                  <li>PWD UDID Card &amp; 5% Horizontal Reservation claim</li>
-                  <li>1st-10th Rural &amp; Kannada Medium Study signatures</li>
-                  <li>KEA Hall Ticket &amp; Exam Center verification</li>
-                </ul>
-              </div>
-              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] font-mono text-sky-400">
-                🔒 Invariant: Unclaimed quotas cannot be added later.
-              </div>
-            </div>
-
-            {/* Phase 2 */}
-            <div className="p-5 rounded-2xl bg-slate-950/85 border border-indigo-500/30 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-3 font-mono text-xs">
-                  <span className="text-indigo-400 font-bold uppercase">PHASE 2 • APR - MAY</span>
-                  <span className="text-slate-400 text-[11px]">Exam &amp; Normalization</span>
-                </div>
-                <h4 className="text-base font-bold text-white mb-2">PCM Mock &amp; Rank Formula</h4>
-                <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
-                  <li>180 Marks PCM (60 Physics, 60 Chem, 60 Math)</li>
-                  <li>Zero negative marking strategy</li>
-                  <li>Normalized Composite: 50% KCET + 50% Board</li>
-                  <li>Provisional Answer Key 48-hr objection window</li>
-                </ul>
-              </div>
-              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] font-mono text-indigo-400">
-                🎯 Tie-Breaker: Math score takes 1st priority.
-              </div>
-            </div>
-
-            {/* Phase 3 */}
-            <div className="p-5 rounded-2xl bg-slate-950/85 border border-purple-500/30 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-3 font-mono text-xs">
-                  <span className="text-purple-400 font-bold uppercase">PHASE 3 • JUNE</span>
-                  <span className="text-slate-400 text-[11px]">Verification</span>
-                </div>
-                <h4 className="text-base font-bold text-white mb-2">BEO Verification &amp; Secret Key</h4>
-                <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
-                  <li>7-Year Study Certificate signed by BEO/DDPI</li>
-                  <li>KEA Special Medical Board for PWD candidates</li>
-                  <li>Name spelling Soundex/OCR discrepancy defense</li>
-                  <li>Receive official KEA Verification Slip &amp; Secret Key</li>
-                </ul>
-              </div>
-              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] font-mono text-purple-400">
-                🔑 Never share your KEA Secret Key with agents.
-              </div>
-            </div>
-
-            {/* Phase 4 */}
-            <div className="p-5 rounded-2xl bg-slate-950/85 border border-emerald-500/30 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-3 font-mono text-xs">
-                  <span className="text-emerald-400 font-bold uppercase">PHASE 4 • JULY - AUG</span>
-                  <span className="text-slate-400 text-[11px]">Counseling</span>
-                </div>
-                <h4 className="text-base font-bold text-white mb-2">Option Entry &amp; 4 Rounds</h4>
-                <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
-                  <li>Round 1: Add unlimited preference priority choices</li>
-                  <li>Choice 2 Decision Tree: Hold R1 seat &amp; compete for R2</li>
-                  <li>+12% to +18% Cutoff Expansion in Round 2</li>
-                  <li>Download e-Challan &amp; College Admission Order</li>
-                </ul>
-              </div>
-              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] font-mono text-emerald-400">
-                🛡️ Choice 2 guarantees 100% safety net retention.
-              </div>
-            </div>
-
-            {/* Phase 5 */}
-            <div className="p-5 rounded-2xl bg-slate-950/85 border border-amber-500/30 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-3 font-mono text-xs">
-                  <span className="text-amber-400 font-bold uppercase">PHASE 5 • AUG - SEPT</span>
-                  <span className="text-slate-400 text-[11px]">Living &amp; Fees</span>
-                </div>
-                <h4 className="text-base font-bold text-white mb-2">SNQ ₹4.1L Waiver &amp; Transit</h4>
-                <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
-                  <li>SNQ Fee Waiver: Pay ₹8,000/yr vs ₹1,05,000 standard</li>
-                  <li>Karnataka SSP &amp; NSP Post-Matric Scholarships</li>
-                  <li>₹25,000/yr First-Generation Tuition Concession</li>
-                  <li>Campus hostel &amp; Namma Metro student transit pass</li>
-                </ul>
-              </div>
-              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] font-mono text-amber-400">
-                💰 SNQ seats are 5% supernumerary (zero general merit loss).
-              </div>
-            </div>
-
-            {/* Phase 6 */}
-            <div className="p-5 rounded-2xl bg-slate-950/85 border border-cyan-500/30 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-3 font-mono text-xs">
-                  <span className="text-cyan-400 font-bold uppercase">PHASE 6 • YEAR 1 - 4</span>
-                  <span className="text-slate-400 text-[11px]">Startup &amp; Placements</span>
-                </div>
-                <h4 className="text-base font-bold text-white mb-2">Incubator Grants &amp; Patents</h4>
-                <ul className="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
-                  <li>DST NIDHI-TBI &amp; NAIN ₹10L student seed grants</li>
-                  <li>Elevate 100: ₹25 Lakhs equity-free startup grant</li>
-                  <li>100% State Patent Subsidy (₹2,00,000 per patent)</li>
-                  <li>Phoenix &lt;300ms WebRTC Voice AI mock coach</li>
-                </ul>
-              </div>
-              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] font-mono text-cyan-400">
-                🚀 100% student founder equity ownership invariant.
-              </div>
-            </div>
-
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/95 border border-emerald-500/20 text-xs">
-            <div className="font-bold text-white mb-1">🌟 Universal User Guarantee:</div>
-            <p className="text-slate-300">
-              When any Karnataka student enters Horizon OS, they are guided from registration to graduation with zero informational blind-spots, guaranteed reservation protections, and direct access to state incubator capital.
-            </p>
-          </div>
-        </div>
+                )}
+              </div>
+            </FeatureCard>
+          </section>
+        )}
 
       </main>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

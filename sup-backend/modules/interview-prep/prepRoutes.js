@@ -663,6 +663,17 @@ router.post('/voice-coach/session/interruption-test', protect, (req, res) => {
   }
 });
 
+router.post('/voice-coach/session/finalize', protect, (req, res) => {
+  try {
+    const { sessionId, finalAnswerSample } = req.body;
+    const result = voiceAiCoachEngine.finalizeSession(sessionId, finalAnswerSample);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 const { liveWhiteboardSimulator } = require('./liveWhiteboardSimulator');
 
 // ═══════════════════════════════════════════════════════════
@@ -696,8 +707,6 @@ router.post('/hackathon/judge-defense/round', protect, (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-const { compensationNegotiatorEngine } = require('./compensationNegotiatorEngine');
 
 // ═══════════════════════════════════════════════════════════
 // Feature 9: Compensation & Stock Equity Negotiation Engine
@@ -858,10 +867,7 @@ router.post('/star/refine-story', protect, (req, res) => {
 
 const { pitchTimerBuzzerEngine } = require('../hackathon-agent/pitchTimerBuzzerEngine');
 
-// ═══════════════════════════════════════════════════════════
-// Feature 23: Stage-Ready 180s Pitch Timer & Audio Buzzer
-// ═══════════════════════════════════════════════════════════
-const { pitchTimerBuzzerEngine } = require('../hackathon-agent/pitchTimerBuzzerEngine');
+
 
 // ═══════════════════════════════════════════════════════════
 // Feature 23: Stage-Ready 180s Pitch Timer & Audio Buzzer
@@ -1177,6 +1183,8 @@ router.post('/system-design/simulate-rate-limiter', protect, (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+});
+
 const { postMortemAnalyticsEngine } = require('../hackathon-agent/postMortemAnalyticsEngine');
 
 // ═══════════════════════════════════════════════════════════
@@ -1204,6 +1212,8 @@ router.post('/audio/noise-filter-compensate', protect, (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+});
+
 const { pwaOfflineTeleprompterEngine } = require('../hackathon-agent/pwaOfflineTeleprompterEngine');
 
 // ═══════════════════════════════════════════════════════════
@@ -1314,7 +1324,22 @@ router.post('/hackathon/assemble-squad', protect, (req, res) => {
   }
 });
 
+// ═══════════════════════════════════════════════════════════
+// Feature 73: Dynamic Squad Role AI Copilot & Split Chat
+// ═══════════════════════════════════════════════════════════
+const { squadChatEngine } = require('../hackathon-agent/squadChatEngine');
+router.post('/hackathon/team/split-chat', protect, (req, res) => {
+  try {
+    const result = squadChatEngine.processMessage(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
 

@@ -99,4 +99,6 @@ function clearBucketStore() {
   BUCKET_STORE.clear();
 }
 
-module.exports = { TokenBucket, createTokenBucketLimiter, clearBucketStore, BUCKET_STORE };
+const tokenBucketLimiter = createTokenBucketLimiter();
+
+module.exports = { TokenBucket, createTokenBucketLimiter, tokenBucketLimiter, clearBucketStore, BUCKET_STORE };

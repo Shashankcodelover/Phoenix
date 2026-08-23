@@ -5,20 +5,97 @@
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
+// Token Management
+export function getAuthToken() {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('phoenix_auth_token') || null;
+}
+
+export function setAuthToken(token) {
+  if (typeof window !== 'undefined' && token) {
+    localStorage.setItem('phoenix_auth_token', token);
+  }
+}
+
+export function clearAuthToken() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('phoenix_auth_token');
+    localStorage.removeItem('phoenix_user_profile');
+  }
+}
+
+let guestInitPromise = null;
+export async function ensureAuthToken() {
+  if (typeof window === 'undefined') return null;
+  let token = getAuthToken();
+  if (token) return token;
+
+  if (!guestInitPromise) {
+    guestInitPromise = fetch(`${API_BASE}/auth/guest`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: 'Apex Candidate', targetDomain: 'interview' })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.token) {
+          setAuthToken(data.token);
+          if (data.user) {
+            localStorage.setItem('phoenix_user_profile', JSON.stringify(data.user));
+          }
+          return data.token;
+        }
+        return null;
+      })
+      .catch(err => {
+        console.warn('[Phoenix Auth] Guest token fallback error:', err.message);
+        return null;
+      })
+      .finally(() => {
+        guestInitPromise = null;
+      });
+  }
+  return guestInitPromise;
+}
+
 export async function fetchApi(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;
+  
+  // Ensure token is attached
+  let token = getAuthToken();
+  if (!token && typeof window !== 'undefined') {
+    token = await ensureAuthToken();
+  }
+
   const defaultHeaders = {
     'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
   };
 
   try {
-    const res = await fetch(url, {
+    let res = await fetch(url, {
       ...options,
       headers: {
         ...defaultHeaders,
         ...options.headers,
       },
     });
+
+    // If 401, try refreshing guest token once
+    if (res.status === 401 && typeof window !== 'undefined') {
+      clearAuthToken();
+      const newToken = await ensureAuthToken();
+      if (newToken) {
+        res = await fetch(url, {
+          ...options,
+          headers: {
+            ...defaultHeaders,
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`
+          }
+        });
+      }
+    }
 
     if (!res.ok) {
       const errBody = await res.json().catch(() => ({}));
@@ -27,10 +104,45 @@ export async function fetchApi(endpoint, options = {}) {
 
     return await res.json();
   } catch (err) {
-    console.warn(`[Phoenix API Client] Request to "${endpoint}" failed, using offline fallback:`, err.message);
+    console.warn(`[Phoenix API Client] Request to "${endpoint}" failed:`, err.message);
     throw err;
   }
 }
+
+// Auth & Profile APIs
+export const authApi = {
+  login: async (email, password) => {
+    const data = await fetchApi('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
+    });
+    if (data.token) setAuthToken(data.token);
+    return data;
+  },
+  signup: async (name, email, password) => {
+    return await fetchApi('/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({ name, email, password })
+    });
+  },
+  guestSession: async (profileData) => {
+    const data = await fetchApi('/auth/guest', {
+      method: 'POST',
+      body: JSON.stringify(profileData || {})
+    });
+    if (data.token) setAuthToken(data.token);
+    return data;
+  }
+};
+
+export const profileApi = {
+  getProfile: (userId) => fetchApi(`/profile/${userId}`),
+  updateProfile: (userId, data) => fetchApi(`/profile/${userId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data)
+  })
+};
+
 
 // Vault 1: Horizon APIs
 export const horizonApi = {
@@ -135,8 +247,31 @@ export const hackathonApi = {
   whisperJudgeDefense: (payload) => fetchApi('/prep/hackathon/judge/realtime-whisper', { method: 'POST', body: JSON.stringify(payload) }),
   generatePostMortemAnalytics: (payload) => fetchApi('/prep/hackathon/post-mortem/generate-analytics', { method: 'POST', body: JSON.stringify(payload) }),
   generatePwaOfflineBundle: (payload) => fetchApi('/prep/hackathon/offline/generate-pwa-bundle', { method: 'POST', body: JSON.stringify(payload) }),
-  generatePitchStoryboard: (payload) => fetchApi('/prep/hackathon/video/generate-pitch-storyboard', { method: 'POST', body: JSON.stringify(payload) })
+  generatePitchStoryboard: (payload) => fetchApi('/prep/hackathon/video/generate-pitch-storyboard', { method: 'POST', body: JSON.stringify(payload) }),
+  
+  // Part 1 Inception APIs
+  scanPoster: (payload) => fetchApi('/agent/inception/scan-poster', { method: 'POST', body: JSON.stringify(payload) }),
+  getWinningIdeas: (payload) => fetchApi('/agent/inception/winning-ideas', { method: 'POST', body: JSON.stringify(payload) }),
+  getFoundationDocs: (payload) => fetchApi('/agent/inception/foundation-docs', { method: 'POST', body: JSON.stringify(payload) }),
+  getCrazyFeatures: (payload) => fetchApi('/agent/inception/crazy-features', { method: 'POST', body: JSON.stringify(payload) }),
+  generateOnePager: (payload) => fetchApi('/agent/inception/one-pager', { method: 'POST', body: JSON.stringify(payload) }),
+  generateDeepBuildGuide: (payload) => fetchApi('/agent/inception/deep-build-guide', { method: 'POST', body: JSON.stringify(payload) }),
+
+  // Room Synchronizer APIs
+  createRoom: (payload) => fetchApi('/agent/room/create', { method: 'POST', body: JSON.stringify(payload) }),
+  getRoom: (roomId) => fetchApi(`/agent/room/${roomId}`),
+  joinRoom: (roomId, payload) => fetchApi(`/agent/room/${roomId}/join`, { method: 'POST', body: JSON.stringify(payload) }),
+  resetRoom: (roomId) => fetchApi(`/agent/room/${roomId}/reset`, { method: 'POST' }),
+  updatePoster: (roomId, payload) => fetchApi(`/agent/room/${roomId}/update-poster`, { method: 'POST', body: JSON.stringify(payload) }),
+  lockRoomIdea: (roomId, payload) => fetchApi(`/agent/room/${roomId}/lock-idea`, { method: 'POST', body: JSON.stringify(payload) }),
+  castRoomVote: (roomId, payload) => fetchApi(`/agent/room/${roomId}/vote`, { method: 'POST', body: JSON.stringify(payload) }),
+  getRoomFoundationDocs: (roomId) => fetchApi(`/agent/room/${roomId}/foundation-docs`),
+  setRoomRound: (roomId, roundKey) => fetchApi(`/agent/room/${roomId}/set-round`, { method: 'POST', body: JSON.stringify({ roundKey }) }),
+  getRoomRoundAssets: (roomId, roundKey) => fetchApi(`/agent/room/${roomId}/round-assets?roundKey=${roundKey || 'ROUND_3_STAGE_PITCH'}`)
 };
+
+
+
 
 
 

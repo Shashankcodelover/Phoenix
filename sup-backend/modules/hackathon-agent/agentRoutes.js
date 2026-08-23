@@ -89,4 +89,160 @@ router.post('/pitch-deck', aiRateLimiter, async (req, res) => {
   }
 });
 
+// ═══════════════════════════════════════════════════════════
+// HACKATHON INCEPTION SUITE (Part 1: Poster, Ideas, Docs, Features)
+// ═══════════════════════════════════════════════════════════
+const { hackathonInceptionEngine } = require('./hackathonInceptionEngine');
+
+router.post('/inception/scan-poster', (req, res) => {
+  try {
+    const result = hackathonInceptionEngine.scanPosterAndExtractTimeline(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+const { liveAiIdeaGenerator } = require('./liveAiIdeaGenerator');
+
+router.post('/inception/winning-ideas', async (req, res) => {
+  try {
+    const result = await liveAiIdeaGenerator.generateDynamicWinningIdeas(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+router.post('/inception/foundation-docs', (req, res) => {
+  try {
+    const result = hackathonInceptionEngine.generateSixFoundationDocs(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/inception/crazy-features', (req, res) => {
+  try {
+    const result = hackathonInceptionEngine.generateCrazyFeatures(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// HACKATHON INCEPTION SUITE (Part 2: One-Pager, Deep Build Guide)
+// ═══════════════════════════════════════════════════════════
+const { generateOnePager } = require('./onePagerGenerator');
+const { generateDeepBuildGuide } = require('./deepBuildGuideGenerator');
+
+router.post('/inception/one-pager', aiRateLimiter, generateOnePager);
+router.post('/inception/deep-build-guide', aiRateLimiter, generateDeepBuildGuide);
+
+// ═══════════════════════════════════════════════════════════
+// HACKATHON LIVE ROOM SYNCHRONIZER (Dynamic Multi-Member State)
+// ═══════════════════════════════════════════════════════════
+const { hackathonRoomStore } = require('./hackathonRoomStore');
+
+router.post('/room/create', (req, res) => {
+  try {
+    const result = hackathonRoomStore.createRoom(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.get('/room/:roomId', (req, res) => {
+  try {
+    const room = hackathonRoomStore.getRoom(req.params.roomId);
+    if (!room) return res.status(404).json({ message: 'Room not found' });
+    res.json({ success: true, room });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/room/:roomId/join', (req, res) => {
+  try {
+    const result = hackathonRoomStore.joinRoom(req.params.roomId, req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/room/:roomId/reset', (req, res) => {
+  try {
+    const result = hackathonRoomStore.resetSquad(req.params.roomId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/room/:roomId/update-poster', (req, res) => {
+  try {
+    const result = hackathonRoomStore.updatePosterData(req.params.roomId, req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/room/:roomId/lock-idea', (req, res) => {
+  try {
+    const { problemStatement, domain } = req.body;
+    const result = hackathonRoomStore.lockProblemStatement(req.params.roomId, problemStatement, domain);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/room/:roomId/vote', (req, res) => {
+  try {
+    const { ideaId, memberId } = req.body;
+    const result = hackathonRoomStore.castVote(req.params.roomId, ideaId, memberId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.get('/room/:roomId/foundation-docs', (req, res) => {
+  try {
+    const result = hackathonRoomStore.getConnectedFoundationDocs(req.params.roomId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/room/:roomId/set-round', (req, res) => {
+  try {
+    const { roundKey } = req.body;
+    const result = hackathonRoomStore.setRound(req.params.roomId, roundKey);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.get('/room/:roomId/round-assets', (req, res) => {
+  try {
+    const { roundKey } = req.query;
+    const result = hackathonRoomStore.getRoundSpecificAssets(req.params.roomId, roundKey);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
+
+

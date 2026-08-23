@@ -67,5 +67,10 @@ const createRateLimiter = (options = {}) => {
     next();
   };
 };
+const aiRateLimiter = createRateLimiter({
+  windowMs: 60 * 1000,
+  maxRequests: 60,
+  message: 'AI rate limit exceeded. Please slow down and try again in a minute.'
+});
 
-module.exports = { createRateLimiter };
+module.exports = { createRateLimiter, aiRateLimiter };

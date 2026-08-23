@@ -89,4 +89,51 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { signup, login };
+// GUEST / AUTO-SESSION (Instant Zero-Friction JWT)
+const guestSession = async (req, res) => {
+
+  try {
+    const { name = 'Apex Engineer', targetDomain = 'interview', educationLevel = 'Engineering 4th Year' } = req.body || {};
+    const guestEmail = 'guest_candidate@phoenix.os';
+
+    let user = await User.findOne({ email: guestEmail });
+    if (!user) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash('GuestApex2026!', salt);
+      user = await User.create({
+        name,
+        email: guestEmail,
+        password: hashedPassword,
+        state: 'Karnataka',
+        domains: [targetDomain],
+        skills: ['JavaScript', 'TypeScript', 'Node.js', 'React', 'Distributed Systems'],
+        experience: 'Advanced',
+        targetRole: 'Senior Full-Stack / Distributed Systems Engineer'
+      });
+    }
+
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" }
+    );
+
+    res.json({
+      message: "Guest session initialized",
+      token,
+      user: {
+        _id: user._id,
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        domains: user.domains,
+        skills: user.skills,
+        targetRole: user.targetRole
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { signup, login, guestSession };

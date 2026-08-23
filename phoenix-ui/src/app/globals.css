@@ -6,12 +6,15 @@
   --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   
-  --bg-space: #030712;
-  --bg-space-secondary: #060d1f;
-  --bg-card: rgba(10, 16, 32, 0.78);
-  --bg-card-hover: rgba(15, 23, 46, 0.90);
-  --border-glass: rgba(255, 255, 255, 0.08);
-  --border-glass-hover: rgba(255, 255, 255, 0.22);
+  --bg-space: #060B18;
+  --bg-space-secondary: #0A1224;
+  --bg-card: rgba(11, 20, 42, 0.85);
+  --bg-card-hover: rgba(16, 28, 58, 0.95);
+  --border-glass: rgba(255, 255, 255, 0.12);
+  --border-glass-hover: rgba(56, 189, 248, 0.40);
+  --text-main: #FFFFFF;
+  --text-muted: #CBD5E1;
+  --text-subtle: #94A3B8;
   
   --glow-horizon: #38bdf8;
   --glow-horizon-secondary: #0284c7;
@@ -23,28 +26,71 @@
   --glow-rose: #f43f5e;
 }
 
+[data-theme="light"], .theme-light {
+  --bg-space: #F8FAFC;
+  --bg-space-secondary: #F1F5F9;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-card-hover: #FFFFFF;
+  --border-glass: rgba(15, 23, 42, 0.12);
+  --border-glass-hover: rgba(2, 132, 199, 0.40);
+  --text-main: #0F172A;
+  --text-muted: #334155;
+  --text-subtle: #475569;
+}
+
 body {
   background-color: var(--bg-space);
-  color: #F8FAFC;
+  color: var(--text-main);
   font-family: var(--font-sans);
   overflow-x: hidden;
   min-height: 100vh;
   letter-spacing: -0.01em;
   background-image: 
-    radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    radial-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+    radial-gradient(rgba(15, 23, 42, 0.02) 1px, transparent 1px);
   background-size: 32px 32px;
   background-position: 0 0, 16px 16px;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
+
+
+[data-theme="dark"] body {
+  background-image: 
+    radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   letter-spacing: -0.03em;
+  color: var(--text-main);
+}
+
+.text-theme-main {
+  color: var(--text-main) !important;
+}
+
+.text-theme-muted {
+  color: var(--text-muted) !important;
+}
+
+.text-theme-subtle {
+  color: var(--text-subtle) !important;
+}
+
+.bg-theme-card {
+  background-color: var(--bg-card) !important;
+}
+
+.border-theme-glass {
+  border-color: var(--border-glass) !important;
 }
 
 code, pre, .font-mono {
   font-family: var(--font-mono);
 }
+
 
 /* ══════════════════════════════════════════════════════════
    HIGH-OCTANE GLASSMORPHIC ARCHITECTURE & SHADOWS

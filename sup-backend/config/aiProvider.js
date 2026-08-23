@@ -20,11 +20,13 @@ const { humanizeText } = require('../utils/humanizer');
 
 // --- Provider Implementations ---
 
+
 /**
  * Call Google Gemini API (With Multi-Key Pool Failover)
  */
 async function callGemini(prompt, systemInstruction = '', jsonMode = false) {
   const keys = extractApiKeys(process.env.GEMINI_API_KEY);
+
   if (keys.length === 0) {
     throw new Error('GEMINI_API_KEY not configured');
   }
