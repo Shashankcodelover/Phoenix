@@ -102,6 +102,31 @@ Warm regards,
       }
     };
   }
+
+  /**
+   * Domestic & Global Offer Evaluator and Script Synthesizer
+   */
+  evaluateOffer(payload = {}) {
+    const {
+      roleLevel = 'SDE1',
+      baseSalary = 1600000,
+      joiningBonus = 200000,
+      stocksEsopsYearly = 300000,
+      hasCompetingOffer = false,
+      competingTotal = 0
+    } = payload;
+
+    const totalInr = Number(baseSalary) + Number(joiningBonus) + Number(stocksEsopsYearly);
+    const lpa = (totalInr / 100000).toFixed(1) + ' LPA';
+    const hasLeverage = hasCompetingOffer || totalInr < 2000000;
+
+    return {
+      roleLevel,
+      currentTotalCTC: `${lpa} ($${Math.round(totalInr / 83).toLocaleString()})`,
+      negotiationLeverage: hasLeverage ? 'High (Strong Upward Mobility)' : 'Moderate',
+      counterOfferScript: `I am thrilled by this offer. Given my active discussions and competing offer of ₹${(Number(competingTotal || 0)/100000).toFixed(1)} LPA, I would like to explore bridging the base to ₹${((totalInr * 1.15)/100000).toFixed(1)} LPA.`
+    };
+  }
 }
 
 const compensationNegotiatorEngine = new CompensationNegotiatorEngine();

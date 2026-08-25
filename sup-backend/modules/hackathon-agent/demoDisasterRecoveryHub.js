@@ -24,7 +24,7 @@ class DemoDisasterRecoveryHub {
       ]
     };
 
-    const disasterSpeechScript = `Judges, while the hackathon venue Wi-Fi is experiencing an intermittent drop, our architecture was built offline-first. Notice as our local in-memory fallback server and Web Audio pipeline process the exact same payload in sub-5ms with zero dropped transactions.`;
+    const disasterSpeechScript = `Judges, while the hackathon venue Wi-Fi is experiencing an intermittent drop, our architecture was built offline-first with procedural fallbacks. Notice as our local in-memory fallback server and Web Audio pipeline process the exact same payload in sub-5ms with zero dropped transactions.`;
 
     const mockServerCode = `// Standalone Emergency Mock Server (Zero Dependencies)
 const http = require('http');
