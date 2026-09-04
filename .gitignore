@@ -30,3 +30,4 @@ npm-debug.log*
 *.mp4
 *.jpeg
 *.png
+!docs/showcase/**/*.png
