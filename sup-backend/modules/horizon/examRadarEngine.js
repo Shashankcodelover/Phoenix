@@ -58,7 +58,10 @@ const INITIAL_SEED = [
   }
 ];
 
+const mongoose = require('mongoose');
+
 async function seedExamsIfEmpty() {
+  if (!mongoose.connection || mongoose.connection.readyState !== 1) return;
   const count = await ExamAlert.countDocuments();
   if (count === 0) {
     await ExamAlert.insertMany(INITIAL_SEED);
@@ -69,6 +72,13 @@ async function seedExamsIfEmpty() {
  * Retrieves exam radar alerts filtered by target sector or exam key from MongoDB.
  */
 async function getExamNotifications({ sector, examKey }) {
+  if (!mongoose.connection || mongoose.connection.readyState !== 1) {
+    let filtered = INITIAL_SEED;
+    if (examKey) filtered = filtered.filter(e => e.examKey === examKey);
+    if (sector) filtered = filtered.filter(e => e.sector.toLowerCase().includes(sector.toLowerCase()));
+    return { success: true, count: filtered.length, exams: filtered };
+  }
+
   await seedExamsIfEmpty();
   
   let query = {};

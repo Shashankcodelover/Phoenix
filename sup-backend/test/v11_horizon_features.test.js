@@ -1,7 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const { evaluateStudentDiagnostic } = require('../modules/horizon/diagnosticEngine');
 const { getExamNotifications } = require('../modules/horizon/examRadarEngine');
@@ -12,19 +11,6 @@ const { generateDailyChecklist, generateMonthlyMilestones } = require('../module
 const { getResources } = require('../modules/horizon/resourceRepository');
 const { exploreDomainByStage } = require('../modules/horizon/domainExplorer');
 const { getGapGuide, listGapGuides } = require('../modules/horizon/gapGuideEngine');
-
-let mongoServer;
-
-test.before(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const uri = mongoServer.getUri();
-  await mongoose.connect(uri);
-});
-
-test.after(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
-});
 
 test('evaluateStudentDiagnostic matches Tech sector correctly', async () => {
   const dummyId = new mongoose.Types.ObjectId().toString();

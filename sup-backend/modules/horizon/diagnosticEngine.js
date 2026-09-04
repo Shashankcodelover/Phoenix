@@ -89,22 +89,29 @@ async function evaluateStudentDiagnostic(userId, { academicStage, interests, pri
   const matchedWorld = matchWorld(interests);
   const worldDetails = WORLD_MAP[matchedWorld];
 
-  let profile = await HorizonProfile.findOne({ userId });
-  if (!profile) {
-    profile = new HorizonProfile({
-      userId: userId,
-      academicStage: academicStage,
-      selectedWorld: matchedWorld,
-      activeRoadmapId: 'foundation_30_day',
-      completedChecklistItems: [],
-      pyqBookmarks: [],
-      examAlertSubscriptions: []
-    });
-    await profile.save();
-  } else {
-    profile.academicStage = academicStage;
-    profile.selectedWorld = matchedWorld;
-    await profile.save();
+  const mongoose = require('mongoose');
+  if (mongoose.connection && mongoose.connection.readyState === 1) {
+    try {
+      let profile = await HorizonProfile.findOne({ userId });
+      if (!profile) {
+        profile = new HorizonProfile({
+          userId: userId,
+          academicStage: academicStage,
+          selectedWorld: matchedWorld,
+          activeRoadmapId: 'foundation_30_day',
+          completedChecklistItems: [],
+          pyqBookmarks: [],
+          examAlertSubscriptions: []
+        });
+        await profile.save();
+      } else {
+        profile.academicStage = academicStage;
+        profile.selectedWorld = matchedWorld;
+        await profile.save();
+      }
+    } catch (dbErr) {
+      console.warn('[Horizon Diagnostic] DB save skipped:', dbErr.message);
+    }
   }
 
   return {

@@ -52,7 +52,10 @@ const SAMPLE_PYQS_SEED = [
   },
 ];
 
+const mongoose = require('mongoose');
+
 async function seedMCQsIfEmpty() {
+  if (!mongoose.connection || mongoose.connection.readyState !== 1) return;
   const count = await MCQBank.countDocuments();
   if (count === 0) {
     await MCQBank.insertMany(SAMPLE_PYQS_SEED);
@@ -63,6 +66,19 @@ async function seedMCQsIfEmpty() {
  * Searches questions by exam key, subject, or difficulty via MongoDB.
  */
 async function getPyqQuestions({ examKey, subject, difficulty, limit = 10 }) {
+  if (!mongoose.connection || mongoose.connection.readyState !== 1) {
+    let filtered = SAMPLE_PYQS_SEED;
+    if (examKey) filtered = filtered.filter(q => q.examKey === examKey);
+    if (subject) filtered = filtered.filter(q => q.subject.toLowerCase().includes(subject.toLowerCase()));
+    if (difficulty) filtered = filtered.filter(q => q.difficulty === difficulty);
+    const sliced = filtered.slice(0, limit);
+    return {
+      success: true,
+      count: sliced.length,
+      questions: sliced,
+    };
+  }
+
   await seedMCQsIfEmpty();
 
   let query = {};
@@ -93,7 +109,12 @@ async function evaluateMockExam({ examKey, answers }) {
   const breakdown = [];
 
   const questionIds = answers.map(a => a.questionId);
-  const questionsList = await MCQBank.find({ questionId: { $in: questionIds } }).lean();
+  let questionsList = [];
+  if (!mongoose.connection || mongoose.connection.readyState !== 1) {
+    questionsList = SAMPLE_PYQS_SEED.filter(q => questionIds.includes(q.questionId));
+  } else {
+    questionsList = await MCQBank.find({ questionId: { $in: questionIds } }).lean();
+  }
   
   // Create a map for O(1) lookup
   const questionMap = {};

@@ -175,14 +175,18 @@ async function searchAndRankHackathons(queryOptions = {}) {
   };
 }
 
-// Start background scraper CRON job (Runs every 12 hours)
-setInterval(() => {
-  scrapeAndSeedLiveHackathons().catch(err => console.error('[Scraper] Background job failed:', err.message));
-}, 12 * 60 * 60 * 1000);
+// Start background scraper CRON job (Runs every 12 hours, unref so it won't hold process open)
+if (process.env.NODE_ENV !== 'test') {
+  const cron = setInterval(() => {
+    scrapeAndSeedLiveHackathons().catch(err => console.error('[Scraper] Background job failed:', err.message));
+  }, 12 * 60 * 60 * 1000);
+  if (cron.unref) cron.unref();
 
-// Initial boot scrape (deferred by 5s to allow server.js to finish dotenv + RAG init)
-setTimeout(() => {
-  scrapeAndSeedLiveHackathons().catch(console.error);
-}, 5000);
+  // Initial boot scrape (deferred by 5s to allow server.js to finish dotenv + RAG init)
+  const bootTimer = setTimeout(() => {
+    scrapeAndSeedLiveHackathons().catch(console.error);
+  }, 5000);
+  if (bootTimer.unref) bootTimer.unref();
+}
 
 module.exports = { searchAndRankHackathons, scrapeAndSeedLiveHackathons };

@@ -4,6 +4,7 @@ const crypto = require('crypto');
 require('dotenv').config();
 
 const fs = require('fs');
+const path = require('path');
 
 // FIX REJECTION #4: Do NOT write to the filesystem on boot.
 // In read-only containers (K8s, Docker, Fargate), fs.appendFileSync crashes the process.
@@ -255,6 +256,15 @@ app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/chat', chatRoutes);
+
+// Static assets & SPA fallback (Express 5 compatible)
+app.use(express.static(path.join(__dirname, '../sup-frontend')));
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/socket.io')) {
+    return res.sendFile(path.join(__dirname, '../sup-frontend/index.html'));
+  }
+  next();
+});
 
 // Global Error Handler
 app.use((err, req, res, next) => {

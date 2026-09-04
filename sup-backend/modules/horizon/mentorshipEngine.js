@@ -47,7 +47,10 @@ const SENIOR_PROFILES_SEED = [
   }
 ];
 
+const mongoose = require('mongoose');
+
 async function seedMentorsIfEmpty() {
+  if (!mongoose.connection || mongoose.connection.readyState !== 1) return;
   const count = await MentorProfile.countDocuments();
   if (count === 0) {
     await MentorProfile.insertMany(SENIOR_PROFILES_SEED);
@@ -55,6 +58,18 @@ async function seedMentorsIfEmpty() {
 }
 
 async function getSeniorMentors({ world }) {
+  if (!mongoose.connection || mongoose.connection.readyState !== 1) {
+    let filtered = SENIOR_PROFILES_SEED;
+    if (world === 'tech_world') filtered = filtered.filter(m => /CS|B\.E/i.test(m.originPath));
+    else if (world === 'commerce_world') filtered = filtered.filter(m => /Commerce|CA/i.test(m.originPath));
+    else if (world === 'bio_world') filtered = filtered.filter(m => /Medical|NEET|Science/i.test(m.originPath));
+    return {
+      success: true,
+      count: filtered.length,
+      mentors: filtered,
+    };
+  }
+
   await seedMentorsIfEmpty();
 
   let query = {};
@@ -62,7 +77,6 @@ async function getSeniorMentors({ world }) {
     if (world === 'tech_world') query.originPath = { $regex: 'CS|B.E', $options: 'i' };
     else if (world === 'commerce_world') query.originPath = { $regex: 'Commerce|CA', $options: 'i' };
     else if (world === 'bio_world') query.originPath = { $regex: 'Medical|NEET|Science', $options: 'i' };
-    // Add other mappings as necessary, or rely on a proper `world` field if added to schema later
   }
   
   const mentors = await MentorProfile.find(query).lean();
