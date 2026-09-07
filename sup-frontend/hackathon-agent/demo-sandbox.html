@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Product Demo Sandbox & Embeddable Widget | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-indigo: #6366f1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent-cyan);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-cyan), var(--accent-emerald));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: #e0f2fe;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-cyan);
+      color: #070d18;
+      border-color: var(--accent-cyan);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    }
+
+    /* Grid */
+    .sandbox-grid {
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      gap: 1.5rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #fff;
+    }
+
+    /* Simulator Window (CodeSandbox style) */
+    .sim-window {
+      background: #090e17;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+    }
+    .window-header {
+      background: #151e2e;
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .window-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .window-url-bar {
+      background: #0b111e;
+      padding: 0.25rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      width: 60%;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .sim-body {
+      padding: 1.5rem;
+      min-height: 260px;
+    }
+
+    .sim-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .metric-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .metric-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 0.35rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Simulation Control Buttons */
+    .sim-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+    .sim-btn {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-cyan);
+      padding: 0.8rem 0.6rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .sim-btn:hover {
+      background: var(--accent-cyan);
+      color: #070d18;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    }
+
+    /* Telemetry Log Terminal */
+    .terminal-box {
+      background: #050b14;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      height: 180px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .log-line {
+      display: flex;
+      gap: 0.5rem;
+      line-height: 1.4;
+    }
+    .log-time { color: var(--accent-cyan); }
+    .log-source { color: var(--accent-amber); }
+    .log-msg { color: #cbd5e1; }
+
+    /* Right Panel: Embed & Share */
+    .embed-box {
+      background: #090e17;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .embed-textarea {
+      width: 100%;
+      height: 110px;
+      background: transparent;
+      border: none;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      resize: none;
+      outline: none;
+      line-height: 1.5;
+    }
+    .btn-copy {
+      width: 100%;
+      background: var(--accent-indigo);
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-copy:hover {
+      opacity: 0.9;
+    }
+
+    /* Judge rating badge */
+    .rating-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: var(--accent-amber);
+      padding: 0.3rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: rgba(56, 189, 248, 0.95);
+      border: 1px solid #38bdf8;
+      color: #070d18;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🦅</span> Phoenix OS
+      <span class="nav-badge">Pillar 2 • Feature 27</span>
+    </div>
+    <div class="nav-links">
+      <a href="/hackathon-agent/team-synergy.html">Team Synergy</a>
+      <a href="/hackathon-agent/judge-defense.html">Judge Defense</a>
+      <a href="/hackathon-agent/pitch-deck.html">Pitch Deck</a>
+      <a href="/hackathon-agent/sponsor-sandbox.html">Sponsor Sandbox</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Interactive Product Demo Sandbox & Embeddable Widget</h1>
+      <p class="hero-subtitle">
+        CodeSandbox & StackBlitz-grade zero-install runtime: execute live application states, stress test offline fallbacks, inspect telemetry logs, and generate frictionless embeddable iframe widgets for judges and investors.
+      </p>
+
+      <!-- Presets Bar -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">DEMO RUNTIMES:</span>
+        <button class="preset-btn active" id="btn-preset-aegis" onclick="selectDemoPreset('aegis_drone_sandbox')">Aegis: Disaster Drone Swarm</button>
+        <button class="preset-btn" id="btn-preset-zk" onclick="selectDemoPreset('zk_clinical_sandbox')">OncoMatch: ZK Clinical Trials</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="sandbox-grid">
+      <!-- Left: Interactive Simulator -->
+      <div class="panel">
+        <div class="rating-pill" id="demo-rating">★ 4.98 / 5.0 (Judge Rating)</div>
+        <h2 class="panel-title" id="demo-title"><span>🛸</span> Aegis: Autonomous Disaster Drone Swarm</h2>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.25rem;" id="demo-tagline">
+          Zero-bandwidth mesh network dispatch & survivor triage simulator
+        </p>
+
+        <!-- Simulated In-Browser Window -->
+        <div class="sim-window">
+          <div class="window-header">
+            <div class="window-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <div class="window-url-bar" id="sim-url">https://aegis-mesh.phoenix.internal/live-telemetry</div>
+            <div style="font-size:0.75rem; color:var(--accent-emerald); font-weight:700;" id="sim-badge">LIVE RUNTIME</div>
+          </div>
+
+          <div class="sim-body">
+            <!-- Dynamic State Metrics -->
+            <div class="sim-metrics-grid" id="sim-metrics-container">
+              <!-- Rendered via JS -->
+            </div>
+
+            <!-- Action Triggers -->
+            <h4 style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.6rem;">
+              SIMULATE JUDGE ACTIONS:
+            </h4>
+            <div class="sim-actions-grid" id="sim-actions-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Telemetry Log Terminal -->
+        <h3 style="font-size:0.95rem; font-weight:700; margin-bottom:0.75rem; color:#fff; display:flex; align-items:center; gap:0.4rem;">
+          <span>📡</span> Real-Time Sandbox Kernel Telemetry
+        </h3>
+        <div class="terminal-box" id="telemetry-terminal">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Right: Embeddable Widget Generator -->
+      <div class="panel">
+        <h2 class="panel-title"><span>📦</span> Embeddable Judge Widget</h2>
+        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5; margin-bottom:1rem;">
+          Embed this zero-signup interactive demo directly on your Devpost project page, Notion documentation, or investor memo.
+        </p>
+
+        <div class="embed-box">
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.5rem; font-weight:700;">HTML IFRAME SNIPPET:</div>
+          <textarea class="embed-textarea" id="embed-code" readonly></textarea>
+        </div>
+
+        <button class="btn-copy" id="btn-copy-embed" onclick="copyEmbedCode()">
+          📋 Copy Embeddable Code
+        </button>
+
+        <div style="margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid rgba(255,255,255,0.08);">
+          <div style="font-size:0.8rem; color:var(--text-muted); font-weight:700; margin-bottom:0.4rem;">DIRECT JUDGE SANDBOX LINK:</div>
+          <div style="background:#090e17; border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:0.5rem; font-size:0.75rem; color:var(--accent-cyan); font-family:'JetBrains Mono'; word-break:break-all;" id="direct-link">
+            http://localhost:5000/hackathon-agent/demo-sandbox.html?sandbox=aegis_drone_sandbox
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-msg">Action dispatched!</div>
+
+  <script>
+    let presets = [];
+    let currentPreset = null;
+    let currentState = {};
+    let telemetryLogs = [];
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/agent/demo-sandbox/presets');
+        const data = await res.json();
+        if (data.success) {
+          presets = data.presets;
+          selectDemoPreset('aegis_drone_sandbox');
+        }
+      } catch (err) {
+        console.error('Failed to load sandbox presets:', err);
+      }
+    }
+
+    function selectDemoPreset(presetId) {
+      currentPreset = presets.find(p => p.id === presetId) || presets[0];
+      currentState = { ...currentPreset.initialState };
+      telemetryLogs = [...currentPreset.telemetryEvents];
+
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(presetId === 'aegis_drone_sandbox' ? 'btn-preset-aegis' : 'btn-preset-zk');
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('demo-title').innerHTML = `<span>${presetId === 'aegis_drone_sandbox' ? '🛸' : '🧬'}</span> ${currentPreset.title}`;
+      document.getElementById('demo-tagline').innerText = currentPreset.tagline;
+      document.getElementById('demo-rating').innerText = `★ ${currentPreset.rating}`;
+
+      renderMetrics();
+      renderActions();
+      renderTelemetry();
+      fetchEmbedCode();
+
+      showToast(`Mounted ${currentPreset.title} Sandbox!`);
+    }
+
+    function renderMetrics() {
+      const container = document.getElementById('sim-metrics-container');
+      container.innerHTML = '';
+      Object.entries(currentState).forEach(([key, val]) => {
+        const card = document.createElement('div');
+        card.className = 'metric-card';
+        const formattedKey = key.replace(/([A-Z])/g, ' $1').toUpperCase();
+        card.innerHTML = `
+          <div class="metric-label">${formattedKey}</div>
+          <div class="metric-val" id="metric-${key}">${val}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderActions() {
+      const container = document.getElementById('sim-actions-container');
+      container.innerHTML = '';
+      currentPreset.actions.forEach(act => {
+        const btn = document.createElement('button');
+        btn.className = 'sim-btn';
+        btn.id = `btn-action-${act.id}`;
+        btn.innerHTML = `
+          <span>⚡</span>
+          <span>${act.name}</span>
+          <span style="font-size:0.65rem; opacity:0.8;">(${act.latencyMs}ms)</span>
+        `;
+        btn.onclick = () => triggerSandboxAction(act.id);
+        container.appendChild(btn);
+      });
+    }
+
+    function renderTelemetry() {
+      const terminal = document.getElementById('telemetry-terminal');
+      terminal.innerHTML = '';
+      telemetryLogs.forEach(log => {
+        const line = document.createElement('div');
+        line.className = 'log-line';
+        line.innerHTML = `
+          <span class="log-time">${log.time}</span>
+          <span class="log-source">[${log.source}]</span>
+          <span class="log-msg">${log.event}</span>
+        `;
+        terminal.appendChild(line);
+      });
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    async function triggerSandboxAction(actionId) {
+      try {
+        const res = await fetch('/api/v1/agent/demo-sandbox/action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sandboxId: currentPreset.id,
+            actionId: actionId,
+            currentState: currentState
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          currentState = data.newState;
+          telemetryLogs.push(data.telemetryLog);
+          renderMetrics();
+          renderTelemetry();
+          showToast(`Executed: ${data.actionExecuted}!`);
+        }
+      } catch (err) {
+        alert('Simulation failed: ' + err.message);
+      }
+    }
+
+    async function fetchEmbedCode() {
+      try {
+        const res = await fetch('/api/v1/agent/demo-sandbox/embed', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sandboxId: currentPreset.id })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('embed-code').value = data.embedCode;
+          document.getElementById('direct-link').innerText = data.quickShareUrl;
+        }
+      } catch (err) {
+        console.error('Failed to get embed code:', err);
+      }
+    }
+
+    function copyEmbedCode() {
+      const code = document.getElementById('embed-code').value;
+      navigator.clipboard.writeText(code);
+      showToast('Copied iframe snippet to clipboard!');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cold Outreach & Recruiter InMail Generator | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.85);
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--accent-emerald);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    /* Main Container */
+    .outreach-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Header */
+    .header-hero {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+    .header-hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #10b981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .header-hero p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Preset Fast-Fills */
+    .presets-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      overflow-x: auto;
+      padding: 0.75rem 1rem;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-emerald);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .preset-btn {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 0.4rem 0.85rem;
+      border-radius: 0.5rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--accent-emerald);
+      color: #fff;
+    }
+
+    /* Grid Workspace */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 1024px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Panel Card */
+    .panel-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1.25rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.9rem 1.25rem;
+      background: rgba(2, 6, 23, 0.5);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #f1f5f9;
+    }
+
+    /* Form Fields */
+    .panel-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .field-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .field-input, .field-select, .field-textarea {
+      width: 100%;
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0.6rem;
+      padding: 0.65rem 0.9rem;
+      color: #f8fafc;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field-input:focus, .field-select:focus, .field-textarea:focus {
+      border-color: var(--accent-emerald);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+    }
+    .field-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.6rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      transform: translateY(-1px);
+    }
+
+    /* Right Panel Content */
+    .outreach-output {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      overflow-y: auto;
+      max-height: 700px;
+    }
+
+    /* Subject Lines Selector */
+    .subject-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .subject-item {
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.6rem;
+      padding: 0.65rem 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .subject-item:hover, .subject-item.selected {
+      border-color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .open-rate-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      padding: 0.15rem 0.45rem;
+      border-radius: 0.25rem;
+    }
+
+    /* Message Preview Card */
+    .message-card {
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      position: relative;
+    }
+    .message-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      padding: 0.45rem 0.85rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      color: #fff;
+    }
+
+    /* Stats HUD */
+    .stats-hud {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.6rem;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    .stat-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent-emerald);
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span style="font-size: 1.4rem;">📬</span>
+      <span>Recruiter InMail Generator</span>
+      <span class="nav-badge">Pillar 1 • Feature 14</span>
+    </div>
+    <div class="nav-links">
+      <a href="../dashboard/dashboard.html">Dashboard</a>
+      <a href="questions.html">Company Radar</a>
+      <a href="practice.html">AI Mock Interview</a>
+      <a href="copilot-studio.html">Code Reviewer</a>
+      <a href="graph-dp-tracer.html">Graph & DP Visualizer</a>
+      <a href="star-vault.html">STAR Vault</a>
+      <a href="sql-workbench.html">SQL Workbench</a>
+      <a href="concurrency.html">Concurrency</a>
+    </div>
+  </header>
+
+  <div class="outreach-container">
+    <div class="header-hero">
+      <h1>Cold Outreach & Recruiter InMail Generator</h1>
+      <p>AI-tailored, high-converting cold outreach sequences for Engineering Hiring Managers, Technical Recruiters, and Alumni referrals with real-time open rate optimization.</p>
+    </div>
+
+    <!-- Presets Bar -->
+    <div class="presets-bar">
+      <span class="preset-label">⚡ Fast Presets:</span>
+      <button class="preset-btn" onclick="loadPreset('hiringManager')">Hiring Manager at Stripe (Payments Infra)</button>
+      <button class="preset-btn" onclick="loadPreset('recruiter')">Staff Recruiter at Google (Cloud Systems)</button>
+      <button class="preset-btn" onclick="loadPreset('alumni')">Alumni Referral at Meta (E5 SWE)</button>
+    </div>
+
+    <!-- Workspace Grid -->
+    <div class="workspace-grid">
+      <!-- Left Panel: Input Configuration -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>⚙️</span> Outreach Personalization Engine
+          </div>
+          <div style="font-size: 0.8rem; color: var(--accent-emerald); font-weight: 700;">
+            Zero Desperate Pleading
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <div class="field-group">
+            <div class="field-label">Target Recipient Type</div>
+            <select id="recipient-type" class="field-select">
+              <option value="HIRING_MANAGER">Engineering Hiring Manager (EM / Staff / Director)</option>
+              <option value="RECRUITER">Technical Recruiter / Talent Acquisition</option>
+              <option value="ALUMNI">Alumni / Peer Referral Request</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="field-group">
+              <div class="field-label">Target Company</div>
+              <input type="text" id="target-company" class="field-input" value="Stripe">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Recipient Name</div>
+              <input type="text" id="recipient-name" class="field-input" value="Sarah">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Role Title</div>
+            <input type="text" id="role-title" class="field-input" value="Staff Backend Engineer (Payments Infra)">
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Candidate Superpower / Metric Hook</div>
+            <input type="text" id="candidate-hook" class="field-input" value="Architected distributed event queue processing 100k events/sec with 0% data drop">
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Personal Context / Engineering Observation</div>
+            <textarea id="personal-context" class="field-textarea" placeholder="e.g. Read your tech blog post on distributed consensus with Raft...">Loved your recent blog post on idempotency keys and multi-region failovers.</textarea>
+          </div>
+
+          <button id="btn-gen-outreach" class="btn-submit" onclick="generateMessage()">
+            <span>🚀</span> Generate Outreach Sequence
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Panel: Message & A/B Subjects -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>✨</span> High-Conversion Message Preview
+          </div>
+          <div style="font-size: 0.8rem; color: #10b981; font-weight: 700;" id="conversion-score">
+            92 / 100 Impact
+          </div>
+        </div>
+
+        <div class="outreach-output">
+          <!-- A/B Subject Lines -->
+          <div>
+            <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem;">
+              A/B High-Open Subject Lines (Click to Select)
+            </div>
+            <div id="subject-container" class="subject-list"></div>
+          </div>
+
+          <!-- Message Body -->
+          <div>
+            <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; display: flex; justify-content: space-between;">
+              <span>InMail & Email Body</span>
+              <span id="word-count" style="color: var(--accent-emerald);">0 words (Optimal)</span>
+            </div>
+            <div id="message-display" class="message-card">
+              Click "Generate Outreach Sequence" to create your tailored InMail.
+            </div>
+            <div class="message-actions">
+              <button id="btn-copy-msg" class="btn-secondary" onclick="copyMessage()">
+                <span>📋</span> Copy to Clipboard
+              </button>
+              <button id="btn-mail-client" class="btn-secondary" onclick="openMailClient()">
+                <span>📬</span> Open in Mail Client
+              </button>
+            </div>
+          </div>
+
+          <!-- Stats & CTA HUD -->
+          <div class="stats-hud">
+            <div class="stat-card">
+              <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Predicted Open Rate</div>
+              <div id="stat-open-rate" class="stat-val">88%</div>
+            </div>
+            <div class="stat-card">
+              <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Cognitive Friction</div>
+              <div class="stat-val" style="color: var(--accent-cyan);">Ultra-Low</div>
+            </div>
+          </div>
+
+          <!-- Key Principles -->
+          <div style="background: rgba(2, 6, 23, 0.6); border-left: 3px solid var(--accent-emerald); border-radius: 0 0.5rem 0.5rem 0; padding: 0.75rem; font-size: 0.82rem; line-height: 1.5;">
+            <strong>Executive Outreach Key:</strong> Keeps text under 150 words, offers an asynchronous 90-second Loom/GitHub link, and removes pressure for a formal calendar sync.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const presets = {
+      hiringManager: {
+        type: 'HIRING_MANAGER',
+        company: 'Stripe',
+        name: 'Sarah',
+        role: 'Staff Backend Engineer (Payments Infra)',
+        hook: 'Architected distributed event queue processing 100k events/sec with 0% data drop',
+        context: 'Loved your recent blog post on idempotency keys and multi-region failovers.'
+      },
+      recruiter: {
+        type: 'RECRUITER',
+        company: 'Google',
+        name: 'David',
+        role: 'Software Engineer III (Cloud Systems)',
+        hook: 'Optimized Kubernetes pod scheduling latency by 42% across 200+ microservices',
+        context: 'Tracking Google Cloud Platform new edge worker initiatives.'
+      },
+      alumni: {
+        type: 'ALUMNI',
+        company: 'Meta',
+        name: 'Priya',
+        role: 'Senior Software Engineer (Reality Labs)',
+        hook: 'Engineered real-time WebRTC telemetry sync handling 4M daily active users',
+        context: 'Saw your talk at the university tech summit last spring.'
+      }
+    };
+
+    let latestOutreachData = null;
+    let selectedSubject = '';
+
+    function loadPreset(key) {
+      if (presets[key]) {
+        const p = presets[key];
+        document.getElementById('recipient-type').value = p.type;
+        document.getElementById('target-company').value = p.company;
+        document.getElementById('recipient-name').value = p.name;
+        document.getElementById('role-title').value = p.role;
+        document.getElementById('candidate-hook').value = p.hook;
+        document.getElementById('personal-context').value = p.context;
+        generateMessage();
+      }
+    }
+
+    async function generateMessage() {
+      const payload = {
+        recipientType: document.getElementById('recipient-type').value,
+        company: document.getElementById('target-company').value.trim(),
+        recipientName: document.getElementById('recipient-name').value.trim(),
+        roleTitle: document.getElementById('role-title').value.trim(),
+        candidateHook: document.getElementById('candidate-hook').value.trim(),
+        personalContext: document.getElementById('personal-context').value.trim()
+      };
+
+      const btn = document.getElementById('btn-gen-outreach');
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳</span> Personalizing Sequence...';
+
+      try {
+        const res = await fetch('/api/v1/prep/outreach/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error('Outreach generation failed: ' + res.status);
+        const data = await res.json();
+        latestOutreachData = data;
+        renderOutreach(data);
+      } catch (err) {
+        console.error('Outreach generation error:', err);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>🚀</span> Generate Outreach Sequence';
+      }
+    }
+
+    function renderOutreach(data) {
+      document.getElementById('conversion-score').innerText = `${data.conversionScore} / 100 Impact`;
+      document.getElementById('word-count').innerText = `${data.wordCount} words (Optimal < 150)`;
+      document.getElementById('message-display').innerText = data.messageBody;
+
+      // Subject lines
+      const subContainer = document.getElementById('subject-container');
+      const subjects = data.subjectLines || [];
+      selectedSubject = subjects[0]?.text || '';
+      document.getElementById('stat-open-rate').innerText = subjects[0]?.openRate || '88%';
+
+      subContainer.innerHTML = subjects.map((s, idx) => `
+        <div class="subject-item ${idx === 0 ? 'selected' : ''}" onclick="selectSubjectByIndex(${idx})">
+          <span>${escapeHtml(s.text)}</span>
+          <span class="open-rate-badge">${s.openRate} open rate</span>
+        </div>
+      `).join('');
+    }
+
+    function selectSubjectByIndex(idx) {
+      if (latestOutreachData && latestOutreachData.subjectLines && latestOutreachData.subjectLines[idx]) {
+        const s = latestOutreachData.subjectLines[idx];
+        selectedSubject = s.text;
+        document.getElementById('stat-open-rate').innerText = s.openRate;
+        const items = document.querySelectorAll('.subject-item');
+        items.forEach((item, i) => {
+          if (i === idx) item.classList.add('selected');
+          else item.classList.remove('selected');
+        });
+      }
+    }
+
+
+    function copyMessage() {
+      if (latestOutreachData && latestOutreachData.messageBody) {
+        const textToCopy = `Subject: ${selectedSubject}\n\n${latestOutreachData.messageBody}`;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          const btn = document.getElementById('btn-copy-msg');
+          btn.innerHTML = '<span>✅</span> Copied!';
+          setTimeout(() => { btn.innerHTML = '<span>📋</span> Copy to Clipboard'; }, 2000);
+        });
+      }
+    }
+
+    function openMailClient() {
+      if (latestOutreachData) {
+        const sub = encodeURIComponent(selectedSubject);
+        const body = encodeURIComponent(latestOutreachData.messageBody);
+        window.location.href = `mailto:?subject=${sub}&body=${body}`;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadPreset('hiringManager');
+    });
+  </script>
+</body>
+</html>

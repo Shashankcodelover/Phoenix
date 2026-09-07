@@ -25,8 +25,209 @@ const { generatePitchDeckBlueprint } = require('./pitchDeckGenerator');
 
 const router = express.Router();
 
+// Feature 21: Problem Statement Deconstructor & Idea Scoring Engine (Public)
+const { ideaDeconstructorEngine } = require('./ideaDeconstructorEngine');
+
+router.get('/deconstruct/presets', (req, res) => {
+  res.json({ success: true, presets: ideaDeconstructorEngine.getPresets() });
+});
+
+router.post('/deconstruct/score', (req, res) => {
+  try {
+    const result = ideaDeconstructorEngine.deconstructAndScore(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 22: Rapid Architecture & Full-Stack Tech Stack Scaffolder (Public)
+const { stackScaffolderEngine } = require('./stackScaffolderEngine');
+
+router.get('/scaffolder/presets', (req, res) => {
+  res.json({ success: true, presets: stackScaffolderEngine.getPresets() });
+});
+
+router.post('/scaffolder/generate', (req, res) => {
+  try {
+    const result = stackScaffolderEngine.generateScaffold(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 23: Sponsor API Bounty Auto-Integrator & Webhook Sandbox (Public)
+const { sponsorSandboxEngine } = require('./sponsorSandboxEngine');
+
+router.get('/bounties/catalog', (req, res) => {
+  res.json({ success: true, bounties: sponsorSandboxEngine.getCatalog() });
+});
+
+router.post('/bounties/simulate', (req, res) => {
+  try {
+    const result = sponsorSandboxEngine.simulateCall(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/bounties/webhook-dispatch', (req, res) => {
+  try {
+    const result = sponsorSandboxEngine.dispatchWebhook(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 24: 3-Minute VC Demo Pitch Deck Generator & Slide Structurer (Public)
+const { vcPitchDeckEngine } = require('./vcPitchDeckEngine');
+
+router.get('/pitch/presets', (req, res) => {
+  res.json({ success: true, presets: vcPitchDeckEngine.getPresets() });
+});
+
+router.post('/pitch/generate-deck', (req, res) => {
+  try {
+    const result = vcPitchDeckEngine.generateDeck(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 25: Live Demo Defense & Tough Judge Q&A Simulator (Public)
+const { judgeDefenseEngine } = require('./judgeDefenseEngine');
+
+router.get('/judge-sim/presets', (req, res) => {
+  res.json({ success: true, ...judgeDefenseEngine.getPresets() });
+});
+
+router.post('/judge-sim/evaluate-round', (req, res) => {
+  try {
+    const result = judgeDefenseEngine.evaluateDefenseRound(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/judge-sim/verdict', (req, res) => {
+  try {
+    const result = judgeDefenseEngine.generateFinalVerdict(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 26: Hackathon Team Synergy & Role Task Matrix Canvas (Public)
+const { teamSynergyEngine } = require('./teamSynergyEngine');
+
+router.get('/team-synergy/presets', (req, res) => {
+  res.json({ success: true, ...teamSynergyEngine.getPresets() });
+});
+
+router.post('/team-synergy/evaluate', (req, res) => {
+  try {
+    const result = teamSynergyEngine.evaluateTeam(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/team-synergy/add-task', (req, res) => {
+  try {
+    const result = teamSynergyEngine.addTask(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 27: Interactive Product Demo Sandbox & Embeddable Widget (Public)
+const { demoSandboxEngine } = require('./demoSandboxEngine');
+
+router.get('/demo-sandbox/presets', (req, res) => {
+  res.json({ success: true, ...demoSandboxEngine.getPresets() });
+});
+
+router.post('/demo-sandbox/action', (req, res) => {
+  try {
+    const result = demoSandboxEngine.executeAction(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/demo-sandbox/embed', (req, res) => {
+  try {
+    const result = demoSandboxEngine.generateEmbedWidget(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 28: Competitive Moat & Unfair Advantage Auditor (Public)
+const { moatAuditorEngine } = require('./moatAuditorEngine');
+
+router.get('/moat/benchmarks', (req, res) => {
+  res.json({ success: true, ...moatAuditorEngine.getPresets() });
+});
+
+router.post('/moat/audit', (req, res) => {
+  try {
+    const result = moatAuditorEngine.auditMoat(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 29: Technical Architecture Diagram & Flow Visualizer (Public)
+const { archVisualizerEngine } = require('./archVisualizerEngine');
+
+router.get('/arch/presets', (req, res) => {
+  res.json({ success: true, ...archVisualizerEngine.getPresets() });
+});
+
+router.post('/arch/simulate-flow', (req, res) => {
+  try {
+    const result = archVisualizerEngine.simulateFlow(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 30: Live Demo Video Script & Teleprompter Studio (Public)
+const { demoScriptEngine } = require('./demoScriptEngine');
+
+router.get('/demo-script/presets', (req, res) => {
+  res.json({ success: true, ...demoScriptEngine.getPresets() });
+});
+
+router.post('/demo-script/timing', (req, res) => {
+  try {
+    const result = demoScriptEngine.calculateTiming(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // Apply protect middleware to ALL agent routes
 router.use(protect);
+
+
+
+
+
 
 router.post('/scrape', getScrapedEvents);
 router.post('/save-team', saveTeam);

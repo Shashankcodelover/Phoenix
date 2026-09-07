@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hackathon Team Synergy & Role Task Matrix Canvas | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-indigo: #6366f1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      color: var(--accent-indigo);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-indigo), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      color: #e0e7ff;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-indigo);
+      color: white;
+      border-color: var(--accent-indigo);
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Grid layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 1.5rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #fff;
+    }
+
+    /* Archetype Matrix */
+    .archetype-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .archetype-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 0.9rem;
+      transition: border-color 0.2s;
+    }
+    .archetype-card.covered {
+      border-left: 4px solid var(--accent-emerald);
+    }
+    .archetype-card.missing {
+      border-left: 4px solid var(--accent-rose);
+      background: rgba(244, 63, 94, 0.04);
+    }
+    .arch-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.35rem;
+    }
+    .arch-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .arch-badge {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      font-weight: 700;
+    }
+    .arch-badge.covered {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .arch-badge.missing {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+    .arch-member {
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Score Box */
+    .synergy-score-box {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(56, 189, 248, 0.1));
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .score-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .score-tier {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-emerald);
+      margin-top: 0.25rem;
+    }
+
+    /* Telemetry row */
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .telemetry-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .tele-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .tele-value {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 0.35rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Kanban Board (Linear style) */
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .kanban-col {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 10px;
+      padding: 1rem;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+    }
+    .col-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .col-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .col-count {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.15rem 0.45rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .task-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      flex: 1;
+    }
+    .task-card {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.85rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.15s;
+    }
+    .task-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .task-id {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+      margin-bottom: 0.25rem;
+    }
+    .task-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      line-height: 1.4;
+      margin-bottom: 0.5rem;
+    }
+    .task-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+    }
+    .task-assignee {
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .task-priority {
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.65rem;
+    }
+    .p-urgent { background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); }
+    .p-high { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
+    .p-medium { background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan); }
+
+    /* New Task Form */
+    .add-task-bar {
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.5rem;
+      margin-top: 1rem;
+    }
+    .task-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.85rem;
+      padding: 0.4rem 0.6rem;
+      outline: none;
+    }
+    .task-select {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0.35rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      outline: none;
+    }
+    .btn-add {
+      background: var(--accent-indigo);
+      color: white;
+      border: none;
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-add:hover {
+      opacity: 0.9;
+    }
+
+    /* Blockers List */
+    .blocker-item {
+      background: rgba(244, 63, 94, 0.08);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      border-radius: 8px;
+      padding: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+    .blocker-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-rose);
+      margin-bottom: 0.25rem;
+    }
+    .blocker-resolution {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: rgba(99, 102, 241, 0.9);
+      border: 1px solid #818cf8;
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🦅</span> Phoenix OS
+      <span class="nav-badge">Pillar 2 • Feature 26</span>
+    </div>
+    <div class="nav-links">
+      <a href="/hackathon-agent/judge-defense.html">Judge Defense</a>
+      <a href="/hackathon-agent/pitch-deck.html">Pitch Deck</a>
+      <a href="/hackathon-agent/sponsor-sandbox.html">Sponsor Sandbox</a>
+      <a href="/hackathon-agent/stack-scaffolder.html">Stack Scaffolder</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Hackathon Team Synergy & Role Task Matrix Canvas</h1>
+      <p class="hero-subtitle">
+        Linear-grade hackathon execution board: map the 4 winning builder archetypes, eliminate technical blind spots, track real-time git commit velocity, and dissolve high-stakes sprint blockers before demo day.
+      </p>
+
+      <!-- Presets Bar -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">ACTIVE ROSTER BENCHMARKS:</span>
+        <button class="preset-btn active" id="btn-squad-alpha" onclick="selectSquadPreset('squad_phoenix_alpha')">Squad Phoenix Alpha (Tier-1 Grand Prize)</button>
+        <button class="preset-btn" id="btn-squad-crypto" onclick="selectSquadPreset('squad_crypto_zero')">Team CryptoZero (Duo with Blind Spots)</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="dashboard-grid">
+      <!-- Left Column: Archetype Matrix & Scores -->
+      <div class="panel">
+        <h2 class="panel-title"><span>🛡️</span> Archetype Complementarity</h2>
+        
+        <!-- Synergy Score Box -->
+        <div class="synergy-score-box">
+          <div class="score-number" id="synergy-score-num">96 / 100</div>
+          <div class="score-tier" id="synergy-tier">TIER 1 (GRAND PRIZE CONTENDER)</div>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-top:0.35rem;" id="podium-prob">94% Expected Win Odds</div>
+        </div>
+
+        <!-- Archetypes -->
+        <div class="archetype-list" id="archetype-list">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Active Blockers -->
+        <h3 style="font-size:0.95rem; font-weight:700; margin-bottom:0.75rem; color:#fff; display:flex; align-items:center; gap:0.4rem;">
+          <span>🚨</span> High-Stakes Blockers
+        </h3>
+        <div id="blockers-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Right Column: Linear-style Task Matrix & Telemetry -->
+      <div class="panel">
+        <!-- Telemetry Strip -->
+        <div class="telemetry-strip">
+          <div class="telemetry-card">
+            <div class="tele-label">Git Commit Velocity</div>
+            <div class="tele-value" id="tele-velocity" style="color:var(--accent-cyan);">42 / 6h</div>
+          </div>
+          <div class="telemetry-card">
+            <div class="tele-label">Sprint Completion</div>
+            <div class="tele-value" id="tele-completion" style="color:var(--accent-emerald);">78%</div>
+          </div>
+          <div class="telemetry-card">
+            <div class="tele-label">Roster Capacity</div>
+            <div class="tele-value" id="tele-capacity" style="color:var(--accent-indigo);">4 Engineers</div>
+          </div>
+        </div>
+
+        <!-- Kanban Board -->
+        <h2 class="panel-title"><span>⚡</span> Agile Sprint Board (Linear Mode)</h2>
+        <div class="kanban-board">
+          <!-- To Do -->
+          <div class="kanban-col">
+            <div class="col-header">
+              <span class="col-title"><span>📋</span> To Do</span>
+              <span class="col-count" id="count-todo">0</span>
+            </div>
+            <div class="task-cards" id="col-todo">
+              <!-- Tasks -->
+            </div>
+          </div>
+
+          <!-- In Progress -->
+          <div class="kanban-col">
+            <div class="col-header">
+              <span class="col-title" style="color:var(--accent-amber);"><span>⏳</span> In Progress</span>
+              <span class="col-count" id="count-inprogress">0</span>
+            </div>
+            <div class="task-cards" id="col-inprogress">
+              <!-- Tasks -->
+            </div>
+          </div>
+
+          <!-- Done -->
+          <div class="kanban-col">
+            <div class="col-header">
+              <span class="col-title" style="color:var(--accent-emerald);"><span>✅</span> Done</span>
+              <span class="col-count" id="count-done">0</span>
+            </div>
+            <div class="task-cards" id="col-done">
+              <!-- Tasks -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Task Bar -->
+        <div class="add-task-bar">
+          <input type="text" class="task-input" id="new-task-title" placeholder="Add sprint task (e.g. Set up Cloudflare Tunnel for Judge Live Demo)..." />
+          <select class="task-select" id="new-task-assignee">
+            <option value="Alex Rivera">Alex Rivera</option>
+            <option value="David Chen">David Chen</option>
+            <option value="Priya Sharma">Priya Sharma</option>
+            <option value="Sneha Patel">Sneha Patel</option>
+          </select>
+          <select class="task-select" id="new-task-priority">
+            <option value="HIGH">High</option>
+            <option value="URGENT">Urgent</option>
+            <option value="MEDIUM">Medium</option>
+          </select>
+          <button class="btn-add" id="btn-add-task" onclick="addNewTask()">+ Add Task</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-msg">Team preset loaded!</div>
+
+  <script>
+    let presets = [];
+    let currentPreset = null;
+    let currentTasks = [];
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/agent/team-synergy/presets');
+        const data = await res.json();
+        if (data.success) {
+          presets = data.presets;
+          selectSquadPreset('squad_phoenix_alpha');
+        }
+      } catch (err) {
+        console.error('Failed to load presets:', err);
+      }
+    }
+
+    function selectSquadPreset(presetId) {
+      currentPreset = presets.find(p => p.id === presetId) || presets[0];
+      currentTasks = [...currentPreset.tasks];
+
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(presetId === 'squad_phoenix_alpha' ? 'btn-squad-alpha' : 'btn-squad-crypto');
+      if (activeBtn) activeBtn.classList.add('active');
+
+      // Update Assignee Dropdown
+      const assigneeSelect = document.getElementById('new-task-assignee');
+      assigneeSelect.innerHTML = '';
+      currentPreset.members.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.name;
+        opt.innerText = `${m.avatar} ${m.name}`;
+        assigneeSelect.appendChild(opt);
+      });
+
+      // Update Telemetry
+      document.getElementById('tele-velocity').innerText = currentPreset.repoVelocity.split(' ')[0] + ' commits';
+      document.getElementById('tele-capacity').innerText = `${currentPreset.members.length} Engineers`;
+
+      evaluateAndRender();
+      showToast(`Loaded ${currentPreset.name}!`);
+    }
+
+    async function evaluateAndRender() {
+      try {
+        const res = await fetch('/api/v1/agent/team-synergy/evaluate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            members: currentPreset.members,
+            tasks: currentTasks,
+            blockers: currentPreset.blockers
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          // Synergy stats
+          document.getElementById('synergy-score-num').innerText = data.synergyScore;
+          document.getElementById('synergy-tier').innerText = data.synergyTier;
+          document.getElementById('podium-prob').innerText = `${data.podiumWinProbability} Expected Win Odds`;
+          document.getElementById('tele-completion').innerText = data.taskMetrics.completionRate;
+
+          // Archetypes
+          const list = document.getElementById('archetype-list');
+          list.innerHTML = '';
+          data.archetypeCoverage.forEach(arch => {
+            const isCovered = arch.status === 'COVERED';
+            const card = document.createElement('div');
+            card.className = `archetype-card ${isCovered ? 'covered' : 'missing'}`;
+            card.innerHTML = `
+              <div class="arch-header">
+                <span class="arch-title">${arch.archetype}</span>
+                <span class="arch-badge ${isCovered ? 'covered' : 'missing'}">${arch.status}</span>
+              </div>
+              <div class="arch-member">${isCovered ? 'Assigned: ' + arch.assignedMember : '⚠️ Unfilled Critical Gap'}</div>
+            `;
+            list.appendChild(card);
+          });
+
+          // Blockers
+          const blockersContainer = document.getElementById('blockers-container');
+          blockersContainer.innerHTML = '';
+          if (data.blockersSummary && data.blockersSummary.length > 0) {
+            data.blockersSummary.forEach(blk => {
+              const bDiv = document.createElement('div');
+              bDiv.className = 'blocker-item';
+              bDiv.innerHTML = `
+                <div class="blocker-title">[${blk.severity}] ${blk.title}</div>
+                <div class="blocker-resolution">Fix: ${blk.resolution}</div>
+              `;
+              blockersContainer.appendChild(bDiv);
+            });
+          } else {
+            blockersContainer.innerHTML = '<div style="font-size:0.8rem; color:var(--accent-emerald);">All blockers cleared. Maximum sprint velocity.</div>';
+          }
+
+          // Render Kanban columns
+          renderKanban();
+        }
+      } catch (err) {
+        console.error('Failed to evaluate team:', err);
+      }
+    }
+
+    function renderKanban() {
+      const colTodo = document.getElementById('col-todo');
+      const colInProgress = document.getElementById('col-inprogress');
+      const colDone = document.getElementById('col-done');
+
+      colTodo.innerHTML = '';
+      colInProgress.innerHTML = '';
+      colDone.innerHTML = '';
+
+      let todoCount = 0, inprogCount = 0, doneCount = 0;
+
+      currentTasks.forEach(task => {
+        const priorityClass = task.priority === 'URGENT' ? 'p-urgent' : task.priority === 'HIGH' ? 'p-high' : 'p-medium';
+        const card = document.createElement('div');
+        card.className = 'task-card';
+        card.innerHTML = `
+          <div class="task-id">${task.id}</div>
+          <div class="task-title">${task.title}</div>
+          <div class="task-footer">
+            <span class="task-assignee">👤 ${task.assignee}</span>
+            <span class="task-priority ${priorityClass}">${task.priority}</span>
+          </div>
+        `;
+
+        if (task.status === 'TODO') {
+          colTodo.appendChild(card);
+          todoCount++;
+        } else if (task.status === 'IN_PROGRESS') {
+          colInProgress.appendChild(card);
+          inprogCount++;
+        } else if (task.status === 'DONE') {
+          colDone.appendChild(card);
+          doneCount++;
+        }
+      });
+
+      document.getElementById('count-todo').innerText = todoCount;
+      document.getElementById('count-inprogress').innerText = inprogCount;
+      document.getElementById('count-done').innerText = doneCount;
+    }
+
+    async function addNewTask() {
+      const titleInput = document.getElementById('new-task-title');
+      const title = titleInput.value.trim();
+      if (!title) {
+        alert('Please enter a sprint task title.');
+        return;
+      }
+
+      const assignee = document.getElementById('new-task-assignee').value;
+      const priority = document.getElementById('new-task-priority').value;
+
+      try {
+        const res = await fetch('/api/v1/agent/team-synergy/add-task', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tasks: currentTasks,
+            newTask: { title, assignee, priority, status: 'TODO' }
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          currentTasks = data.tasks;
+          titleInput.value = '';
+          evaluateAndRender();
+          showToast('Added task to sprint backlog!');
+        }
+      } catch (err) {
+        alert('Failed to add task: ' + err.message);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

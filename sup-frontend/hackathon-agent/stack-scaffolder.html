@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rapid Architecture & Tech Stack Scaffolder | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--accent-emerald);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2.25rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-emerald));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--accent-emerald);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover {
+      background: rgba(16, 185, 129, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* Cockpit Layout */
+    .cockpit-grid {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 0.75rem;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .form-control {
+      width: 100%;
+      background: rgba(10, 16, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .stack-badges {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .badge-item {
+      background: rgba(10, 16, 30, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    .badge-label {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .badge-val {
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .btn-generate {
+      width: 100%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.85rem;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      margin-top: 1.25rem;
+    }
+    .btn-generate:hover {
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* Code Viewer Tabs */
+    .tabs-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.5rem;
+      overflow-x: auto;
+    }
+    .tab-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .tab-item:hover {
+      color: #fff;
+    }
+    .tab-item.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    /* Editor Window */
+    .editor-container {
+      background: #050b14;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #e2e8f0;
+      min-height: 380px;
+      max-height: 480px;
+      overflow: auto;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .editor-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .btn-action {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: translateY(-1px);
+    }
+    .btn-primary-action {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    .btn-primary-action:hover {
+      background: rgba(56, 189, 248, 0.25);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0f172a;
+      border: 1px solid var(--accent-emerald);
+      color: #fff;
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>⚡</span>
+      <span>Phoenix OS</span>
+      <span class="nav-badge">Pillar 2 • Feature 22</span>
+    </div>
+    <div class="nav-links">
+      <a href="/hackathon-agent/idea-scorer.html">Idea Scorer</a>
+      <a href="/hackathon-agent/command-center.html">Command Center</a>
+      <a href="/hackathon-agent/team.html">Team Synergy</a>
+      <a href="/hackathon-agent/pitch-planner.html">Pitch Planner</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Rapid Architecture & Full-Stack Tech Stack Scaffolder</h1>
+      <p class="hero-subtitle">
+        Turn hackathon ideas into production-ready architectures in under 60 seconds. Generate turnkey Docker Compose multi-service topologies, PostgreSQL pgvector schemas with HNSW indexes, pre-wired environment variables, and 1-click bootstrap scripts.
+      </p>
+
+      <!-- Presets -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">STACK ARCHETYPES:</span>
+        <button class="preset-btn" id="btn-preset-agentic" onclick="selectArchetypePreset('agentic_ai_rag')">⚡ Agentic AI & Multimodal RAG</button>
+        <button class="preset-btn" id="btn-preset-realtime" onclick="selectArchetypePreset('realtime_event_mesh')">🛰️ Realtime Event Gateway</button>
+        <button class="preset-btn" id="btn-preset-web3" onclick="selectArchetypePreset('decentralized_zk_fintech')">🔐 Web3 & Zero-Knowledge Vault</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="cockpit-grid">
+      <!-- Left: Configuration Form -->
+      <div class="panel">
+        <h2 class="panel-title"><span>🛠️</span> Stack Blueprint & Microservices</h2>
+
+        <div class="form-group">
+          <label for="input-project-name">Project Monorepo Name</label>
+          <input type="text" class="form-control" id="input-project-name" value="phoenix-apex-mvp">
+        </div>
+
+        <div class="form-group">
+          <label for="select-archetype">Selected Archetype</label>
+          <select class="form-control" id="select-archetype" onchange="onArchetypeChange()">
+            <option value="agentic_ai_rag">Agentic AI & Multimodal RAG Powerhouse</option>
+            <option value="realtime_event_mesh">High-Throughput Realtime Event Gateway</option>
+            <option value="decentralized_zk_fintech">Web3 & Zero-Knowledge Privacy Vault</option>
+          </select>
+        </div>
+
+        <!-- Stack Component Badges -->
+        <div class="form-group">
+          <label>Configured Stack Components</label>
+          <div class="stack-badges" id="stack-badges">
+            <div class="badge-item">
+              <span class="badge-label">Frontend:</span>
+              <span class="badge-val" id="badge-frontend">Next.js 14 App Router</span>
+            </div>
+            <div class="badge-item">
+              <span class="badge-label">Backend:</span>
+              <span class="badge-val" id="badge-backend">FastAPI Python 3.11</span>
+            </div>
+            <div class="badge-item">
+              <span class="badge-label">Database:</span>
+              <span class="badge-val" id="badge-db">PostgreSQL 16 + pgvector</span>
+            </div>
+            <div class="badge-item">
+              <span class="badge-label">Cache / PubSub:</span>
+              <span class="badge-val" id="badge-cache">Redis 7.2 Alpine</span>
+            </div>
+            <div class="badge-item">
+              <span class="badge-label">Orchestration:</span>
+              <span class="badge-val" id="badge-orch">Docker Compose</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-generate" id="btn-scaffold" onclick="generateScaffolding()">
+          <span>⚡</span> Scaffold Full-Stack Architecture & Code
+        </button>
+      </div>
+
+      <!-- Right: Code Viewer -->
+      <div class="panel">
+        <h2 class="panel-title"><span>📂</span> Generated Turnkey Code Artifacts</h2>
+
+        <!-- File Tabs -->
+        <div class="tabs-bar" id="tabs-bar">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Code Box -->
+        <div class="editor-container" id="editor-container">
+          Loading generated files...
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="editor-actions">
+          <button class="btn-action" id="btn-copy-code" onclick="copyCurrentFile()">
+            <span>📋</span> Copy Active File
+          </button>
+          <button class="btn-action btn-primary-action" id="btn-download-zip" onclick="downloadProjectZip()">
+            <span>📦</span> Download Project ZIP (5 Files)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-msg">Scaffold generated!</div>
+
+  <script>
+    let presetsCache = [];
+    let generatedFiles = [];
+    let activeFileIndex = 0;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/agent/scaffolder/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          presetsCache = data.presets;
+          selectArchetypePreset('agentic_ai_rag');
+        }
+      } catch (err) {
+        console.error('Failed to load presets:', err);
+      }
+    }
+
+    function selectArchetypePreset(archId) {
+      document.getElementById('select-archetype').value = archId;
+      onArchetypeChange();
+    }
+
+    function onArchetypeChange() {
+      const archId = document.getElementById('select-archetype').value;
+      const p = presetsCache.find(item => item.id === archId);
+      if (p) {
+        document.getElementById('badge-frontend').innerText = p.frontend.split(' ')[0] + ' ' + (p.frontend.split(' ')[1] || '');
+        document.getElementById('badge-backend').innerText = p.backend.split(' ')[0] + ' ' + (p.backend.split(' ')[1] || '');
+        document.getElementById('badge-db').innerText = p.database.split(' ')[0] + ' ' + (p.database.split(' ')[1] || '');
+        document.getElementById('badge-cache').innerText = p.cache.split(' ')[0] + ' ' + (p.cache.split(' ')[1] || '');
+        document.getElementById('badge-orch').innerText = p.containerOrchestration;
+      }
+      generateScaffolding();
+    }
+
+    async function generateScaffolding() {
+      const archetypeId = document.getElementById('select-archetype').value;
+      const projectName = document.getElementById('input-project-name').value;
+
+      try {
+        const res = await fetch('/api/v1/agent/scaffolder/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            archetypeId,
+            projectName
+          })
+        });
+
+        const data = await res.json();
+        if (data.success && data.data) {
+          generatedFiles = data.data.files;
+          activeFileIndex = 0;
+          renderTabs();
+          renderActiveFile();
+          showToast(`Architecture scaffolded for ${projectName}!`);
+        }
+      } catch (err) {
+        alert('Failed to generate scaffold: ' + err.message);
+      }
+    }
+
+    function renderTabs() {
+      const tabsBar = document.getElementById('tabs-bar');
+      tabsBar.innerHTML = '';
+      generatedFiles.forEach((file, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `tab-item ${idx === activeFileIndex ? 'active' : ''}`;
+        btn.innerText = file.name;
+        btn.onclick = () => {
+          activeFileIndex = idx;
+          renderTabs();
+          renderActiveFile();
+        };
+        tabsBar.appendChild(btn);
+      });
+    }
+
+    function renderActiveFile() {
+      const file = generatedFiles[activeFileIndex];
+      if (file) {
+        document.getElementById('editor-container').innerText = file.content;
+      }
+    }
+
+    function copyCurrentFile() {
+      const file = generatedFiles[activeFileIndex];
+      if (file) {
+        navigator.clipboard.writeText(file.content).catch(() => {});
+        showToast(`Copied ${file.name} to clipboard!`);
+      }
+    }
+
+    function downloadProjectZip() {
+      showToast('Downloading complete multi-service project scaffold (.zip)...');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

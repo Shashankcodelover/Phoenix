@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Demo Defense & Tough Judge Q&A Simulator | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      color: var(--accent-rose);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2.25rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-rose));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      color: var(--accent-rose);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover {
+      background: rgba(244, 63, 94, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* Cockpit Layout */
+    .cockpit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 0.75rem;
+    }
+
+    /* Judge Profile Card */
+    .judge-card {
+      background: rgba(10, 16, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .judge-avatar {
+      font-size: 2.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .judge-info {
+      flex: 1;
+    }
+    .judge-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .judge-role {
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      margin-bottom: 0.25rem;
+    }
+    .judge-focus {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Question Box */
+    .question-box {
+      background: rgba(244, 63, 94, 0.08);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      border-left: 4px solid var(--accent-rose);
+      border-radius: 8px;
+      padding: 1.2rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    /* Answer Area */
+    .answer-textarea {
+      width: 100%;
+      background: rgba(10, 16, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.85rem;
+      font-size: 0.9rem;
+      font-family: inherit;
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+    }
+    .answer-textarea:focus {
+      border-color: var(--accent-cyan);
+      outline: none;
+    }
+
+    .defense-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .btn-autofill {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-submit-defense {
+      flex: 1;
+      background: linear-gradient(135deg, #f43f5e, #e11d48);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.65rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3);
+    }
+    .btn-submit-defense:hover {
+      box-shadow: 0 6px 20px rgba(244, 63, 94, 0.5);
+    }
+
+    /* Scorecard Strip */
+    .score-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .score-card {
+      background: rgba(10, 16, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .score-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.4rem;
+    }
+    .score-val {
+      font-size: 1.7rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Critique Box */
+    .critique-box {
+      background: rgba(10, 16, 30, 0.6);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .critique-title {
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.35rem;
+    }
+    .critique-text {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    /* Verdict Card */
+    .verdict-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+      border: 1px solid var(--accent-emerald);
+      border-radius: 10px;
+      padding: 1.25rem;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+      display: none;
+    }
+    .verdict-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent-emerald);
+      margin-bottom: 0.5rem;
+    }
+    .verdict-remarks {
+      list-style: none;
+      padding: 0;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+    .verdict-remarks li {
+      margin-bottom: 0.35rem;
+      line-height: 1.4;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0f172a;
+      border: 1px solid var(--accent-rose);
+      color: #fff;
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>⚔️</span>
+      <span>Phoenix OS</span>
+      <span class="nav-badge">Pillar 2 • Feature 25</span>
+    </div>
+    <div class="nav-links">
+      <a href="/hackathon-agent/pitch-deck.html">Pitch Deck</a>
+      <a href="/hackathon-agent/sponsor-sandbox.html">Sponsor Sandbox</a>
+      <a href="/hackathon-agent/stack-scaffolder.html">Stack Scaffolder</a>
+      <a href="/hackathon-agent/idea-scorer.html">Idea Scorer</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Live Demo Defense & Tough Judge Q&A Simulator</h1>
+      <p class="hero-subtitle">
+        Face an elite 3-round gauntlet simulating Principal Systems Architects (Ex-Google), Cybersecurity Directors, and Tier-1 VC Partners. Defend technical architecture, concurrency under 100k RPS, and structural business moats under live pressure.
+      </p>
+
+      <!-- Presets -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">CHALLENGE BENCHMARKS:</span>
+        <button class="preset-btn" id="btn-preset-disaster" onclick="selectDefensePreset('disaster_swarm_defense')">Aegis: Disaster Relief Swarm</button>
+        <button class="preset-btn" id="btn-preset-oncomatch" onclick="selectDefensePreset('oncomatch_defense')">OncoMatch: ZK Clinical Trials</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="cockpit-grid">
+      <!-- Left: Judge & Question -->
+      <div class="panel">
+        <h2 class="panel-title">
+          <span>🧑‍⚖️</span> Active Judge Persona & Cross-Examination
+          <span style="font-size:0.8rem; color:var(--accent-rose); margin-left:auto; font-family:'JetBrains Mono';" id="round-indicator">
+            ROUND 1 OF 3
+          </span>
+        </h2>
+
+        <!-- Judge Profile -->
+        <div class="judge-card" id="judge-card">
+          <div class="judge-avatar" id="judge-avatar">👨‍💻</div>
+          <div class="judge-info">
+            <div class="judge-name" id="judge-name">Dr. Sanjay Sen</div>
+            <div class="judge-role" id="judge-title">Principal Systems Architect (Ex-Google / Cloudflare)</div>
+            <div class="judge-focus" id="judge-focus">Focus: Concurrency, Data Sharding, Microservices & Cache Coherence</div>
+          </div>
+        </div>
+
+        <!-- The Question -->
+        <div class="question-box" id="question-text">
+          Loading cross-examination question...
+        </div>
+
+        <!-- Candidate Defense Input -->
+        <textarea class="answer-textarea" id="candidate-defense" placeholder="Formulate your razor-sharp technical defense response here, or click Auto-Fill..."></textarea>
+
+        <div class="defense-actions">
+          <button class="btn-autofill" id="btn-autofill" onclick="autoFillDefense()">
+            ⚡ Auto-Fill High-Caliber Defense
+          </button>
+          <button class="btn-submit-defense" id="btn-submit-defense" onclick="submitDefenseRound()">
+            <span>🚀</span> Submit Defense & Advance
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Live Scorecard & Verdict -->
+      <div class="panel">
+        <h2 class="panel-title"><span>📊</span> Live Defense Scorecard & Panel Verdict</h2>
+
+        <div class="score-strip">
+          <div class="score-card">
+            <div class="score-label">Current Round Score</div>
+            <div class="score-val" id="res-score" style="color:var(--accent-emerald);">95 / 100</div>
+          </div>
+
+          <div class="score-card">
+            <div class="score-label">Judge Panel Sentiment</div>
+            <div class="score-val" id="res-mood" style="font-size:1.15rem; color:var(--accent-cyan);">IMPRESSED</div>
+          </div>
+        </div>
+
+        <!-- Critique Box -->
+        <div class="critique-box">
+          <div class="critique-title">Judge Critique & Evaluation:</div>
+          <div class="critique-text" id="res-critique">
+            Awaiting your defense submission to deliver real-time technical cross-examination.
+          </div>
+        </div>
+
+        <!-- Final Verdict Box -->
+        <div class="verdict-card" id="verdict-card">
+          <div class="verdict-title" id="verdict-title">UNANIMOUS PODIUM WINNER</div>
+          <div style="font-size:0.95rem; font-weight:700; color:#fff;" id="verdict-prob">
+            96% Grand Prize Odds • Silicon Valley Investment Grade
+          </div>
+          <ul class="verdict-remarks" id="verdict-remarks">
+            <!-- Populated by JS -->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-msg">Defense evaluated!</div>
+
+  <script>
+    let currentRound = 1;
+    let currentProjectId = 'disaster_swarm_defense';
+    let judgePanel = [];
+    let projects = [];
+    let cumulativeScores = [];
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/agent/judge-sim/presets');
+        const data = await res.json();
+        if (data.success) {
+          judgePanel = data.judgePanel;
+          projects = data.projects;
+          selectDefensePreset('disaster_swarm_defense');
+        }
+      } catch (err) {
+        console.error('Failed to load judge presets:', err);
+      }
+    }
+
+    function selectDefensePreset(projId) {
+      currentProjectId = projId;
+      currentRound = 1;
+      cumulativeScores = [];
+      document.getElementById('verdict-card').style.display = 'none';
+
+      renderRound();
+      showToast('Loaded defense project benchmark!');
+    }
+
+    function renderRound() {
+      const judge = judgePanel.find(j => j.round === currentRound) || judgePanel[0];
+      document.getElementById('round-indicator').innerText = `ROUND ${currentRound} OF 3`;
+      document.getElementById('judge-avatar').innerText = judge.avatar;
+      document.getElementById('judge-name').innerText = judge.judgeName;
+      document.getElementById('judge-title').innerText = judge.judgeTitle;
+      document.getElementById('judge-focus').innerText = `Focus: ${judge.focus}`;
+      document.getElementById('question-text').innerText = judge.promptQuestion;
+      document.getElementById('candidate-defense').value = '';
+    }
+
+    function autoFillDefense() {
+      const p = projects.find(item => item.id === currentProjectId);
+      if (p && p.sampleAnswers && p.sampleAnswers[currentRound - 1]) {
+        document.getElementById('candidate-defense').value = p.sampleAnswers[currentRound - 1];
+        showToast('Auto-filled calibrated defense answer!');
+      }
+    }
+
+    async function submitDefenseRound() {
+      const answer = document.getElementById('candidate-defense').value;
+      if (!answer.trim()) {
+        alert('Please formulate a defense response or click Auto-Fill.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/v1/agent/judge-sim/evaluate-round', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            projectId: currentProjectId,
+            round: currentRound,
+            candidateAnswer: answer
+          })
+        });
+
+        const data = await res.json();
+        if (data.success && data.data) {
+          document.getElementById('res-score').innerText = `${data.data.score} / 100`;
+          document.getElementById('res-mood').innerText = data.data.mood.replace(/_/g, ' ');
+          document.getElementById('res-critique').innerText = data.data.critique;
+
+          cumulativeScores.push(data.data.score);
+
+          if (data.data.hasCompletedAllRounds) {
+            triggerFinalVerdict();
+          } else {
+            currentRound++;
+            setTimeout(renderRound, 800);
+          }
+          showToast(`Round ${data.data.roundEvaluated} defense evaluated!`);
+        }
+      } catch (err) {
+        alert('Failed to evaluate round: ' + err.message);
+      }
+    }
+
+    async function triggerFinalVerdict() {
+      const avg = Math.round(cumulativeScores.reduce((a,b)=>a+b,0) / cumulativeScores.length);
+      const proj = projects.find(p => p.id === currentProjectId);
+
+      try {
+        const res = await fetch('/api/v1/agent/judge-sim/verdict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            projectTitle: proj ? proj.title : 'Aegis Platform',
+            averageScore: avg
+          })
+        });
+
+        const data = await res.json();
+        if (data.success && data.data) {
+          const card = document.getElementById('verdict-card');
+          card.style.display = 'block';
+          document.getElementById('verdict-title').innerText = data.data.verdict.replace(/_/g, ' ');
+          document.getElementById('verdict-title').style.color = data.data.verdictColor;
+          document.getElementById('verdict-prob').innerText = `${data.data.podiumProbability} • ${data.data.investorReadinessScore}`;
+
+          const list = document.getElementById('verdict-remarks');
+          list.innerHTML = '';
+          data.data.panelRemarks.forEach(rem => {
+            const li = document.createElement('li');
+            li.innerText = rem;
+            list.appendChild(li);
+          });
+        }
+      } catch (err) {
+        console.error('Failed to get verdict:', err);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

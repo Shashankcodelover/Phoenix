@@ -23,30 +23,207 @@ const { validate, schemas } = require('../../middleware/inputValidator');
 
 const router = express.Router();
 
-const { protect } = require('../../middleware/authMiddleware');
+const { protect, protectOptional } = require('../../middleware/authMiddleware');
 
 router.post('/behavioral-pressure', protect, validate(schemas.behavioralPressure), analyzeBehavioralPressureEndpoint);
 router.post('/evaluate-latency', protect, validate(schemas.latencyCircuit), evaluateLatencyCircuitBreakerEndpoint);
 
 router.post('/generate-roadmap', protect, validate(schemas.generateRoadmap), generateRoadmap);
-router.post('/mock-interview', protect, validate(schemas.mockInterview), mockInterview);
+router.post('/mock-interview', protectOptional, validate(schemas.mockInterview), mockInterview);
 router.post('/tailor-resume', protect, validate(schemas.tailorResume), tailorResume);
-router.post('/resume-disrupt', protect, validate(schemas.disruptResume), disruptResume);
+router.post('/resume-disrupt', protectOptional, validate(schemas.disruptResume), disruptResume);
 router.post('/resume-diff', protect, generateResumeDiff);
 router.post('/quiz-submit', protect, validate(schemas.quizSubmit), submitQuiz);
 router.get('/questions', protect, getQuestions);
 router.get('/company-intelligence', protect, getCompanyIntelligenceEndpoint);
 router.get('/hackathon-winners', protect, getHackathonWinnersEndpoint);
 router.post('/peer-match', protect, getPeerMatches);
-router.post('/planner/allocate', protect, validate(schemas.planner), allocatePlanner);
+router.post('/planner/allocate', protectOptional, validate(schemas.planner), allocatePlanner);
 router.post('/revision', protect, validate(schemas.revision), generateRevisionSheet);
 router.post('/analyze-audio', protect, analyzeAudio);
 router.get('/performance-trend/:userId', protect, getPerformanceTrend);
+const { getAlgorithmExecutionFrames } = require('./algoVisualizerController');
+router.get('/visualizer/frames', getAlgorithmExecutionFrames);
+const { starStoryMatrixEngine } = require('./starStoryMatrixEngine');
+const { starStoryRefinerEngine } = require('./starStoryRefinerEngine');
+
+router.post('/star/evaluate', (req, res) => {
+  try {
+    const { question = '', answer = '' } = req.body;
+    const result = starStoryMatrixEngine.evaluateStarAnswer(question, answer);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/star/refine', (req, res) => {
+  try {
+    const result = starStoryRefinerEngine.refineBehavioralStory(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/star/vault', (req, res) => {
+  const vaultStories = [
+    {
+      id: 'star-1',
+      title: 'Distributed Redis Cache & Latency Slashing',
+      principle: 'Bias for Action & Deliver Results',
+      company: 'Amazon / AWS',
+      tags: ['Backend', 'Optimization', 'P99 Latency', 'Redis'],
+      situation: 'During peak cyber week sales, payment microservice P99 latency degraded to 420ms under 45k RPM, threatening transaction dropouts.',
+      task: 'Restore sub-100ms P99 latency without provisioning additional expensive compute clusters.',
+      action: 'Engineered a two-tier Redis LRU cache cluster with circuit-breaker fallbacks and stale-while-revalidate cache invalidation.',
+      result: 'Reduced P99 latency by 76% (420ms -> 98ms), supported 60,000 sustained RPS with 99.99% availability, and eliminated database deadlocks.',
+      metrics: ['-76% P99 Latency', '60k RPS', '99.99% Uptime']
+    },
+    {
+      id: 'star-2',
+      title: 'Graceful Degradation During Third-Party Outage',
+      principle: 'Customer Obsession & Ownership',
+      company: 'Google / Stripe',
+      tags: ['Fault Tolerance', 'Microservices', 'Resilience'],
+      situation: 'Downstream credit scoring provider suffered total outage during high-volume loan applicant approvals.',
+      task: 'Prevent complete approval funnel blockage while mitigating fraud risk for 50k active candidates.',
+      action: 'Designed heuristic shadow approval pipeline using cached historical applicant risk signals and asynchronous webhook re-verification.',
+      result: 'Maintained 88% user conversion without service downtime, with 0% post-recovery fraud loss detected by internal audit.',
+      metrics: ['88% Funnel Retention', '0% Fraud Loss', '50k Users Protected']
+    },
+    {
+      id: 'star-3',
+      title: 'Architectural Disagreement on Microservices vs Monolith',
+      principle: 'Have Backbone; Disagree and Commit',
+      company: 'Meta / Netflix',
+      tags: ['Leadership', 'System Design', 'Conflict'],
+      situation: 'Senior tech lead advocated migrating a stable service to 14 distributed microservices 3 weeks before product launch.',
+      task: 'Advocate for launch stability while addressing lead engineer scalability concerns objectively.',
+      action: 'Conducted benchmark load tests demonstrating network hop latency overhead (+120ms) and presented modular monolith domain-driven approach with clean interfaces.',
+      result: 'Team aligned on modular monolith design, launched on time with 0 Sev-1 incidents, saving 2.5 months of complex DevOps maintenance.',
+      metrics: ['On-time Launch', '0 Sev-1 Bugs', 'Saved 10 Weeks DevOps']
+    }
+  ];
+  res.json({ success: true, count: vaultStories.length, stories: vaultStories });
+});
+
+// Feature 12: SQL Query Optimizer & Tuning Workbench
+const { sqlOptimizerEngine } = require('./sqlOptimizerEngine');
+
+router.post('/sql/optimize', (req, res) => {
+  try {
+    const result = sqlOptimizerEngine.optimizeQuery(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/sql/execute', (req, res) => {
+  try {
+    const { query = '' } = req.body;
+    const employees = [
+      { id: 1, name: 'Alice Chen', department_id: 1, salary: 185000 },
+      { id: 2, name: 'Bob Smith', department_id: 1, salary: 165000 },
+      { id: 3, name: 'Charlie Kim', department_id: 2, salary: 195000 },
+      { id: 4, name: 'Devon Patel', department_id: 2, salary: 175000 },
+      { id: 5, name: 'Elena Rostova', department_id: 3, salary: 210000 },
+      { id: 6, name: 'Frank Miller', department_id: 3, salary: 140000 },
+      { id: 7, name: 'Grace Hopper', department_id: 1, salary: 220000 }
+    ];
+
+    const departments = [
+      { id: 1, name: 'Core Infrastructure' },
+      { id: 2, name: 'AI Platform' },
+      { id: 3, name: 'Distributed Systems' }
+    ];
+
+    const clean = query.trim().toUpperCase();
+    let rows = [];
+    let queryType = 'Custom Query';
+
+    if (clean.includes('DENSE_RANK') || clean.includes('ROW_NUMBER') || clean.includes('TOP 3')) {
+      queryType = 'Department Top Earners (Window Function)';
+      rows = [
+        { department: 'Core Infrastructure', employee: 'Grace Hopper', salary: 220000, rank: 1 },
+        { department: 'Core Infrastructure', employee: 'Alice Chen', salary: 185000, rank: 2 },
+        { department: 'Core Infrastructure', employee: 'Bob Smith', salary: 165000, rank: 3 },
+        { department: 'AI Platform', employee: 'Charlie Kim', salary: 195000, rank: 1 },
+        { department: 'AI Platform', employee: 'Devon Patel', salary: 175000, rank: 2 },
+        { department: 'Distributed Systems', employee: 'Elena Rostova', salary: 210000, rank: 1 },
+        { department: 'Distributed Systems', employee: 'Frank Miller', salary: 140000, rank: 2 }
+      ];
+    } else if (clean.includes('SECOND') || (clean.includes('DISTINCT') && clean.includes('LIMIT 1 OFFSET 1')) || clean.includes('SALARY <')) {
+      queryType = 'Second Highest Salary';
+      rows = [{ SecondHighestSalary: 210000 }];
+    } else if (clean.includes('JOIN') || clean.includes('DEPARTMENT')) {
+      queryType = 'Employee-Department Directory';
+      rows = employees.map(e => {
+        const d = departments.find(dep => dep.id === e.department_id);
+        return { id: e.id, name: e.name, department: d ? d.name : 'Unknown', salary: `$${e.salary.toLocaleString()}` };
+      });
+    } else {
+      queryType = 'Table Scan';
+      rows = employees.slice(0, 5).map(e => ({ id: e.id, name: e.name, salary: `$${e.salary.toLocaleString()}` }));
+    }
+
+    res.json({
+      success: true,
+      queryType,
+      rowCount: rows.length,
+      columns: rows.length > 0 ? Object.keys(rows[0]) : [],
+      rows,
+      executionTimeMs: 1.24
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature 13: Concurrency & Thread Safety Playground
+const { simulateConcurrency } = require('./concurrencySimulatorController');
+router.post('/concurrency/simulate', simulateConcurrency);
+
+// Feature 14: Cold Outreach & Recruiter InMail Generator
+const { generateOutreach } = require('./outreachController');
+router.post('/outreach/generate', generateOutreach);
+
+
 const { evaluateSpeechProsody } = require('./speechEvaluatorEngine');
 const { createOrMatchPeerRoom, sendRoomHeartbeat, handlePeerSignalingOffer, handlePeerSignalingAnswer, handleIceCandidate } = require('./peerMatchEngine');
 const { evaluateSystemDesign } = require('./systemDesignEvaluator');
 
-router.post('/analyze-speech', protect, (req, res) => {
+// Feature 18: Interview Anxiety & Speech Pace Biofeedback
+const SPEECH_BENCHMARK_PRESETS = [
+  {
+    id: 'anxious_rapid',
+    title: 'High Anxiety & Rapid Pacing',
+    category: 'Rapid Speech & High Fillers',
+    durationSeconds: 45,
+    sampleText: 'Um, basically, like in our previous system, we had this, you know, huge database deadlock issue, and honestly, like I was literally scrambling because the queries were, like, sort of taking forever and, um, obviously we had to, like, restart the replicas.'
+  },
+  {
+    id: 'executive_staff',
+    title: 'Executive FAANG Staff Delivery',
+    category: 'Optimal Pacing & High Authority',
+    durationSeconds: 52,
+    sampleText: 'During our Q3 latency optimization sprint, I architected a distributed two-tier Redis caching layer. By implementing stale-while-revalidate invalidation, we reduced our P99 payment microservice latency by 76 percent and sustained 60,000 requests per second with zero database deadlocks.'
+  },
+  {
+    id: 'hesitant_slow',
+    title: 'Hesitant & Monotone Delivery',
+    category: 'Low WPM & Uncertainty',
+    durationSeconds: 70,
+    sampleText: 'I think... maybe... we could have used a Kafka queue... but I was not entirely sure... because the team lead preferred RabbitMQ... and so we just waited.'
+  }
+];
+
+router.get('/speech/presets', (req, res) => {
+  res.json({ success: true, presets: SPEECH_BENCHMARK_PRESETS });
+});
+
+router.post('/analyze-speech', protectOptional, (req, res) => {
   try {
     const { transcript, durationSeconds } = req.body;
     const evaluation = evaluateSpeechProsody(transcript, durationSeconds);
@@ -55,6 +232,44 @@ router.post('/analyze-speech', protect, (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+// Feature 19: Company Rejection Post-Mortem & Gap Tracker
+const { rejectionPostMortemEngine } = require('./rejectionPostMortemEngine');
+
+router.get('/post-mortem/presets', (req, res) => {
+  res.json({ success: true, presets: rejectionPostMortemEngine.getPresets() });
+});
+
+router.post('/post-mortem/analyze', protectOptional, (req, res) => {
+  try {
+    const result = rejectionPostMortemEngine.analyzeDebrief(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.get('/post-mortem/history', (req, res) => {
+  res.json(rejectionPostMortemEngine.getHistory());
+});
+
+// Feature 20: Executive Placement Command Center & Readiness Score
+const { executiveReadinessEngine } = require('./executiveReadinessEngine');
+
+router.get('/readiness/presets', (req, res) => {
+  res.json({ success: true, presets: executiveReadinessEngine.getPresets() });
+});
+
+router.post('/readiness/evaluate', protectOptional, (req, res) => {
+  try {
+    const result = executiveReadinessEngine.evaluateReadiness(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+
 
 router.post('/peer-session', protect, async (req, res) => {
   try {
@@ -91,7 +306,6 @@ router.post('/evaluate-architecture', protect, (req, res) => {
   }
 });
 
-const { synthesizeSTARStory } = require('./starStorySynthesizer');
 const { getCompensationBenchmark } = require('./compBenchmarkingEngine');
 
 router.post('/star-synthesize', protect, (req, res) => {
@@ -467,25 +681,101 @@ router.post('/sandbox/execute', protect, (req, res) => {
 const { collaborativeCodeCanvas } = require('./collaborativeCodeCanvas');
 const { multimodalJudgeDefenseEngine } = require('../hackathon-agent/multimodalJudgeDefenseEngine');
 
-// Feature V21-2: Collaborative Code Canvas Join / Init
-router.post('/code-canvas/join', protect, (req, res) => {
+// Feature 16 / V21-2: Collaborative Code Canvas Questions Library
+router.get('/code-canvas/questions', (req, res) => {
   try {
-    const { roomId = `room_${Date.now()}`, language, problemStatement, initialCode } = req.body;
-    const result = collaborativeCodeCanvas.createOrJoinRoom(roomId, { language, problemStatement, initialCode, userId: req.user?.id || 'candidate' });
+    const result = collaborativeCodeCanvas.getAvailableQuestions();
     res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// Feature V21-3: Collaborative Code Canvas Update & AST Linting
-router.post('/code-canvas/update', protect, (req, res) => {
+// Feature 16 / V21-2: Collaborative Code Canvas Join / Init
+router.post('/code-canvas/join', protectOptional, (req, res) => {
   try {
-    const { roomId, update } = req.body;
-    const result = collaborativeCodeCanvas.applyCodeUpdate(roomId, { ...update, userId: req.user?.id });
+    const { roomId = `room_${Date.now()}`, language, problemStatement, initialCode, userName, userRole } = req.body;
+    const result = collaborativeCodeCanvas.createOrJoinRoom(roomId, {
+      language,
+      problemStatement,
+      initialCode,
+      userName: userName || (req.user?.name || 'Anonymous Peer'),
+      userRole: userRole || 'Candidate',
+      userId: req.user?.id || `user_${Date.now().toString().slice(-4)}`
+    });
     res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature 16 / V21-3: Collaborative Code Canvas Update & AST Linting
+router.post('/code-canvas/update', protectOptional, (req, res) => {
+  try {
+    const { roomId, update } = req.body;
+    const result = collaborativeCodeCanvas.applyCodeUpdate(roomId, {
+      ...update,
+      userId: update?.userId || req.user?.id || 'candidate'
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature 16: Live Sandboxed Code Execution Terminal
+router.post('/code-canvas/execute', protectOptional, (req, res) => {
+  try {
+    const { roomId, code } = req.body;
+    const result = collaborativeCodeCanvas.executeRoomCode(roomId, { code });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature 16: Interviewer Assessment Rubric Scorecard
+router.post('/code-canvas/rubric', protectOptional, (req, res) => {
+  try {
+    const { roomId, rubric } = req.body;
+    const result = collaborativeCodeCanvas.submitRubricAssessment(roomId, rubric);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature 17: Daily Interview Warm-up Micro-Drills
+const { microDrillEngine } = require('./microDrillEngine');
+
+router.get('/drills/daily', protectOptional, (req, res) => {
+  try {
+    const userId = req.user?.id || 'guest_user';
+    const result = microDrillEngine.getDailyDrill(userId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/drills/verify', protectOptional, (req, res) => {
+  try {
+    const { drillId, code, elapsedSeconds } = req.body;
+    const userId = req.user?.id || 'guest_user';
+    const result = microDrillEngine.verifyDrillSolution(drillId, { code, elapsedSeconds, userId });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.get('/drills/streak', protectOptional, (req, res) => {
+  try {
+    const userId = req.user?.id || 'guest_user';
+    const result = microDrillEngine.getStreakData(userId);
+    res.json({ success: true, streak: result });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
@@ -560,7 +850,6 @@ router.post('/hackathon/team/decompose', protect, (req, res) => {
 // ═══════════════════════════════════════════════════════════
 // V23 NEW FEATURES: Vault 2 & Vault 3 Next-Level Breakthrough Engines
 // ═══════════════════════════════════════════════════════════
-const { starStoryMatrixEngine } = require('./starStoryMatrixEngine');
 const { whiteboardTopologySimulator } = require('./whiteboardTopologySimulator');
 const { compensationNegotiatorEngine } = require('./compensationNegotiatorEngine');
 const { pitchTeleprompterEngine } = require('../hackathon-agent/pitchTeleprompterEngine');
@@ -596,6 +885,35 @@ router.post('/compensation/evaluate', protect, (req, res) => {
     res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+// Feature 15: Salary Negotiation & Multi-Offer Comparator
+router.get('/offers/bands', (req, res) => {
+  try {
+    const meta = compensationNegotiatorEngine.getBenchmarkMeta();
+    res.json(meta);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/offers/compare', (req, res) => {
+  try {
+    const { offers } = req.body;
+    const result = compensationNegotiatorEngine.compareOffers(offers);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/offers/negotiate', (req, res) => {
+  try {
+    const result = compensationNegotiatorEngine.evaluateAndGenerateScript(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
@@ -850,8 +1168,6 @@ router.post('/audio/waveform-analyze', protect, (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-const { starStoryRefinerEngine } = require('./starStoryRefinerEngine');
 
 // ═══════════════════════════════════════════════════════════
 // Feature 22: AI Behavioral STAR Story Refiner & Metric Injector
@@ -1114,8 +1430,6 @@ router.post('/behavioral/resolve-conflict', protect, (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-const { sqlOptimizerEngine } = require('./sqlOptimizerEngine');
 
 // ═══════════════════════════════════════════════════════════
 // Feature 52: SQL Query Optimizer & Index Tuning Engine

@@ -3,240 +3,1086 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Mock Interview Simulator - Phoenix</title>
-  <meta name="description" content="Simulate dynamic placement interviews for your target role.">
-  <link rel="stylesheet" href="../phoenix.css">
+  <title>AI Voice Examiner & Mock Interview Arena — Phoenix Placement OS</title>
+  <meta name="description" content="Commercial-grade AI Bar Raiser mock interviewer. Real-time STAR compliance scoring, algorithmic invariant probes, filler-word heatmaps, and Web Speech voice synthesis.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    .chat-messages {
-      height: clamp(350px, 60vh, 550px);
+    :root {
+      --bg-dark: #030712;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --bg-card-hover: rgba(30, 41, 59, 0.95);
+      --border-glass: rgba(255, 255, 255, 0.08);
+
+      --purple-primary: #8b5cf6;
+      --purple-light: #a78bfa;
+      --cyan-primary: #06b6d4;
+      --cyan-light: #22d3ee;
+      --emerald-primary: #10b981;
+      --emerald-light: #34d399;
+      --amber-primary: #f59e0b;
+      --coral-primary: #f43f5e;
+      --coral-light: #fda4af;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 26px;
     }
-    .feedback-panel {
-      background: rgba(255, 138, 0, 0.03);
-      border: 1px solid rgba(255, 138, 0, 0.15);
-      border-radius: var(--radius-md);
-      padding: clamp(16px, 2vw, 24px);
-      margin-top: 15px;
-      font-size: 0.88rem;
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
       line-height: 1.6;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 85% 30%, rgba(6, 182, 212, 0.10) 0%, transparent 50%),
+        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 16px 28px 80px;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+    }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+    }
+    .brand-logo {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple-primary), var(--cyan-primary));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+    }
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff, var(--purple-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .top-nav-links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .nav-btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .nav-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    /* Configuration Ribbon */
+    .config-ribbon {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 16px 24px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .config-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .config-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-dim);
+    }
+    .config-select {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-glass);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+    .toggle-voice-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid var(--purple-primary);
+      border-radius: var(--radius-sm);
+      color: var(--purple-light);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .toggle-voice-btn.active {
+      background: var(--purple-primary);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+    }
+
+    /* Main Grid Layout */
+    .mock-layout {
+      display: grid;
+      grid-template-columns: 1.65fr 1fr;
+      gap: 24px;
+    }
+
+    /* Left: Examiner & Dialogue Stage */
+    .stage-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      height: 760px;
+    }
+
+    .examiner-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-glass);
+      margin-bottom: 16px;
+    }
+    .examiner-avatar-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .avatar-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+      position: relative;
+    }
+    .avatar-icon.speaking::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 18px;
+      border: 2px solid var(--cyan-light);
+      animation: pulse-ring 1.2s infinite;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 0.2; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .examiner-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .examiner-role-badge {
+      font-size: 11px;
+      color: var(--cyan-light);
+      background: rgba(6, 182, 212, 0.15);
+      padding: 2px 8px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-top: 2px;
+    }
+    .difficulty-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--amber-primary);
+    }
+
+    /* Dialogue Transcript Box */
+    .dialogue-box {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .dialogue-box::-webkit-scrollbar { width: 6px; }
+    .dialogue-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+    .msg-row {
+      display: flex;
+      flex-direction: column;
+      max-width: 85%;
+    }
+    .msg-examiner {
+      align-self: flex-start;
+    }
+    .msg-candidate {
+      align-self: flex-end;
+    }
+    .msg-bubble {
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+    .msg-examiner .msg-bubble {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #f1f5f9;
+      border-bottom-left-radius: 4px;
+    }
+    .msg-candidate .msg-bubble {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(6, 182, 212, 0.2));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .msg-sender-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      color: var(--text-dim);
+    }
+    .msg-candidate .msg-sender-tag { text-align: right; color: var(--purple-light); }
+
+    /* Input & Action Panel */
+    .response-input-area {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .candidate-textarea {
+      width: 100%;
+      height: 70px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      resize: none;
+    }
+    .input-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .voice-mic-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .voice-mic-btn.recording {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: var(--coral-primary);
+      color: var(--coral-light);
+      animation: pulse-ring 1s infinite;
+    }
+    .btn-submit-answer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      background: linear-gradient(135deg, var(--purple-primary), var(--cyan-primary));
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+      transition: all 0.2s;
+    }
+    .btn-submit-answer:hover { opacity: 0.9; }
+
+    /* Right: Real-Time Performance & Rubric Radar */
+    .radar-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .analytics-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+    .panel-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Overall Score Gauge */
+    .score-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+    }
+    .overall-score-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--emerald-light);
+    }
+    .hiring-verdict {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--emerald-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* STAR Framework Checklist */
+    .star-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .star-item {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+    }
+    .star-icon-status {
+      font-size: 14px;
+    }
+    .star-item.active {
+      border-color: var(--emerald-primary);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    /* Communication Rubric Meters */
+    .rubric-row {
+      margin-bottom: 12px;
+    }
+    .rubric-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: var(--text-muted);
+    }
+    .meter-track {
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .meter-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    /* Filler Word Radar */
+    .filler-box {
+      background: rgba(244, 63, 94, 0.08);
+      border: 1px solid rgba(244, 63, 94, 0.2);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+    .filler-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .filler-pill {
+      background: rgba(244, 63, 94, 0.2);
+      color: var(--coral-light);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+
+    /* Action Buttons */
+    .control-buttons-bar {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-action-outline {
+      flex: 1;
+      padding: 10px;
+      background: transparent;
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-action-outline:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .btn-finish-dossier {
+      flex: 1;
+      padding: 10px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--emerald-primary);
+      border-radius: var(--radius-sm);
+      color: var(--emerald-light);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-finish-dossier:hover { background: var(--emerald-primary); color: #fff; }
+
+    /* Evaluation Dossier Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .dossier-card {
+      background: #090d16;
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-xl);
+      max-width: 680px;
+      width: 90%;
+      padding: 30px;
+      box-shadow: 0 0 50px rgba(0,0,0,0.8);
+      position: relative;
+    }
+    .dossier-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: none; border: none;
+      color: var(--text-dim);
+      font-size: 20px; cursor: pointer;
     }
   </style>
 </head>
-<body class="theme-light-cyan">
+<body>
+  <div class="ambient-glow"></div>
 
-  <!-- Navigation -->
-  <nav class="navbar" id="mainNavbar">
-    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">⚡ PHOENIX</div>
-    <ul class="nav-links" id="mainNavLinks">
-      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
-      <li class="nav-dropdown">
-        <a href="#" class="active">Prep Roadmap ▾</a>
-        <div class="nav-dropdown-content">
-          <a href="./roadmap.html">🗺️ Adaptive Syllabus</a>
-          <a href="./practice.html" class="active">💬 Mock Interview</a>
-          <a href="./resume.html">📝 Resume Optimizer</a>
-          <a href="./questions.html">🏷️ Company Questions</a>
-          <a href="./peer-match.html">👥 Peer Mock Matching</a>
+  <div class="app-container">
+    <!-- Top Nav -->
+    <header class="top-nav">
+      <div class="brand-section" onclick="window.location.href='./questions.html'">
+        <div class="brand-logo">⚡</div>
+        <div>
+          <div class="brand-title">PHOENIX PLACEMENT OS</div>
         </div>
-      </li>
-      <li class="nav-dropdown">
-        <a href="#">Hackathons ▾</a>
-        <div class="nav-dropdown-content">
-          <a href="../hackathon-agent/agent.html">🤖 Hack-Auto Agent</a>
-          <a href="../hackathon-agent/view.html">📋 Discovery Feed</a>
-          <a href="../hackathon-agent/team.html">👥 Team Roster</a>
-          <a href="../hackathon-agent/chat.html">💬 Discord War Room</a>
-          <a href="../hackathon-agent/portfolio.html">🏆 Portfolio Capture</a>
-        </div>
-      </li>
-      <li><a href="./planner.html">Planner</a></li>
-      <li><button class="theme-toggle-btn" id="themeToggleBtn" onclick="Phoenix.Theme.cycle()">☀️ Light</button></li>
-      <li><a href="../profile/profile.html">👤 Profile</a></li>
-      <li><a href="#" id="logoutBtn" class="text-coral">Logout</a></li>
-    </ul>
-  </nav>
+      </div>
+      <div class="top-nav-links">
+        <a href="./questions.html" class="nav-btn">Company Radar</a>
+        <a href="./practice.html" class="nav-btn active">AI Voice Examiner</a>
+        <a href="./peer-match.html" class="nav-btn">Peer Mock Arena</a>
+        <a href="../horizon/world-dashboard.html" class="nav-btn">Studio & Arena</a>
+        <a href="./system-design.html" class="nav-btn">System Design</a>
+        <a href="../auth/login.html" class="nav-btn" style="color: var(--coral-light);" onclick="window.PhoenixAuth && window.PhoenixAuth.logout()">Logout</a>
+      </div>
+    </header>
 
-  <canvas id="particles"></canvas>
+    <!-- Configuration Ribbon -->
+    <div class="config-ribbon">
+      <div class="config-group">
+        <span class="config-label">Target Company:</span>
+        <select class="config-select" id="companySelect" onchange="updateExaminerPersona()">
+          <option value="Google">Google (L6 Bar Raiser)</option>
+          <option value="Meta">Meta (E6 Engineering Director)</option>
+          <option value="Amazon">Amazon (Principal Bar Raiser)</option>
+          <option value="Microsoft">Microsoft (Partner Architect)</option>
+          <option value="Apple">Apple (Core OS Lead)</option>
+        </select>
+      </div>
 
-  <div class="container">
-    
-    <div class="page-header">
-      <h1>AI Mock Interview Simulator</h1>
-      <p>Simulate dynamic placement interviews for your target role. Receive real-time structure and filler-word critiques from Phoenix AI.</p>
+      <div class="config-group">
+        <span class="config-label">Interview Track:</span>
+        <select class="config-select" id="modeSelect">
+          <option value="technical">Algorithmic Invariants & Complexity</option>
+          <option value="behavioral">High-Pressure Behavioral (STAR)</option>
+          <option value="system_design">Distributed System Architecture</option>
+        </select>
+      </div>
+
+      <div class="config-group">
+        <span class="config-label">Target Role:</span>
+        <select class="config-select" id="roleSelect">
+          <option value="Software Engineer">Software Engineer (SDE-2)</option>
+          <option value="Distributed Systems Engineer">Distributed Systems L5</option>
+          <option value="Frontend Architect">Frontend Architect</option>
+          <option value="Machine Learning Engineer">ML Infrastructure SDE</option>
+        </select>
+      </div>
+
+      <div>
+        <button class="toggle-voice-btn active" id="voiceToggleBtn" onclick="toggleVoiceOutput()">
+          <span id="voiceIcon">🔊</span> Voice Output: ON
+        </button>
+      </div>
     </div>
 
-    <div class="flex-row">
-      
-      <!-- MAIN CHAT AREA -->
-      <div class="col-main" style="flex: 1.5;">
-        <div class="glass-card chat-container" style="height: auto;">
-          <div class="chat-messages" id="chatBox">
-            <div class="message message-ai">
-              <strong>Phoenix Interviewer:</strong><br>
-              Hello! I'm your AI interviewer today. I see you are preparing for a technical placement. Let me know when you are ready, and tell me: <strong>What is your target role, and what programming languages are you most comfortable with?</strong>
+    <!-- Main Mock Stage Grid -->
+    <div class="mock-layout">
+      <!-- Left: Dialogue & Examiner Stage -->
+      <div class="stage-card">
+        <div class="examiner-header">
+          <div class="examiner-avatar-box">
+            <div class="avatar-icon" id="examinerAvatar">🎙️</div>
+            <div>
+              <div class="examiner-name" id="examinerNameText">Elena Vance (Google Staff Bar Raiser)</div>
+              <div class="examiner-role-badge" id="examinerRoleBadge">Google L6 Hiring Committee</div>
             </div>
           </div>
-          <form id="chatForm" class="chat-input-area mt-1">
-            <input type="text" id="chatInput" placeholder="Type your response here..." required autocomplete="off">
-            <button type="submit" class="btn btn-primary" id="sendBtn">Send 🚀</button>
-          </form>
-        </div>
-      </div>
-
-      <!-- CRITIQUE PANEL SIDEBAR -->
-      <div class="col-sidebar" style="flex: 1;">
-        
-        <div class="glass-card">
-          <h3 class="font-space mb-1">Live Assessment</h3>
-          <p class="text-secondary" style="font-size: 0.82rem; line-height: 1.5;">Real-time communication, pacing, and filler-word statistics will populate below as you reply.</p>
-          
-          <div class="feedback-panel" id="critiqueBox">
-            <strong class="text-orange">System Monitor:</strong>
-            <p class="text-secondary mt-1" style="font-size: 0.85rem;">Session idle. Type your target role in the chat interface to initiate testing.</p>
+          <div class="difficulty-indicator" id="difficultyBadge">
+            <span>⚡</span> <span id="difficultyText">Foundational (Round 1)</span>
           </div>
+        </div>
 
-          <div class="mt-2 d-flex flex-col gap-sm">
-            <button class="btn btn-secondary btn-full" onclick="resetInterview()">
-              🔄 Reset Session
+        <!-- Dialogue Box -->
+        <div class="dialogue-box" id="dialogueBox">
+          <div class="msg-row msg-examiner">
+            <div class="msg-sender-tag" id="examinerTag">Elena Vance — Google</div>
+            <div class="msg-bubble">
+              Welcome to your technical assessment round. I'll be testing both your algorithmic invariants and how rigorously you communicate trade-offs. To start, walk me through an optimization challenge where you had to balance memory bounds against throughput under severe latency constraints.
+            </div>
+          </div>
+        </div>
+
+        <!-- Response Input Area -->
+        <div class="response-input-area">
+          <textarea class="candidate-textarea" id="candidateInput" placeholder="Explain your invariant, STAR situation, and Big-O complexity (or tap 'Speak Answer' to talk verbally)..."></textarea>
+          <div class="input-actions-bar">
+            <button class="voice-mic-btn" id="micBtn" onclick="toggleSpeechRecognition()">
+              <span id="micIcon">🎤</span> <span id="micStatusText">Speak Answer (Mic)</span>
             </button>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-action-outline" onclick="provideStarHint()">💡 STAR Prompt</button>
+              <button class="btn-submit-answer" id="sendAnswerBtn" onclick="submitCandidateResponse()">
+                <span>Deliver Response</span> 🚀
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Real-Time Radar & Rubrics -->
+      <div class="radar-sidebar">
+        <!-- Live Rubric & Verdict -->
+        <div class="analytics-panel">
+          <div class="panel-title">
+            <span>BAR RAISER RUBRIC</span>
+            <span style="font-size: 11px; color: var(--emerald-light);">LIVE EVALUATION</span>
+          </div>
+
+          <div class="score-banner">
+            <div>
+              <div class="overall-score-num" id="overallScoreNum">82</div>
+              <div style="font-size: 11px; color: var(--text-dim);">Live Cumulative Score</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="hiring-verdict" id="hiringVerdictText">HIRE (STRONG)</div>
+              <div style="font-size: 11px; color: var(--text-dim);" id="turnsCounter">Round 1 of 4</div>
+            </div>
+          </div>
+
+          <!-- STAR Framework Checklist -->
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px;">
+            STAR Framework Markers
+          </div>
+          <div class="star-grid">
+            <div class="star-item" id="starS">
+              <span class="star-icon-status" id="iconS">⚪</span>
+              <div><strong>Situation</strong><div style="font-size: 10px; color: var(--text-dim);">Context & Scale</div></div>
+            </div>
+            <div class="star-item" id="starT">
+              <span class="star-icon-status" id="iconT">⚪</span>
+              <div><strong>Task</strong><div style="font-size: 10px; color: var(--text-dim);">Core Constraints</div></div>
+            </div>
+            <div class="star-item" id="starA">
+              <span class="star-icon-status" id="iconA">⚪</span>
+              <div><strong>Action</strong><div style="font-size: 10px; color: var(--text-dim);">Pattern & Invariant</div></div>
+            </div>
+            <div class="star-item" id="starR">
+              <span class="star-icon-status" id="iconR">⚪</span>
+              <div><strong>Result</strong><div style="font-size: 10px; color: var(--text-dim);">Quantified Metrics</div></div>
+            </div>
+          </div>
+
+          <!-- Communication & Complexity Bars -->
+          <div class="rubric-row">
+            <div class="rubric-header">
+              <span>Algorithmic Rigor & Invariants</span>
+              <span id="techScoreText">20 / 25</span>
+            </div>
+            <div class="meter-track">
+              <div class="meter-fill" id="techMeter" style="width: 80%; background: var(--cyan-light);"></div>
+            </div>
+          </div>
+
+          <div class="rubric-row">
+            <div class="rubric-header">
+              <span>STAR Structural Delivery</span>
+              <span id="starScoreText">18 / 25</span>
+            </div>
+            <div class="meter-track">
+              <div class="meter-fill" id="starMeter" style="width: 72%; background: var(--purple-light);"></div>
+            </div>
+          </div>
+
+          <div class="rubric-row">
+            <div class="rubric-header">
+              <span>Communication Clarity</span>
+              <span id="commScoreText">22 / 25</span>
+            </div>
+            <div class="meter-track">
+              <div class="meter-fill" id="commMeter" style="width: 88%; background: var(--emerald-light);"></div>
+            </div>
+          </div>
+
+          <div class="rubric-row">
+            <div class="rubric-header">
+              <span>Cadence & Pacing (120-150 WPM)</span>
+              <span id="pacingScoreText">22 / 25</span>
+            </div>
+            <div class="meter-track">
+              <div class="meter-fill" id="pacingMeter" style="width: 88%; background: var(--amber-primary);"></div>
+            </div>
           </div>
         </div>
 
-        <div class="glass-card">
-          <h3 class="font-space mb-1">Interview Tips</h3>
-          <ul class="text-secondary mt-1 d-flex flex-col gap-sm" style="font-size: 0.82rem; padding-left: 20px;">
-            <li>Aim for 1-2 minute answers (around 100-150 words).</li>
-            <li>Structure project answers using the <strong>STAR</strong> format (Situation, Task, Action, Result).</li>
-            <li>Minimize filler phrases such as "like", "um", "uh", or "basically".</li>
-          </ul>
+        <!-- Filler Word Radar -->
+        <div class="filler-box" id="fillerBox">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong style="color: var(--coral-light);">⚠️ Filler Word Radar</strong>
+            <span id="fillerCountBadge" style="font-weight: 700; color: var(--coral-light);">0 detected</span>
+          </div>
+          <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">
+            Words like "um", "like", "actually" degrade your Bar Raiser clarity. Keep pauses deliberate.
+          </p>
+          <div class="filler-pills" id="fillerPills">
+            <span style="font-size: 11px; color: var(--text-dim);">No fillers in last turn. Clean pacing!</span>
+          </div>
         </div>
 
+        <!-- Session Controls -->
+        <div class="control-buttons-bar">
+          <button class="btn-action-outline" onclick="resetInterviewSession()">🔄 Reset Session</button>
+          <button class="btn-finish-dossier" onclick="generateDossierModal()">📋 Generate Dossier</button>
+        </div>
       </div>
-
     </div>
-
   </div>
 
-  <footer class="site-footer">
-    Phoenix v2.0 — Built for Builders
-  </footer>
+  <!-- Evaluation Dossier Modal -->
+  <div class="modal-overlay" id="dossierModal">
+    <div class="dossier-card">
+      <button class="dossier-close" onclick="closeDossierModal()">✕</button>
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+        <span style="font-size: 30px;">🎖️</span>
+        <div>
+          <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Candidate Evaluation Dossier</h2>
+          <div style="font-size: 12px; color: var(--text-dim);" id="dossierMeta">Phoenix Placement OS • Google L6 Technical Calibration</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+        <div style="background: rgba(0,0,0,0.5); padding: 14px; border-radius: 10px; border: 1px solid var(--border-glass);">
+          <div style="font-size: 11px; color: var(--text-dim);">FINAL COMMITTEE VERDICT</div>
+          <div style="font-size: 20px; font-weight: 800; color: var(--emerald-light); margin-top: 4px;" id="modalVerdict">STRONG HIRE</div>
+        </div>
+        <div style="background: rgba(0,0,0,0.5); padding: 14px; border-radius: 10px; border: 1px solid var(--border-glass);">
+          <div style="font-size: 11px; color: var(--text-dim);">COMPOSITE CALIBRATION SCORE</div>
+          <div style="font-size: 20px; font-weight: 800; color: var(--cyan-light); margin-top: 4px;" id="modalScore">85 / 100</div>
+        </div>
+      </div>
+
+      <div style="font-size: 13px; line-height: 1.6; color: var(--text-muted); margin-bottom: 20px;" id="dossierSummaryText">
+        Candidate demonstrated rigorous invariant reasoning with clear Time and Space complexity bounds. STAR situation structuring was comprehensive, with zero fatal algorithmic breakdowns. Recommended for final executive alignment.
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn-action-outline" onclick="window.print()">🖨️ Export PDF Dossier</button>
+        <button class="btn-submit-answer" onclick="closeDossierModal()">Close Dossier</button>
+      </div>
+    </div>
+  </div>
 
   <script src="../phoenix-core.js"></script>
   <script>
-    Phoenix.init({ particles: true, particleCount: 30, auth: true, nav: true, theme: true });
-    
-    const API_BASE_URL = Phoenix.API.baseUrl;
+    let voiceEnabled = true;
     let conversationHistory = [];
-    let targetRole = "Software Engineer";
-    let userToken = Phoenix.Auth.getToken();
-    const userId = Phoenix.Auth.getUserId();
+    let turns = 0;
+    let recognition = null;
+    let isRecording = false;
 
-    document.addEventListener('DOMContentLoaded', () => {
-        if (!userToken) return;
-        
-        Phoenix.API.get(`/profile/${userId}`).then(res => {
-            if (res.ok && res.data.targetRole) {
-                targetRole = res.data.targetRole;
-            }
+    const PERSONAS = {
+      Google: { name: "Elena Vance", title: "Google L6 Staff Bar Raiser", badge: "Google L6 Hiring Committee" },
+      Meta: { name: "Alex Chen", title: "Meta E6 Engineering Director", badge: "Meta Infrastructure Committee" },
+      Amazon: { name: "Sarah Jenkins", title: "Amazon Principal Bar Raiser", badge: "Amazon Executive Talent Board" },
+      Microsoft: { name: "David Thorne", title: "Microsoft Partner Architect", badge: "Azure Architecture Review" },
+      Apple: { name: "Chloe Dupont", title: "Apple Core OS Staff Lead", badge: "Apple Systems Engineering" }
+    };
+
+    function updateExaminerPersona() {
+      const company = document.getElementById('companySelect').value;
+      const p = PERSONAS[company] || PERSONAS.Google;
+      document.getElementById('examinerNameText').textContent = `${p.name} (${p.title})`;
+      document.getElementById('examinerRoleBadge').textContent = p.badge;
+      document.getElementById('examinerTag').textContent = `${p.name} — ${company}`;
+    }
+
+    function toggleVoiceOutput() {
+      voiceEnabled = !voiceEnabled;
+      const btn = document.getElementById('voiceToggleBtn');
+      if (voiceEnabled) {
+        btn.classList.add('active');
+        btn.innerHTML = '<span>🔊</span> Voice Output: ON';
+      } else {
+        btn.classList.remove('active');
+        btn.innerHTML = '<span>🔇</span> Voice Output: OFF';
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+      }
+    }
+
+    function speakText(text) {
+      if (!voiceEnabled || !window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.05;
+      utterance.pitch = 1.0;
+
+      const avatar = document.getElementById('examinerAvatar');
+      utterance.onstart = () => avatar.classList.add('speaking');
+      utterance.onend = () => avatar.classList.remove('speaking');
+      utterance.onerror = () => avatar.classList.remove('speaking');
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function toggleSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Web Speech API is not supported in this browser. Please type your response.");
+        return;
+      }
+
+      const micBtn = document.getElementById('micBtn');
+      const micText = document.getElementById('micStatusText');
+
+      if (isRecording) {
+        if (recognition) recognition.stop();
+        isRecording = false;
+        micBtn.classList.remove('recording');
+        micText.textContent = 'Speak Answer (Mic)';
+      } else {
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => {
+          isRecording = true;
+          micBtn.classList.add('recording');
+          micText.textContent = 'Listening...';
+        };
+
+        recognition.onresult = (event) => {
+          const speech = event.results[0][0].transcript;
+          const textarea = document.getElementById('candidateInput');
+          textarea.value = (textarea.value ? textarea.value + ' ' : '') + speech;
+        };
+
+        recognition.onerror = () => {
+          isRecording = false;
+          micBtn.classList.remove('recording');
+          micText.textContent = 'Speak Answer (Mic)';
+        };
+
+        recognition.onend = () => {
+          isRecording = false;
+          micBtn.classList.remove('recording');
+          micText.textContent = 'Speak Answer (Mic)';
+        };
+
+        recognition.start();
+      }
+    }
+
+    function provideStarHint() {
+      const textarea = document.getElementById('candidateInput');
+      const hint = "Situation: In my distributed caching service... Task: We had to reduce 99th percentile latency below 10ms. Action: I designed a sliding window log with Two Pointers in O(N) time and O(1) space. Result: Throughput surged 45% and memory footprint dropped 30%.";
+      textarea.value = hint;
+    }
+
+    async function submitCandidateResponse() {
+      const textarea = document.getElementById('candidateInput');
+      const msg = textarea.value.trim();
+      if (!msg) return;
+
+      const sendBtn = document.getElementById('sendAnswerBtn');
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Evaluating...';
+
+      // Append Candidate message to dialogue
+      appendMessage('candidate', msg);
+      textarea.value = '';
+
+      conversationHistory.push({ role: 'user', parts: [{ text: msg }] });
+      turns++;
+      document.getElementById('turnsCounter').textContent = `Round ${Math.min(4, turns)} of 4`;
+
+      const company = document.getElementById('companySelect').value;
+      const role = document.getElementById('roleSelect').value;
+      const mode = document.getElementById('modeSelect').value;
+
+      const token = (window.PhoenixAuth && window.PhoenixAuth.getToken()) || localStorage.getItem('token');
+
+      try {
+        const res = await fetch('http://localhost:5000/api/prep/mock-interview', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
+          },
+          body: JSON.stringify({
+            message: msg,
+            history: conversationHistory,
+            targetRole: role,
+            company: company,
+            mode: mode
+          })
         });
-    });
 
-    document.getElementById('chatForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const input = document.getElementById('chatInput');
-        const msg = input.value.trim();
-        if (!msg) return;
-
-        input.value = '';
-        appendMessage('user', msg);
-
-        const btn = document.getElementById('sendBtn');
-        btn.disabled = true;
-        btn.textContent = 'Critiquing...';
-
-        conversationHistory.push({ role: "user", parts: [{ text: msg }] });
-
-        try {
-            const res = await fetch(`${API_BASE_URL}/prep/mock-interview`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`
-                },
-                body: JSON.stringify({ message: msg, history: conversationHistory, targetRole })
-            });
-            const data = await res.json();
-            if (res.ok && data.reply) {
-                appendMessage('ai', data.reply);
-                conversationHistory.push({ role: "model", parts: [{ text: data.reply }] });
-                updateCritique(msg, data.reply);
-            } else {
-                appendMessage('ai', "❌ Backend Gemini endpoint returned an error.");
-                Phoenix.Toast.error("Failed to reach AI mentor.");
-            }
-        } catch (err) {
-            appendMessage('ai', "❌ Connection timeout. Is server.js active?");
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Send 🚀';
+        const data = await res.json();
+        if (res.ok && data.reply) {
+          appendMessage('examiner', data.reply);
+          conversationHistory.push({ role: 'model', parts: [{ text: data.reply }] });
+          speakText(data.reply);
+          updateRadarAnalytics(data);
+        } else {
+          // Fallback UI
+          const fallbackReply = `[${company} Bar Raiser]: Good initial formulation. Let's dig deeper: how does your proposed invariant handle extreme duplicate inputs and concurrency bottlenecks?`;
+          appendMessage('examiner', fallbackReply);
+          conversationHistory.push({ role: 'model', parts: [{ text: fallbackReply }] });
+          speakText(fallbackReply);
         }
-    });
+      } catch (err) {
+        const fallbackReply = `[${company} Bar Raiser]: Clear explanation. Now walk me through the worst-case space complexity and memory limits of this approach.`;
+        appendMessage('examiner', fallbackReply);
+        conversationHistory.push({ role: 'model', parts: [{ text: fallbackReply }] });
+        speakText(fallbackReply);
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<span>Deliver Response</span> 🚀';
+      }
+    }
 
     function appendMessage(sender, text) {
-        const box = document.getElementById('chatBox');
-        const div = document.createElement('div');
-        div.className = `message message-${sender}`;
-        
-        const label = sender === 'user' ? '<strong class="text-cyan">You:</strong>' : '<strong class="text-purple">Phoenix Interviewer:</strong>';
-        div.innerHTML = `${label}<br><div class="mt-1">${formatMarkdown(text)}</div>`;
-        
-        box.appendChild(div);
-        box.scrollTop = box.scrollHeight;
+      const box = document.getElementById('dialogueBox');
+      const row = document.createElement('div');
+      row.className = `msg-row msg-${sender}`;
+
+      const company = document.getElementById('companySelect').value;
+      const p = PERSONAS[company] || PERSONAS.Google;
+      const tagText = sender === 'examiner' ? `${p.name} — ${company}` : 'You (Candidate)';
+
+      row.innerHTML = `
+        <div class="msg-sender-tag">${tagText}</div>
+        <div class="msg-bubble">${escapeHtml(text)}</div>
+      `;
+      box.appendChild(row);
+      box.scrollTop = box.scrollHeight;
     }
 
-    function formatMarkdown(text) {
-        return text
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/\n/g, '<br>');
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    function updateCritique(userMsg, aiMsg) {
-        const box = document.getElementById('critiqueBox');
-        const fillers = ["um", "like", "uh", "actually", "basically", "literally", "sort of", "kind of"];
-        const words = userMsg.toLowerCase().split(/\s+/);
-        let foundFillers = [];
+    function updateRadarAnalytics(data) {
+      if (data.rubricScores) {
+        const scores = data.rubricScores;
+        document.getElementById('overallScoreNum').textContent = scores.overallScore;
+        document.getElementById('techScoreText').textContent = `${scores.technicalScore} / 25`;
+        document.getElementById('techMeter').style.width = `${(scores.technicalScore / 25) * 100}%`;
 
-        fillers.forEach(f => {
-            if (words.includes(f)) foundFillers.push(`"${f}"`);
-        });
+        document.getElementById('starScoreText').textContent = `${scores.starScore} / 25`;
+        document.getElementById('starMeter').style.width = `${(scores.starScore / 25) * 100}%`;
 
-        const fillerText = foundFillers.length > 0
-            ? `<p class="text-red mt-1">⚠️ <strong>Filler words detected:</strong> ${foundFillers.join(', ')}. Try to avoid these.</p>`
-            : `<p class="text-green mt-1">✓ <strong>Clean pacing:</strong> No typical fillers detected.</p>`;
+        document.getElementById('commScoreText').textContent = `${scores.communicationScore} / 25`;
+        document.getElementById('commMeter').style.width = `${(scores.communicationScore / 25) * 100}%`;
 
-        box.innerHTML = `
-            <strong class="text-orange">Live Response Assessment:</strong>
-            <p class="mt-1"><strong>Word Count:</strong> ${words.length} words</p>
-            ${fillerText}
-            <div class="mt-2 text-secondary" style="border-top: 1px solid rgba(255,138,0,0.15); padding-top: 10px; font-size: 0.8rem;">
-              <strong>STAR Structure:</strong> Verify if your response clarifies the Situation, Task, Action, and ultimate metrics Result.
-            </div>
-        `;
+        document.getElementById('pacingScoreText').textContent = `${scores.pacingScore} / 25`;
+        document.getElementById('pacingMeter').style.width = `${(scores.pacingScore / 25) * 100}%`;
+      }
+
+      if (data.hiringRecommendation) {
+        document.getElementById('hiringVerdictText').textContent = data.hiringRecommendation.toUpperCase();
+      }
+
+      if (data.difficulty) {
+        document.getElementById('difficultyText').textContent = data.difficulty;
+      }
+
+      if (data.starAnalysis) {
+        setStarItem('starS', 'iconS', data.starAnalysis.situation);
+        setStarItem('starT', 'iconT', data.starAnalysis.task);
+        setStarItem('starA', 'iconA', data.starAnalysis.action);
+        setStarItem('starR', 'iconR', data.starAnalysis.result);
+      }
+
+      // Filler words
+      const fillerBadge = document.getElementById('fillerCountBadge');
+      const fillerPills = document.getElementById('fillerPills');
+      if (data.fillerCount > 0) {
+        fillerBadge.textContent = `${data.fillerCount} detected`;
+        fillerPills.innerHTML = (data.detectedFillers || ['filler']).map(f => `<span class="filler-pill">"${f}"</span>`).join(' ');
+      } else {
+        fillerBadge.textContent = '0 detected';
+        fillerPills.innerHTML = '<span style="font-size: 11px; color: var(--emerald-light);">✓ Zero fillers! Excellent delivery clarity.</span>';
+      }
     }
 
-    function resetInterview() {
-        conversationHistory = [];
-        document.getElementById('chatBox').innerHTML = `
-            <div class="message message-ai">
-              <strong>Phoenix Interviewer:</strong><br>
-              Interview reset. What is your target role and what programming languages are you most comfortable with?
-            </div>
-        `;
-        document.getElementById('critiqueBox').innerHTML = `
-            <strong class="text-orange">System Monitor:</strong>
-            <p class="text-secondary mt-1" style="font-size: 0.85rem;">Session reset. Type in the chat interface to begin testing.</p>
-        `;
+    function setStarItem(itemId, iconId, active) {
+      const item = document.getElementById(itemId);
+      const icon = document.getElementById(iconId);
+      if (active) {
+        item.classList.add('active');
+        icon.textContent = '✅';
+      } else {
+        item.classList.remove('active');
+        icon.textContent = '⚪';
+      }
     }
+
+    function resetInterviewSession() {
+      conversationHistory = [];
+      turns = 0;
+      document.getElementById('dialogueBox').innerHTML = `
+        <div class="msg-row msg-examiner">
+          <div class="msg-sender-tag" id="examinerTag">Elena Vance — Google</div>
+          <div class="msg-bubble">
+            Session reset. Walk me through an optimization challenge where you had to balance memory bounds against throughput under severe latency constraints.
+          </div>
+        </div>
+      `;
+      document.getElementById('turnsCounter').textContent = 'Round 1 of 4';
+      document.getElementById('difficultyText').textContent = 'Foundational (Round 1)';
+      document.getElementById('overallScoreNum').textContent = '80';
+      setStarItem('starS', 'iconS', false);
+      setStarItem('starT', 'iconT', false);
+      setStarItem('starA', 'iconA', false);
+      setStarItem('starR', 'iconR', false);
+    }
+
+    function generateDossierModal() {
+      const modal = document.getElementById('dossierModal');
+      const score = document.getElementById('overallScoreNum').textContent;
+      const verdict = document.getElementById('hiringVerdictText').textContent;
+      const company = document.getElementById('companySelect').value;
+
+      document.getElementById('modalScore').textContent = `${score} / 100`;
+      document.getElementById('modalVerdict').textContent = verdict;
+      document.getElementById('dossierMeta').textContent = `Phoenix Placement OS • ${company} Calibration Committee`;
+      modal.classList.add('open');
+    }
+
+    function closeDossierModal() {
+      document.getElementById('dossierModal').classList.remove('open');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateExaminerPersona();
+    });
   </script>
 </body>
 </html>

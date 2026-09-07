@@ -349,8 +349,15 @@
         primaryGoal: 'Find the best path'
       };
 
-      const token = localStorage.getItem('token') || '';
-      
+      // Save student profile locally for instant hydration
+      localStorage.setItem('horizonStudentProfile', JSON.stringify({
+        academicStage: selectedData.academicStage,
+        interestSector: sector,
+        updatedAt: new Date().toISOString()
+      }));
+
+      const targetUrl = `world-dashboard.html?world=${sector}&stage=${selectedData.academicStage}`;
+
       fetch('/api/v1/horizon/diagnostic', {
         method: 'POST',
         headers: { 
@@ -362,17 +369,16 @@
       .then(r => r.json())
       .then(data => {
         if (data.redirectionUrl) {
-          setTimeout(() => { window.location.href = data.redirectionUrl; }, 1200);
-        } else if (data.success === false) {
-          alert("Error saving profile: " + data.message);
-          window.location.href = `world-dashboard.html?world=${sector}&stage=${selectedData.academicStage}`;
+          setTimeout(() => { window.location.href = data.redirectionUrl; }, 1000);
+        } else {
+          setTimeout(() => { window.location.href = targetUrl; }, 1000);
         }
       })
       .catch((err) => {
-        alert("Network error: Could not reach the server. Falling back to guest dashboard.");
+        console.warn('Horizon diagnostic API fallback:', err);
         setTimeout(() => {
-          window.location.href = `world-dashboard.html?world=${sector}&stage=${selectedData.academicStage}`;
-        }, 1200);
+          window.location.href = targetUrl;
+        }, 1000);
       });
     }
 

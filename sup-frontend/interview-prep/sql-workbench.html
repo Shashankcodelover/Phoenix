@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL & Database Query Tuning Workbench | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.85);
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent-cyan);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    /* Main Container */
+    .sql-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Header */
+    .header-hero {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+    .header-hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .header-hero p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Preset Buttons Bar */
+    .presets-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      overflow-x: auto;
+      padding: 0.75rem 1rem;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .preset-btn {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 0.4rem 0.85rem;
+      border-radius: 0.5rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      color: #fff;
+    }
+
+    /* Grid Workspace */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 1024px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Panel Card */
+    .panel-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1.25rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.9rem 1.25rem;
+      background: rgba(2, 6, 23, 0.5);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #f1f5f9;
+    }
+
+    /* Editor Wrapper */
+    .editor-wrapper {
+      background: #020617;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+    }
+    .sql-textarea {
+      width: 100%;
+      min-height: 180px;
+      background: transparent;
+      color: #f8fafc;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: 1.6;
+      resize: vertical;
+      tab-size: 2;
+    }
+
+    /* Controls */
+    .editor-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1.25rem;
+      background: rgba(2, 6, 23, 0.6);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .btn-run {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.3rem;
+      border-radius: 0.6rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+    .btn-run:hover {
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+      transform: translateY(-1px);
+    }
+    .btn-tune {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.3rem;
+      border-radius: 0.6rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+    .btn-tune:hover {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      transform: translateY(-1px);
+    }
+
+    /* Results Table View */
+    .results-wrapper {
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      max-height: 320px;
+    }
+    .sql-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+    .sql-table th {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--accent-cyan);
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 2px solid rgba(56, 189, 248, 0.3);
+      font-weight: 700;
+    }
+    .sql-table td {
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      color: #e2e8f0;
+    }
+    .sql-table tr:hover td {
+      background: rgba(56, 189, 248, 0.05);
+    }
+
+    /* Right Panel: Plan & Tuning */
+    .tuning-content {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      overflow-y: auto;
+      max-height: 650px;
+    }
+
+    /* Cost Comparison Gauge */
+    .cost-card {
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 0.85rem;
+      padding: 1rem 1.25rem;
+    }
+    .cost-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    .cost-box {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.6rem;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    .cost-box.bad {
+      border-color: rgba(244, 63, 94, 0.3);
+      background: rgba(244, 63, 94, 0.08);
+    }
+    .cost-box.good {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.08);
+    }
+    .cost-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    /* Index Box */
+    .index-box {
+      background: #020617;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 0.75rem;
+      padding: 1rem;
+    }
+    .index-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #6ee7b7;
+      margin-top: 0.5rem;
+      white-space: pre-wrap;
+    }
+
+    /* Tuning Rules */
+    .rules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .rule-item {
+      background: rgba(2, 6, 23, 0.6);
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span style="font-size: 1.4rem;">🗄️</span>
+      <span>SQL Tuning Workbench</span>
+      <span class="nav-badge">Pillar 1 • Feature 12</span>
+    </div>
+    <div class="nav-links">
+      <a href="../dashboard/dashboard.html">Dashboard</a>
+      <a href="questions.html">Company Radar</a>
+      <a href="practice.html">AI Mock Interview</a>
+      <a href="copilot-studio.html">Code Reviewer</a>
+      <a href="graph-dp-tracer.html">Graph & DP Visualizer</a>
+      <a href="star-vault.html">STAR Vault</a>
+    </div>
+  </header>
+
+  <div class="sql-container">
+    <div class="header-hero">
+      <h1>SQL & Database Query Tuning Workbench</h1>
+      <p>Interactive SQL query execution engine, EXPLAIN plan cost profiler, composite B-Tree index synthesizer, and FAANG window function benchmarks.</p>
+    </div>
+
+    <!-- Benchmark Presets Bar -->
+    <div class="presets-bar">
+      <span class="preset-label">⚡ Benchmark Presets:</span>
+      <button class="preset-btn" onclick="loadPreset('secondHighest')">Second Highest Salary (Offset/Limit)</button>
+      <button class="preset-btn" onclick="loadPreset('topEarners')">Department Top 3 Earners (Window DENSE_RANK)</button>
+      <button class="preset-btn" onclick="loadPreset('join')">Employee Department Directory (INNER JOIN)</button>
+      <button class="preset-btn" onclick="loadPreset('unindexedScan')">10M-Row Slow Scan (Index Tuning)</button>
+    </div>
+
+    <!-- Workspace Grid -->
+    <div class="workspace-grid">
+      <!-- Left Panel: SQL Editor & Output Table -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>💻</span> Interactive SQL Query Editor
+          </div>
+          <div style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: 600;" id="query-meta">
+            Ready to Execute
+          </div>
+        </div>
+
+        <div class="editor-wrapper">
+          <textarea id="sql-editor" class="sql-textarea" spellcheck="false"></textarea>
+        </div>
+
+        <div class="editor-controls">
+          <div style="display: flex; gap: 0.75rem;">
+            <button id="btn-run-sql" class="btn-run" onclick="runQuery()">
+              <span>▶️</span> Execute Query
+            </button>
+            <button id="btn-tune-sql" class="btn-tune" onclick="explainAndTune()">
+              <span>⚡</span> EXPLAIN & Tune Index
+            </button>
+          </div>
+          <button class="preset-btn" onclick="clearEditor()">Clear</button>
+        </div>
+
+        <div class="results-wrapper">
+          <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+            <span>Query Results (<span id="row-count">0</span> rows)</span>
+            <span id="exec-time" style="color: #10b981;">0.00 ms</span>
+          </div>
+          <div id="table-container">
+            <div style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.85rem;">
+              Click "Execute Query" to inspect database result records.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: EXPLAIN Execution Plan & Index Tuning -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📊</span> EXPLAIN ANALYZE & Index Advisor
+          </div>
+          <div style="font-size: 0.8rem; color: #10b981; font-weight: 700;" id="speedup-badge">
+            17,640x Potential Speedup
+          </div>
+        </div>
+
+        <div class="tuning-content">
+          <!-- Cost Comparison Card -->
+          <div class="cost-card">
+            <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">
+              Query Execution Cost & I/O Scans (10M Rows)
+            </div>
+            <div class="cost-grid">
+              <div class="cost-box bad">
+                <div style="font-size: 0.7rem; text-transform: uppercase; color: #fca5a5; font-weight: 700;">Unindexed Cost</div>
+                <div id="cost-bad" class="cost-val" style="color: var(--accent-rose);">148,200</div>
+                <div style="font-size: 0.75rem; color: #fca5a5;">Seq Scan (Full Table)</div>
+              </div>
+              <div class="cost-box good">
+                <div style="font-size: 0.7rem; text-transform: uppercase; color: #6ee7b7; font-weight: 700;">Optimized Cost</div>
+                <div id="cost-good" class="cost-val" style="color: var(--accent-emerald);">8.4</div>
+                <div style="font-size: 0.75rem; color: #6ee7b7;">Index Scan (B-Tree)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Composite Index Recommendation -->
+          <div class="index-box">
+            <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: #34d399; display: flex; justify-content: space-between; align-items: center;">
+              <span>✨ Recommended Covering Index</span>
+              <span style="font-size: 0.75rem; background: rgba(16, 185, 129, 0.2); padding: 0.2rem 0.5rem; border-radius: 0.3rem;">B-Tree</span>
+            </div>
+            <pre id="index-def" class="index-code">CREATE INDEX idx_users_status_created_at ON users (status, created_at DESC) INCLUDE (user_id, email);</pre>
+          </div>
+
+          <!-- Optimization Rules -->
+          <div>
+            <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem;">
+              Database Query Tuning Rules
+            </div>
+            <div id="rules-container" class="rules-list">
+              <div class="rule-item"><strong>Equality First Rule:</strong> Place equality predicates (`status = ACTIVE`) before range conditions in composite index.</div>
+              <div class="rule-item"><strong>Covering Index with INCLUDE:</strong> Stores projection columns in index leaf pages, eliminating table heap lookups.</div>
+              <div class="rule-item"><strong>Sort Order Alignment:</strong> Aligning index order (`created_at DESC`) removes expensive in-memory sort buffer spills.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const presets = {
+      secondHighest: `-- LeetCode 176: Second Highest Salary
+SELECT MAX(salary) AS SecondHighestSalary
+FROM employees
+WHERE salary < (SELECT MAX(salary) FROM employees);`,
+      topEarners: `-- LeetCode 185: Department Top 3 Earners
+SELECT d.name AS Department, e.name AS Employee, e.salary AS Salary,
+       DENSE_RANK() OVER (PARTITION BY e.department_id ORDER BY e.salary DESC) as Rank
+FROM employees e
+JOIN departments d ON e.department_id = d.id;`,
+      join: `-- Department Employee Directory
+SELECT e.id, e.name, d.name AS department, e.salary
+FROM employees e
+INNER JOIN departments d ON e.department_id = d.id
+ORDER BY e.salary DESC;`,
+      unindexedScan: `-- Slow Unindexed Query (10M Rows Table Scan Hazard)
+SELECT user_id, email, status
+FROM users
+WHERE created_at >= NOW() - INTERVAL 7 DAY AND status = 'ACTIVE'
+ORDER BY created_at DESC;`
+    };
+
+    const editor = document.getElementById('sql-editor');
+
+    function loadPreset(key) {
+      if (presets[key]) {
+        editor.value = presets[key];
+        if (key === 'unindexedScan') {
+          explainAndTune();
+        } else {
+          runQuery();
+        }
+      }
+    }
+
+    function clearEditor() {
+      editor.value = '';
+    }
+
+    async function runQuery() {
+      const query = editor.value.trim();
+      if (!query) {
+        alert('Please write or select a SQL query to execute.');
+        return;
+      }
+
+      const runBtn = document.getElementById('btn-run-sql');
+      const queryMeta = document.getElementById('query-meta');
+      runBtn.disabled = true;
+      runBtn.innerHTML = '<span>⏳</span> Executing...';
+      queryMeta.innerText = 'Executing query...';
+
+      try {
+        const res = await fetch('/api/v1/prep/sql/execute', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        });
+
+        if (!res.ok) throw new Error('Query execution failed: ' + res.status);
+        const data = await res.json();
+        renderResultsTable(data);
+        queryMeta.innerText = data.queryType;
+      } catch (err) {
+        console.error('SQL Execution error:', err);
+        queryMeta.innerText = 'Execution Failed';
+      } finally {
+        runBtn.disabled = false;
+        runBtn.innerHTML = '<span>▶️</span> Execute Query';
+      }
+    }
+
+    function renderResultsTable(data) {
+      const container = document.getElementById('table-container');
+      const rowCountEl = document.getElementById('row-count');
+      const execTimeEl = document.getElementById('exec-time');
+
+      const rows = data.rows || [];
+      const cols = data.columns || [];
+
+      rowCountEl.innerText = rows.length;
+      execTimeEl.innerText = `${data.executionTimeMs || 1.2} ms`;
+
+      if (rows.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">0 rows returned.</div>';
+        return;
+      }
+
+      let html = '<table class="sql-table"><thead><tr>';
+      for (const col of cols) {
+        html += `<th>${escapeHtml(col)}</th>`;
+      }
+      html += '</tr></thead><tbody>';
+
+      for (const row of rows) {
+        html += '<tr>';
+        for (const col of cols) {
+          html += `<td>${escapeHtml(row[col])}</td>`;
+        }
+        html += '</tr>';
+      }
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    async function explainAndTune() {
+      const sqlQuery = editor.value.trim();
+      const tuneBtn = document.getElementById('btn-tune-sql');
+      tuneBtn.disabled = true;
+      tuneBtn.innerHTML = '<span>⏳</span> Analyzing Plan...';
+
+      try {
+        const res = await fetch('/api/v1/prep/sql/optimize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sqlQuery })
+        });
+
+        if (!res.ok) throw new Error('Optimization failed: ' + res.status);
+        const data = await res.json();
+        renderTuningAdvisor(data);
+      } catch (err) {
+        console.error('Tuning error:', err);
+      } finally {
+        tuneBtn.disabled = false;
+        tuneBtn.innerHTML = '<span>⚡</span> EXPLAIN & Tune Index';
+      }
+    }
+
+    function renderTuningAdvisor(data) {
+      if (data.optimizedExecutionPlan) {
+        document.getElementById('cost-bad').innerText = data.unoptimizedExecutionPlan?.estimatedCost?.toLocaleString() || '148,200';
+        document.getElementById('cost-good').innerText = data.optimizedExecutionPlan?.estimatedCost || '8.4';
+        document.getElementById('speedup-badge').innerText = `${data.optimizedExecutionPlan?.speedupFactor || '17,640x'} Potential Speedup`;
+        document.getElementById('index-def').innerText = data.optimizedExecutionPlan?.indexDefinition || '';
+
+        const rulesContainer = document.getElementById('rules-container');
+        rulesContainer.innerHTML = (data.tuningRuleBreakdown || []).map(r => `
+          <div class="rule-item">💡 ${escapeHtml(r)}</div>
+        `).join('');
+      }
+    }
+
+    function escapeHtml(str) {
+      if (str === undefined || str === null) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadPreset('secondHighest');
+    });
+  </script>
+</body>
+</html>

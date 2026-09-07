@@ -3,225 +3,582 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Time-Budget Allocator - Phoenix</title>
-  <link rel="stylesheet" href="../phoenix.css">
+  <title>Adaptive 12-Week SDE Study Planner — Phoenix Placement OS</title>
+  <meta name="description" content="Dynamic calendar roadmap generating weekly curriculum and daily problem sets based on candidate target company, role, and weak topic heatmaps.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    .task-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 16px 20px;
-      margin-bottom: 12px;
+    :root {
+      --bg-dark: #030712;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --bg-card-hover: rgba(30, 41, 59, 0.95);
+      --border-glass: rgba(255, 255, 255, 0.08);
+
+      --purple-primary: #8b5cf6;
+      --purple-light: #a78bfa;
+      --cyan-primary: #06b6d4;
+      --cyan-light: #22d3ee;
+      --emerald-primary: #10b981;
+      --emerald-light: #34d399;
+      --amber-primary: #f59e0b;
+      --coral-primary: #f43f5e;
+      --coral-light: #fda4af;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 26px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 10% 15%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 90% 25%, rgba(6, 182, 212, 0.10) 0%, transparent 50%),
+        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 16px 28px 80px;
+    }
+
+    /* Top Nav */
+    .top-nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: var(--transition-fast);
+      padding: 12px 24px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+    }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+    }
+    .brand-logo {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple-primary), var(--cyan-primary));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+    }
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff, var(--purple-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .top-nav-links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .nav-btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .nav-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+      border: 1px solid rgba(139, 92, 246, 0.3);
     }
 
-    .task-card:hover {
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.7));
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-xl);
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      max-width: 750px;
+      margin-top: 4px;
+    }
+    .hero-stats-row {
+      display: flex;
+      gap: 16px;
+    }
+    .stat-pill {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      text-align: center;
+    }
+    .stat-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--cyan-light);
+    }
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    /* Configuration Panel */
+    .planner-config-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .config-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .config-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .config-select, .config-input {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      padding: 8px 14px;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+    .btn-recalc-plan {
+      padding: 10px 22px;
+      background: linear-gradient(135deg, var(--purple-primary), var(--cyan-primary));
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+      transition: all 0.2s;
+    }
+    .btn-recalc-plan:hover { opacity: 0.9; }
+
+    /* Weak Topics Tag Selector */
+    .weak-topics-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .weak-topic-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .weak-topic-pill.selected {
+      background: rgba(244, 63, 94, 0.15);
+      border-color: var(--coral-primary);
+      color: var(--coral-light);
+      font-weight: 700;
+    }
+
+    /* Main Grid: Weekly Curriculum & Daily Task Agenda */
+    .planner-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+
+    /* Left: 12 Weeks Interactive Roadmap */
+    .weeks-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .week-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 18px 22px;
+      transition: all 0.25s;
+    }
+    .week-card:hover {
+      border-color: rgba(139, 92, 246, 0.35);
       background: var(--bg-card-hover);
-      border-color: rgba(0, 245, 255, 0.15);
+    }
+    .week-card.boosted {
+      border-left: 4px solid var(--coral-primary);
+      background: rgba(244, 63, 94, 0.04);
+    }
+    .week-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .week-badge {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--cyan-light);
+    }
+    .boost-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: rgba(244, 63, 94, 0.2);
+      color: var(--coral-light);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .week-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .week-focus-text {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .week-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.5px;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-glass);
+    }
+
+    /* Right: Daily Agenda & Progress */
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+    .sidebar-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .agenda-task-item {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .agenda-task-text {
+      font-size: 12.5px;
+      color: #f1f5f9;
+    }
+    .duration-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--cyan-light);
+      background: rgba(6, 182, 212, 0.15);
+      padding: 2px 6px;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
+  <div class="ambient-glow"></div>
 
-  <!-- Navigation -->
-  <nav class="navbar">
-    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">PHOENIX</div>
-    <ul class="nav-links">
-      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
-      <li class="nav-dropdown">
-        <a href="#">Prep Roadmap ▾</a>
-        <div class="nav-dropdown-content">
-          <a href="./roadmap.html">🗺️ Adaptive Syllabus</a>
-          <a href="./practice.html">💬 Mock Interview</a>
-          <a href="./resume.html">📝 Resume Optimizer</a>
-          <a href="./questions.html">🏷️ Company Questions</a>
-          <a href="./peer-match.html">👥 Peer Mock Matching</a>
-        </div>
-      </li>
-      <li class="nav-dropdown">
-        <a href="#">Hackathons ▾</a>
-        <div class="nav-dropdown-content">
-          <a href="../hackathon-agent/agent.html">🤖 Hack-Auto Agent</a>
-          <a href="../hackathon-agent/view.html">📋 Discovery Feed</a>
-          <a href="../hackathon-agent/team.html">👥 Team Roster</a>
-          <a href="../hackathon-agent/chat.html">💬 Discord War Room</a>
-          <a href="../hackathon-agent/portfolio.html">🏆 Portfolio Capture</a>
-        </div>
-      </li>
-      <li><a href="./planner.html" class="active">Planner</a></li>
-      <li><a href="../profile/profile.html">👤 Profile</a></li>
-      <li><a href="#" id="logoutBtn" style="color: var(--coral);">Logout</a></li>
-    </ul>
-  </nav>
-
-  <!-- Particle Background -->
-  <canvas id="particles"></canvas>
-
-  <div class="container">
-    
-    <div class="page-header">
-      <h1>Unified Time-Budget Allocator</h1>
-      <p>Resolve schedule conflicts when interview schedules and hackathon deadlines collide. Auto-prioritize your daily tasks.</p>
-    </div>
-
-    <div class="flex-row">
-      
-      <!-- ALLOCATOR INPUTS -->
-      <div class="col-sidebar">
-        <div class="glass-card">
-          <h3 class="font-space mb-2" style="font-size: 1.15rem;">Budget Settings</h3>
-          <form id="allocatorForm" style="margin-top: 15px;">
-            <div class="form-group">
-              <label>Target Interview Date</label>
-              <input type="date" id="interviewDate" required>
-            </div>
-
-            <div class="form-group">
-              <label>Target Hackathon Date</label>
-              <input type="date" id="hackathonDate" required>
-            </div>
-
-            <div class="form-group">
-              <label>Daily Coding Budget (Hours)</label>
-              <select id="dailyHours">
-                <option value="2">2 Hours / Day</option>
-                <option value="4" selected>4 Hours / Day</option>
-                <option value="6">6 Hours / Day</option>
-                <option value="8">8 Hours / Day</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Allocation Ratio</label>
-              <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-secondary); margin-bottom:5px;">
-                <span>Prep: 50%</span>
-                <span>Hackathon: 50%</span>
-              </div>
-              <input type="range" id="ratioSlider" min="20" max="80" step="10" value="50">
-            </div>
-
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
-              ⚡ Calculate Allocations
-            </button>
-          </form>
+  <div class="app-container">
+    <!-- Top Nav -->
+    <header class="top-nav">
+      <div class="brand-section" onclick="window.location.href='./questions.html'">
+        <div class="brand-logo">⚡</div>
+        <div>
+          <div class="brand-title">PHOENIX PLACEMENT OS</div>
         </div>
       </div>
+      <div class="top-nav-links">
+        <a href="./questions.html" class="nav-btn">Company Radar</a>
+        <a href="./practice.html" class="nav-btn">AI Voice Examiner</a>
+        <a href="./cramming.html" class="nav-btn">Cramming Sheets</a>
+        <a href="./resume-disruptor.html" class="nav-btn">ATS Disruptor</a>
+        <a href="./planner.html" class="nav-btn active">12-Week SDE Planner</a>
+        <a href="../horizon/world-dashboard.html" class="nav-btn">Studio & Arena</a>
+        <a href="../auth/login.html" class="nav-btn" style="color: var(--coral-light);" onclick="window.PhoenixAuth && window.PhoenixAuth.logout()">Logout</a>
+      </div>
+    </header>
 
-      <!-- ALLOCATED TASKS CALENDAR -->
-      <div class="col-main">
-        <div class="glass-card">
-          <h2 class="font-space mb-2" style="font-size: 1.25rem;">Synchronized Task Schedule</h2>
-          <div id="allocationResultsContainer" style="margin-top: 15px;">
-            <!-- Render placeholder -->
-            <div class="empty-state">
-              <div class="icon">📅</div>
-              <h3>No Allocation Computed</h3>
-              <p>Configure dates on the left and trigger calculation to map a conflict-free timeline.</p>
-            </div>
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <div>
+        <h1 class="hero-title">Adaptive 12-Week SDE Study Planner</h1>
+        <p class="hero-desc">
+          Automated syllabus generator customized to your target FAANG tier, daily coding hours, and weak topic heatmaps. Dynamically balances algorithmic invariant mastery with high-scale system design.
+        </p>
+      </div>
+      <div class="hero-stats-row">
+        <div class="stat-pill">
+          <div class="stat-val" id="totalWeeksVal">12</div>
+          <div class="stat-lbl">Weeks Roadmap</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" style="color: var(--emerald-light);" id="readinessVal">94%</div>
+          <div class="stat-lbl">FAANG Match</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Planner Configuration Panel -->
+    <div class="planner-config-card">
+      <div class="config-field">
+        <span class="config-label">Target Company:</span>
+        <select class="config-select" id="companySelect">
+          <option value="Google">Google (L4/L5 SWE)</option>
+          <option value="Meta">Meta (E4/E5 SWE)</option>
+          <option value="Amazon">Amazon (SDE-2 Bar Raiser)</option>
+          <option value="Microsoft">Microsoft (SDE-2 Core)</option>
+          <option value="Apple">Apple (Core OS / Systems)</option>
+        </select>
+      </div>
+
+      <div class="config-field">
+        <span class="config-label">Target Role Track:</span>
+        <select class="config-select" id="roleSelect">
+          <option value="Software Engineer">Software Engineer (General)</option>
+          <option value="Distributed Systems L5">Distributed Systems L5</option>
+          <option value="Frontend Architect">Frontend Architect</option>
+          <option value="Machine Learning SDE">ML Systems Engineer</option>
+        </select>
+      </div>
+
+      <div class="config-field">
+        <span class="config-label">Daily Coding Budget:</span>
+        <select class="config-select" id="hoursSelect">
+          <option value="2">2 Hours / Day</option>
+          <option value="4" selected>4 Hours / Day</option>
+          <option value="6">6 Hours / Day</option>
+          <option value="8">8 Hours / Day</option>
+        </select>
+      </div>
+
+      <div>
+        <button class="btn-recalc-plan" id="generatePlanBtn" onclick="generateAdaptivePlan()">
+          ⚡ Generate Adaptive Plan
+        </button>
+      </div>
+    </div>
+
+    <!-- Weak Topics Heatmap Selection -->
+    <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: 16px 24px; margin-bottom: 24px;">
+      <div style="font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">
+        Weak Topic Heatmap Injection (Tap to Prioritize & Boost Problem Density):
+      </div>
+      <div class="weak-topics-row" id="weakTopicsRow">
+        <span class="weak-topic-pill selected" onclick="toggleWeakTopic(this, 'Dynamic Programming')">🔥 Dynamic Programming</span>
+        <span class="weak-topic-pill" onclick="toggleWeakTopic(this, 'System Design')">🔥 System Design</span>
+        <span class="weak-topic-pill" onclick="toggleWeakTopic(this, 'Graph Traversals')">🔥 Graph Traversals</span>
+        <span class="weak-topic-pill" onclick="toggleWeakTopic(this, 'Sliding Window')">🔥 Sliding Window</span>
+        <span class="weak-topic-pill" onclick="toggleWeakTopic(this, 'Two Heaps')">🔥 Two Heaps</span>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="planner-grid">
+      <!-- Left: 12 Weeks Interactive Roadmap -->
+      <div class="weeks-container" id="weeksContainer">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Right: Daily Agenda & Weekly Milestones -->
+      <div>
+        <div class="sidebar-card">
+          <div class="sidebar-title">
+            <span>📅 TODAY'S SDE AGENDA</span>
+            <span style="font-size: 11px; color: var(--emerald-light);" id="agendaHours">4.0 hrs/day</span>
+          </div>
+          <div id="dailyAgendaContainer">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-title">
+            <span>🎯 12-WEEK MILESTONES</span>
+          </div>
+          <div style="font-size: 12.5px; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px;">
+            <div><strong>Week 4:</strong> Algorithmic Invariant Certification (90%+ on Blind 75)</div>
+            <div><strong>Week 8:</strong> Advanced Trees & Graphs under 20-min timed constraints</div>
+            <div><strong>Week 10:</strong> Distributed Microservices, P99 Latency & CAP Architecture</div>
+            <div><strong>Week 12:</strong> Live Bar Raiser Mock Calibration & Final Committee Approval</div>
           </div>
         </div>
       </div>
-
     </div>
-
   </div>
 
+  <script src="../phoenix-core.js"></script>
   <script>
-    const API_BASE_URL = window.location.protocol === 'file:' ? 'http://localhost:5000/api/v1' : (window.location.origin.includes('localhost') ? 'http://localhost:5000/api/v1' : '/api/v1');
-    let userToken = null;
+    let activeWeakTopics = ['Dynamic Programming'];
 
-    document.addEventListener('DOMContentLoaded', () => {
-        userToken = localStorage.getItem('token');
-        if (!userToken) {
-            window.location.href = '../auth/login.html';
-            return;
-        }
-
-        // Set default dates
-        const today = new Date();
-        const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-        const nextFortnight = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
-
-        document.getElementById('interviewDate').value = nextFortnight.toISOString().substring(0, 10);
-        document.getElementById('hackathonDate').value = nextWeek.toISOString().substring(0, 10);
-
-        if (typeof window.animateParticles === 'function') {
-            window.animateParticles();
-        }
-    });
-
-    
-
-    // Trigger allocation calculate
-    document.getElementById('allocatorForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const interviewDate = document.getElementById('interviewDate').value;
-        const hackathonDate = document.getElementById('hackathonDate').value;
-        const dailyHours = document.getElementById('dailyHours').value;
-        const ratio = document.getElementById('ratioSlider').value;
-
-        const container = document.getElementById('allocationResultsContainer');
-        container.innerHTML = '<div class="empty-state"><h3>⚡ Resolving schedules... allocating hourly budgets...</h3></div>';
-
-        try {
-            const res = await fetch(`${API_BASE_URL}/planner/allocate`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`
-                },
-                body: JSON.stringify({ interviewDate, hackathonDate, dailyHours, ratio })
-            });
-            const data = await res.json();
-            if (res.ok && data.schedule) {
-                renderAllocations(data.schedule);
-            }
-        } catch (error) {
-            // Render fallback schedule if API has connection timeout
-            const fallbackSchedule = [
-                { title: "Solve 2 LeetCode Medium Hashmap Problems", duration: `${(dailyHours * ratio / 100).toFixed(1)} hrs`, type: "prep" },
-                { title: "Initialize Express Server & Mongoose Schemas", duration: `${(dailyHours * (100 - ratio) / 100).toFixed(1)} hrs`, type: "hackathon" },
-                { title: "Study Database Normalization & Indexing", duration: `${(dailyHours * ratio / 100).toFixed(1)} hrs`, type: "prep" },
-                { title: "Configure Geofenced Instagram scraper APIs", duration: `${(dailyHours * (100 - ratio) / 100).toFixed(1)} hrs`, type: "hackathon" }
-            ];
-            renderAllocations(fallbackSchedule);
-        }
-    });
-
-    function renderAllocations(schedule) {
-        const container = document.getElementById('allocationResultsContainer');
-        container.innerHTML = '';
-
-        schedule.forEach(task => {
-            const card = document.createElement('div');
-            card.className = 'task-card';
-
-            const badgeClass = task.type === 'prep' ? 'badge-cyan' : 'badge-purple';
-            const label = task.type === 'prep' ? 'PLACEMENT PREP' : 'HACKATHON BUILD';
-
-            card.innerHTML = `
-              <div>
-                <span class="badge ${badgeClass}" style="font-size:0.65rem; padding: 2px 8px; margin-bottom: 6px;">${label}</span>
-                <strong style="color:var(--text-primary); font-size:0.95rem; display:block;">${task.title}</strong>
-              </div>
-              <span class="badge badge-orange">${task.duration}</span>
-            `;
-            container.appendChild(card);
-        });
+    function toggleWeakTopic(el, topic) {
+      el.classList.toggle('selected');
+      if (activeWeakTopics.includes(topic)) {
+        activeWeakTopics = activeWeakTopics.filter(t => t !== topic);
+      } else {
+        activeWeakTopics.push(topic);
+      }
+      generateAdaptivePlan();
     }
 
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '../auth/login.html';
+    async function generateAdaptivePlan() {
+      const company = document.getElementById('companySelect').value;
+      const role = document.getElementById('roleSelect').value;
+      const hours = document.getElementById('hoursSelect').value;
+      const token = (window.PhoenixAuth && window.PhoenixAuth.getToken()) || localStorage.getItem('token');
+
+      try {
+        const res = await fetch('http://localhost:5000/api/prep/planner/allocate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
+          },
+          body: JSON.stringify({
+            company: company,
+            dailyHours: hours,
+            ratio: 60,
+            targetRole: role,
+            weakTopics: activeWeakTopics
+          })
+        });
+
+        const data = await res.json();
+        renderPlan(data);
+      } catch (err) {
+        console.error("Planner generation error:", err);
+      }
+    }
+
+    function renderPlan(data) {
+      if (data.readinessProjection) {
+        document.getElementById('readinessVal').textContent = data.readinessProjection.split(' ')[0] || '94%';
+      }
+      document.getElementById('agendaHours').textContent = `${data.dailyHours || 4} hrs/day`;
+
+      // Render Weeks
+      const container = document.getElementById('weeksContainer');
+      container.innerHTML = '';
+
+      (data.studyPlan || []).forEach(w => {
+        const card = document.createElement('div');
+        const isBoosted = w.priority && w.priority.includes('HIGH');
+        card.className = `week-card ${isBoosted ? 'boosted' : ''}`;
+
+        card.innerHTML = `
+          <div class="week-header">
+            <span class="week-badge">WEEK ${w.week} • PHASE ${Math.ceil(w.week / 3)}</span>
+            ${isBoosted ? '<span class="boost-tag">🔥 Weak Topic Boost</span>' : ''}
+          </div>
+          <div class="week-title">${w.topic}</div>
+          <div class="week-focus-text">${w.focus}</div>
+          <div class="week-meta-bar">
+            <span style="color: var(--cyan-light);">🎯 Target: ${w.targetProblems} Problems</span>
+            <span style="color: var(--amber-primary);">⚖️ ${w.difficulty}</span>
+            <span style="color: var(--emerald-light);">${w.companyWeight}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      // Render Today's Agenda
+      const agendaBox = document.getElementById('dailyAgendaContainer');
+      agendaBox.innerHTML = '';
+      (data.schedule || []).forEach(task => {
+        const item = document.createElement('div');
+        item.className = 'agenda-task-item';
+        item.innerHTML = `
+          <div class="agenda-task-text">
+            <strong>${task.title}</strong>
+            <div style="font-size: 11px; color: var(--text-dim);">${task.category || 'Preparation'}</div>
+          </div>
+          <span class="duration-badge">${task.duration}</span>
+        `;
+        agendaBox.appendChild(item);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      generateAdaptivePlan();
     });
   </script>
-<script src="../phoenix-core.js"></script>
-<script>Phoenix.init({ particles: true, theme: true, nav: true });</script>
 </body>
 </html>

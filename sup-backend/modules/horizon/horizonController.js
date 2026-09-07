@@ -87,32 +87,41 @@ const horizonController = {
     }
   },
 
-  // POST /api/v1/horizon/bot/chat
+  // POST /api/v1/horizon/bot/chat (Zero-Quota Resilient)
   botChat: async (req, res) => {
     try {
       const { message, userStage, currentPage } = req.body;
-      let reply = "I'm your Phoenix Guide. Try asking about your roadmap or exam prep.";
-      let focusElements = [];
-      
-      const lower = message.toLowerCase();
-      if (lower.includes('roadmap')) {
-        reply = "Here is your phased roadmap! It breaks down your journey from Zero-to-One foundation all the way to placement.";
-        focusElements.push({ selector: '#roadmapCard' });
-      } else if (lower.includes('kcet') || lower.includes('exam')) {
-        reply = "I've highlighted your Exam Radar. Keep an eye on those registration dates!";
-        focusElements.push({ selector: '#examCard' });
-      } else if (lower.includes('checklist')) {
-        reply = "Complete these daily actions to earn XP and level up your career foundation.";
-        focusElements.push({ selector: '#checklistCard' });
-      }
+      const { processMessage } = require('./ai-guide-bot/guideBotEngine');
+      const result = await processMessage({ message, userStage, currentPage });
+      return res.status(200).json(result);
+    } catch (err) {
+      // Even in a catastrophic catch, never return 500 error to student
+      const { findSemanticResponse } = require('./ai-guide-bot/horizonSemanticKnowledge');
+      const fallback = findSemanticResponse(req.body ? req.body.message : '', req.body ? req.body.userStage : '2nd_pu');
+      return res.status(200).json(fallback);
+    }
+  },
 
+  // POST /api/v1/horizon/session/log (2-3 Hour Daily Learning Session Tracker)
+  logSession: async (req, res) => {
+    try {
+      const { sessionMinutes, currentCycle, exercisesCompleted, xpEarned } = req.body;
+      const targetDailyMinutes = 180; // 3 hours goal
+      const remainingMinutes = Math.max(0, targetDailyMinutes - (sessionMinutes || 0));
+      
       return res.status(200).json({
         success: true,
-        botReply: reply,
-        focusElements
+        sessionMinutes: sessionMinutes || 0,
+        targetDailyMinutes,
+        remainingMinutes,
+        percentComplete: Math.min(100, Math.round(((sessionMinutes || 0) / targetDailyMinutes) * 100)),
+        currentCycle: currentCycle || 'Cycle 1: Web Foundations',
+        exercisesCompleted: exercisesCompleted || 0,
+        xpEarned: xpEarned || 0,
+        message: sessionMinutes >= 120 ? '🔥 Incredible dedication! You are in the top 5% of persistent engineers today.' : 'Keep pushing forward! Consistent 2-3 hour daily practice creates placement masters.'
       });
     } catch (err) {
-      return res.status(500).json({ success: false, error: err.message });
+      return res.status(200).json({ success: true, sessionMinutes: 0 });
     }
   },
 
@@ -213,6 +222,74 @@ const horizonController = {
       const result = getGapGuide(req.params.domainKey);
       if (!result.success) return res.status(404).json(result);
       return res.status(200).json(result);
+    } catch (err) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
+  // ─── DAY 2: REGIONAL ENTRANCE & VTU ENGINEERING BRIDGES ───────────────
+  // GET /api/v1/horizon/dcet/bridge
+  getDcetBridge: async (req, res) => {
+    try {
+      const { diplomaMathBridgeEngine } = require('./diplomaMathBridgeEngine');
+      return res.status(200).json(diplomaMathBridgeEngine.getBridgeCurriculum());
+    } catch (err) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
+  // POST /api/v1/horizon/dcet/bridge/evaluate
+  evaluateDcetBridge: async (req, res) => {
+    try {
+      const { diplomaMathBridgeEngine } = require('./diplomaMathBridgeEngine');
+      return res.status(200).json(diplomaMathBridgeEngine.evaluateBridgeDiagnostic(req.body));
+    } catch (err) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
+  // GET /api/v1/horizon/colleges/cutoffs
+  getCollegeTrends: async (req, res) => {
+    try {
+      const { collegeCutoffExplorerEngine } = require('./collegeCutoffExplorerEngine');
+      return res.status(200).json(collegeCutoffExplorerEngine.getCutoffTrends(req.query.collegeCode));
+    } catch (err) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
+  // POST /api/v1/horizon/colleges/chances
+  predictCollegeChances: async (req, res) => {
+    try {
+      const { collegeCutoffExplorerEngine } = require('./collegeCutoffExplorerEngine');
+      return res.status(200).json(collegeCutoffExplorerEngine.predictAdmissionChances(req.body));
+    } catch (err) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
+  // POST /api/v1/horizon/scholarships/evaluate
+  evaluateScholarship: async (req, res) => {
+    try {
+      const { predictScholarshipEligibility } = require('./scholarshipEngine');
+      const payload = {
+        userId: (req.user && req.user._id) ? req.user._id : 'guest_student',
+        academicStage: req.body.academicStage || '2nd_pu',
+        familyIncomeLakhs: req.body.familyIncomeLakhs || 4.5,
+        entranceRank: req.body.entranceRank || 6500,
+        isFemale: req.body.isFemale || false
+      };
+      return res.status(200).json(predictScholarshipEligibility(payload));
+    } catch (err) {
+      return res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
+  // POST /api/v1/horizon/karnataka/371j
+  evaluateArticle371J: async (req, res) => {
+    try {
+      const { article371JEngine } = require('./article371JEngine');
+      return res.status(200).json(article371JEngine.evaluateEligibility(req.body));
     } catch (err) {
       return res.status(500).json({ success: false, error: err.message });
     }

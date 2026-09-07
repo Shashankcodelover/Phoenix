@@ -218,7 +218,10 @@ const createPromptShield = (options = {}) => {
       }
 
       // 4. Sanitize all string inputs (strip HTML, escape special chars)
-      if (sanitize) {
+      // Preserves valid programming code syntax (e.g. `<` and `>`) on code execution and review routes
+      const url = req.originalUrl || req.url || '';
+      const isCodeExecutionRoute = url.includes('/drills/') || url.includes('/code-canvas/') || url.includes('/sandbox/') || url.includes('/code-review');
+      if (sanitize && !isCodeExecutionRoute) {
         req.body = sanitizeDeep(req.body);
       }
     }

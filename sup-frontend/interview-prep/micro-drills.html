@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Interview Warm-up Micro-Drills | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --editor-bg: #0b1120;
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: var(--accent-amber);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Consistency & Streak HUD */
+    .streak-hud {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .hud-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 25px -10px rgba(0,0,0,0.5);
+    }
+    .hud-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+    }
+    .hud-value {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hud-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* 7-day dot tracker */
+    .day-dots {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .day-dot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    .dot-circle {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+    }
+    .dot-circle.completed {
+      background: var(--accent-emerald);
+      border-color: var(--accent-emerald);
+      color: #000;
+      font-weight: 800;
+    }
+
+    /* Drill Arena Split View */
+    .drill-arena {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 1.5rem;
+    }
+
+    /* Left Pane: Problem Details & Catalog */
+    .problem-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .problem-category {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-cyan);
+    }
+    .problem-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .badges-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+    }
+    .badge.complexity {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .badge.timer {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .problem-desc {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .hint-box {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: 8px;
+      padding: 0.85rem;
+      font-size: 0.88rem;
+      color: #fde68a;
+      cursor: pointer;
+    }
+
+    .catalog-selector {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .catalog-select {
+      width: 100%;
+      background: rgba(10, 15, 28, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.6rem;
+      font-family: inherit;
+      font-size: 0.88rem;
+      outline: none;
+      margin-top: 0.35rem;
+    }
+
+    /* Right Pane: Code Editor & Runner */
+    .editor-card {
+      background: var(--editor-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .editor-header {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .editor-body {
+      position: relative;
+      display: flex;
+      flex: 1;
+      min-height: 280px;
+    }
+    .line-numbers {
+      width: 45px;
+      padding: 1rem 0;
+      background: rgba(10, 15, 28, 0.95);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      color: #475569;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      text-align: right;
+      padding-right: 0.75rem;
+      user-select: none;
+      line-height: 1.5;
+    }
+    .code-textarea {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      padding: 1rem;
+      resize: none;
+      outline: none;
+      white-space: pre;
+      tab-size: 2;
+    }
+
+    /* Action bar */
+    .action-bar {
+      padding: 0.85rem 1.25rem;
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-verify {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s;
+    }
+    .btn-verify:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.5);
+    }
+    .btn-reset {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-muted);
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    /* Verification Feedback Drawer */
+    .results-panel {
+      margin-top: 1.5rem;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: none;
+    }
+    .results-panel.success {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(15, 23, 42, 0.95));
+    }
+    .results-panel.failed {
+      border-color: rgba(244, 63, 94, 0.5);
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.08), rgba(15, 23, 42, 0.95));
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0f172a;
+      border: 1px solid var(--accent-emerald);
+      color: var(--accent-emerald);
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>⚡</span>
+      <span>Phoenix OS</span>
+      <span class="nav-badge">Pillar 1 • Feature 17</span>
+    </div>
+    <div class="nav-links">
+      <a href="/interview-prep/pair-programming.html">Pair-Programming</a>
+      <a href="/interview-prep/offer-comparator.html">Offer Comparator</a>
+      <a href="/interview-prep/copilot-studio.html">Code Reviewer</a>
+      <a href="/interview-prep/star-vault.html">STAR Vault</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Streak & Consistency HUD -->
+    <div class="streak-hud">
+      <div class="hud-card">
+        <div class="hud-label">Daily Streak</div>
+        <div class="hud-value" id="hud-streak-val">🔥 12 Days</div>
+        <div class="hud-sub">Personal Best: <span id="hud-best-streak">18 Days</span></div>
+      </div>
+
+      <div class="hud-card">
+        <div class="hud-label">Cognitive Agility Index</div>
+        <div class="hud-value" id="hud-agility-val">⚡ 94%</div>
+        <div class="hud-sub">Top 6% Algorithmic Speed</div>
+      </div>
+
+      <div class="hud-card">
+        <div class="hud-label">This Week's Consistency</div>
+        <div class="day-dots" id="weekly-dots-container">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Micro-Drill Arena -->
+    <div class="drill-arena">
+      <!-- Left: Problem Card -->
+      <div class="problem-card">
+        <div>
+          <div class="problem-category" id="drill-cat-display">Bit Manipulation</div>
+          <h2 class="problem-title" id="drill-title-display">Single Non-Duplicate Number</h2>
+        </div>
+
+        <div class="badges-row">
+          <span class="badge complexity" id="drill-complexity-badge">O(N) Time, O(1) Space</span>
+          <span class="badge timer" id="drill-timer-badge">⏱️ 05:00</span>
+        </div>
+
+        <p class="problem-desc" id="drill-desc-display">
+          Given a non-empty array of integers where every element appears exactly twice except for one element, find that single one using bitwise XOR operations in O(1) auxiliary memory.
+        </p>
+
+        <!-- Hint Accordion -->
+        <div class="hint-box" onclick="toggleHint()">
+          <strong>💡 Hint & Invariant:</strong>
+          <span id="hint-text" style="display:none; margin-top:0.4rem; display:none;">XOR of any number with itself is 0 (a ^ a = 0).</span>
+          <span id="hint-prompt" style="color:var(--text-muted); font-size:0.8rem; margin-left:0.5rem;">(Click to reveal)</span>
+        </div>
+
+        <!-- Catalog Selector -->
+        <div class="catalog-selector">
+          <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">SWITCH DRILL:</label>
+          <select class="catalog-select" id="drill-select" onchange="switchDrill(this.value)">
+            <!-- Populated via JS -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Right: Code Editor & Runner -->
+      <div class="editor-card">
+        <div class="editor-header">
+          <span style="font-size:0.82rem; color:var(--text-muted); font-weight:600;">JavaScript (V8 Isolated Sandbox)</span>
+          <span style="font-size:0.82rem; color:var(--accent-cyan);" id="test-count-hud">3 Verification Tests</span>
+        </div>
+
+        <div class="editor-body">
+          <div class="line-numbers" id="line-numbers">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15</div>
+          <textarea class="code-textarea" id="drill-code" spellcheck="false" oninput="updateLineNums()"></textarea>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn-reset" id="btn-reset-drill" onclick="resetDrillCode()">Reset Code</button>
+          <button class="btn-verify" id="btn-verify-drill" onclick="verifySolution()">
+            <span>⚡</span> Test Solution & Verify (<15ms)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verification Results Area -->
+    <div class="results-panel" id="results-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+        <h3 id="result-status-title" style="font-size:1.15rem; font-weight:800;">Verification Passed!</h3>
+        <span id="result-timing" style="font-family:'JetBrains Mono'; font-size:0.85rem; color:var(--text-muted);">0.4ms execution</span>
+      </div>
+      <p id="result-feedback-text" style="font-size:0.95rem; line-height:1.5; color:#cbd5e1;"></p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-msg">🔥 Streak updated! 13 Days!</div>
+
+  <script>
+    let activeDrillData = null;
+    let catalogData = [];
+    let timerSeconds = 300;
+    let timerInterval = null;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/prep/drills/daily');
+        const data = await res.json();
+        if (data.success) {
+          activeDrillData = data.activeDrill;
+          catalogData = data.catalog;
+          renderDrill(activeDrillData);
+          renderCatalog(catalogData);
+          renderStreak(data.streak);
+          startTimer();
+        }
+      } catch (err) {
+        console.error('Failed to load drill:', err);
+      }
+    }
+
+    function renderDrill(drill) {
+      document.getElementById('drill-cat-display').innerText = drill.category;
+      document.getElementById('drill-title-display').innerText = drill.title;
+      document.getElementById('drill-complexity-badge').innerText = drill.targetComplexity;
+      document.getElementById('drill-desc-display').innerText = drill.description;
+      document.getElementById('hint-text').innerText = drill.hint;
+      document.getElementById('drill-code').value = drill.starterCode;
+      updateLineNums();
+    }
+
+    function renderCatalog(catalog) {
+      const select = document.getElementById('drill-select');
+      select.innerHTML = '';
+      catalog.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item.id;
+        opt.innerText = `${item.title} (${item.category})`;
+        if (activeDrillData && item.id === activeDrillData.id) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    function renderStreak(streak) {
+      document.getElementById('hud-streak-val').innerText = `🔥 ${streak.currentStreak} Days`;
+      document.getElementById('hud-best-streak').innerText = `${streak.bestStreak} Days`;
+      document.getElementById('hud-agility-val').innerText = `⚡ ${streak.cognitiveAgilityScore}%`;
+
+      const dotsContainer = document.getElementById('weekly-dots-container');
+      dotsContainer.innerHTML = '';
+      streak.weeklyHistory.forEach(day => {
+        const d = document.createElement('div');
+        d.className = 'day-dot';
+        d.innerHTML = `
+          <div class="dot-circle ${day.completed ? 'completed' : ''}">${day.completed ? '✓' : ''}</div>
+          <span>${day.day}</span>
+        `;
+        dotsContainer.appendChild(d);
+      });
+    }
+
+    function updateLineNums() {
+      const text = document.getElementById('drill-code').value;
+      const count = (text.match(/\n/g) || []).length + 1;
+      const nums = [];
+      for (let i = 1; i <= Math.max(count, 15); i++) nums.push(i);
+      document.getElementById('line-numbers').innerHTML = nums.join('<br>');
+    }
+
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerSeconds = 300;
+      timerInterval = setInterval(() => {
+        if (timerSeconds > 0) timerSeconds--;
+        const mins = Math.floor(timerSeconds / 60);
+        const secs = timerSeconds % 60;
+        document.getElementById('drill-timer-badge').innerText = `⏱️ ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    function toggleHint() {
+      const text = document.getElementById('hint-text');
+      const prompt = document.getElementById('hint-prompt');
+      if (text.style.display === 'none') {
+        text.style.display = 'block';
+        prompt.style.display = 'none';
+      } else {
+        text.style.display = 'none';
+        prompt.style.display = 'inline';
+      }
+    }
+
+    function switchDrill(drillId) {
+      fetch('/api/v1/prep/drills/daily')
+        .then(r => r.json())
+        .then(data => {
+          // Find matching drill
+          fetch('/api/v1/prep/drills/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ drillId, code: '' })
+          });
+        });
+    }
+
+    function resetDrillCode() {
+      if (activeDrillData) {
+        document.getElementById('drill-code').value = activeDrillData.starterCode;
+        updateLineNums();
+        showToast('Starter code restored');
+      }
+    }
+
+    async function verifySolution() {
+      const code = document.getElementById('drill-code').value;
+      const elapsed = 300 - timerSeconds;
+
+      try {
+        const res = await fetch('/api/v1/prep/drills/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            drillId: activeDrillData ? activeDrillData.id : 'drill-1-bit-manipulation',
+            code: code,
+            elapsedSeconds: elapsed
+          })
+        });
+
+        const data = await res.json();
+        const panel = document.getElementById('results-panel');
+        panel.style.display = 'block';
+
+        if (data.passed) {
+          panel.className = 'results-panel success';
+          document.getElementById('result-status-title').innerText = '🎉 Verification Passed (100%)';
+          document.getElementById('result-status-title').style.color = 'var(--accent-emerald)';
+          document.getElementById('result-timing').innerText = `${data.durationMs}ms execution time`;
+          document.getElementById('result-feedback-text').innerText = data.feedback;
+          renderStreak(data.updatedStreak);
+          showToast(`🔥 Streak incremented to ${data.updatedStreak.currentStreak} Days!`);
+        } else {
+          panel.className = 'results-panel failed';
+          document.getElementById('result-status-title').innerText = '❌ Verification Failed';
+          document.getElementById('result-status-title').style.color = 'var(--accent-rose)';
+          document.getElementById('result-timing').innerText = `${data.durationMs}ms execution time`;
+          document.getElementById('result-feedback-text').innerText = data.feedback;
+        }
+
+        panel.scrollIntoView({ behavior: 'smooth' });
+      } catch (err) {
+        alert('Verification request failed: ' + err.message);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

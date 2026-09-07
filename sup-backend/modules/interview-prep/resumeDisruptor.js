@@ -6,20 +6,20 @@
 
 const { callAIForFeature, parseAIJson } = require('../../config/aiProvider');
 
-
 const ROLE_KEYWORDS = {
-  'google_sde': ['Data Structures', 'System Architecture', 'Distributed Systems', 'Java', 'C++', 'Go', 'Microservices', 'Latency', 'Multithreading'],
-  'ai_engineer': ['PyTorch', 'TensorFlow', 'LLM', 'RAG', 'Vector Database', 'Fine-Tuning', 'Transformer', 'Embedding', 'Model Deployment'],
-  'fullstack_lead': ['React', 'Next.js', 'Node.js', 'PostgreSQL', 'GraphQL', 'AWS', 'Docker', 'CI/CD', 'TypeScript', 'State Management']
+  'google_sde': ['Data Structures', 'System Architecture', 'Distributed Systems', 'Java', 'C++', 'Go', 'Microservices', 'Latency', 'Multithreading', 'Algorithms'],
+  'ai_engineer': ['PyTorch', 'TensorFlow', 'LLM', 'RAG', 'Vector Database', 'Fine-Tuning', 'Transformer', 'Embedding', 'Model Deployment', 'CUDA'],
+  'fullstack_lead': ['React', 'Next.js', 'Node.js', 'PostgreSQL', 'GraphQL', 'AWS', 'Docker', 'CI/CD', 'TypeScript', 'State Management', 'Micro-frontends'],
+  'distributed_systems': ['Raft Consensus', 'Kafka', 'Redis', 'Cassandra', 'gRPC', 'Protobuf', 'Sharding', 'CAP Theorem', 'Envoy', 'Kubernetes']
 };
 
 async function analyzeAndDisruptResume(resumeText, targetRole = 'google_sde') {
   const roleKeys = ROLE_KEYWORDS[targetRole] || ROLE_KEYWORDS['google_sde'];
 
-  // Calculate basic ATS keyword match
+  // 1. Calculate basic ATS keyword match
   const resumeLower = (resumeText || '').toLowerCase();
-  let matchedKeys = [];
-  let missingKeys = [];
+  const matchedKeys = [];
+  const missingKeys = [];
 
   roleKeys.forEach(key => {
     if (resumeLower.includes(key.toLowerCase())) {
@@ -29,25 +29,51 @@ async function analyzeAndDisruptResume(resumeText, targetRole = 'google_sde') {
     }
   });
 
-  const matchPercent = Math.round((matchedKeys.length / roleKeys.length) * 100);
+  const keywordMatchScore = Math.round((matchedKeys.length / roleKeys.length) * 100);
 
-  const systemPrompt = `You are a Principal Technical Recruiter at Google. Review the provided resume for a ${targetRole} position. Score the ATS readability (0-100), rewrite weak bullet points into high-impact STAR (Situation, Task, Action, Result) format with metric quantifications, and suggest 3 high-leverage skills to add.`;
+  // 2. XYZ Formula & Metric Density Analysis
+  const lines = (resumeText || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  let metricLineCount = 0;
+  let actionVerbCount = 0;
+  const strongVerbs = ['architected', 'spearheaded', 'engineered', 'optimized', 'reduced', 'increased', 'developed', 'deployed', 'orchestrated', 'built', 'scaled'];
+
+  lines.forEach(line => {
+    const lLower = line.toLowerCase();
+    if (/\d+%|\d+\s*(ms|k|m|million|billion|users|req|rps|gb|tb)/i.test(line) || /\$\d+/i.test(line)) {
+      metricLineCount++;
+    }
+    if (strongVerbs.some(v => lLower.includes(v))) {
+      actionVerbCount++;
+    }
+  });
+
+  const totalLines = Math.max(1, lines.length);
+  const metricDensityPercent = Math.min(100, Math.round((metricLineCount / totalLines) * 100));
+  const xyzFormulaScore = Math.min(100, Math.round(((actionVerbCount + metricLineCount * 1.5) / totalLines) * 70));
+  const atsScore = Math.min(99, Math.max(30, Math.round((keywordMatchScore * 0.45) + (xyzFormulaScore * 0.35) + (metricDensityPercent * 0.20))));
+
+  const systemPrompt = `You are a Principal Technical Recruiter at Google and Amazon Bar Raiser. Review the provided resume for a ${targetRole} position. Score the ATS readability (0-100), rewrite weak bullet points into high-impact Google XYZ formula statements ("Accomplished [X] as measured by [Y], by doing [Z]"), and format an ATS-optimized clean markdown draft.`;
 
   const fallbackGenerator = () => {
     return JSON.stringify({
-      atsScore: Math.max(65, matchPercent + 15),
-      keywordMatchScore: matchPercent,
+      atsScore,
+      keywordMatchScore,
+      xyzFormulaScore,
+      metricDensityPercent,
       matchedKeywords: matchedKeys,
       missingKeywords: missingKeys,
       starBullets: [
-        "Architected scalable Node.js microservices reducing API response latency by 45% across 100k daily active users.",
-        "Engineered RAG vector search pipeline utilizing Pgvector, increasing semantic search accuracy by 32%."
+        "Accomplished 45% reduction in P99 API latency across 120k daily active users by architecting asynchronous Node.js and Redis caching pipelines.",
+        "Engineered zero-downtime distributed sharding using PostgreSQL and Kafka, scaling database write throughput by 3.8x under peak holiday traffic.",
+        "Spearheaded automated CI/CD container security scans with Docker and GitHub Actions, eliminating 98% of vulnerable dependencies before deployment.",
+        "Optimized client-side bundle size by 35% utilizing dynamic code splitting and Webpack tree-shaking, dropping Time to Interactive (TTI) to 0.8s."
       ],
       recommendations: [
-        "Include explicit metrics (e.g. latency reduction, user scale) in every bullet point.",
-        "Add missing keywords: " + missingKeys.slice(0, 3).join(', '),
-        "Format resume in single-column clean layout for 99% ATS parsing accuracy."
-      ]
+        "Upgrade passive statements into Google XYZ format: 'Accomplished [X], as measured by [Y], by doing [Z]'.",
+        `Add high-priority target role keywords: ${missingKeys.slice(0, 4).join(', ')}.`,
+        "Maintain single-column ATS formatting without tables, text boxes, or graphic headers for 99% parser pass rate."
+      ],
+      cleanMarkdown: `# Candidate Software Engineer\n\n**Email**: candidate@phoenix.os • **LinkedIn**: linkedin.com/in/verified-dev • **GitHub**: github.com/verified-dev\n\n## Professional Experience\n\n### Senior Software Engineer • Cloud Distributed Systems\n- Accomplished 45% reduction in P99 API latency across 120k daily active users by architecting asynchronous Node.js and Redis caching pipelines.\n- Engineered zero-downtime distributed sharding using PostgreSQL and Kafka, scaling write throughput by 3.8x.\n\n## Core Technical Competencies\n- **Languages**: Java, TypeScript, Go, Python, SQL\n- **Systems & Cloud**: Distributed Systems, Docker, Kubernetes, AWS, Microservices\n`
     });
   };
 
@@ -61,23 +87,15 @@ async function analyzeAndDisruptResume(resumeText, targetRole = 'google_sde') {
 
   try {
     const parsed = parseAIJson(aiResult.text);
+    if (!parsed.atsScore) parsed.atsScore = atsScore;
+    if (!parsed.keywordMatchScore) parsed.keywordMatchScore = keywordMatchScore;
+    if (!parsed.xyzFormulaScore) parsed.xyzFormulaScore = xyzFormulaScore;
+    if (!parsed.metricDensityPercent) parsed.metricDensityPercent = metricDensityPercent;
+    if (!parsed.matchedKeywords) parsed.matchedKeywords = matchedKeys;
+    if (!parsed.missingKeywords) parsed.missingKeywords = missingKeys;
     return parsed;
   } catch (e) {
-    return {
-      atsScore: Math.max(70, matchPercent + 20),
-      keywordMatchScore: matchPercent,
-      matchedKeywords: matchedKeys,
-      missingKeywords: missingKeys,
-      starBullets: [
-        "Spearheaded core platform optimization using asynchronous execution, cutting cloud costs by $12k annually.",
-        "Integrated robust JWT auth and rate-limiting middleware, mitigating 100% of unauthorized API floods."
-      ],
-      recommendations: [
-        "Emphasize impact metrics and quantified results.",
-        "Incorporate target role technical keywords: " + missingKeys.join(', ')
-      ],
-      rawAnalysis: aiResultText
-    };
+    return JSON.parse(fallbackGenerator());
   }
 }
 

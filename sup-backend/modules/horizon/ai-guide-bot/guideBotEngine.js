@@ -1,72 +1,82 @@
 /**
- * Phoenix Horizon — AI Guide Bot Engine
- * ======================================
- * An interactive AI assistant that:
- * 1. Understands the current page context (which page the user is on)
- * 2. Can answer questions about the platform, roadmaps, exams, and career paths
- * 3. Returns "focus instructions" that tell the frontend to highlight specific page elements
- * 4. Provides contextual guidance based on the user's academic stage
- *
- * The bot communicates via structured JSON responses that the frontend
- * interprets to create visual focus effects (blinking, circles, highlights).
+ * Phoenix Horizon — AI Guide Bot Engine (Zero-Quota Resilient)
+ * ============================================================
+ * Multi-Tier Intelligent Career Coach:
+ * - Tier 3: Cloud LLM Dispatch (Gemini / OpenAI / Groq via callAIForFeature)
+ * - Tier 1: Zero-Quota High-Density Semantic Knowledge Engine (Instant, Offline, Pedagogy-First)
+ * 
+ * Guarantee: The user will NEVER receive a rate-limit error, quota-exceeded message,
+ * or broken response, ensuring seamless 2-3 hour daily training sessions.
  */
 
-const { getPuSyllabusGapAnalysis, getPuMonthByMonthRoadmap, getPuEntranceExamPrep, getPuBoardPyqs, getPuResources } = require('../cs-pu/puCurriculumEngine');
-const { getDiplomaSyllabusGapAnalysis, getDiplomaRoadmap, getDcetPrepPlan, getDcetPyqs, getDiplomaResources, getLateralEntryGuide } = require('../cs-diploma/diplomaCurriculumEngine');
-const { getEngSemesterGapAnalysis, getEngRoadmap, evaluatePlacementReadiness } = require('../cs-engineering/engCurriculumEngine');
+const { callAIForFeature, parseAIJson } = require('../../../config/aiProvider');
+const { findSemanticResponse } = require('./horizonSemanticKnowledge');
 
-const { dispatchToAI } = require('../../../config/aiProvider');
-
-// ═══════════════════════════════════════════════════════════
-// CORE BOT LOGIC
-// ═══════════════════════════════════════════════════════════
-
+/**
+ * Process incoming student message with multi-tier resilience.
+ */
 async function processMessage({ message, userStage, currentPage }) {
   if (!message || typeof message !== 'string') {
     return { success: false, error: 'Message is required.' };
   }
 
   const stage = userStage || '2nd_pu';
+  const page = currentPage || 'world-dashboard';
 
-  const systemInstruction = `
-    You are the Phoenix Horizon Guide Bot, an intelligent, empathetic AI career counselor and navigation assistant.
-    The user is a student at academic stage: ${stage}.
-    They are currently on the page/context: ${currentPage || 'world-dashboard'}.
-    
-    Respond in JSON format with two fields:
-    1. "botReply": Your actual textual response to the student. Keep it conversational, helpful, and concise. Use emojis.
-    2. "focusElements": An array of strings representing the UI components they should look at (e.g., ["roadmap", "exam_radar", "daily_checklist", "mentor_section", "pyq_bank", "resource_links", "world_badge", "navigation"]). Only include elements highly relevant to their query. If none apply, return an empty array.
-  `;
-
+  // Attempt Tier 3: Cloud LLM with tight timeout
+  let cloudSuccess = false;
   try {
-    const rawResult = await dispatchToAI(message, systemInstruction, 'conversational', true);
-    let parsedData = { botReply: "I'm having trouble analyzing that request right now.", focusElements: [] };
-    
-    if (typeof rawResult === 'string') {
-      try {
-        parsedData = JSON.parse(rawResult);
-      } catch (e) {
-        // Fallback if not valid JSON
-        parsedData.botReply = rawResult;
-      }
-    } else {
-      parsedData = rawResult;
-    }
+    const systemInstruction = `
+      You are the Phoenix Horizon Guide Bot, an expert career mentor, technical instructor, and Karnataka KEA counselor.
+      The user is at academic stage: ${stage}.
+      Current page: ${page}.
+      Format your response with rich GitHub markdown, code snippets if technical, and practical action steps.
+      Respond in JSON with:
+      1. "botReply": Your comprehensive answer.
+      2. "focusElements": Array of CSS selectors to highlight (e.g. ["#learningStudio", "#karnatakaVault", "#assessmentArena", "#mentorshipHub", "#codeSandboxCard", "#dailyFocusTimer"]).
+    `;
 
-    return {
-      success: true,
-      userStage: stage,
-      currentPage: currentPage || 'world-dashboard',
-      botReply: parsedData.botReply,
-      focusElements: parsedData.focusElements || [],
-      timestamp: new Date().toISOString(),
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: 'AI Engine failed to process your request: ' + error.message
-    };
+    let timer;
+    const timeoutPromise = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error('AI_TIMEOUT')), 3500);
+    });
+
+    const aiPromise = callAIForFeature('conversational', message, systemInstruction, true);
+
+    const result = await Promise.race([aiPromise, timeoutPromise])
+      .finally(() => clearTimeout(timer));
+
+    if (result && result.text && !result.isFallback) {
+      const parsed = parseAIJson(result.text, { botReply: result.text });
+      if (parsed.botReply && parsed.botReply.length > 20) {
+        cloudSuccess = true;
+        return {
+          success: true,
+          userStage: stage,
+          currentPage: page,
+          botReply: parsed.botReply,
+          focusElements: parsed.focusElements || [],
+          source: result.provider || 'cloud_ai',
+          timestamp: new Date().toISOString()
+        };
+      }
+    }
+  } catch (err) {
+    // Silent catch: fall through to Tier 1 Semantic Engine
   }
+
+  // Tier 1: High-Density Semantic Knowledge Engine Fallback (Instant, Zero Quota)
+  const fallback = findSemanticResponse(message, stage);
+  return {
+    success: true,
+    userStage: stage,
+    currentPage: page,
+    botReply: fallback.botReply,
+    topic: fallback.topic,
+    focusElements: fallback.focusElements || [],
+    source: 'semantic_knowledge_tier1',
+    timestamp: new Date().toISOString()
+  };
 }
 
 module.exports = { processMessage };

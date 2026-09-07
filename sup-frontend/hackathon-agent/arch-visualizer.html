@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technical Architecture Diagram & Flow Visualizer | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-indigo: #6366f1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(192, 132, 252, 0.15);
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      color: var(--accent-purple);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-purple), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(192, 132, 252, 0.1);
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      color: #f3e8ff;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-purple);
+      color: #070d18;
+      border-color: var(--accent-purple);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(192, 132, 252, 0.4);
+    }
+
+    /* Main Canvas Grid */
+    .canvas-grid {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 1.5rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #fff;
+    }
+
+    /* Diagram Canvas Window */
+    .diagram-window {
+      background: #090e17;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.5rem;
+      min-height: 380px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .nodes-flow-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .arch-node-card {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 10px;
+      padding: 1rem;
+      min-width: 170px;
+      flex: 1 1 160px;
+      text-align: center;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .arch-node-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-purple);
+    }
+    .node-icon {
+      font-size: 1.75rem;
+      margin-bottom: 0.35rem;
+    }
+    .node-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .node-tier {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+    .node-latency {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .node-latency.degraded {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+      border-color: rgba(244, 63, 94, 0.3);
+    }
+
+    /* Flow Connectors Strip */
+    .flow-strip {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    .flow-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .flow-row:last-child { border-bottom: none; }
+    .flow-path { color: var(--accent-cyan); font-weight: 600; }
+    .flow-meta { color: var(--text-muted); }
+
+    /* Controls Bar */
+    .canvas-controls {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .btn-control {
+      background: rgba(192, 132, 252, 0.1);
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      color: var(--accent-purple);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-control:hover, .btn-control.active {
+      background: var(--accent-purple);
+      color: #070d18;
+    }
+
+    /* Right: Mermaid Code & Export */
+    .code-box {
+      background: #090e17;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .code-textarea {
+      width: 100%;
+      height: 220px;
+      background: transparent;
+      border: none;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      resize: none;
+      outline: none;
+      line-height: 1.5;
+    }
+    .btn-copy {
+      width: 100%;
+      background: var(--accent-indigo);
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-copy:hover {
+      opacity: 0.9;
+    }
+
+    /* Telemetry Gauge */
+    .gauge-card {
+      background: linear-gradient(135deg, rgba(192, 132, 252, 0.15), rgba(56, 189, 248, 0.1));
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+    .gauge-val {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+    }
+    .gauge-sub {
+      font-size: 0.8rem;
+      color: var(--accent-emerald);
+      font-weight: 700;
+      margin-top: 0.25rem;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: rgba(192, 132, 252, 0.95);
+      border: 1px solid #c084fc;
+      color: #070d18;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🦅</span> Phoenix OS
+      <span class="nav-badge">Pillar 2 • Feature 29</span>
+    </div>
+    <div class="nav-links">
+      <a href="/hackathon-agent/moat-auditor.html">Moat Auditor</a>
+      <a href="/hackathon-agent/demo-sandbox.html">Demo Sandbox</a>
+      <a href="/hackathon-agent/team-synergy.html">Team Synergy</a>
+      <a href="/hackathon-agent/judge-defense.html">Judge Defense</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Technical Architecture Diagram & Flow Visualizer</h1>
+      <p class="hero-subtitle">
+        Eraser.io & Lucidchart-grade architecture studio: map multi-tier microservices, inspect live hop-by-hop latency budgets, simulate chaos traffic degradation, and export production-ready Mermaid specs for judges.
+      </p>
+
+      <!-- Presets Bar -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">ARCHITECTURE PATTERNS:</span>
+        <button class="preset-btn active" id="btn-arch-microservices" onclick="selectArchPreset('arch_distributed_microservices')">Distributed Microservices (100k RPS)</button>
+        <button class="preset-btn" id="btn-arch-mesh" onclick="selectArchPreset('arch_mesh_lora')">Offline LoRa Drone Mesh (DePIN)</button>
+      </div>
+    </div>
+
+    <!-- Main Canvas Grid -->
+    <div class="canvas-grid">
+      <!-- Left: Dynamic Diagram & Latencies -->
+      <div class="panel">
+        <div class="canvas-controls">
+          <button class="btn-control" id="btn-stress-test" onclick="toggleStressMode()">
+            ⚡ Simulate 100k RPS Stress Surge
+          </button>
+        </div>
+
+        <div class="diagram-window">
+          <div class="nodes-flow-container" id="nodes-container">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Flow Pipeline Details -->
+        <h3 style="font-size:0.95rem; font-weight:700; margin-bottom:0.75rem; color:#fff; display:flex; align-items:center; gap:0.4rem;">
+          <span>🔄</span> Inter-Service Protocol & Bandwidth Telemetry
+        </h3>
+        <div class="flow-strip" id="flows-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Right: Mermaid Spec & Latency Gauge -->
+      <div class="panel">
+        <!-- Latency Gauge -->
+        <div class="gauge-card">
+          <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">End-to-End P99 Latency</div>
+          <div class="gauge-val" id="total-latency-val">219 ms</div>
+          <div class="gauge-sub" id="latency-status-sub">OPTIMAL (FAANG Production Grade)</div>
+        </div>
+
+        <!-- Mermaid Spec Box -->
+        <h2 class="panel-title"><span>📐</span> Production Mermaid Spec</h2>
+        <div class="code-box">
+          <textarea class="code-textarea" id="mermaid-code" readonly></textarea>
+        </div>
+        <button class="btn-copy" id="btn-copy-mermaid" onclick="copyMermaid()">
+          📋 Copy Mermaid Diagram Code
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-msg">Architecture loaded!</div>
+
+  <script>
+    let presets = [];
+    let currentArch = null;
+    let stressActive = false;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/agent/arch/presets');
+        const data = await res.json();
+        if (data.success) {
+          presets = data.presets;
+          selectArchPreset('arch_distributed_microservices');
+        }
+      } catch (err) {
+        console.error('Failed to load arch presets:', err);
+      }
+    }
+
+    function selectArchPreset(presetId) {
+      currentArch = presets.find(p => p.id === presetId) || presets[0];
+      stressActive = false;
+      document.getElementById('btn-stress-test').classList.remove('active');
+
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(presetId === 'arch_distributed_microservices' ? 'btn-arch-microservices' : 'btn-arch-mesh');
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('mermaid-code').value = currentArch.mermaidSpec;
+      renderNodes(currentArch.nodes);
+      renderFlows(currentArch.flows);
+      updateTotalLatency(currentArch.nodes);
+
+      showToast(`Loaded ${currentArch.title}!`);
+    }
+
+    function renderNodes(nodes) {
+      const container = document.getElementById('nodes-container');
+      container.innerHTML = '';
+      nodes.forEach(node => {
+        const isDegraded = node.status === 'DEGRADED_LATENCY';
+        const card = document.createElement('div');
+        card.className = 'arch-node-card';
+        card.innerHTML = `
+          <div class="node-icon">${node.icon}</div>
+          <div class="node-title">${node.label}</div>
+          <div class="node-tier">${node.tier}</div>
+          <div class="node-latency ${isDegraded ? 'degraded' : ''}" id="latency-${node.id}">
+            ${node.latencyMs} ms
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderFlows(flows) {
+      const container = document.getElementById('flows-container');
+      container.innerHTML = '';
+      flows.forEach(f => {
+        const row = document.createElement('div');
+        row.className = 'flow-row';
+        row.innerHTML = `
+          <span class="flow-path">${f.from} ➔ ${f.to}</span>
+          <span class="flow-meta">${f.protocol} • ${f.bandwidth}</span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function updateTotalLatency(nodes) {
+      const total = nodes.reduce((a, b) => a + b.latencyMs, 0);
+      document.getElementById('total-latency-val').innerText = `${total} ms`;
+      if (stressActive) {
+        document.getElementById('latency-status-sub').innerText = 'SURGE PRESSURE (Degraded Vector Hop)';
+        document.getElementById('latency-status-sub').style.color = 'var(--accent-amber)';
+      } else {
+        document.getElementById('latency-status-sub').innerText = 'OPTIMAL (FAANG Production Grade)';
+        document.getElementById('latency-status-sub').style.color = 'var(--accent-emerald)';
+      }
+    }
+
+    async function toggleStressMode() {
+      stressActive = !stressActive;
+      const btn = document.getElementById('btn-stress-test');
+      if (stressActive) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+
+      try {
+        const res = await fetch('/api/v1/agent/arch/simulate-flow', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            archId: currentArch.id,
+            stressMode: stressActive
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          renderNodes(data.nodes);
+          updateTotalLatency(data.nodes);
+          showToast(stressActive ? 'Stress Surge active!' : 'Restored nominal traffic.');
+        }
+      } catch (err) {
+        alert('Stress test failed: ' + err.message);
+      }
+    }
+
+    function copyMermaid() {
+      const code = document.getElementById('mermaid-code').value;
+      navigator.clipboard.writeText(code);
+      showToast('Copied Mermaid syntax to clipboard!');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

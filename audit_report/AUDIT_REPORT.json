@@ -1,0 +1,212 @@
+{
+  "summary": {
+    "start_url": "http://localhost:5000/interview-prep/questions.html",
+    "pages_explored": 5,
+    "total_duration_seconds": 33.18,
+    "composite_quality_score": 68,
+    "grade": "B (Functional with Loopholes)",
+    "score_breakdown": {
+      "navigation_health": "25/25",
+      "runtime_stability": "5/25",
+      "network_reliability": "13/25",
+      "interaction_completeness": "25/25"
+    }
+  },
+  "pages": [
+    {
+      "index": 1,
+      "url": "http://localhost:5000/interview-prep/questions.html",
+      "title": "FAANG Company Radar & Pattern Taxonomy — Phoenix Placement OS",
+      "load_time_ms": 4254,
+      "elements": {
+        "inputs_count": 8,
+        "buttons_count": 11,
+        "links_count": 10
+      },
+      "interactions_executed": [
+        "Filled input [filter by pattern, data structure, or problem name (e.g. sliding window, two pointers, rate limiter)...] with test value",
+        "Selected option [Sliding Window] on dropdown #1",
+        "Selected option [Easy] on dropdown #2",
+        "Clicked action button: '🌐\nall faang (15)'",
+        "Clicked action button: '🔴\ngoogle\n87% freq'",
+        "Clicked action button: '🟦\nmicrosoft\n92% freq'",
+        "Clicked action button: '📦\namazon\n95% freq'"
+      ],
+      "discovered_links": [
+        "http://localhost:5000/horizon/world-dashboard.html",
+        "http://localhost:5000/interview-prep/system-design.html",
+        "http://localhost:5000/enterprise/recruiter-dashboard.html",
+        "http://localhost:5000/auth/login.html"
+      ],
+      "errors": [],
+      "screenshot": "page_1_localhost_5000_interview_prep_questions_html.png",
+      "status_code": 200
+    },
+    {
+      "index": 2,
+      "url": "http://localhost:5000/horizon/world-dashboard.html",
+      "title": "Phoenix Horizon — Google-Grade Code Studio & Competitive Assessment Arena",
+      "load_time_ms": 916,
+      "elements": {
+        "inputs_count": 2,
+        "buttons_count": 28,
+        "links_count": 0
+      },
+      "interactions_executed": [
+        "Filled input [// write your solution here...] with test value",
+        "Clicked action button: '💻\nalgorithmic studio & tracer'",
+        "Clicked action button: '⚡\ncompetitive assessment arena'"
+      ],
+      "discovered_links": [],
+      "errors": [],
+      "screenshot": "page_2_localhost_5000_horizon_world_dashboard_html.png",
+      "status_code": 200
+    },
+    {
+      "index": 3,
+      "url": "http://localhost:5000/interview-prep/system-design.html",
+      "title": "Login — Phoenix",
+      "load_time_ms": 975,
+      "elements": {
+        "inputs_count": 3,
+        "buttons_count": 12,
+        "links_count": 1
+      },
+      "interactions_executed": [
+        "Filled input [your@email.com] with test value",
+        "Filled input [enter your password] with test value",
+        "Filled input [ask phoenix anything or give a command...] with test value",
+        "Clicked action button: '👁️'",
+        "Clicked action button: 'login'",
+        "Clicked action button: '⚡ 1-click instant demo / inves'",
+        "Clicked action button: '🤖\nai'"
+      ],
+      "discovered_links": [
+        "http://localhost:5000/interview-prep/signup.html"
+      ],
+      "errors": [],
+      "screenshot": "page_3_localhost_5000_interview_prep_system_design_h.png",
+      "status_code": 200
+    },
+    {
+      "index": 4,
+      "url": "http://localhost:5000/enterprise/recruiter-dashboard.html",
+      "title": "Recruiter Dashboard - Phoenix Enterprise",
+      "load_time_ms": 681,
+      "elements": {
+        "inputs_count": 5,
+        "buttons_count": 5,
+        "links_count": 5
+      },
+      "interactions_executed": [
+        "Filled input [e.g. frontend developer] with test value",
+        "Filled input [paste first code snippet here...] with test value",
+        "Filled input [paste second code snippet here...] with test value",
+        "Selected option [Beginner] on dropdown #1",
+        "Clicked action button: '🔍 analyze similarity'"
+      ],
+      "discovered_links": [
+        "http://localhost:5000/dashboard/dashboard.html",
+        "http://localhost:5000/dashboard/leaderboard.html",
+        "http://localhost:5000/profile/profile.html"
+      ],
+      "errors": [],
+      "screenshot": "page_4_localhost_5000_enterprise_recruiter_dashboard.png",
+      "status_code": 200
+    },
+    {
+      "index": 5,
+      "url": "http://localhost:5000/auth/login.html",
+      "title": "Login — Phoenix",
+      "load_time_ms": 584,
+      "elements": {
+        "inputs_count": 3,
+        "buttons_count": 12,
+        "links_count": 1
+      },
+      "interactions_executed": [
+        "Filled input [your@email.com] with test value",
+        "Filled input [enter your password] with test value",
+        "Filled input [ask phoenix anything or give a command...] with test value",
+        "Clicked action button: '👁️'",
+        "Clicked action button: 'login'",
+        "Clicked action button: '⚡ 1-click instant demo / inves'",
+        "Clicked action button: '🤖\nai'"
+      ],
+      "discovered_links": [
+        "http://localhost:5000/auth/signup.html"
+      ],
+      "errors": [],
+      "screenshot": "page_5_localhost_5000_auth_login_html.png",
+      "status_code": 200
+    }
+  ],
+  "loopholes_detected": [
+    "Found 4 fatal JS console errors that may disrupt user journey.",
+    "Found 2 HTTP 4xx/5xx network failures during autonomous browsing.",
+    "One or more pages experienced load latency > 2.5s."
+  ],
+  "actionable_rebuilding_tasks": [
+    "Audit server route mounts in server.js to resolve broken HTTP endpoints.",
+    "Resolve client-side JavaScript null references in console error logs.",
+    "Proceed with high-depth feature-by-feature construction as outlined in the Master Ledger."
+  ],
+  "network_errors": [
+    {
+      "url": "http://localhost:5000/api/auth/login",
+      "status": 400,
+      "statusText": "Bad Request"
+    },
+    {
+      "url": "http://localhost:5000/api/auth/login",
+      "status": 400,
+      "statusText": "Bad Request"
+    }
+  ],
+  "console_errors": [
+    {
+      "type": "ERROR",
+      "text": "Failed to load resource: the server responded with a status of 400 (Bad Request)",
+      "location": {
+        "url": "http://localhost:5000/api/auth/login",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "ERROR",
+      "text": "Loading the image 'data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394A3B8' d='M6 8L1 3h10z'/%3E%3C/svg%3E' violates the following Content Security Policy directive: \"default-src 'self'\". Note that 'img-src' was not explicitly set, so 'default-src' is used as a fallback. The action has been blocked.",
+      "location": {
+        "url": "http://localhost:5000/phoenix-core.js",
+        "line": 53,
+        "column": 0,
+        "lineNumber": 53,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "ERROR",
+      "text": "Refused to execute script from 'http://localhost:5000/enterprise/phoenix-bot.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+      "location": {
+        "url": "http://localhost:5000/enterprise/recruiter-dashboard.html",
+        "line": 275,
+        "column": 0,
+        "lineNumber": 275,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "ERROR",
+      "text": "Failed to load resource: the server responded with a status of 400 (Bad Request)",
+      "location": {
+        "url": "http://localhost:5000/api/auth/login",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ]
+}

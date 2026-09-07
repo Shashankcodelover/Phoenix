@@ -91,10 +91,13 @@ const validate = (schema, options = {}) => {
   const { stripUnknown = true } = options;
 
   return (req, res, next) => {
-    if (!req.body || typeof req.body !== 'object') {
+    const isGet = req.method === 'GET';
+    const dataSource = isGet ? req.query : req.body;
+
+    if (!dataSource || typeof dataSource !== 'object') {
       return res.status(400).json({
         error: 'VALIDATION_ERROR',
-        message: 'Request body must be a JSON object.'
+        message: isGet ? 'Query parameters must be valid.' : 'Request body must be a JSON object.'
       });
     }
 
@@ -102,7 +105,7 @@ const validate = (schema, options = {}) => {
 
     // Validate each field defined in the schema
     for (const [fieldName, fieldSchema] of Object.entries(schema)) {
-      const error = validateField(req.body[fieldName], fieldSchema, fieldName);
+      const error = validateField(dataSource[fieldName], fieldSchema, fieldName);
       if (error) errors.push(error);
     }
 
@@ -118,12 +121,16 @@ const validate = (schema, options = {}) => {
     if (stripUnknown) {
       const allowedKeys = new Set(Object.keys(schema));
       const cleaned = {};
-      for (const key of Object.keys(req.body)) {
+      for (const key of Object.keys(dataSource)) {
         if (allowedKeys.has(key)) {
-          cleaned[key] = req.body[key];
+          cleaned[key] = dataSource[key];
         }
       }
-      req.body = cleaned;
+      if (isGet) {
+        req.query = cleaned;
+      } else {
+        req.body = cleaned;
+      }
     }
 
     next();
@@ -135,7 +142,9 @@ const schemas = {
   mockInterview: {
     message: { type: 'string', required: true, maxLength: 5000 },
     history: { type: 'array', required: false, maxItems: 50 },
-    targetRole: { type: 'string', required: false, maxLength: 200 }
+    targetRole: { type: 'string', required: false, maxLength: 200 },
+    company: { type: 'string', required: false, maxLength: 100 },
+    mode: { type: 'string', required: false, maxLength: 50 }
   },
 
   generateRoadmap: {
@@ -287,6 +296,22 @@ const schemas = {
         }
       }
     }
+  },
+
+  planner: {
+    interviewDate: { type: 'string', required: false, maxLength: 50 },
+    hackathonDate: { type: 'string', required: false, maxLength: 50 },
+    dailyHours: { required: false },
+    ratio: { required: false },
+    company: { type: 'string', required: false, maxLength: 100 },
+    weeks: { required: false },
+    targetRole: { type: 'string', required: false, maxLength: 100 },
+    weakTopics: { type: 'array', required: false, maxItems: 20 }
+  },
+
+  revision: {
+    topic: { type: 'string', required: false, maxLength: 100 },
+    difficulty: { type: 'string', required: false, maxLength: 50 }
   }
 };
 

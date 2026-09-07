@@ -1,64 +1,177 @@
 /**
- * Phoenix Apex Ultra: Feature 19 — Hackathon Team Role Synergy & Skill-Complementarity Recommender
+ * Phoenix Apex Ultra: Feature 26 — Hackathon Team Synergy & Role Task Matrix Canvas
+ * Competitors: Linear, Notion
  * 
- * Computes 4-role hackathon team archetype synergy, identifies technical and pitching gaps,
- * and outputs 24-hour sprint task allocations to maximize podium win rate.
+ * Computes:
+ * - 4-Role Hackathon Archetype Complementarity Matrix
+ * - Live Git Commit Velocity & Burn-down Simulation
+ * - Real-time Sprint Blockers & Root-Cause Remediation
+ * - Linear-style Agile Task Matrix with status, priority, and assignees
  */
 
 const WINNING_ARCHETYPES = [
-  'Frontend & UI/UX Storyteller',
-  'Backend & Distributed Systems Architect',
-  'AI/ML & RAG Specialist',
-  'Pitch Lead & Business Moat Presenter'
+  {
+    role: 'Frontend & UI/UX Storyteller',
+    idealSkills: ['React', 'Next.js 15', 'TailwindCSS', 'Framer Motion', 'Figma', 'UI/UX'],
+    deliverableFocus: 'Ship interactive glassmorphic UI, responsive sliders, demo dashboard'
+  },
+  {
+    role: 'Backend & Systems Architect',
+    idealSkills: ['Node.js', 'Go', 'Redis', 'PostgreSQL', 'Docker', 'Distributed Systems'],
+    deliverableFocus: 'Zero-latency microservices, DB schemas, 100k RPS caching layer'
+  },
+  {
+    role: 'AI/ML & Data Specialist',
+    idealSkills: ['Python', 'LangChain', 'Gemini API', 'Vector Embeddings', 'AST Parsing'],
+    deliverableFocus: 'Two-stage vector RAG, inference latency optimization, AST parser'
+  },
+  {
+    role: 'Pitch Lead & Product Moat Presenter',
+    idealSkills: ['Pitch Decks', 'VC Valuation', 'Marp Slides', 'Public Speaking', 'TAM Modeling'],
+    deliverableFocus: '3-minute teleprompter pitch, Marp deck, judge defense cross-examination'
+  }
+];
+
+const PRESETS = [
+  {
+    id: 'squad_phoenix_alpha',
+    name: 'Team Phoenix Alpha (Grand Prize Contender)',
+    repoVelocity: '42 commits / 6 hours (Peak Velocity)',
+    sprintProgress: 78,
+    members: [
+      { name: 'Alex Rivera', roleTitle: 'Lead Frontend Engineer', skills: ['React', 'Next.js 15', 'TailwindCSS', 'Framer Motion'], avatar: '👨‍🎨' },
+      { name: 'David Chen', roleTitle: 'Distributed Systems Architect', skills: ['Node.js', 'Redis', 'PostgreSQL', 'Docker'], avatar: '🛠️' },
+      { name: 'Priya Sharma', roleTitle: 'AI/ML & RAG Specialist', skills: ['Python', 'Gemini API', 'LangChain', 'Vector Search'], avatar: '🧠' },
+      { name: 'Sneha Patel', roleTitle: 'Pitch Lead & Product Strategist', skills: ['Pitch Decks', 'VC Valuation', 'Marp Slides', 'Public Speaking'], avatar: '🎯' }
+    ],
+    tasks: [
+      { id: 'TSK-101', title: 'Mount Glassmorphic telemetry visualizer & real-time gauges', assignee: 'Alex Rivera', status: 'IN_PROGRESS', priority: 'HIGH', column: 'in_progress', estimateHours: 3 },
+      { id: 'TSK-102', title: 'Configure distributed Redis LRU sharded cache & failover', assignee: 'David Chen', status: 'DONE', priority: 'URGENT', column: 'done', estimateHours: 4 },
+      { id: 'TSK-103', title: 'Embed Two-Stage Gemini 1.5 Vector RAG retriever pipeline', assignee: 'Priya Sharma', status: 'IN_PROGRESS', priority: 'HIGH', column: 'in_progress', estimateHours: 5 },
+      { id: 'TSK-104', title: 'Draft 180s VC pitch teleprompter & 5-slide Marp deck', assignee: 'Sneha Patel', status: 'DONE', priority: 'MEDIUM', column: 'done', estimateHours: 2 },
+      { id: 'TSK-105', title: 'Automate Devpost markdown exporter & submission media zip', assignee: 'Alex Rivera', status: 'TODO', priority: 'MEDIUM', column: 'todo', estimateHours: 2 }
+    ],
+    blockers: [
+      { id: 'BLK-1', title: 'Gemini Rate-Limit Quota Spike during stress tests', severity: 'HIGH', owner: 'Priya Sharma', resolution: 'Mounted token bucket rate-limiter and LRU cache fallback.' }
+    ]
+  },
+  {
+    id: 'squad_crypto_zero',
+    name: 'Team CryptoZero (Solo/Duo Sprint with Gaps)',
+    repoVelocity: '12 commits / 6 hours (Moderate Velocity)',
+    sprintProgress: 35,
+    members: [
+      { name: 'Marcus Vance', roleTitle: 'Smart Contract Dev', skills: ['Solidity', 'Rust', 'Foundry'], avatar: '⛓️' },
+      { name: 'Elena Drake', roleTitle: 'Backend Dev', skills: ['Go', 'PostgreSQL', 'Docker'], avatar: '💻' }
+    ],
+    tasks: [
+      { id: 'TSK-201', title: 'Deploy ZK rollup smart contract on Sepolia testnet', assignee: 'Marcus Vance', status: 'IN_PROGRESS', priority: 'URGENT', column: 'in_progress', estimateHours: 4 },
+      { id: 'TSK-202', title: 'Build telemetry event consumer & PostgreSQL indexer', assignee: 'Elena Drake', status: 'IN_PROGRESS', priority: 'HIGH', column: 'in_progress', estimateHours: 3 },
+      { id: 'TSK-203', title: 'Need Interactive Frontend UI (Currently Missing)', assignee: 'Unassigned', status: 'TODO', priority: 'URGENT', column: 'todo', estimateHours: 6 },
+      { id: 'TSK-204', title: 'Need 3-Minute VC Pitch Script (Currently Missing)', assignee: 'Unassigned', status: 'TODO', priority: 'HIGH', column: 'todo', estimateHours: 3 }
+    ],
+    blockers: [
+      { id: 'BLK-2', title: 'Critical Skill Gap: No Dedicated Frontend or Pitch Storyteller', severity: 'CRITICAL', owner: 'Team', resolution: 'Activate Phoenix Auto-Scaffolder & Pitch Deck AI generator immediately.' }
+    ]
+  }
 ];
 
 class TeamSynergyEngine {
-  /**
-   * Analyzes team members, evaluates coverage of winning archetypes, and computes synergy score.
-   */
-  evaluateTeamSynergy(payload = {}) {
+  getPresets() {
+    return {
+      presets: PRESETS,
+      winningArchetypes: WINNING_ARCHETYPES
+    };
+  }
+
+  evaluateTeam(payload = {}) {
     const {
-      members = [
-        { name: 'Alex', primarySkills: ['React', 'Next.js 15', 'TailwindCSS v4', 'UI/UX'] },
-        { name: 'David', primarySkills: ['Node.js', 'Redis', 'CockroachDB', 'Distributed Systems'] },
-        { name: 'Priya', primarySkills: ['Python', 'LangChain', 'Two-Stage RAG', 'AST Parsing'] },
-        { name: 'Sneha', primarySkills: ['Pitch Decks', 'VC Valuation', 'Marp Slides', 'Public Speaking'] }
-      ]
+      members = PRESETS[0].members,
+      tasks = PRESETS[0].tasks,
+      blockers = PRESETS[0].blockers
     } = payload;
 
-    const coveredArchetypes = [];
-    members.forEach(member => {
-      const skillsStr = (member.primarySkills || []).join(' ').toLowerCase();
-      if (skillsStr.includes('react') || skillsStr.includes('next.js') || skillsStr.includes('ui/ux') || skillsStr.includes('tailwind')) {
-        coveredArchetypes.push({ role: 'Frontend & UI/UX Storyteller', assignedTo: member.name });
-      } else if (skillsStr.includes('node') || skillsStr.includes('redis') || skillsStr.includes('distributed') || skillsStr.includes('backend')) {
-        coveredArchetypes.push({ role: 'Backend & Distributed Systems Architect', assignedTo: member.name });
-      } else if (skillsStr.includes('python') || skillsStr.includes('rag') || skillsStr.includes('ai') || skillsStr.includes('ast')) {
-        coveredArchetypes.push({ role: 'AI/ML & RAG Specialist', assignedTo: member.name });
-      } else if (skillsStr.includes('pitch') || skillsStr.includes('vc') || skillsStr.includes('marp') || skillsStr.includes('speaking')) {
-        coveredArchetypes.push({ role: 'Pitch Lead & Business Moat Presenter', assignedTo: member.name });
+    const coveredRoles = [];
+    const memberSkillsFlat = members.map(m => ({
+      name: m.name,
+      skills: (m.skills || []).join(' ').toLowerCase()
+    }));
+
+    WINNING_ARCHETYPES.forEach(arch => {
+      const match = memberSkillsFlat.find(m => 
+        arch.idealSkills.some(skill => m.skills.includes(skill.toLowerCase()))
+      );
+      if (match) {
+        coveredRoles.push({
+          archetype: arch.role,
+          assignedMember: match.name,
+          status: 'COVERED'
+        });
+      } else {
+        coveredRoles.push({
+          archetype: arch.role,
+          assignedMember: 'NONE (GAP)',
+          status: 'MISSING'
+        });
       }
     });
 
-    const uniqueRolesCount = new Set(coveredArchetypes.map(c => c.role)).size;
-    const synergyScore = Math.min(100, Math.round((uniqueRolesCount / 4) * 96 + (members.length >= 4 ? 4 : 0)));
+    const coveredCount = coveredRoles.filter(r => r.status === 'COVERED').length;
+    const synergyScore = Math.min(100, Math.round((coveredCount / 4) * 85 + (members.length >= 3 ? 15 : members.length * 5)));
+
+    // Task stats
+    const totalTasks = tasks.length || 1;
+    const doneTasks = tasks.filter(t => t.status === 'DONE').length;
+    const inProgressTasks = tasks.filter(t => t.status === 'IN_PROGRESS').length;
+    const todoTasks = tasks.filter(t => t.status === 'TODO').length;
+    const sprintHealth = Math.round((doneTasks / totalTasks) * 100);
+
+    const recommendations = [];
+    if (coveredCount < 4) {
+      const missing = coveredRoles.filter(r => r.status === 'MISSING').map(r => r.archetype);
+      recommendations.push(`Urgent: Fill ${missing.join(' and ')} to avoid judge rubric penalties.`);
+    }
+    if (blockers && blockers.length > 0) {
+      recommendations.push(`Resolve ${blockers.length} active sprint blockers to restore git velocity.`);
+    }
+    recommendations.push('Maintain a strict 6-hour code freeze before submission to allow end-to-end rehearsal.');
 
     return {
       success: true,
-      teamSize: members.length,
       synergyScore: `${synergyScore}/100`,
-      podiumWinProbability: synergyScore >= 90 ? '94% (Grand Prize Podium Contender)' : '72% (Solid Finalist)',
-      archetypeCoverage: coveredArchetypes,
-      missingArchetypes: WINNING_ARCHETYPES.filter(role => !coveredArchetypes.some(c => c.role === role)),
-      recommendedSprintDeliverables: [
-        { member: members[0]?.name || 'Member 1', deliverable: 'Ship Glassmorphic interactive Next.js 15 client with live visualizer gauges.' },
-        { member: members[1]?.name || 'Member 2', deliverable: 'Mount sharded Redis LRU cache with multi-key failover and 50,000 RPS chaos tests.' },
-        { member: members[2]?.name || 'Member 3', deliverable: 'Fine-tune Two-Stage Vector RAG retriever and static AST Big-O profiler.' },
-        { member: members[3]?.name || 'Member 4', deliverable: 'Rehearse 180s teleprompter pitch and compile Marp 5-slide deck PDF.' }
-      ]
+      synergyTier: synergyScore >= 90 ? 'TIER 1 (GRAND PRIZE CONTENDER)' : synergyScore >= 70 ? 'TIER 2 (STRONG FINALIST)' : 'TIER 3 (AT RISK OF BLIND SPOTS)',
+      podiumWinProbability: synergyScore >= 90 ? '94%' : synergyScore >= 70 ? '72%' : '45%',
+      archetypeCoverage: coveredRoles,
+      taskMetrics: {
+        total: totalTasks,
+        done: doneTasks,
+        inProgress: inProgressTasks,
+        todo: todoTasks,
+        completionRate: `${sprintHealth}%`
+      },
+      blockersSummary: blockers,
+      recommendations
+    };
+  }
+
+  addTask(payload = {}) {
+    const { tasks = [], newTask = {} } = payload;
+    const task = {
+      id: `TSK-${Math.floor(100 + Math.random() * 900)}`,
+      title: newTask.title || 'New Sprint Task',
+      assignee: newTask.assignee || 'Unassigned',
+      status: newTask.status || 'TODO',
+      priority: newTask.priority || 'MEDIUM',
+      column: (newTask.status || 'TODO').toLowerCase(),
+      estimateHours: newTask.estimateHours || 2
+    };
+    return {
+      success: true,
+      task,
+      tasks: [...tasks, task]
     };
   }
 }
 
 const teamSynergyEngine = new TeamSynergyEngine();
-module.exports = { TeamSynergyEngine, teamSynergyEngine, WINNING_ARCHETYPES };
+module.exports = { TeamSynergyEngine, teamSynergyEngine, WINNING_ARCHETYPES, PRESETS };

@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Company Rejection Post-Mortem & Gap Tracker | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      color: var(--accent-rose);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1350px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2.25rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-rose));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 900px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      color: var(--accent-rose);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover {
+      background: rgba(244, 63, 94, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* Grid Layout */
+    .post-mortem-grid {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 0.75rem;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .form-control {
+      width: 100%;
+      background: rgba(10, 16, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      border-color: var(--accent-cyan);
+    }
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+    .tag-badge {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tag-badge.selected {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: var(--accent-rose);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #f43f5e, #e11d48);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.85rem;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3);
+      margin-top: 1rem;
+    }
+    .btn-submit:hover {
+      box-shadow: 0 6px 20px rgba(244, 63, 94, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* Diagnosis Cards */
+    .diagnosis-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .kpi-card {
+      background: rgba(10, 16, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .kpi-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.4rem;
+    }
+    .kpi-val {
+      font-size: 1.35rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .kpi-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    .root-cause-box {
+      background: rgba(244, 63, 94, 0.08);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      border-left: 4px solid var(--accent-rose);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .root-cause-title {
+      font-size: 0.85rem;
+      color: var(--accent-rose);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.3rem;
+    }
+    .root-cause-desc {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    /* Remediation Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: rgba(56, 189, 248, 0.25);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1.25rem;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -1.5rem;
+      top: 6px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      border: 3px solid #070d18;
+      box-shadow: 0 0 10px var(--accent-cyan);
+    }
+    .timeline-day {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .timeline-focus {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 0.15rem 0 0.3rem 0;
+      color: #fff;
+    }
+    .timeline-task {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Drill Links */
+    .drills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .drill-card {
+      background: rgba(10, 16, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.9rem;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .drill-card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+    .drill-title {
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+    .drill-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* History Table */
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+    .history-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      background: rgba(10, 16, 30, 0.85);
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .history-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .severity-badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-critical { background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); border: 1px solid var(--accent-rose); }
+    .badge-high { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid var(--accent-amber); }
+    .badge-moderate { background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0f172a;
+      border: 1px solid var(--accent-emerald);
+      color: #fff;
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🛡️</span>
+      <span>Phoenix OS</span>
+      <span class="nav-badge">Pillar 1 • Feature 19</span>
+    </div>
+    <div class="nav-links">
+      <a href="/interview-prep/speech-pace.html">Speech Biofeedback</a>
+      <a href="/interview-prep/micro-drills.html">Micro-Drills</a>
+      <a href="/interview-prep/pair-programming.html">Pair-Programming</a>
+      <a href="/interview-prep/offer-comparator.html">Offer Comparator</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Company Rejection Post-Mortem & Gap Tracker</h1>
+      <p class="hero-subtitle">
+        Transform FAANG rejections into systematic engineering breakthroughs. Dissect interview feedback, calculate cooling-off re-apply eligibility countdowns, identify architectural and algorithmic root causes, and follow an automated 14-day intensive recovery curriculum.
+      </p>
+
+      <!-- Presets -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">TEST BENCHMARKS:</span>
+        <button class="preset-btn" id="btn-preset-google" onclick="loadDebriefPreset('google_l5_sysdesign')">Google L5: Cache Stampede & Sharding</button>
+        <button class="preset-btn" id="btn-preset-meta" onclick="loadDebriefPreset('meta_e4_coding')">Meta E4: DP Timeout & Graph Cycle</button>
+        <button class="preset-btn" id="btn-preset-amazon" onclick="loadDebriefPreset('amazon_sde2_behavioral')">Amazon SDE-2: Bar Raiser Ownership</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="post-mortem-grid">
+      <!-- Left: Diagnostic Intake -->
+      <div class="panel">
+        <h2 class="panel-title"><span>📋</span> Diagnostic Intake & Debrief Notes</h2>
+
+        <div class="form-group">
+          <label for="comp-select">Target Company</label>
+          <select class="form-control" id="comp-select" onchange="updateCooldownHint()">
+            <option value="Google">Google (6-12 Mo. Cooldown)</option>
+            <option value="Meta">Meta (12 Mo. Cooldown)</option>
+            <option value="Amazon">Amazon (6 Mo. Cooldown)</option>
+            <option value="Apple">Apple (6 Mo. Cooldown)</option>
+            <option value="Microsoft">Microsoft (6 Mo. Cooldown)</option>
+            <option value="Netflix">Netflix (12 Mo. Cooldown)</option>
+            <option value="Stripe">Stripe (6 Mo. Cooldown)</option>
+            <option value="Uber">Uber (6 Mo. Cooldown)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="role-input">Target Role & Level</label>
+          <input type="text" class="form-control" id="role-input" value="Senior Software Engineer (L5)">
+        </div>
+
+        <div class="form-group">
+          <label for="round-select">Failed Interview Round</label>
+          <select class="form-control" id="round-select">
+            <option value="System Design">Distributed System Design & Architecture</option>
+            <option value="Coding & Algorithms">Coding & Data Structures (DSA)</option>
+            <option value="Behavioral & Leadership Principles">Behavioral & Leadership Principles / Bar-Raiser</option>
+            <option value="Low-Level Design">Object-Oriented & Low-Level Design (LLD)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="date-input">Rejection Date</label>
+          <input type="date" class="form-control" id="date-input" value="2026-08-15">
+        </div>
+
+        <div class="form-group">
+          <label>Failure Pattern Tags (Click to toggle)</label>
+          <div class="tags-container" id="tags-container">
+            <span class="tag-badge selected" onclick="toggleTag(this)">Cache Stampede</span>
+            <span class="tag-badge selected" onclick="toggleTag(this)">Database Sharding Hotspots</span>
+            <span class="tag-badge selected" onclick="toggleTag(this)">Lack of Backpressure</span>
+            <span class="tag-badge" onclick="toggleTag(this)">Time Limit Exceeded</span>
+            <span class="tag-badge" onclick="toggleTag(this)">Suboptimal Big-O</span>
+            <span class="tag-badge" onclick="toggleTag(this)">Missed Graph Cycle</span>
+            <span class="tag-badge" onclick="toggleTag(this)">Vague STAR Metrics</span>
+            <span class="tag-badge" onclick="toggleTag(this)">Defensive Attitude</span>
+            <span class="tag-badge" onclick="toggleTag(this)">Lack of Ownership</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="debrief-notes">Detailed Interviewer Feedback & Notes</label>
+          <textarea class="form-control" id="debrief-notes" placeholder="Paste recruiter debrief notes, areas of pushback, or specific technical pitfalls encountered..."></textarea>
+        </div>
+
+        <button class="btn-submit" id="btn-run-post-mortem" onclick="runPostMortemAnalysis()">
+          <span>⚡</span> Generate Post-Mortem & 14-Day Recovery Plan
+        </button>
+      </div>
+
+      <!-- Right: Analysis & Remediation Roadmap -->
+      <div class="panel" id="analysis-panel" style="display:none;">
+        <h2 class="panel-title"><span>🔬</span> Post-Mortem Diagnostic & Prescriptive Roadmap</h2>
+
+        <!-- Top KPIs -->
+        <div class="diagnosis-header">
+          <div class="kpi-card">
+            <div class="kpi-label">Re-Apply Eligibility</div>
+            <div class="kpi-val" id="kpi-reapply-date" style="color:var(--accent-cyan);">Feb 15, 2027</div>
+            <div class="kpi-sub" id="kpi-cooldown-days">161 Days Remaining</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">Failure Severity Rating</div>
+            <div class="kpi-val" id="kpi-severity" style="color:var(--accent-rose);">CRITICAL</div>
+            <div class="kpi-sub" id="kpi-flaw-cat">Distributed Architecture</div>
+          </div>
+        </div>
+
+        <!-- Root Cause Diagnostic -->
+        <div class="root-cause-box">
+          <div class="root-cause-title">Identified Primary Root Cause</div>
+          <div class="root-cause-desc" id="res-root-cause">
+            Vulnerability to Thundering Herd Cache Stampede & Lack of Mutual Exclusion Locking
+          </div>
+          <div style="margin-top:0.5rem; font-size:0.85rem; color:var(--text-muted);" id="res-gaps">
+            Failed to implement probabilistic early expiration (XFetch) or Redis mutex locks
+          </div>
+        </div>
+
+        <!-- 14-Day Remediation Timeline -->
+        <h3 style="font-size:1rem; font-weight:700; margin-bottom:1rem; color:var(--accent-cyan); display:flex; align-items:center; gap:0.5rem;">
+          <span>🗓️</span> 14-Day Intensive Recovery Pathway
+        </h3>
+        <div class="timeline" id="remediation-timeline">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Recommended Drills -->
+        <h3 style="font-size:1rem; font-weight:700; margin-top:1.5rem; margin-bottom:0.75rem; color:var(--accent-emerald); display:flex; align-items:center; gap:0.5rem;">
+          <span>🎯</span> Recommended Phoenix Drills
+        </h3>
+        <div class="drills-grid" id="drills-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Candidate Rejection Ledger / History -->
+    <div class="panel">
+      <h2 class="panel-title">
+        <span>📜</span> Candidate Post-Mortem & Re-Apply Ledger
+        <span style="font-size:0.8rem; color:var(--text-muted); font-weight:normal; margin-left:auto;" id="history-count">
+          1 debrief recorded
+        </span>
+      </h2>
+
+      <table class="history-table" id="history-table">
+        <thead>
+          <tr>
+            <th>Company & Role</th>
+            <th>Failed Round</th>
+            <th>Rejection Date</th>
+            <th>Primary Root Cause</th>
+            <th>Severity</th>
+            <th>Eligible Re-Apply Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="history-body">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-msg">Post-mortem generated!</div>
+
+  <script>
+    let presetsCache = [];
+
+    async function init() {
+      try {
+        const [presRes, histRes] = await Promise.all([
+          fetch('/api/v1/prep/post-mortem/presets'),
+          fetch('/api/v1/prep/post-mortem/history')
+        ]);
+        const presData = await presRes.json();
+        const histData = await histRes.json();
+
+        if (presData.success && presData.presets) {
+          presetsCache = presData.presets;
+          loadDebriefPreset('google_l5_sysdesign');
+        }
+
+        if (histData.success && histData.history) {
+          renderHistoryTable(histData.history);
+        }
+      } catch (err) {
+        console.error('Failed to initialize post-mortem module:', err);
+      }
+    }
+
+    function toggleTag(el) {
+      el.classList.toggle('selected');
+    }
+
+    function getSelectedTags() {
+      const tags = [];
+      document.querySelectorAll('#tags-container .tag-badge.selected').forEach(el => {
+        tags.push(el.innerText.trim());
+      });
+      return tags;
+    }
+
+    function loadDebriefPreset(presetId) {
+      const p = presetsCache.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.getElementById('comp-select').value = p.company;
+      document.getElementById('role-input').value = p.role;
+      document.getElementById('round-select').value = p.roundType;
+      document.getElementById('date-input').value = p.rejectionDate;
+      document.getElementById('debrief-notes').value = p.notes;
+
+      // Select matching tags
+      document.querySelectorAll('#tags-container .tag-badge').forEach(el => {
+        if (p.failureTags.includes(el.innerText.trim())) {
+          el.classList.add('selected');
+        } else {
+          el.classList.remove('selected');
+        }
+      });
+
+      showToast(`Loaded benchmark preset: ${p.title}`);
+    }
+
+    async function runPostMortemAnalysis() {
+      const company = document.getElementById('comp-select').value;
+      const role = document.getElementById('role-input').value;
+      const roundType = document.getElementById('round-select').value;
+      const rejectionDate = document.getElementById('date-input').value;
+      const failureTags = getSelectedTags();
+      const notes = document.getElementById('debrief-notes').value;
+
+      try {
+        const res = await fetch('/api/v1/prep/post-mortem/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            company,
+            role,
+            roundType,
+            rejectionDate,
+            failureTags,
+            notes
+          })
+        });
+
+        const data = await res.json();
+        if (data.success && data.data) {
+          renderAnalysis(data.data);
+          // Refresh history table
+          const histRes = await fetch('/api/v1/prep/post-mortem/history');
+          const histData = await histRes.json();
+          if (histData.success && histData.history) {
+            renderHistoryTable(histData.history);
+          }
+        }
+      } catch (err) {
+        alert('Failed to run post-mortem: ' + err.message);
+      }
+    }
+
+    function renderAnalysis(data) {
+      document.getElementById('analysis-panel').style.display = 'block';
+
+      document.getElementById('kpi-reapply-date').innerText = data.reapplyDate;
+      document.getElementById('kpi-cooldown-days').innerText = `${data.daysRemaining} Days Remaining (${data.cooldownMonths} Mo. Cooldown)`;
+      
+      const sevEl = document.getElementById('kpi-severity');
+      sevEl.innerText = data.severity;
+      if (data.severity === 'CRITICAL') sevEl.style.color = 'var(--accent-rose)';
+      else if (data.severity === 'HIGH') sevEl.style.color = 'var(--accent-amber)';
+      else sevEl.style.color = 'var(--accent-cyan)';
+
+      document.getElementById('kpi-flaw-cat').innerText = data.failureTaxonomy[0]?.flaw || 'Technical Execution';
+      document.getElementById('res-root-cause').innerText = data.rootCause;
+      document.getElementById('res-gaps').innerText = data.gaps.join(' • ') || 'Comprehensive gap diagnosis logged.';
+
+      // Timeline
+      const timelineEl = document.getElementById('remediation-timeline');
+      timelineEl.innerHTML = '';
+      data.remediationPlan.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'timeline-item';
+        div.innerHTML = `
+          <div class="timeline-day">${item.day} • ${item.phase}</div>
+          <div class="timeline-focus">${item.focus}</div>
+          <div class="timeline-task">${item.task}</div>
+        `;
+        timelineEl.appendChild(div);
+      });
+
+      // Drills
+      const drillsEl = document.getElementById('drills-container');
+      drillsEl.innerHTML = '';
+      data.recommendedDrills.forEach(d => {
+        const a = document.createElement('a');
+        a.className = 'drill-card';
+        a.href = d.url;
+        a.innerHTML = `
+          <div class="drill-title">${d.title}</div>
+          <div class="drill-meta">
+            <span>${d.type}</span>
+            <span style="color:var(--accent-cyan); font-weight:700;">${d.timeEstimate}</span>
+          </div>
+        `;
+        drillsEl.appendChild(a);
+      });
+
+      showToast('Post-mortem analysis complete!');
+    }
+
+    function renderHistoryTable(list) {
+      const tbody = document.getElementById('history-body');
+      tbody.innerHTML = '';
+      document.getElementById('history-count').innerText = `${list.length} debriefs recorded`;
+
+      list.forEach(item => {
+        const tr = document.createElement('tr');
+        const badgeClass = item.severity === 'CRITICAL' ? 'badge-critical' : (item.severity === 'HIGH' ? 'badge-high' : 'badge-moderate');
+        tr.innerHTML = `
+          <td><strong>${item.company}</strong> <br><span style="color:var(--text-muted); font-size:0.8rem;">${item.role}</span></td>
+          <td>${item.roundType}</td>
+          <td style="font-family:'JetBrains Mono', monospace; font-size:0.8rem;">${item.date}</td>
+          <td style="max-width:280px; font-size:0.8rem;">${item.rootCause}</td>
+          <td><span class="severity-badge ${badgeClass}">${item.severity}</span></td>
+          <td style="font-family:'JetBrains Mono', monospace; font-size:0.8rem; color:var(--accent-cyan);">${item.reapplyDate}</td>
+          <td><span style="color:var(--accent-emerald); font-weight:700; font-size:0.8rem;">● Active</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

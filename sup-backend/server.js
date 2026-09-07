@@ -57,7 +57,7 @@ try {
 }
 
 // --- HARDENED CORS WHITELIST (No Origin 'null' vulnerability) ---
-const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:5173,http://127.0.0.1:5500').split(',');
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:5173,http://127.0.0.1:5500,http://localhost:5000,http://127.0.0.1:5000').split(',');
 app.use(cors({
   origin: (origin, cb) => {
     // Allow non-browser requests (mobile apps/curl) with no origin header in production, or whitelisted domains
@@ -181,7 +181,7 @@ app.use((req, res, next) => {
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' ws: wss:; font-src 'self' https://fonts.gstatic.com; object-src 'none';"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' ws: wss:; font-src 'self' https://fonts.gstatic.com; object-src 'none';"
   );
   next();
 });
@@ -256,6 +256,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/prep', aiRateLimiter, prepRoutes);
+app.use('/api/enterprise', enterpriseRoutes);
+app.use('/api/code-review', codeReviewRoutes);
 
 // Static assets & SPA fallback (Express 5 compatible)
 app.use(express.static(path.join(__dirname, '../sup-frontend')));

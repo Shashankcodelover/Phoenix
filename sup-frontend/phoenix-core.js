@@ -491,6 +491,7 @@ const PhoenixCore = (() => {
 
 // Global shorthands & backwards-compatibility functions
 window.Phoenix = PhoenixCore;
+window.PhoenixAuth = PhoenixCore.Auth;
 window.animateParticles = function(canvasId = 'particles', count = 50) {
   if (PhoenixCore && PhoenixCore.Particles) {
     PhoenixCore.Particles.init(canvasId, count);

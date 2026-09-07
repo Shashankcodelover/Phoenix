@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Concurrency & Thread Safety Playground | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.85);
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      color: var(--accent-rose);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    /* Main Container */
+    .playground-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Header */
+    .header-hero {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+    .header-hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #f43f5e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .header-hero p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Scenario Tabs */
+    .scenario-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .scen-btn {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border-subtle);
+      color: #cbd5e1;
+      padding: 0.65rem 1.4rem;
+      border-radius: 0.75rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .scen-btn:hover {
+      border-color: var(--accent-rose);
+      color: #fff;
+    }
+    .scen-btn.active {
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.3) 0%, rgba(225, 29, 72, 0.15) 100%);
+      border-color: var(--accent-rose);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(244, 63, 94, 0.25);
+    }
+
+    /* Grid Workspace */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 1024px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Panels */
+    .panel-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1.25rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.9rem 1.25rem;
+      background: rgba(2, 6, 23, 0.5);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #f1f5f9;
+    }
+
+    /* Swimlanes Viewport */
+    .swimlanes-viewport {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 380px;
+      background: #020617;
+      overflow-y: auto;
+    }
+    .lane-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.75rem;
+      padding: 0.85rem;
+    }
+    .lane-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    .lane-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .action-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.4rem;
+      background: rgba(30, 41, 59, 0.8);
+      border-left: 3px solid #64748b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .action-pill.active {
+      border-left-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.15);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+    }
+    .action-pill.hazard {
+      border-left-color: var(--accent-rose);
+      background: rgba(244, 63, 94, 0.2);
+      color: #fecdd3;
+    }
+    .action-pill.locked {
+      border-left-color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.15);
+    }
+    .action-pill.blocked {
+      border-left-color: var(--accent-amber);
+      background: rgba(245, 158, 11, 0.15);
+      color: #fde68a;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      padding: 0.9rem 1.25rem;
+      background: rgba(2, 6, 23, 0.6);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .btn-ctrl {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0.45rem 0.9rem;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+    .btn-ctrl:hover {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: var(--accent-rose);
+    }
+    .btn-fix {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1.1rem;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+    .btn-fix:hover {
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+      transform: translateY(-1px);
+    }
+
+    /* Right Panel Content */
+    .hud-content {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      overflow-y: auto;
+      max-height: 650px;
+    }
+
+    /* Memory / Outcome Banner */
+    .outcome-banner {
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 0.85rem;
+      padding: 1rem 1.25rem;
+    }
+    .outcome-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.6rem;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    /* Coffman Conditions Radar */
+    .coffman-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .coffman-item {
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.6rem;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.82rem;
+    }
+    .coffman-title {
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 0.2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Guarantees Box */
+    .guarantee-box {
+      background: rgba(2, 6, 23, 0.8);
+      border-left: 3px solid var(--accent-emerald);
+      border-radius: 0 0.6rem 0.6rem 0;
+      padding: 0.85rem 1rem;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span style="font-size: 1.4rem;">⚙️</span>
+      <span>Concurrency Playground</span>
+      <span class="nav-badge">Pillar 1 • Feature 13</span>
+    </div>
+    <div class="nav-links">
+      <a href="../dashboard/dashboard.html">Dashboard</a>
+      <a href="questions.html">Company Radar</a>
+      <a href="practice.html">AI Mock Interview</a>
+      <a href="copilot-studio.html">Code Reviewer</a>
+      <a href="graph-dp-tracer.html">Graph & DP Visualizer</a>
+      <a href="star-vault.html">STAR Vault</a>
+      <a href="sql-workbench.html">SQL Workbench</a>
+    </div>
+  </header>
+
+  <div class="playground-container">
+    <div class="header-hero">
+      <h1>Concurrency & Thread Safety Playground</h1>
+      <p>Multi-threaded race condition interleaving visualizer, Coffman deadlock detection cycle analyzer, and lock-free atomic CAS synchronization.</p>
+    </div>
+
+    <!-- Scenario Switcher -->
+    <div class="scenario-tabs">
+      <button id="btn-scen-race" class="scen-btn active" onclick="switchScenario('race')">
+        <span>🏃</span> Race Condition & Lost Counter Updates
+      </button>
+      <button id="btn-scen-deadlock" class="scen-btn" onclick="switchScenario('deadlock')">
+        <span>🔒</span> Circular Wait Deadlock (Coffman Invariant)
+      </button>
+    </div>
+
+    <!-- Workspace Grid -->
+    <div class="workspace-grid">
+      <!-- Left Panel: Thread Swimlanes & Scrubber -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span id="swimlane-icon">🏃</span>
+            <span id="swimlane-title">Thread Interleaving Execution Timeline</span>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: 700;" id="step-counter">
+            Step 1 / 6
+          </div>
+        </div>
+
+        <div class="swimlanes-viewport" id="swimlanes-body"></div>
+
+        <div class="controls-bar">
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn-ctrl" onclick="stepPrev()">⏪ Prev</button>
+            <button id="btn-play" class="btn-ctrl" style="background: rgba(244, 63, 94, 0.25);" onclick="togglePlay()">
+              <span>▶️</span> Play
+            </button>
+            <button class="btn-ctrl" onclick="stepNext()">Next ⏩</button>
+            <button class="btn-ctrl" onclick="resetPlayback()">🔄 Reset</button>
+          </div>
+          <button id="btn-fix-toggle" class="btn-fix" onclick="toggleFix()">
+            <span>🛡️</span> Apply Mutex Synchronization
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Panel: Memory HUD & Coffman Analysis -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🔬</span> Shared Memory & Concurrency Invariants
+          </div>
+          <div style="font-size: 0.8rem; color: var(--accent-rose); font-weight: 700;" id="safety-score-badge">
+            Hazard Detected
+          </div>
+        </div>
+
+        <div class="hud-content">
+          <!-- Memory State Cards -->
+          <div class="outcome-banner">
+            <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);" id="memory-title">
+              Shared Memory State & Registers
+            </div>
+            <div class="outcome-grid">
+              <div class="metric-card">
+                <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Expected Final</div>
+                <div id="metric-expected" class="metric-val" style="color: var(--accent-emerald);">2000</div>
+              </div>
+              <div class="metric-card">
+                <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Actual Final</div>
+                <div id="metric-actual" class="metric-val" style="color: var(--accent-rose);">1432</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Step Explanation -->
+          <div class="guarantee-box" id="step-explanation">
+            Thread 1 reads shared memory (val = 0) into its local CPU register.
+          </div>
+
+          <!-- Coffman Conditions Radar (Visible on Deadlock) -->
+          <div id="coffman-section" style="display: none;">
+            <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem;">
+              Coffman Deadlock Conditions Checklist
+            </div>
+            <div class="coffman-grid">
+              <div class="coffman-item">
+                <div class="coffman-title">Mutual Exclusion <span style="color: #f43f5e;">YES</span></div>
+                <span style="font-size: 0.75rem; color: #94a3b8;">Resource held exclusively</span>
+              </div>
+              <div class="coffman-item">
+                <div class="coffman-title">Hold & Wait <span style="color: #f43f5e;">YES</span></div>
+                <span style="font-size: 0.75rem; color: #94a3b8;">Holds A, waits for B</span>
+              </div>
+              <div class="coffman-item">
+                <div class="coffman-title">No Preemption <span style="color: #f43f5e;">YES</span></div>
+                <span style="font-size: 0.75rem; color: #94a3b8;">Cannot forcibly revoke lock</span>
+              </div>
+              <div class="coffman-item">
+                <div class="coffman-title">Circular Wait <span id="coffman-circ" style="color: #f43f5e;">YES</span></div>
+                <span id="coffman-circ-desc" style="font-size: 0.75rem; color: #94a3b8;">T1->Lock B->T2->Lock A</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Remediation Engineering Standard -->
+          <div>
+            <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem;">
+              Staff L6 Concurrency Remediation
+            </div>
+            <div id="remediation-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <div class="action-pill locked">💡 Use `pthread_mutex_lock` or Go `sync.Mutex` to wrap critical read-modify-write loops.</div>
+              <div class="action-pill locked">💡 Replace lock contention with atomic hardware primitives (`sync/atomic` / `AtomicInteger` CAS).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentScenario = 'race';
+    let isFixed = false;
+    let scenarioData = null;
+    let currentStep = 0;
+    let isPlaying = false;
+    let playInterval = null;
+
+    async function loadScenario(scenario, fixed) {
+      try {
+        const payload = {
+          scenario,
+          synchronized: scenario === 'race' ? fixed : false,
+          lockOrdered: scenario === 'deadlock' ? fixed : false
+        };
+
+        const res = await fetch('/api/v1/prep/concurrency/simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error('Simulation failed: ' + res.status);
+        scenarioData = await res.json();
+        currentStep = 0;
+        initUI();
+      } catch (err) {
+        console.error('Failed to load scenario:', err);
+      }
+    }
+
+    function switchScenario(scen) {
+      if (scen === currentScenario && scenarioData) return;
+      currentScenario = scen;
+      isFixed = false;
+      stopPlay();
+
+      document.querySelectorAll('.scen-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`btn-scen-${scen}`).classList.add('active');
+
+      const fixBtn = document.getElementById('btn-fix-toggle');
+      if (scen === 'race') {
+        fixBtn.innerHTML = '<span>🛡️</span> Apply Mutex Synchronization';
+        document.getElementById('coffman-section').style.display = 'none';
+      } else {
+        fixBtn.innerHTML = '<span>🛡️</span> Enforce Global Lock Ordering';
+        document.getElementById('coffman-section').style.display = 'block';
+      }
+
+      loadScenario(scen, isFixed);
+    }
+
+    function toggleFix() {
+      isFixed = !isFixed;
+      stopPlay();
+      const fixBtn = document.getElementById('btn-fix-toggle');
+
+      if (currentScenario === 'race') {
+        fixBtn.innerHTML = isFixed ? '<span>↩️</span> Revert to Unsynchronized Race' : '<span>🛡️</span> Apply Mutex Synchronization';
+      } else {
+        fixBtn.innerHTML = isFixed ? '<span>↩️</span> Revert to Unordered Deadlock' : '<span>🛡️</span> Enforce Global Lock Ordering';
+      }
+
+      loadScenario(currentScenario, isFixed);
+    }
+
+    function initUI() {
+      if (!scenarioData) return;
+
+      const steps = scenarioData.steps || [];
+      document.getElementById('swimlane-title').innerText = scenarioData.scenario;
+      document.getElementById('step-counter').innerText = `Step 1 / ${steps.length}`;
+
+      if (currentScenario === 'race') {
+        document.getElementById('metric-expected').innerText = scenarioData.expectedFinalValue || 2000;
+        document.getElementById('metric-actual').innerText = scenarioData.actualFinalValue || 2000;
+
+        const safetyBadge = document.getElementById('safety-score-badge');
+        if (scenarioData.hasRaceCondition) {
+          safetyBadge.innerText = 'Race Condition (Lost Updates)';
+          safetyBadge.style.color = 'var(--accent-rose)';
+          document.getElementById('metric-actual').style.color = 'var(--accent-rose)';
+        } else {
+          safetyBadge.innerText = 'Thread-Safe (100% Synchronized)';
+          safetyBadge.style.color = 'var(--accent-emerald)';
+          document.getElementById('metric-actual').style.color = 'var(--accent-emerald)';
+        }
+      } else {
+        document.getElementById('metric-expected').innerText = 'Deadlock Free';
+        document.getElementById('metric-actual').innerText = scenarioData.hasDeadlock ? 'Deadlocked' : 'Safe';
+
+        const safetyBadge = document.getElementById('safety-score-badge');
+        safetyBadge.innerText = `${scenarioData.safetyScore} / 100 Safety`;
+        safetyBadge.style.color = scenarioData.hasDeadlock ? 'var(--accent-rose)' : 'var(--accent-emerald)';
+        document.getElementById('metric-actual').style.color = scenarioData.hasDeadlock ? 'var(--accent-rose)' : 'var(--accent-emerald)';
+
+        const circEl = document.getElementById('coffman-circ');
+        const circDesc = document.getElementById('coffman-circ-desc');
+        if (scenarioData.hasDeadlock) {
+          circEl.innerText = 'YES';
+          circEl.style.color = '#f43f5e';
+          circDesc.innerText = 'T1->Lock B->T2->Lock A';
+        } else {
+          circEl.innerText = 'BROKEN';
+          circEl.style.color = '#10b981';
+          circDesc.innerText = 'Strict Lock ID ordering eliminates cycle';
+        }
+      }
+
+      renderSteps();
+    }
+
+    function renderSteps() {
+      const container = document.getElementById('swimlanes-body');
+      const steps = scenarioData.steps || [];
+
+      // Group steps into swimlanes
+      container.innerHTML = `
+        <div class="lane-box">
+          <div class="lane-title">
+            <span>Thread 1 (Worker A)</span>
+            <span style="color: #64748b;">Core 0</span>
+          </div>
+          <div class="lane-cards" id="lane-t1"></div>
+        </div>
+        <div class="lane-box">
+          <div class="lane-title">
+            <span>Thread 2 (Worker B)</span>
+            <span style="color: #64748b;">Core 1</span>
+          </div>
+          <div class="lane-cards" id="lane-t2"></div>
+        </div>
+      `;
+
+      const t1Container = document.getElementById('lane-t1');
+      const t2Container = document.getElementById('lane-t2');
+
+      steps.forEach((s, idx) => {
+        const isCurrent = idx === currentStep;
+        let pillClass = 'action-pill';
+        if (isCurrent) pillClass += ' active';
+        if (s.status === 'LOST_UPDATE' || s.status === 'DEADLOCKED') pillClass += ' hazard';
+        else if (s.status === 'LOCKED' || s.status === 'COMMITTED') pillClass += ' locked';
+        else if (s.status === 'BLOCKED' || s.status === 'WAITING') pillClass += ' blocked';
+
+        const itemHtml = `
+          <div class="${pillClass}">
+            <span>Step ${s.step}: ${escapeHtml(s.action)}</span>
+            <span style="font-size: 0.75rem; font-weight: 700;">${s.status}</span>
+          </div>
+        `;
+
+        if (s.thread.includes('Thread 1')) {
+          t1Container.innerHTML += itemHtml;
+        } else {
+          t2Container.innerHTML += itemHtml;
+        }
+      });
+
+      // Update current explanation
+      const cur = steps[currentStep] || steps[0];
+      if (cur) {
+        document.getElementById('step-explanation').innerText = `[${cur.thread}]: ${cur.action}`;
+        document.getElementById('step-counter').innerText = `Step ${currentStep + 1} / ${steps.length}`;
+      }
+    }
+
+    function stepNext() {
+      if (!scenarioData) return;
+      const steps = scenarioData.steps || [];
+      if (currentStep < steps.length - 1) {
+        currentStep++;
+        renderSteps();
+      } else {
+        stopPlay();
+      }
+    }
+
+    function stepPrev() {
+      if (!scenarioData) return;
+      if (currentStep > 0) {
+        currentStep--;
+        renderSteps();
+      }
+    }
+
+    function resetPlayback() {
+      currentStep = 0;
+      stopPlay();
+      renderSteps();
+    }
+
+    function togglePlay() {
+      if (isPlaying) stopPlay();
+      else startPlay();
+    }
+
+    function startPlay() {
+      const steps = scenarioData.steps || [];
+      if (currentStep >= steps.length - 1) currentStep = 0;
+      isPlaying = true;
+      document.getElementById('btn-play').innerHTML = '<span>⏸️</span> Pause';
+      playInterval = setInterval(() => {
+        stepNext();
+      }, 900);
+    }
+
+    function stopPlay() {
+      isPlaying = false;
+      document.getElementById('btn-play').innerHTML = '<span>▶️</span> Play';
+      if (playInterval) {
+        clearInterval(playInterval);
+        playInterval = null;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadScenario('race', false);
+    });
+  </script>
+</body>
+</html>

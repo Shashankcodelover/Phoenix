@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Executive Placement Command Center & Readiness Score | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      color: var(--accent-gold);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2.25rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      color: var(--accent-gold);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover {
+      background: rgba(251, 191, 36, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* Layout Grid */
+    .cockpit-grid {
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 0.75rem;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    .form-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .slider-val {
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+    .form-control {
+      width: 100%;
+      background: rgba(10, 16, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .range-input {
+      width: 100%;
+      height: 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .range-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--accent-cyan);
+    }
+
+    .btn-calc {
+      width: 100%;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      border: none;
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 0.85rem;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+      margin-top: 1.25rem;
+    }
+    .btn-calc:hover {
+      box-shadow: 0 6px 20px rgba(251, 191, 36, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* KPI Highlights */
+    .kpis-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .kpi-card {
+      background: rgba(10, 16, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .kpi-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.4rem;
+    }
+    .kpi-val {
+      font-size: 1.75rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .kpi-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* Vector Progress Bars */
+    .vector-bars {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .vector-card {
+      background: rgba(10, 16, 30, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+    }
+    .vector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .vector-bar-outer {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .vector-bar-inner {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .vector-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+    }
+
+    /* Company Probability Matrix */
+    .company-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.75rem;
+      font-size: 0.85rem;
+    }
+    .company-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      background: rgba(10, 16, 30, 0.85);
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .company-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-cleared { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); border: 1px solid var(--accent-emerald); }
+    .badge-near { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid var(--accent-amber); }
+    .badge-gap { background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); border: 1px solid var(--accent-rose); }
+
+    /* Cryptographic Credential Card */
+    .credential-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+      border: 1px solid var(--accent-gold);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      box-shadow: 0 0 25px rgba(251, 191, 36, 0.15);
+    }
+    .cred-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+    }
+    .cred-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      letter-spacing: 0.02em;
+    }
+    .cred-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .cred-body {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1rem;
+    }
+    .cred-seal {
+      border: 2px dashed rgba(251, 191, 36, 0.4);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      text-align: center;
+    }
+    .cred-seal-icon {
+      font-size: 2rem;
+      margin-bottom: 0.25rem;
+    }
+    .cred-seal-text {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-gold);
+    }
+    .cred-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+    .btn-cred-action {
+      flex: 1;
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      color: var(--accent-gold);
+      padding: 0.55rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-cred-action:hover {
+      background: rgba(251, 191, 36, 0.25);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0f172a;
+      border: 1px solid var(--accent-gold);
+      color: #fff;
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>👑</span>
+      <span>Phoenix OS</span>
+      <span class="nav-badge">Pillar 1 • Feature 20 • FINALE</span>
+    </div>
+    <div class="nav-links">
+      <a href="/interview-prep/post-mortem.html">Post-Mortem Tracker</a>
+      <a href="/interview-prep/speech-pace.html">Speech Biofeedback</a>
+      <a href="/interview-prep/micro-drills.html">Micro-Drills</a>
+      <a href="/interview-prep/pair-programming.html">Pair-Programming</a>
+      <a href="/interview-prep/offer-comparator.html">Offer Comparator</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Executive Placement Command Center & Readiness Score</h1>
+      <p class="hero-subtitle">
+        The unified executive cockpit consolidating multi-dimensional candidate performance across LeetCode-grade algorithmic mastery, distributed system scalability, behavioral leadership presence, and ATS recruiter signal into a cryptographically verified FAANG placement credential.
+      </p>
+
+      <!-- Presets -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">TEST CANDIDATE PROFILES:</span>
+        <button class="preset-btn" id="btn-preset-senior" onclick="loadCandidatePreset('faang_senior_ready')">Preetham J (Staff / L5 Ready - 94/100)</button>
+        <button class="preset-btn" id="btn-preset-mid" onclick="loadCandidatePreset('mid_level_improving')">Alex Rivera (SDE-2 - 83/100)</button>
+        <button class="preset-btn" id="btn-preset-junior" onclick="loadCandidatePreset('junior_bootcamp')">Jordan Chen (Early Career - 68/100)</button>
+      </div>
+    </div>
+
+    <!-- Cockpit Grid -->
+    <div class="cockpit-grid">
+      <!-- Left: Sliders & Controls -->
+      <div class="panel">
+        <h2 class="panel-title"><span>⚙️</span> Candidate Telemetry & Calibration</h2>
+
+        <div class="form-group">
+          <label for="cand-name">Candidate Full Name</label>
+          <input type="text" class="form-control" id="cand-name" value="Preetham J (Staff / Senior Candidate)">
+        </div>
+
+        <div class="form-group">
+          <label for="cand-target">Target Tier & Role</label>
+          <select class="form-control" id="cand-target">
+            <option value="Google L5">Google L5 (Senior SWE)</option>
+            <option value="Meta E5">Meta E5 (Senior SWE)</option>
+            <option value="Amazon SDE-2">Amazon SDE-2</option>
+            <option value="Stripe L3">Stripe L3</option>
+            <option value="Microsoft L62">Microsoft L62</option>
+          </select>
+        </div>
+
+        <!-- Dimension Sliders -->
+        <div class="form-group">
+          <label>
+            <span>1. Coding Prowess (35% Weight)</span>
+            <span class="slider-val" id="val-coding">96</span>
+          </label>
+          <input type="range" class="range-input" id="range-coding" min="0" max="100" value="96" oninput="updateSlider('coding', this.value)">
+        </div>
+
+        <div class="form-group">
+          <label>
+            <span>2. System Design & Latency (30% Weight)</span>
+            <span class="slider-val" id="val-system">94</span>
+          </label>
+          <input type="range" class="range-input" id="range-system" min="0" max="100" value="94" oninput="updateSlider('system', this.value)">
+        </div>
+
+        <div class="form-group">
+          <label>
+            <span>3. Behavioral & STAR (20% Weight)</span>
+            <span class="slider-val" id="val-behavioral">92</span>
+          </label>
+          <input type="range" class="range-input" id="range-behavioral" min="0" max="100" value="92" oninput="updateSlider('behavioral', this.value)">
+        </div>
+
+        <div class="form-group">
+          <label>
+            <span>4. ATS & Recruiter Signal (15% Weight)</span>
+            <span class="slider-val" id="val-resume">95</span>
+          </label>
+          <input type="range" class="range-input" id="range-resume" min="0" max="100" value="95" oninput="updateSlider('resume', this.value)">
+        </div>
+
+        <button class="btn-calc" id="btn-recalculate" onclick="calculateExecutiveReadiness()">
+          <span>⚡</span> Re-Calculate Readiness & Mint Credential
+        </button>
+      </div>
+
+      <!-- Right: Command Center Visuals -->
+      <div class="panel">
+        <h2 class="panel-title"><span>📊</span> Composite Readiness Cockpit</h2>
+
+        <!-- KPIs Strip -->
+        <div class="kpis-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Composite Readiness</div>
+            <div class="kpi-val" id="res-composite-score" style="color:var(--accent-emerald);">94 / 100</div>
+            <div class="kpi-sub" id="res-percentile">93.1th Percentile</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">Placement Verdict</div>
+            <div class="kpi-val" id="res-verdict" style="font-size:1.15rem; color:var(--accent-emerald);">FAANG_READY</div>
+            <div class="kpi-sub">Top 5% Talent Pool</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">Preparation Momentum</div>
+            <div class="kpi-val" id="res-momentum" style="color:var(--accent-gold);">🔥 14 Days</div>
+            <div class="kpi-sub" id="res-drills-stat">42 Drills • 20 Features Active</div>
+          </div>
+        </div>
+
+        <!-- 4-Vector Breakdown -->
+        <h3 style="font-size:0.95rem; font-weight:700; margin-bottom:0.75rem; color:var(--accent-cyan);">
+          Multi-Dimensional Mastery Breakdown:
+        </h3>
+        <div class="vector-bars" id="vector-bars-container">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Company Clearance Matrix -->
+        <h3 style="font-size:0.95rem; font-weight:700; margin-bottom:0.75rem; color:var(--accent-purple);">
+          Target Company Offer Probability Matrix:
+        </h3>
+        <table class="company-table">
+          <thead>
+            <tr>
+              <th>Target Tier</th>
+              <th>Calculated Score</th>
+              <th>Pass Probability</th>
+              <th>Comp Band</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="company-matrix-body">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+
+        <!-- Cryptographic Verifiable Credential -->
+        <div class="credential-card" id="credential-card">
+          <div class="cred-header">
+            <div>
+              <div class="cred-title">VERIFIED FAANG PLACEMENT CREDENTIAL</div>
+              <div class="cred-id" id="cred-hash">SHA256: bcc44b4afe204e4f426757ef</div>
+            </div>
+            <div style="font-family:'JetBrains Mono', monospace; font-size:0.85rem; color:var(--accent-gold);" id="cred-id-display">
+              PHX-F4034D85-2026
+            </div>
+          </div>
+
+          <div class="cred-body">
+            <div>
+              <p style="font-size:1rem; font-weight:700; color:#fff;" id="cred-candidate-name">Preetham J (Staff / Senior Candidate)</p>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem;">
+                Has demonstrated verified mastery across algorithmic complexity, distributed consensus, low-latency architectures, and bar-raiser leadership rubrics.
+              </p>
+              <p style="font-size:0.8rem; color:var(--accent-cyan); margin-top:0.5rem; font-family:'JetBrains Mono', monospace;" id="cred-issued">
+                Issued by Phoenix OS Placement Authority • Sep 7, 2026
+              </p>
+            </div>
+
+            <div class="cred-seal">
+              <div class="cred-seal-icon">🎖️</div>
+              <div class="cred-seal-text">VERIFIED FAANG READY</div>
+            </div>
+          </div>
+
+          <div class="cred-actions">
+            <button class="btn-cred-action" id="btn-copy-cred" onclick="copyCredentialLink()">
+              🔗 Copy Shareable Link
+            </button>
+            <button class="btn-cred-action" id="btn-export-badge" onclick="exportCredentialBadge()">
+              📜 Export Verified Certificate
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-msg">Readiness evaluated!</div>
+
+  <script>
+    let presetsCache = [];
+    let currentDrills = 42;
+    let currentStreak = 14;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/prep/readiness/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          presetsCache = data.presets;
+          loadCandidatePreset('faang_senior_ready');
+        }
+      } catch (err) {
+        console.error('Failed to load readiness presets:', err);
+      }
+    }
+
+    function updateSlider(dim, val) {
+      document.getElementById(`val-${dim}`).innerText = val;
+    }
+
+    function loadCandidatePreset(presetId) {
+      const p = presetsCache.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.getElementById('cand-name').value = p.name;
+      document.getElementById('range-coding').value = p.codingScore;
+      document.getElementById('val-coding').innerText = p.codingScore;
+      document.getElementById('range-system').value = p.systemDesignScore;
+      document.getElementById('val-system').innerText = p.systemDesignScore;
+      document.getElementById('range-behavioral').value = p.behavioralScore;
+      document.getElementById('val-behavioral').innerText = p.behavioralScore;
+      document.getElementById('range-resume').value = p.resumeScore;
+      document.getElementById('val-resume').innerText = p.resumeScore;
+
+      currentDrills = p.drillsCompleted;
+      currentStreak = p.streakDays;
+
+      calculateExecutiveReadiness();
+      showToast(`Loaded candidate profile: ${p.name}`);
+    }
+
+    async function calculateExecutiveReadiness() {
+      const candidateName = document.getElementById('cand-name').value;
+      const targetCompany = document.getElementById('cand-target').value;
+      const codingScore = document.getElementById('range-coding').value;
+      const systemDesignScore = document.getElementById('range-system').value;
+      const behavioralScore = document.getElementById('range-behavioral').value;
+      const resumeScore = document.getElementById('range-resume').value;
+
+      try {
+        const res = await fetch('/api/v1/prep/readiness/evaluate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            candidateName,
+            targetCompany,
+            codingScore,
+            systemDesignScore,
+            behavioralScore,
+            resumeScore,
+            streakDays: currentStreak,
+            drillsCompleted: currentDrills
+          })
+        });
+
+        const data = await res.json();
+        if (data.success && data.data) {
+          renderDashboard(data.data);
+        }
+      } catch (err) {
+        alert('Failed to evaluate readiness: ' + err.message);
+      }
+    }
+
+    function renderDashboard(data) {
+      document.getElementById('res-composite-score').innerText = `${data.compositeScore} / 100`;
+      document.getElementById('res-composite-score').style.color = data.verdictColor;
+      document.getElementById('res-percentile').innerText = data.percentile;
+      document.getElementById('res-verdict').innerText = data.verdict.replace(/_/g, ' ');
+      document.getElementById('res-verdict').style.color = data.verdictColor;
+      document.getElementById('res-momentum').innerText = `🔥 ${data.activityStats.streakDays} Days`;
+      document.getElementById('res-drills-stat').innerText = `${data.activityStats.drillsCompleted} Drills • ${data.activityStats.totalPillar1FeaturesVerified} Features Active`;
+
+      // Render 4-vector bars
+      const vecContainer = document.getElementById('vector-bars-container');
+      vecContainer.innerHTML = '';
+      data.vectors.forEach(v => {
+        const card = document.createElement('div');
+        card.className = 'vector-card';
+        const barColor = v.score >= 88 ? 'var(--accent-emerald)' : (v.score >= 75 ? 'var(--accent-cyan)' : 'var(--accent-amber)');
+        card.innerHTML = `
+          <div class="vector-header">
+            <span><strong>${v.name}</strong></span>
+            <span style="font-family:'JetBrains Mono'; font-weight:700; color:${barColor};">${v.score}/100</span>
+          </div>
+          <div class="vector-bar-outer">
+            <div class="vector-bar-inner" style="width: ${v.score}%; background: ${barColor};"></div>
+          </div>
+          <div class="vector-meta">
+            <span>${v.status}</span>
+            <span>${v.percentile} Rank (${v.weight})</span>
+          </div>
+        `;
+        vecContainer.appendChild(card);
+      });
+
+      // Render Company Clearance Matrix
+      const compBody = document.getElementById('company-matrix-body');
+      compBody.innerHTML = '';
+      data.companyReadinessMatrix.forEach(item => {
+        const tr = document.createElement('tr');
+        const badgeClass = item.clearedBar ? 'badge-cleared' : (item.compositeScore >= item.benchmarkBar - 8 ? 'badge-near' : 'badge-gap');
+        const badgeLabel = item.clearedBar ? 'OFFER BAR MET' : 'TARGET GAP';
+        tr.innerHTML = `
+          <td><strong>${item.companyTier}</strong></td>
+          <td style="font-family:'JetBrains Mono'; font-weight:700;">${item.compositeScore} / ${item.benchmarkBar}</td>
+          <td style="font-family:'JetBrains Mono'; color:var(--accent-cyan); font-weight:700;">${item.passProbability}</td>
+          <td style="font-size:0.8rem; color:var(--text-muted);">${item.compBand}</td>
+          <td><span class="status-badge ${badgeClass}">${badgeLabel}</span></td>
+        `;
+        compBody.appendChild(tr);
+      });
+
+      // Credential update
+      document.getElementById('cred-hash').innerText = `SHA256: ${data.credential.verificationHash}`;
+      document.getElementById('cred-id-display').innerText = data.credential.credentialId;
+      document.getElementById('cred-candidate-name').innerText = data.credential.candidateName;
+      document.getElementById('cred-issued').innerText = `Issued by ${data.credential.issuer} • ${data.credential.issuedAt}`;
+    }
+
+    function copyCredentialLink() {
+      const id = document.getElementById('cred-id-display').innerText;
+      navigator.clipboard.writeText(`https://phoenix.io/credentials/verify/${id}`).catch(() => {});
+      showToast(`Credential link copied: ${id}`);
+    }
+
+    function exportCredentialBadge() {
+      showToast('Verified cryptographic certificate exported!');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

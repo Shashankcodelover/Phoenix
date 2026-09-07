@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Demo Video Script & Teleprompter Studio | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-coral: #fb7185;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(251, 113, 133, 0.15);
+      border: 1px solid rgba(251, 113, 133, 0.35);
+      color: var(--accent-coral);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-coral), var(--accent-amber));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(251, 113, 133, 0.1);
+      border: 1px solid rgba(251, 113, 133, 0.25);
+      color: #ffe4e6;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-coral);
+      color: #070d18;
+      border-color: var(--accent-coral);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(251, 113, 133, 0.4);
+    }
+
+    /* Main Studio Grid */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      gap: 1.5rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #fff;
+    }
+
+    /* Teleprompter Display Box (Loom / Descript style) */
+    .teleprompter-box {
+      background: #050b14;
+      border: 2px solid rgba(251, 113, 133, 0.3);
+      border-radius: 12px;
+      height: 380px;
+      overflow-y: scroll;
+      padding: 2rem;
+      position: relative;
+      scroll-behavior: smooth;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+      margin-bottom: 1.25rem;
+    }
+    .teleprompter-text {
+      font-size: 1.5rem;
+      font-weight: 600;
+      line-height: 1.8;
+      color: #f1f5f9;
+      transition: color 0.2s;
+    }
+    .teleprompter-text .cue-highlight {
+      color: var(--accent-coral);
+      background: rgba(251, 113, 133, 0.15);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      display: block;
+      margin: 1.5rem 0 0.5rem 0;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Studio Controls */
+    .prompter-controls {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .btn-prompter {
+      background: var(--accent-coral);
+      color: #070d18;
+      border: none;
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+    .btn-prompter:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+    .btn-speed {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0.5rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-speed.active {
+      background: var(--accent-cyan);
+      color: #070d18;
+      border-color: var(--accent-cyan);
+    }
+
+    /* Right: Second-by-Second Visual Cue List */
+    .cue-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-height: 520px;
+      overflow-y: auto;
+    }
+    .cue-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 0.85rem;
+      border-left: 3px solid var(--accent-coral);
+      transition: all 0.2s;
+    }
+    .cue-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.35rem;
+    }
+    .cue-timestamp { color: var(--accent-cyan); font-weight: 700; }
+    .cue-type { color: var(--accent-amber); text-transform: uppercase; }
+    .cue-screen-action {
+      font-size: 0.8rem;
+      color: var(--accent-emerald);
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+    .cue-script {
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    /* Pacing Assessment Card */
+    .pacing-card {
+      background: linear-gradient(135deg, rgba(251, 113, 133, 0.15), rgba(245, 158, 11, 0.1));
+      border: 1px solid rgba(251, 113, 133, 0.3);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+    .pacing-val {
+      font-size: 1.8rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+    }
+    .pacing-status {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-emerald);
+      margin-top: 0.25rem;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: rgba(251, 113, 133, 0.95);
+      border: 1px solid #fb7185;
+      color: #070d18;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🦅</span> Phoenix OS
+      <span class="nav-badge">Pillar 2 • Feature 30</span>
+    </div>
+    <div class="nav-links">
+      <a href="/hackathon-agent/arch-visualizer.html">Arch Visualizer</a>
+      <a href="/hackathon-agent/moat-auditor.html">Moat Auditor</a>
+      <a href="/hackathon-agent/demo-sandbox.html">Demo Sandbox</a>
+      <a href="/hackathon-agent/team-synergy.html">Team Synergy</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Live Demo Video Script & Teleprompter Studio</h1>
+      <p class="hero-subtitle">
+        Loom & Descript-grade video production suite: choreograph second-by-second founder speeches, auto-scroll calibrated teleprompter text at 135 WPM, and sync screen actions with live demo transitions.
+      </p>
+
+      <!-- Presets Bar -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">VIDEO SCRIPTS:</span>
+        <button class="preset-btn active" id="btn-script-aegis" onclick="selectScriptPreset('demo_video_aegis')">Aegis Swarm (120s Grand Prize Demo)</button>
+        <button class="preset-btn" id="btn-script-oncomatch" onclick="selectScriptPreset('demo_video_oncomatch')">OncoMatch ZK (60s Lightning Pitch)</button>
+      </div>
+    </div>
+
+    <!-- Studio Grid -->
+    <div class="studio-grid">
+      <!-- Left: Teleprompter & Controls -->
+      <div class="panel">
+        <h2 class="panel-title"><span>📜</span> Live Scrolling Teleprompter Studio</h2>
+
+        <!-- Controls -->
+        <div class="prompter-controls">
+          <button class="btn-prompter" id="btn-toggle-prompter" onclick="togglePrompter()">
+            <span>▶</span> <span id="prompter-btn-text">Start Teleprompter</span>
+          </button>
+          <button class="btn-speed active" id="speed-1" onclick="setSpeed(1.0)">1.0x (135 WPM)</button>
+          <button class="btn-speed" id="speed-15" onclick="setSpeed(1.5)">1.5x (Speed Drill)</button>
+          <button class="btn-speed" id="speed-reset" onclick="resetPrompter()">Reset Scroll</button>
+        </div>
+
+        <!-- Prompter Box -->
+        <div class="teleprompter-box" id="teleprompter-box">
+          <div class="teleprompter-text" id="teleprompter-text">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Second-by-Second Cues & Pacing -->
+      <div class="panel">
+        <!-- Pacing Assessment -->
+        <div class="pacing-card">
+          <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Speech Rhythm & Pace</div>
+          <div class="pacing-val" id="pacing-duration">120 Seconds</div>
+          <div class="pacing-status" id="pacing-status">PERFECT_PACING (Calibrated to 138 WPM)</div>
+        </div>
+
+        <!-- Cue Timeline -->
+        <h2 class="panel-title"><span>🎬</span> Visual Screen Cues Timeline</h2>
+        <div class="cue-timeline" id="cue-timeline">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-msg">Script loaded!</div>
+
+  <script>
+    let presets = [];
+    let currentScript = null;
+    let isScrolling = false;
+    let scrollSpeed = 1.0;
+    let scrollInterval = null;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/agent/demo-script/presets');
+        const data = await res.json();
+        if (data.success) {
+          presets = data.presets;
+          selectScriptPreset('demo_video_aegis');
+        }
+      } catch (err) {
+        console.error('Failed to load demo script presets:', err);
+      }
+    }
+
+    function selectScriptPreset(scriptId) {
+      currentScript = presets.find(s => s.id === scriptId) || presets[0];
+      resetPrompter();
+
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(scriptId === 'demo_video_aegis' ? 'btn-script-aegis' : 'btn-script-oncomatch');
+      if (activeBtn) activeBtn.classList.add('active');
+
+      renderPrompterText(currentScript.cues);
+      renderCueTimeline(currentScript.cues);
+      calculateTiming();
+
+      showToast(`Loaded ${currentScript.title}!`);
+    }
+
+    function renderPrompterText(cues) {
+      const container = document.getElementById('teleprompter-text');
+      container.innerHTML = '';
+      cues.forEach(cue => {
+        const cueTag = document.createElement('div');
+        cueTag.className = 'cue-highlight';
+        cueTag.innerText = `[${cue.timeStart}s - ${cue.timeEnd}s] ACTION: ${cue.screenAction}`;
+        
+        const speechPara = document.createElement('p');
+        speechPara.style.marginBottom = '1.5rem';
+        speechPara.innerText = cue.spokenText;
+
+        container.appendChild(cueTag);
+        container.appendChild(speechPara);
+      });
+    }
+
+    function renderCueTimeline(cues) {
+      const timeline = document.getElementById('cue-timeline');
+      timeline.innerHTML = '';
+      cues.forEach(cue => {
+        const card = document.createElement('div');
+        card.className = 'cue-card';
+        card.innerHTML = `
+          <div class="cue-header">
+            <span class="cue-timestamp">${cue.timeStart}s - ${cue.timeEnd}s</span>
+            <span class="cue-type">${cue.cueType.replace(/_/g, ' ')}</span>
+          </div>
+          <div class="cue-screen-action">🖥️ ${cue.screenAction}</div>
+          <div class="cue-script">"${cue.spokenText}"</div>
+        `;
+        timeline.appendChild(card);
+      });
+    }
+
+    async function calculateTiming() {
+      try {
+        const res = await fetch('/api/v1/agent/demo-script/timing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            scriptId: currentScript.id,
+            speechRateWpm: currentScript.targetWpm
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('pacing-duration').innerText = `${data.estimatedDurationSeconds} Seconds (${data.totalWordCount} Words)`;
+          document.getElementById('pacing-status').innerText = `${data.pacingAssessment} (Calibrated to ${currentScript.targetWpm} WPM)`;
+        }
+      } catch (err) {
+        console.error('Failed to calculate timing:', err);
+      }
+    }
+
+    function togglePrompter() {
+      if (isScrolling) {
+        pausePrompter();
+      } else {
+        startPrompter();
+      }
+    }
+
+    function startPrompter() {
+      isScrolling = true;
+      document.getElementById('prompter-btn-text').innerText = 'Pause Teleprompter';
+      const box = document.getElementById('teleprompter-box');
+      scrollInterval = setInterval(() => {
+        box.scrollTop += 1 * scrollSpeed;
+      }, 30);
+      showToast('Teleprompter running...');
+    }
+
+    function pausePrompter() {
+      isScrolling = false;
+      document.getElementById('prompter-btn-text').innerText = 'Start Teleprompter';
+      clearInterval(scrollInterval);
+    }
+
+    function resetPrompter() {
+      pausePrompter();
+      document.getElementById('teleprompter-box').scrollTop = 0;
+    }
+
+    function setSpeed(speed) {
+      scrollSpeed = speed;
+      document.querySelectorAll('.btn-speed').forEach(b => b.classList.remove('active'));
+      if (speed === 1.0) document.getElementById('speed-1').classList.add('active');
+      if (speed === 1.5) document.getElementById('speed-15').classList.add('active');
+      showToast(`Set scrolling pace to ${speed}x!`);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

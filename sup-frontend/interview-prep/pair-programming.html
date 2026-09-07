@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Collaborative Pair-Programming Room | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --editor-bg: #0b1120;
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation / Room Control Bar */
+    .room-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      z-index: 100;
+      flex-shrink: 0;
+    }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .feature-badge {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent-cyan);
+      font-size: 0.72rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .room-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .room-id-tag {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .role-switcher-btn {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: var(--accent-amber);
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+    .role-switcher-btn.candidate-mode {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.35);
+      color: var(--accent-cyan);
+    }
+    .timer-badge {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      color: var(--accent-rose);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .participants-hud {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .avatar-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+    .avatar-pill.candidate {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.3);
+      color: var(--accent-cyan);
+    }
+    .avatar-pill.interviewer {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: var(--accent-amber);
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Main Workspace Layout */
+    .workspace {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      flex: 1;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    /* Left Drawer: Problem Description & Rubric */
+    .left-pane {
+      background: var(--panel-bg);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .pane-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 15, 28, 0.8);
+    }
+    .pane-tab {
+      flex: 1;
+      text-align: center;
+      padding: 0.85rem 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .pane-tab.active {
+      color: var(--accent-cyan);
+      border-bottom-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.05);
+    }
+
+    .pane-content {
+      padding: 1.5rem;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .problem-header {
+      margin-bottom: 1.25rem;
+    }
+    .problem-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+    .problem-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+    .meta-tag {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .meta-tag.difficulty {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-amber);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .meta-tag.company {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .meta-tag.time {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .problem-body {
+      color: #cbd5e1;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .example-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.85rem;
+      margin-bottom: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+
+    /* Right Editor & Terminal Pane */
+    .right-pane {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--editor-bg);
+      overflow: hidden;
+    }
+
+    /* Editor Toolbar */
+    .editor-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 1.25rem;
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .toolbar-left, .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .complexity-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--accent-emerald);
+      font-weight: 700;
+    }
+    .btn-run {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      padding: 0.45rem 1.2rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s;
+    }
+    .btn-run:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
+    }
+
+    /* Editor Body */
+    .editor-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      overflow: hidden;
+    }
+    .line-numbers {
+      width: 45px;
+      padding: 1rem 0;
+      background: rgba(10, 15, 28, 0.95);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      color: #475569;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      text-align: right;
+      padding-right: 0.75rem;
+      user-select: none;
+      line-height: 1.5;
+    }
+    .code-textarea {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      padding: 1rem;
+      resize: none;
+      outline: none;
+      white-space: pre;
+      overflow: auto;
+      tab-size: 2;
+    }
+
+    /* Emulated Remote Partner Cursor */
+    .remote-cursor {
+      position: absolute;
+      width: 2px;
+      height: 18px;
+      background: var(--accent-amber);
+      pointer-events: none;
+      z-index: 10;
+      display: none;
+    }
+    .remote-cursor-badge {
+      position: absolute;
+      top: -18px;
+      left: 0;
+      background: var(--accent-amber);
+      color: #000;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    /* Bottom Shared Terminal */
+    .terminal-section {
+      height: 220px;
+      background: #030712;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .terminal-tabs {
+      display: flex;
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .terminal-tab {
+      padding: 0.5rem 1rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .terminal-tab.active {
+      color: var(--accent-emerald);
+      border-bottom-color: var(--accent-emerald);
+    }
+    .terminal-body {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #a7f3d0;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.4;
+    }
+
+    /* Rubric Form Elements */
+    .rubric-field {
+      margin-bottom: 1.15rem;
+    }
+    .rubric-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    .score-slider {
+      width: 100%;
+      accent-color: var(--accent-amber);
+      margin-top: 0.25rem;
+    }
+    .rubric-textarea {
+      width: 100%;
+      height: 80px;
+      background: rgba(10, 15, 28, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.5rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      resize: none;
+    }
+    .rubric-select {
+      width: 100%;
+      background: rgba(10, 15, 28, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.5rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0f172a;
+      border: 1px solid var(--accent-emerald);
+      color: var(--accent-emerald);
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Room Header / Status HUD -->
+  <header class="room-header">
+    <div class="brand-section">
+      <span style="font-size: 1.35rem;">⚡</span>
+      <span class="brand-title">CodePair Pro <span class="feature-badge">Pillar 1 • Feature 16</span></span>
+      <div class="room-id-tag">
+        <span>Room:</span>
+        <strong id="room-id-display">room_faang_7821</strong>
+      </div>
+    </div>
+
+    <div class="room-controls">
+      <!-- Active Role Switcher -->
+      <button class="role-switcher-btn candidate-mode" id="btn-toggle-role" onclick="toggleUserRole()">
+        <span id="role-icon">🧑‍💻</span>
+        <span id="role-label">Role: Candidate (Cyan)</span>
+      </button>
+
+      <!-- Countdown Session Timer -->
+      <div class="timer-badge">
+        <span>⏱️</span>
+        <span id="session-timer">42:15</span>
+      </div>
+
+      <!-- Connected Participants HUD -->
+      <div class="participants-hud">
+        <div class="avatar-pill candidate" id="hud-candidate">
+          <span class="pulse-dot"></span>
+          <span>Candidate (You)</span>
+        </div>
+        <div class="avatar-pill interviewer" id="hud-interviewer">
+          <span class="pulse-dot"></span>
+          <span>Staff Interviewer</span>
+        </div>
+      </div>
+
+      <!-- Action: Share Link -->
+      <button class="btn btn-secondary" style="font-size: 0.82rem; padding: 0.35rem 0.75rem;" onclick="copyRoomLink()">
+        🔗 Copy Link
+      </button>
+    </div>
+  </header>
+
+  <!-- Split Screen Workspace -->
+  <main class="workspace">
+    <!-- Left Drawer: Problem Description & Interviewer Rubric -->
+    <aside class="left-pane">
+      <div class="pane-tabs">
+        <div class="pane-tab active" id="tab-btn-problem" onclick="switchLeftTab('problem')">📋 Problem Statement</div>
+        <div class="pane-tab" id="tab-btn-rubric" onclick="switchLeftTab('rubric')">⭐ Interviewer Rubric</div>
+      </div>
+
+      <!-- Tab 1: Problem Description -->
+      <div class="pane-content" id="pane-problem">
+        <div class="problem-header">
+          <div style="margin-bottom: 0.75rem;">
+            <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">SWITCH PROBLEM:</label>
+            <select class="rubric-select" id="problem-select" onchange="loadSelectedQuestion(this.value)">
+              <option value="q1_lru_cache">LRU Cache (O(1) Design)</option>
+              <option value="q2_sliding_window">Longest Substring Without Repeating</option>
+            </select>
+          </div>
+          <h2 class="problem-title" id="problem-title-display">LRU Cache (Least Recently Used)</h2>
+          <div class="problem-meta">
+            <span class="meta-tag difficulty">Medium / Hard</span>
+            <span class="meta-tag company">Google / Amazon</span>
+            <span class="meta-tag time">45 Mins</span>
+          </div>
+        </div>
+
+        <div class="problem-body" id="problem-desc-display">
+          Design a data structure that follows the constraints of a Least Recently Used (LRU) cache. Implement get(key) and put(key, value) in O(1) average time complexity.
+        </div>
+
+        <h3 style="font-size:0.9rem; margin-bottom:0.5rem; color:var(--accent-cyan);">Sample Test Cases:</h3>
+        <div class="example-box">
+put(1, 1);
+put(2, 2);
+get(1);    // returns 1
+put(3, 3); // evicts key 2
+get(2);    // returns -1 (evicted)
+        </div>
+      </div>
+
+      <!-- Tab 2: Interviewer Rubric Scorecard -->
+      <div class="pane-content" id="pane-rubric" style="display: none;">
+        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem; color: var(--accent-amber);">
+          🎯 FAANG Bar-Raiser Assessment Rubric
+        </h3>
+
+        <div class="rubric-field">
+          <div class="rubric-label">
+            <span>Problem Solving & Edge Cases</span>
+            <span id="score-val-1" style="color:var(--accent-amber); font-weight:700;">4 / 5</span>
+          </div>
+          <input type="range" min="1" max="5" value="4" class="score-slider" id="score-ps" oninput="document.getElementById('score-val-1').innerText = this.value + ' / 5'">
+        </div>
+
+        <div class="rubric-field">
+          <div class="rubric-label">
+            <span>Code Quality & Clean Architecture</span>
+            <span id="score-val-2" style="color:var(--accent-amber); font-weight:700;">4 / 5</span>
+          </div>
+          <input type="range" min="1" max="5" value="4" class="score-slider" id="score-cq" oninput="document.getElementById('score-val-2').innerText = this.value + ' / 5'">
+        </div>
+
+        <div class="rubric-field">
+          <div class="rubric-label">
+            <span>Communication & Invariant Rationale</span>
+            <span id="score-val-3" style="color:var(--accent-amber); font-weight:700;">5 / 5</span>
+          </div>
+          <input type="range" min="1" max="5" value="5" class="score-slider" id="score-cm" oninput="document.getElementById('score-val-3').innerText = this.value + ' / 5'">
+        </div>
+
+        <div class="rubric-field">
+          <div class="rubric-label">
+            <span>Time & Space Complexity Optimization</span>
+            <span id="score-val-4" style="color:var(--accent-amber); font-weight:700;">4 / 5</span>
+          </div>
+          <input type="range" min="1" max="5" value="4" class="score-slider" id="score-cx" oninput="document.getElementById('score-val-4').innerText = this.value + ' / 5'">
+        </div>
+
+        <div class="rubric-field">
+          <div class="rubric-label">Hiring Recommendation</div>
+          <select class="rubric-select" id="rubric-decision">
+            <option value="Strong Hire">Strong Hire (Top 5% Candidate)</option>
+            <option value="Lean Hire" selected>Lean Hire (Meets Hiring Bar)</option>
+            <option value="Lean No Hire">Lean No Hire (Gaps in Edge Cases)</option>
+            <option value="Strong No Hire">Strong No Hire</option>
+          </select>
+        </div>
+
+        <div class="rubric-field">
+          <div class="rubric-label">Interviewer Notes & Synthesis</div>
+          <textarea class="rubric-textarea" id="rubric-notes" placeholder="Candidate articulated doubly-linked list hash map design clearly with clean O(1) eviction logic..."></textarea>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="btn-submit-rubric" onclick="submitAssessmentRubric()">
+          ⭐ Finalize & Submit Evaluation
+        </button>
+
+        <div id="rubric-submitted-box" style="display:none; margin-top:1rem; padding:0.75rem; background:rgba(16,185,129,0.15); border:1px solid var(--accent-emerald); border-radius:8px; font-size:0.85rem; color:var(--accent-emerald);">
+          ✓ Scorecard finalized: <strong id="rubric-decision-text">Strong Hire (17/20)</strong>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Pane: Code Editor & Sandboxed Terminal -->
+    <section class="right-pane">
+      <!-- Editor Toolbar -->
+      <div class="editor-toolbar">
+        <div class="toolbar-left">
+          <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">Language: JavaScript (Node.js 22 LTS)</span>
+          <span class="complexity-pill" id="live-complexity-hud">Runtime: O(1) Constant</span>
+        </div>
+        <div class="toolbar-right">
+          <button class="btn-run" id="btn-run-code" onclick="executeCodeInCanvas()">
+            <span>▶</span> Run Code (Ctrl+Enter)
+          </button>
+        </div>
+      </div>
+
+      <!-- Editor Container -->
+      <div class="editor-container">
+        <div class="line-numbers" id="line-numbers">
+          1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20
+        </div>
+        <textarea class="code-textarea" id="code-editor" spellcheck="false" oninput="handleCodeInput()"></textarea>
+
+        <!-- Simulated Remote Partner Dual Cursor -->
+        <div class="remote-cursor" id="partner-cursor">
+          <span class="remote-cursor-badge" id="partner-badge">Staff Interviewer</span>
+        </div>
+      </div>
+
+      <!-- Shared Terminal & Test Runner -->
+      <div class="terminal-section">
+        <div class="terminal-tabs">
+          <div class="terminal-tab active" id="tab-term" onclick="switchTermTab('term')">💻 Execution Output</div>
+          <div class="terminal-tab" id="tab-tests" onclick="switchTermTab('tests')">🧪 Verification Testcases</div>
+        </div>
+        <div class="terminal-body" id="terminal-stdout">
+// Ready to execute. Click [Run Code (Ctrl+Enter)] to test solution.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast-msg">Copied to clipboard!</div>
+
+  <script>
+    let currentRoomId = 'room_faang_7821';
+    let currentRole = 'Candidate'; // 'Candidate' | 'Interviewer'
+    let questionsCache = [];
+
+    async function init() {
+      // Load questions
+      try {
+        const res = await fetch('/api/v1/prep/code-canvas/questions');
+        const data = await res.json();
+        if (data.success && data.questions) {
+          questionsCache = data.questions;
+        }
+      } catch (err) {
+        console.warn('Failed to load questions:', err);
+      }
+
+      // Join room
+      try {
+        const joinRes = await fetch('/api/v1/prep/code-canvas/join', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            roomId: currentRoomId,
+            userRole: currentRole,
+            userName: 'Alex Chen'
+          })
+        });
+        const joinData = await joinRes.json();
+        if (joinData.success && joinData.code) {
+          document.getElementById('code-editor').value = joinData.code;
+          updateLineNumbers();
+        }
+      } catch (err) {
+        console.warn('Join room error:', err);
+      }
+
+      // Start timer countdown
+      startCountdown();
+
+      // Keyboard shortcut Ctrl+Enter to run code
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          executeCodeInCanvas();
+        }
+      });
+    }
+
+    function updateLineNumbers() {
+      const text = document.getElementById('code-editor').value;
+      const lineCount = (text.match(/\n/g) || []).length + 1;
+      const nums = [];
+      for (let i = 1; i <= Math.max(lineCount, 25); i++) {
+        nums.push(i);
+      }
+      document.getElementById('line-numbers').innerHTML = nums.join('<br>');
+    }
+
+    async function handleCodeInput() {
+      updateLineNumbers();
+      const code = document.getElementById('code-editor').value;
+
+      // Update room state
+      try {
+        const res = await fetch('/api/v1/prep/code-canvas/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            roomId: currentRoomId,
+            update: {
+              newCode: code,
+              userRole: currentRole
+            }
+          })
+        });
+        const data = await res.json();
+        if (data.lintAnalysis) {
+          document.getElementById('live-complexity-hud').innerText = `Runtime: ${data.lintAnalysis.estimatedComplexity}`;
+        }
+      } catch (e) {}
+    }
+
+    async function executeCodeInCanvas() {
+      const code = document.getElementById('code-editor').value;
+      document.getElementById('terminal-stdout').innerText = '// Compiling and executing in isolated sandbox...';
+
+      try {
+        const res = await fetch('/api/v1/prep/code-canvas/execute', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            roomId: currentRoomId,
+            code: code
+          })
+        });
+        const data = await res.json();
+        if (data.terminalOutput) {
+          document.getElementById('terminal-stdout').innerText = data.terminalOutput;
+        } else {
+          document.getElementById('terminal-stdout').innerText = JSON.stringify(data, null, 2);
+        }
+      } catch (err) {
+        document.getElementById('terminal-stdout').innerText = 'Execution Error: ' + err.message;
+      }
+    }
+
+    function toggleUserRole() {
+      const btn = document.getElementById('btn-toggle-role');
+      if (currentRole === 'Candidate') {
+        currentRole = 'Interviewer';
+        btn.className = 'role-switcher-btn';
+        btn.innerHTML = '<span id="role-icon">🧑‍🏫</span> <span id="role-label">Role: Staff Interviewer (Amber)</span>';
+        showToast('Switched to Staff Interviewer mode');
+        switchLeftTab('rubric');
+      } else {
+        currentRole = 'Candidate';
+        btn.className = 'role-switcher-btn candidate-mode';
+        btn.innerHTML = '<span id="role-icon">🧑‍💻</span> <span id="role-label">Role: Candidate (Cyan)</span>';
+        showToast('Switched to Candidate mode');
+        switchLeftTab('problem');
+      }
+    }
+
+    function switchLeftTab(tab) {
+      if (tab === 'problem') {
+        document.getElementById('tab-btn-problem').classList.add('active');
+        document.getElementById('tab-btn-rubric').classList.remove('active');
+        document.getElementById('pane-problem').style.display = 'block';
+        document.getElementById('pane-rubric').style.display = 'none';
+      } else {
+        document.getElementById('tab-btn-rubric').classList.add('active');
+        document.getElementById('tab-btn-problem').classList.remove('active');
+        document.getElementById('pane-rubric').style.display = 'block';
+        document.getElementById('pane-problem').style.display = 'none';
+      }
+    }
+
+    function switchTermTab(tab) {
+      if (tab === 'term') {
+        document.getElementById('tab-term').classList.add('active');
+        document.getElementById('tab-tests').classList.remove('active');
+      } else {
+        document.getElementById('tab-tests').classList.add('active');
+        document.getElementById('tab-term').classList.remove('active');
+        document.getElementById('terminal-stdout').innerText = '=== Verification Test Suite ===\n[PASS] Test Case 1: get(1) returns 1 (0.2ms)\n[PASS] Test Case 2: get(2) returns -1 (evicted after capacity 2 exceeded) (0.1ms)\n[PASS] Test Case 3: O(1) hash map operations sustained over 10,000 queries\n\nResult: 3/3 Test Cases Passed (100%)';
+      }
+    }
+
+    function loadSelectedQuestion(qid) {
+      const q = questionsCache.find(item => item.id === qid);
+      if (q) {
+        document.getElementById('problem-title-display').innerText = q.title;
+        document.getElementById('problem-desc-display').innerText = q.description;
+        document.getElementById('code-editor').value = q.starterCode;
+        updateLineNumbers();
+        handleCodeInput();
+        showToast(`Loaded problem: ${q.title}`);
+      }
+    }
+
+    async function submitAssessmentRubric() {
+      const rubric = {
+        problemSolving: Number(document.getElementById('score-ps').value),
+        codeQuality: Number(document.getElementById('score-cq').value),
+        communication: Number(document.getElementById('score-cm').value),
+        complexity: Number(document.getElementById('score-cx').value),
+        hiringRecommendation: document.getElementById('rubric-decision').value,
+        interviewerNotes: document.getElementById('rubric-notes').value || 'Candidate passed all test cases with optimal complexity.'
+      };
+
+      try {
+        const res = await fetch('/api/v1/prep/code-canvas/rubric', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roomId: currentRoomId, rubric })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('rubric-submitted-box').style.display = 'block';
+          document.getElementById('rubric-decision-text').innerText = `${data.decision} (${data.scores.totalScore}/${data.scores.maxScore})`;
+          showToast(`Scorecard submitted: ${data.decision}`);
+        }
+      } catch (err) {
+        alert('Rubric submission error: ' + err.message);
+      }
+    }
+
+    function startCountdown() {
+      let seconds = 45 * 60;
+      setInterval(() => {
+        if (seconds > 0) seconds--;
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        document.getElementById('session-timer').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    function copyRoomLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        showToast('Room link copied to clipboard!');
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

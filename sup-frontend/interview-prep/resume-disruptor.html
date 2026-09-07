@@ -3,128 +3,532 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ATS Resume Disruptor - Phoenix 10000X</title>
-  <link rel="stylesheet" href="../phoenix.css">
+  <title>ATS Resume Disruptor & FAANG Bullet Enhancer — Phoenix Placement OS</title>
+  <meta name="description" content="Commercial-grade ATS resume auditor and Google XYZ formula rewriter. Real-time keyword gap analysis, metric density score, and 1-click ATS markdown exporter.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    .ats-score-box {
-      background: rgba(0, 245, 255, 0.05);
-      border: 1px solid var(--cyan);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      text-align: center;
+    :root {
+      --bg-dark: #030712;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --bg-card-hover: rgba(30, 41, 59, 0.95);
+      --border-glass: rgba(255, 255, 255, 0.08);
+
+      --purple-primary: #8b5cf6;
+      --purple-light: #a78bfa;
+      --cyan-primary: #06b6d4;
+      --cyan-light: #22d3ee;
+      --emerald-primary: #10b981;
+      --emerald-light: #34d399;
+      --amber-primary: #f59e0b;
+      --coral-primary: #f43f5e;
+      --coral-light: #fda4af;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 26px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 10% 15%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 90% 25%, rgba(6, 182, 212, 0.10) 0%, transparent 50%),
+        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 16px 28px 80px;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
       margin-bottom: 20px;
     }
-    .bullet-card {
-      background: rgba(123, 47, 247, 0.04);
-      border-left: 3px solid var(--purple);
-      padding: 12px 16px;
-      border-radius: 0 var(--radius-md) var(--radius-md) 0;
-      margin-bottom: 10px;
-      font-size: 0.88rem;
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
     }
+    .brand-logo {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple-primary), var(--cyan-primary));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+    }
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff, var(--purple-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .top-nav-links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .nav-btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .nav-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    /* Main Grid Layout */
+    .disruptor-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+    }
+
+    .editor-card, .results-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Form Controls */
+    .section-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-glass);
+    }
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .role-select-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .custom-select {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+    .btn-sample-load {
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .btn-sample-load:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+
+    .resume-textarea {
+      width: 100%;
+      height: 380px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      margin-bottom: 16px;
+    }
+    .resume-textarea:focus { border-color: var(--purple-primary); }
+
+    .btn-scan-disrupt {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--purple-primary), var(--cyan-primary));
+      border: none;
+      border-radius: var(--radius-md);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-scan-disrupt:hover { opacity: 0.92; }
+
+    /* Results Panel */
+    .score-summary-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .score-pill-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      text-align: center;
+    }
+    .score-big-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--cyan-light);
+    }
+    .score-pill-title {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* Keyword Gap Box */
+    .keywords-gap-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+    }
+    .keyword-pill-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .kw-pill-matched {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald-light);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .kw-pill-missing {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: var(--coral-light);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* STAR / XYZ Bullets List */
+    .bullet-enhancement-card {
+      background: rgba(139, 92, 246, 0.05);
+      border-left: 3px solid var(--purple-primary);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #f1f5f9;
+      position: relative;
+    }
+    .bullet-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--purple-light);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    /* Markdown Export Drawer */
+    .markdown-drawer {
+      display: none;
+      background: #020617;
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-top: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #94a3b8;
+      max-height: 250px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    .markdown-drawer.open { display: block; }
   </style>
 </head>
 <body>
+  <div class="ambient-glow"></div>
 
-  <nav class="navbar">
-    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">PHOENIX</div>
-    <ul class="nav-links">
-      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
-      <li><a href="./roadmap.html">Roadmap</a></li>
-      <li><a href="./practice.html">Mock Interview</a></li>
-      <li><a href="./resume-disruptor.html" class="active">📝 ATS Resume Disruptor</a></li>
-      <li><a href="../profile/profile.html">👤 Profile</a></li>
-    </ul>
-  </nav>
-
-  <canvas id="particles"></canvas>
-
-  <div class="container">
-    <div class="page-header">
-      <h1>📝 ATS Resume Disruptor Engine</h1>
-      <p>Disrupt traditional resume screening. Optimize your bullet points into quantified STAR impact statements aligned with Google, Meta, and Amazon recruiter criteria.</p>
-    </div>
-
-    <div class="flex-row">
-      <!-- LEFT: Input -->
-      <div class="col-main">
-        <div class="glass-card">
-          <form id="disruptForm">
-            <div class="form-group">
-              <label>Target Role Tier</label>
-              <select id="targetRole">
-                <option value="google_sde">Google SDE / Software Engineer</option>
-                <option value="ai_engineer">AI & Machine Learning Engineer</option>
-                <option value="fullstack_lead">Fullstack Tech Lead</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Paste Resume Text / Bullets</label>
-              <textarea id="resumeContent" rows="12" placeholder="Paste your work experience bullets or summary here..." required style="font-size: 0.85rem;"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%;">⚡ Run ATS Scan & Disrupt Bullets</button>
-          </form>
+  <div class="app-container">
+    <!-- Top Nav -->
+    <header class="top-nav">
+      <div class="brand-section" onclick="window.location.href='./questions.html'">
+        <div class="brand-logo">⚡</div>
+        <div>
+          <div class="brand-title">PHOENIX PLACEMENT OS</div>
         </div>
       </div>
+      <div class="top-nav-links">
+        <a href="./questions.html" class="nav-btn">Company Radar</a>
+        <a href="./practice.html" class="nav-btn">AI Voice Examiner</a>
+        <a href="./cramming.html" class="nav-btn">Cramming Sheets</a>
+        <a href="./resume-disruptor.html" class="nav-btn active">ATS Disruptor</a>
+        <a href="../horizon/world-dashboard.html" class="nav-btn">Studio & Arena</a>
+        <a href="../auth/login.html" class="nav-btn" style="color: var(--coral-light);" onclick="window.PhoenixAuth && window.PhoenixAuth.logout()">Logout</a>
+      </div>
+    </header>
 
-      <!-- RIGHT: Results -->
-      <div class="col-sidebar">
-        <div class="ats-score-box">
-          <h4 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">ATS Match Score</h4>
-          <div style="font-size: 3rem; font-weight: 900; color: var(--cyan); margin: 6px 0;" id="scoreDisplay">--</div>
-          <span class="badge badge-purple" id="matchKeywordBadge">Keyword Match: --</span>
+    <!-- Main 2-Column Grid -->
+    <div class="disruptor-layout">
+      <!-- Left: Editor & Role Configuration -->
+      <div class="editor-card">
+        <div class="section-title-bar">
+          <div class="section-title">
+            <span>📝</span> ATS Resume Parser & Optimizer
+          </div>
+          <button class="btn-sample-load" onclick="loadSampleResume()">
+            ⚡ Load FAANG Sample Resume
+          </button>
         </div>
 
-        <div class="glass-card">
-          <h3 class="font-space mb-2" style="font-size: 1.1rem; color: var(--purple);">✨ STAR Impact Bullets</h3>
-          <div id="bulletsContainer">
-            <p style="color:var(--text-muted); font-size:0.85rem;">STAR formatted bullet points will appear here.</p>
+        <div class="role-select-bar">
+          <select class="custom-select" id="targetRoleSelect">
+            <option value="google_sde">Google SDE / Systems Engineer</option>
+            <option value="ai_engineer">AI & Machine Learning Infrastructure</option>
+            <option value="fullstack_lead">Fullstack Tech Lead & Architecture</option>
+            <option value="distributed_systems">Distributed Systems L5 (Kafka/Raft)</option>
+          </select>
+        </div>
+
+        <textarea class="resume-textarea" id="resumeInput" placeholder="Paste your raw resume text, work experience bullets, or project accomplishments here..."></textarea>
+
+        <button class="btn-scan-disrupt" id="scanBtn" onclick="runAtsDisruptorScan()">
+          <span>⚡ Run ATS Scan & XYZ Bullet Disruptor</span>
+        </button>
+      </div>
+
+      <!-- Right: Real-Time Radar & Bullet Enhancer -->
+      <div class="results-card">
+        <div class="section-title-bar">
+          <div class="section-title">
+            <span>🎯</span> ATS Screening Calibration
           </div>
+          <button class="btn-sample-load" onclick="toggleMarkdownDrawer()">
+            📋 View Clean ATS Markdown
+          </button>
+        </div>
+
+        <!-- Scores Breakdown -->
+        <div class="score-summary-grid">
+          <div class="score-pill-box">
+            <div class="score-big-num" id="atsScoreVal">--</div>
+            <div class="score-pill-title">ATS Composite Score</div>
+          </div>
+          <div class="score-pill-box">
+            <div class="score-big-num" style="color: var(--purple-light);" id="keywordScoreVal">--</div>
+            <div class="score-pill-title">Keyword Match</div>
+          </div>
+          <div class="score-pill-box">
+            <div class="score-big-num" style="color: var(--emerald-light);" id="xyzScoreVal">--</div>
+            <div class="score-pill-title">Google XYZ Formula</div>
+          </div>
+        </div>
+
+        <!-- Keywords Gap Radar -->
+        <div class="keywords-gap-card">
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">
+            Keyword Coverage & Recruiter Match Gap
+          </div>
+          <div class="keyword-pill-cloud" id="matchedPillsContainer">
+            <span style="font-size: 12px; color: var(--text-dim);">Run scan to evaluate matched skills...</span>
+          </div>
+          <div class="keyword-pill-cloud" id="missingPillsContainer" style="margin-top: 10px;">
+            <!-- Missing skills -->
+          </div>
+        </div>
+
+        <!-- STAR / XYZ Rewritten Bullets -->
+        <div style="flex: 1; overflow-y: auto;">
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px;">
+            Google XYZ Enhanced Impact Statements ("Accomplished [X] by doing [Z]")
+          </div>
+          <div id="starBulletsContainer">
+            <div class="bullet-enhancement-card">
+              <span class="bullet-tag">Sample XYZ Formulation</span>
+              Accomplished 45% reduction in P99 API latency across 120k daily active users by architecting asynchronous Node.js and Redis caching pipelines.
+            </div>
+            <div class="bullet-enhancement-card">
+              <span class="bullet-tag">Sample XYZ Formulation</span>
+              Engineered zero-downtime distributed sharding using PostgreSQL and Kafka, scaling database write throughput by 3.8x under peak traffic.
+            </div>
+          </div>
+        </div>
+
+        <!-- Clean ATS Markdown Drawer -->
+        <div class="markdown-drawer" id="markdownDrawer">
+          <!-- Populated dynamically -->
         </div>
       </div>
     </div>
   </div>
 
+  <script src="../phoenix-core.js"></script>
   <script>
-    const API = 'http://localhost:5000/api/v1/prep/resume-disrupt';
+    const SAMPLE_RESUME = `Senior Software Engineer • Cloud Platforms
+• Built backend microservices in Java and Node.js for customer transactions.
+• Worked on reducing database latency and scaling user requests.
+• Implemented caching using Redis to support 50k active users.
+• Created automated unit tests and continuous integration pipelines.
+• Collaborated with product teams to design REST APIs and data schemas.`;
 
-    // Particles
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    let particles = [];
-    for (let i = 0; i < 35; i++) { particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*1.1, dx: (Math.random()-0.5)*0.12, dy: (Math.random()-0.5)*0.12 }); }
-    function animP() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(0,245,255,0.2)"; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fill(); p.x+=p.dx; p.y+=p.dy; if(p.x<0||p.x>canvas.width) p.dx*=-1; if(p.y<0||p.y>canvas.height) p.dy*=-1; }); requestAnimationFrame(animP); }
-    animP();
+    function loadSampleResume() {
+      document.getElementById('resumeInput').value = SAMPLE_RESUME;
+    }
 
-    document.getElementById('disruptForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const resumeText = document.getElementById('resumeContent').value;
-      const targetRole = document.getElementById('targetRole').value;
+    async function runAtsDisruptorScan() {
+      const text = document.getElementById('resumeInput').value.trim();
+      if (!text) {
+        alert("Please paste your resume text or click 'Load FAANG Sample Resume'.");
+        return;
+      }
 
-      document.getElementById('scoreDisplay').innerText = '...';
+      const scanBtn = document.getElementById('scanBtn');
+      scanBtn.disabled = true;
+      scanBtn.innerHTML = '<span>⏳ Scanning ATS Keywords & Formulating XYZ Bullets...</span>';
+
+      const role = document.getElementById('targetRoleSelect').value;
+      const token = (window.PhoenixAuth && window.PhoenixAuth.getToken()) || localStorage.getItem('token');
 
       try {
-        const res = await fetch(API, {
+        const res = await fetch('http://localhost:5000/api/prep/resume-disrupt', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ resumeText, targetRole })
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
+          },
+          body: JSON.stringify({ resumeText: text, targetRole: role })
         });
+
         const data = await res.json();
-
-        document.getElementById('scoreDisplay').innerText = `${data.atsScore || 85}%`;
-        document.getElementById('matchKeywordBadge').innerText = `Keyword Match: ${data.keywordMatchScore || 70}%`;
-
-        const bContainer = document.getElementById('bulletsContainer');
-        bContainer.innerHTML = (data.starBullets || []).map(b => `
-          <div class="bullet-card">${b}</div>
-        `).join('');
+        renderScanResults(data);
       } catch (err) {
-        document.getElementById('scoreDisplay').innerText = 'Err';
+        console.error("Scan error:", err);
+      } finally {
+        scanBtn.disabled = false;
+        scanBtn.innerHTML = '<span>⚡ Run ATS Scan & XYZ Bullet Disruptor</span>';
       }
+    }
+
+    function renderScanResults(data) {
+      document.getElementById('atsScoreVal').textContent = `${data.atsScore || 85}%`;
+      document.getElementById('keywordScoreVal').textContent = `${data.keywordMatchScore || 60}%`;
+      document.getElementById('xyzScoreVal').textContent = `${data.xyzFormulaScore || 90}%`;
+
+      // Render Matched & Missing Keywords
+      const matchedBox = document.getElementById('matchedPillsContainer');
+      const missingBox = document.getElementById('missingPillsContainer');
+
+      matchedBox.innerHTML = '<strong style="font-size: 11px; color: var(--emerald-light); margin-right: 6px;">Matched:</strong> ' +
+        (data.matchedKeywords && data.matchedKeywords.length > 0
+          ? data.matchedKeywords.map(k => `<span class="kw-pill-matched">✓ ${k}</span>`).join(' ')
+          : '<span style="font-size: 11px; color: var(--text-dim);">None detected</span>');
+
+      missingBox.innerHTML = '<strong style="font-size: 11px; color: var(--coral-light); margin-right: 6px;">Missing FAANG Tags:</strong> ' +
+        (data.missingKeywords && data.missingKeywords.length > 0
+          ? data.missingKeywords.map(k => `<span class="kw-pill-missing">+ ${k}</span>`).join(' ')
+          : '<span style="font-size: 11px; color: var(--text-dim);">Zero missing! High ATS alignment</span>');
+
+      // Render Enhanced Bullets
+      const bulletsBox = document.getElementById('starBulletsContainer');
+      if (data.starBullets && data.starBullets.length > 0) {
+        bulletsBox.innerHTML = data.starBullets.map((b, idx) => `
+          <div class="bullet-enhancement-card">
+            <span class="bullet-tag">Google XYZ Enhancement #${idx + 1}</span>
+            ${escapeHtml(b)}
+          </div>
+        `).join('');
+      }
+
+      // Populate Clean Markdown
+      const drawer = document.getElementById('markdownDrawer');
+      drawer.textContent = data.cleanMarkdown || '# ATS Optimized Resume Draft\n\n- ' + (data.starBullets || []).join('\n- ');
+    }
+
+    function toggleMarkdownDrawer() {
+      const drawer = document.getElementById('markdownDrawer');
+      drawer.classList.toggle('open');
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSampleResume();
     });
   </script>
-<script src="../phoenix-core.js"></script>
-<script>Phoenix.init({ particles: true, theme: true, nav: true });</script>
 </body>
 </html>

@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salary Negotiation & Multi-Offer Comparator | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.85);
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--accent-emerald);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2.25rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 850px;
+      line-height: 1.6;
+    }
+
+    /* Preset bar */
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .preset-btn {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: var(--accent-cyan);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover {
+      background: rgba(56, 189, 248, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* Offers Input Grid */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .offers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .offer-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      position: relative;
+      transition: all 0.25s ease;
+      box-shadow: 0 10px 25px -10px rgba(0,0,0,0.5);
+    }
+    .offer-card:hover {
+      border-color: rgba(56, 189, 248, 0.45);
+    }
+    .offer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .offer-badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+    }
+    .btn-remove-offer {
+      background: transparent;
+      border: none;
+      color: var(--accent-rose);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .btn-remove-offer:hover {
+      opacity: 0.8;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+    .form-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .form-input, .form-select {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+      color: var(--text-main);
+      font-size: 0.92rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    /* Action Toolbar */
+    .action-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: white;
+      border: none;
+      padding: 0.85rem 1.85rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);
+      transition: all 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+      padding: 0.85rem 1.4rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    /* Comparison Results Area */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .insight-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .insight-card.gold {
+      border-color: rgba(245, 158, 11, 0.5);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(15, 23, 42, 0.95));
+    }
+    .insight-card.emerald {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(15, 23, 42, 0.95));
+    }
+    .insight-card.cyan {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(15, 23, 42, 0.95));
+    }
+    .insight-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+    }
+    .insight-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+    }
+    .insight-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Matrix Table */
+    .matrix-container {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      overflow-x: auto;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .comp-table th {
+      background: rgba(15, 23, 42, 0.95);
+      padding: 1rem 1.25rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .comp-table td {
+      padding: 1rem 1.25rem;
+      font-size: 0.95rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      vertical-align: middle;
+    }
+    .comp-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .tc-highlight {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--accent-cyan);
+    }
+    .percentile-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    /* Script generator panel */
+    .negotiation-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .script-output {
+      background: rgba(10, 15, 26, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+      margin-top: 1rem;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+    .talking-points-list {
+      list-style: none;
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .talking-point-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      border-left: 3px solid var(--accent-cyan);
+      font-size: 0.92rem;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0f172a;
+      border: 1px solid var(--accent-emerald);
+      color: var(--accent-emerald);
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🦅</span>
+      <span>Phoenix OS</span>
+      <span class="nav-badge">Pillar 1 • Feature 15</span>
+    </div>
+    <div class="nav-links">
+      <a href="/interview-prep/copilot-studio.html">Code Reviewer</a>
+      <a href="/interview-prep/star-vault.html">STAR Vault</a>
+      <a href="/interview-prep/sql-workbench.html">SQL Tuning</a>
+      <a href="/interview-prep/concurrency.html">Concurrency</a>
+      <a href="/interview-prep/recruiter-outreach.html">Recruiter InMail</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Salary Negotiation & Multi-Offer Comparator</h1>
+      <p class="hero-subtitle">
+        Enterprise-grade compensation intelligence benchmarking multi-year equity vesting (Amazon 5/15/40/40, Google 33/33/22/12, Meta 25/yr), state tax deduction differentials, and real purchasing power with 1-click executive counter-offer scripts.
+      </p>
+
+      <!-- Preset Scenarios -->
+      <div class="presets-bar">
+        <span class="preset-label">Benchmark Presets:</span>
+        <button class="preset-btn" id="btn-preset-1" onclick="loadPreset('faang_l5')">Google L5 (SF) vs Meta E5 (Seattle)</button>
+        <button class="preset-btn" id="btn-preset-2" onclick="loadPreset('sde2_austin')">Amazon SDE-2 (Austin) vs Stripe L2 (Remote)</button>
+        <button class="preset-btn" id="btn-preset-3" onclick="loadPreset('staff_ai')">Staff AI: Databricks vs OpenAI</button>
+      </div>
+    </div>
+
+    <!-- Active Offers Management -->
+    <div class="section-header">
+      <h2 class="section-title">
+        <span>💼</span> Active Job Offers Under Consideration
+      </h2>
+      <button class="btn-secondary" id="btn-add-offer" onclick="addNewOfferCard()">
+        <span>+</span> Add Another Offer
+      </button>
+    </div>
+
+    <!-- Offers Input Grid -->
+    <div class="offers-grid" id="offers-container">
+      <!-- Dynamic cards rendered by JS -->
+    </div>
+
+    <!-- Action Toolbar -->
+    <div class="action-toolbar">
+      <button class="btn-primary" id="btn-compare" onclick="executeComparison()">
+        <span>⚡</span> Run Side-by-Side Comparison
+      </button>
+      <button class="btn-secondary" id="btn-generate-script" onclick="generateCounterScript()">
+        <span>📝</span> Draft Executive Counter-Offer Script
+      </button>
+    </div>
+
+    <!-- Live Comparison Results -->
+    <div id="results-section" style="display: none;">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🏆</span> Multi-Offer Compensation Breakdown & Insights
+        </h2>
+      </div>
+
+      <!-- Top Insights -->
+      <div class="insights-grid">
+        <div class="insight-card gold">
+          <div class="insight-label">Highest Year 1 Total Comp</div>
+          <div class="insight-value" id="insight-highest-y1">$0</div>
+          <div class="insight-sub" id="insight-highest-y1-sub">—</div>
+        </div>
+        <div class="insight-card emerald">
+          <div class="insight-label">Highest 4-Year Cumulative TC</div>
+          <div class="insight-value" id="insight-highest-4yr">$0</div>
+          <div class="insight-sub" id="insight-highest-4yr-sub">—</div>
+        </div>
+        <div class="insight-card cyan">
+          <div class="insight-label">Top Post-Tax Purchasing Power</div>
+          <div class="insight-value" id="insight-purchasing-power">$0</div>
+          <div class="insight-sub" id="insight-purchasing-power-sub">—</div>
+        </div>
+      </div>
+
+      <!-- Detailed Matrix Table -->
+      <div class="matrix-container">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Company & Level</th>
+              <th>Location & Tax</th>
+              <th>Base Salary</th>
+              <th>Year 1 TC</th>
+              <th>Year 2 TC</th>
+              <th>Year 3 TC</th>
+              <th>Year 4 TC</th>
+              <th>4-Yr Total Comp</th>
+              <th>COL Real Value</th>
+              <th>Percentile</th>
+            </tr>
+          </thead>
+          <tbody id="matrix-table-body">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Executive Counter-Offer Playbook -->
+    <div class="negotiation-panel" id="script-section" style="display: none;">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>📜</span> Executive Counter-Offer Script & Negotiation Playbook
+        </h2>
+        <button class="btn-secondary" id="btn-copy-email" onclick="copyEmailScript()">
+          <span>📋</span> Copy Email Draft
+        </button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+        <div>
+          <h3 style="font-size: 1rem; color: var(--accent-cyan); margin-bottom: 0.5rem;">Target Counter-Offer Email Draft</h3>
+          <div class="script-output" id="email-script-box">Generating...</div>
+        </div>
+        <div>
+          <h3 style="font-size: 1rem; color: var(--accent-emerald); margin-bottom: 0.5rem;">Phone Negotiation Strategy & Key Anchors</h3>
+          <ul class="talking-points-list" id="phone-points-list">
+            <!-- Populated via JS -->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast-msg">
+    <span>✓</span> <span id="toast-text">Copied to clipboard!</span>
+  </div>
+
+  <script>
+    let offersState = [
+      {
+        id: 'offer-1',
+        company: 'Google',
+        roleLevel: 'google_l5',
+        location: 'sf_bay_area',
+        baseSalary: 205000,
+        totalEquityGrant: 720000,
+        vestingSchedule: 'google_front',
+        bonusPercentage: 15,
+        signonY1: 40000,
+        signonY2: 0
+      },
+      {
+        id: 'offer-2',
+        company: 'Meta',
+        roleLevel: 'meta_e5',
+        location: 'seattle_wa',
+        baseSalary: 215000,
+        totalEquityGrant: 800000,
+        vestingSchedule: 'equal_25',
+        bonusPercentage: 15,
+        signonY1: 50000,
+        signonY2: 0
+      }
+    ];
+
+    let benchmarkMeta = null;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/prep/offers/bands');
+        benchmarkMeta = await res.json();
+      } catch (err) {
+        console.error('Failed to load bands metadata:', err);
+      }
+      renderOffers();
+    }
+
+    function renderOffers() {
+      const container = document.getElementById('offers-container');
+      container.innerHTML = '';
+
+      offersState.forEach((offer, idx) => {
+        const card = document.createElement('div');
+        card.className = 'offer-card';
+        card.id = `card-${offer.id}`;
+        card.innerHTML = `
+          <div class="offer-header">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span class="offer-badge">Offer ${String.fromCharCode(65 + idx)}</span>
+              <strong style="font-size: 1.1rem;">${offer.company}</strong>
+            </div>
+            ${offersState.length > 1 ? `<button class="btn-remove-offer" onclick="removeOffer('${offer.id}')">✕ Remove</button>` : ''}
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Company Name</label>
+              <input type="text" class="form-input" value="${offer.company}" onchange="updateOfferField('${offer.id}', 'company', this.value)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Role / Level Band</label>
+              <select class="form-select" onchange="updateOfferField('${offer.id}', 'roleLevel', this.value)">
+                <option value="google_l4" ${offer.roleLevel === 'google_l4' ? 'selected' : ''}>L4 / SDE-2 ($265k P50)</option>
+                <option value="google_l5" ${offer.roleLevel === 'google_l5' ? 'selected' : ''}>L5 / Senior SDE ($395k P50)</option>
+                <option value="google_l6" ${offer.roleLevel === 'google_l6' ? 'selected' : ''}>L6 / Staff SDE ($550k P50)</option>
+                <option value="meta_e5" ${offer.roleLevel === 'meta_e5' ? 'selected' : ''}>Meta E5 ($410k P50)</option>
+                <option value="amazon_sde2" ${offer.roleLevel === 'amazon_sde2' ? 'selected' : ''}>Amazon SDE-2 ($260k P50)</option>
+                <option value="amazon_sde3" ${offer.roleLevel === 'amazon_sde3' ? 'selected' : ''}>Amazon SDE-3 ($390k P50)</option>
+                <option value="startup_unicorn" ${offer.roleLevel === 'startup_unicorn' ? 'selected' : ''}>Unicorn Tech Lead ($320k P50)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Location & Tax Bracket</label>
+              <select class="form-select" onchange="updateOfferField('${offer.id}', 'location', this.value)">
+                <option value="sf_bay_area" ${offer.location === 'sf_bay_area' ? 'selected' : ''}>San Francisco, CA (9.3% tax)</option>
+                <option value="seattle_wa" ${offer.location === 'seattle_wa' ? 'selected' : ''}>Seattle, WA (0% State Tax)</option>
+                <option value="nyc_ny" ${offer.location === 'nyc_ny' ? 'selected' : ''}>New York, NY (10.5% tax)</option>
+                <option value="austin_tx" ${offer.location === 'austin_tx' ? 'selected' : ''}>Austin, TX (0% State Tax)</option>
+                <option value="us_remote" ${offer.location === 'us_remote' ? 'selected' : ''}>US Remote / Low COL (4.5% tax)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Base Salary ($/yr)</label>
+              <input type="number" class="form-input" value="${offer.baseSalary}" onchange="updateOfferField('${offer.id}', 'baseSalary', Number(this.value))">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">4-Year Total Equity Grant ($)</label>
+              <input type="number" class="form-input" value="${offer.totalEquityGrant}" onchange="updateOfferField('${offer.id}', 'totalEquityGrant', Number(this.value))">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vesting Schedule</label>
+              <select class="form-select" onchange="updateOfferField('${offer.id}', 'vestingSchedule', this.value)">
+                <option value="equal_25" ${offer.vestingSchedule === 'equal_25' ? 'selected' : ''}>Equal (25% / 25% / 25% / 25%)</option>
+                <option value="google_front" ${offer.vestingSchedule === 'google_front' ? 'selected' : ''}>Google Front (33% / 33% / 22% / 12%)</option>
+                <option value="amazon_back" ${offer.vestingSchedule === 'amazon_back' ? 'selected' : ''}>Amazon Back (5% / 15% / 40% / 40%)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Target Annual Bonus (%)</label>
+              <input type="number" class="form-input" value="${offer.bonusPercentage}" onchange="updateOfferField('${offer.id}', 'bonusPercentage', Number(this.value))">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Year 1 Sign-on Bonus ($)</label>
+              <input type="number" class="form-input" value="${offer.signonY1}" onchange="updateOfferField('${offer.id}', 'signonY1', Number(this.value))">
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function updateOfferField(id, field, value) {
+      const offer = offersState.find(o => o.id === id);
+      if (offer) {
+        offer[field] = value;
+      }
+    }
+
+    function addNewOfferCard() {
+      const nextIdx = offersState.length + 1;
+      offersState.push({
+        id: `offer-${Date.now()}`,
+        company: `Company ${String.fromCharCode(64 + nextIdx)}`,
+        roleLevel: 'google_l5',
+        location: 'austin_tx',
+        baseSalary: 185000,
+        totalEquityGrant: 500000,
+        vestingSchedule: 'equal_25',
+        bonusPercentage: 15,
+        signonY1: 30000,
+        signonY2: 0
+      });
+      renderOffers();
+    }
+
+    function removeOffer(id) {
+      offersState = offersState.filter(o => o.id !== id);
+      renderOffers();
+    }
+
+    function loadPreset(key) {
+      if (key === 'faang_l5') {
+        offersState = [
+          {
+            id: 'offer-1',
+            company: 'Google',
+            roleLevel: 'google_l5',
+            location: 'sf_bay_area',
+            baseSalary: 205000,
+            totalEquityGrant: 720000,
+            vestingSchedule: 'google_front',
+            bonusPercentage: 15,
+            signonY1: 40000,
+            signonY2: 0
+          },
+          {
+            id: 'offer-2',
+            company: 'Meta',
+            roleLevel: 'meta_e5',
+            location: 'seattle_wa',
+            baseSalary: 215000,
+            totalEquityGrant: 800000,
+            vestingSchedule: 'equal_25',
+            bonusPercentage: 15,
+            signonY1: 50000,
+            signonY2: 0
+          }
+        ];
+      } else if (key === 'sde2_austin') {
+        offersState = [
+          {
+            id: 'offer-1',
+            company: 'Amazon',
+            roleLevel: 'amazon_sde2',
+            location: 'austin_tx',
+            baseSalary: 175000,
+            totalEquityGrant: 450000,
+            vestingSchedule: 'amazon_back',
+            bonusPercentage: 0,
+            signonY1: 65000,
+            signonY2: 45000
+          },
+          {
+            id: 'offer-2',
+            company: 'Stripe',
+            roleLevel: 'google_l4',
+            location: 'us_remote',
+            baseSalary: 170000,
+            totalEquityGrant: 480000,
+            vestingSchedule: 'equal_25',
+            bonusPercentage: 10,
+            signonY1: 30000,
+            signonY2: 0
+          }
+        ];
+      } else if (key === 'staff_ai') {
+        offersState = [
+          {
+            id: 'offer-1',
+            company: 'Databricks',
+            roleLevel: 'google_l6',
+            location: 'sf_bay_area',
+            baseSalary: 260000,
+            totalEquityGrant: 1200000,
+            vestingSchedule: 'equal_25',
+            bonusPercentage: 20,
+            signonY1: 75000,
+            signonY2: 0
+          },
+          {
+            id: 'offer-2',
+            company: 'OpenAI',
+            roleLevel: 'google_l6',
+            location: 'sf_bay_area',
+            baseSalary: 280000,
+            totalEquityGrant: 1500000,
+            vestingSchedule: 'equal_25',
+            bonusPercentage: 15,
+            signonY1: 100000,
+            signonY2: 0
+          }
+        ];
+      }
+      renderOffers();
+      showToast(`Loaded preset: ${key}`);
+    }
+
+    async function executeComparison() {
+      try {
+        const res = await fetch('/api/v1/prep/offers/compare', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ offers: offersState })
+        });
+        const data = await res.json();
+        if (!data.success) {
+          alert('Comparison error: ' + data.error);
+          return;
+        }
+
+        displayComparisonResults(data);
+      } catch (err) {
+        alert('Network error comparing offers: ' + err.message);
+      }
+    }
+
+    function displayComparisonResults(data) {
+      document.getElementById('results-section').style.display = 'block';
+
+      // Summary Insights
+      const insights = data.comparisonInsights;
+      document.getElementById('insight-highest-y1').innerText = `$${insights.highestFirstYear.amount.toLocaleString()}`;
+      document.getElementById('insight-highest-y1-sub').innerText = `${insights.highestFirstYear.company} (Year 1 Cash + Stock)`;
+
+      document.getElementById('insight-highest-4yr').innerText = `$${insights.highestFourYear.amount.toLocaleString()}`;
+      document.getElementById('insight-highest-4yr-sub').innerText = `${insights.highestFourYear.company} (4-Year Cumulative)`;
+
+      document.getElementById('insight-purchasing-power').innerText = `$${insights.highestPurchasingPower.amount.toLocaleString()}`;
+      document.getElementById('insight-purchasing-power-sub').innerText = `${insights.highestPurchasingPower.company} (${insights.highestPurchasingPower.location})`;
+
+      // Matrix Table
+      const tbody = document.getElementById('matrix-table-body');
+      tbody.innerHTML = '';
+
+      data.offers.forEach(offer => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${offer.company}</strong><br><span style="color:var(--text-muted); font-size:0.8rem;">${offer.roleTitle}</span></td>
+          <td>${offer.location}<br><span style="color:var(--accent-amber); font-size:0.8rem;">${offer.taxDeductionRate} est. tax</span></td>
+          <td style="font-family:'JetBrains Mono';">$${offer.baseSalary.toLocaleString()}</td>
+          <td class="tc-highlight">$${offer.firstYearTC.toLocaleString()}</td>
+          <td style="font-family:'JetBrains Mono';">$${offer.annualBreakdown.year2.total.toLocaleString()}</td>
+          <td style="font-family:'JetBrains Mono';">$${offer.annualBreakdown.year3.total.toLocaleString()}</td>
+          <td style="font-family:'JetBrains Mono';">$${offer.annualBreakdown.year4.total.toLocaleString()}</td>
+          <td style="font-family:'JetBrains Mono'; font-weight:700; color:var(--accent-emerald);">$${offer.total4YearComp.toLocaleString()}</td>
+          <td style="font-family:'JetBrains Mono'; color:var(--accent-cyan);">$${offer.colAdjustedPurchasingPower.toLocaleString()}/yr</td>
+          <td><span class="percentile-badge">${offer.marketPercentile}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Smooth scroll into results
+      document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function generateCounterScript() {
+      try {
+        const primary = offersState[0];
+        const competing = offersState.length > 1 ? offersState[1] : null;
+
+        const res = await fetch('/api/v1/prep/offers/negotiate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            company: primary.company,
+            roleLevel: primary.roleLevel,
+            baseSalary: primary.baseSalary,
+            annualStockGrant: Math.round(primary.totalEquityGrant / 4),
+            signonBonus: primary.signonY1,
+            hasCompetingOffer: !!competing,
+            competingCompany: competing ? competing.company : 'Peer FAANG',
+            competingTC: competing ? (competing.baseSalary + Math.round(competing.totalEquityGrant / 4) + competing.signonY1) : 0
+          })
+        });
+
+        const data = await res.json();
+        if (!data.success) return;
+
+        document.getElementById('script-section').style.display = 'block';
+        document.getElementById('email-script-box').innerText = data.negotiationArtifacts.recruiterEmailTemplate;
+
+        const list = document.getElementById('phone-points-list');
+        list.innerHTML = '';
+        data.negotiationArtifacts.phoneNegotiationKeypoints.forEach(point => {
+          const li = document.createElement('li');
+          li.className = 'talking-point-item';
+          li.innerHTML = `<span>🎯</span> <span>${point}</span>`;
+          list.appendChild(li);
+        });
+
+        if (data.negotiationArtifacts.objectionPlaybook) {
+          data.negotiationArtifacts.objectionPlaybook.forEach(obj => {
+            const li = document.createElement('li');
+            li.className = 'talking-point-item';
+            li.style.borderLeftColor = 'var(--accent-rose)';
+            li.innerHTML = `<span>🛡️</span> <div><strong>Objection:</strong> "${obj.objection}"<br><span style="color:var(--text-muted); font-size:0.85rem;"><strong>Rebuttal:</strong> "${obj.counter}"</span></div>`;
+            list.appendChild(li);
+          });
+        }
+
+        document.getElementById('script-section').scrollIntoView({ behavior: 'smooth' });
+      } catch (err) {
+        alert('Failed to generate script: ' + err.message);
+      }
+    }
+
+    function copyEmailScript() {
+      const text = document.getElementById('email-script-box').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Recruiter Email Script copied to clipboard!');
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      document.getElementById('toast-text').innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

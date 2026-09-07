@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competitive Moat & Unfair Advantage Auditor | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      color: var(--accent-gold);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-gold), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      color: #fef3c7;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-gold);
+      color: #070d18;
+      border-color: var(--accent-gold);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+    }
+
+    /* Main Grid */
+    .moat-grid {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 1.5rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #fff;
+    }
+
+    /* Overall Moat Score Card */
+    .moat-score-card {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(56, 189, 248, 0.1));
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .score-headline {
+      font-size: 2.75rem;
+      font-weight: 800;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .score-grade {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      margin-top: 0.25rem;
+    }
+    .clone-risk-pill {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .risk-low { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .risk-high { background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); }
+
+    /* Incumbent Risk Alert Box */
+    .incumbent-box {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .incumbent-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 0.4rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    .incumbent-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* 5 Pillars Breakdown */
+    .pillar-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 0.85rem;
+    }
+    .pillar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+    .pillar-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .pillar-score {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--accent-cyan);
+    }
+    .pillar-bar-bg {
+      background: rgba(255, 255, 255, 0.08);
+      height: 6px;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+    .pillar-bar-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--accent-cyan), var(--accent-gold));
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+    .pillar-rationale {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Blueprint List */
+    .blueprint-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .blueprint-item {
+      display: flex;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      line-height: 1.5;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border-left: 3px solid var(--accent-cyan);
+    }
+
+    /* Interactive Audit Form */
+    .audit-form {
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .form-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .form-input {
+      flex: 1;
+      background: #090e17;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      color: #fff;
+      padding: 0.5rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .btn-audit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent-gold), #f59e0b);
+      color: #070d18;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-audit:hover {
+      opacity: 0.9;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: rgba(251, 191, 36, 0.95);
+      border: 1px solid #fbbf24;
+      color: #070d18;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🦅</span> Phoenix OS
+      <span class="nav-badge">Pillar 2 • Feature 28</span>
+    </div>
+    <div class="nav-links">
+      <a href="/hackathon-agent/demo-sandbox.html">Demo Sandbox</a>
+      <a href="/hackathon-agent/team-synergy.html">Team Synergy</a>
+      <a href="/hackathon-agent/judge-defense.html">Judge Defense</a>
+      <a href="/hackathon-agent/pitch-deck.html">Pitch Deck</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Competitive Moat & Unfair Advantage Auditor</h1>
+      <p class="hero-subtitle">
+        CB Insights & PitchBook-grade defensibility diagnostic: stress test structural moats across 5 pillars, model Big Tech fast-follower clone exposure, and formulate impregnable venture-scale unfair advantages.
+      </p>
+
+      <!-- Presets Bar -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">MOAT BENCHMARKS:</span>
+        <button class="preset-btn active" id="btn-moat-aegis" onclick="selectMoatBenchmark('aegis_mesh_moat')">Aegis Swarm (A+ Structural Moat)</button>
+        <button class="preset-btn" id="btn-moat-crm" onclick="selectMoatBenchmark('agentic_crm_moat')">NetPulse CRM (B- Vulnerable to Clones)</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="moat-grid">
+      <!-- Left: Score Summary & Incumbent Simulator -->
+      <div class="panel">
+        <h2 class="panel-title"><span>🛡️</span> Defensibility Scorecard</h2>
+
+        <!-- Score Card -->
+        <div class="moat-score-card">
+          <div class="score-headline" id="moat-total-score">94 / 100</div>
+          <div class="score-grade" id="moat-grade">A+ (Structural Unfair Advantage)</div>
+          <div class="clone-risk-pill risk-low" id="clone-risk-pill">EXTREMELY LOW (Big Tech Resistant)</div>
+        </div>
+
+        <!-- Incumbent Vector Box -->
+        <div class="incumbent-box">
+          <div class="incumbent-title">
+            <span>⚡ Hyperscaler Clone Threat</span>
+            <span id="incumbent-threat-badge" style="color:var(--accent-emerald);">LOW</span>
+          </div>
+          <div class="incumbent-desc" id="incumbent-analysis">
+            AWS IoT and Google Cloud rely on persistent 5G/satellite backhauls. In catastrophic blackout zones, hyperscalers cannot boot without edge mesh physical nodes.
+          </div>
+        </div>
+
+        <!-- Quick Audit Simulator -->
+        <div class="audit-form">
+          <h3 style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem; color:#fff;">Live Project Re-Audit</h3>
+          <div class="form-row">
+            <input type="text" class="form-input" id="audit-company" placeholder="Project Name" value="Apex Defense AI" />
+            <input type="text" class="form-input" id="audit-domain" placeholder="Domain" value="Autonomous Edge" />
+          </div>
+          <button class="btn-audit" id="btn-run-audit" onclick="runLiveAudit()">
+            🚀 Execute Full Moat Audit
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: 5 Pillars Detailed Breakdown -->
+      <div class="panel">
+        <h2 class="panel-title"><span>🏛️</span> 5-Pillar Structural Moat Breakdown</h2>
+        <div id="pillars-container">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Fortification Blueprint -->
+        <h2 class="panel-title" style="margin-top:1.5rem;"><span>⚔️</span> Strategic Moat Fortification Blueprint</h2>
+        <div class="blueprint-list" id="blueprint-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-msg">Moat benchmark loaded!</div>
+
+  <script>
+    let benchmarks = [];
+    let currentBenchmark = null;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/agent/moat/benchmarks');
+        const data = await res.json();
+        if (data.success) {
+          benchmarks = data.benchmarks;
+          selectMoatBenchmark('aegis_mesh_moat');
+        }
+      } catch (err) {
+        console.error('Failed to load moat benchmarks:', err);
+      }
+    }
+
+    function selectMoatBenchmark(benchmarkId) {
+      currentBenchmark = benchmarks.find(b => b.id === benchmarkId) || benchmarks[0];
+
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(benchmarkId === 'aegis_mesh_moat' ? 'btn-moat-aegis' : 'btn-moat-crm');
+      if (activeBtn) activeBtn.classList.add('active');
+
+      renderBenchmarkView();
+      showToast(`Loaded ${currentBenchmark.company} Moat Profile!`);
+    }
+
+    function renderBenchmarkView() {
+      document.getElementById('moat-total-score').innerText = `${currentBenchmark.totalScore} / 100`;
+      document.getElementById('moat-grade').innerText = currentBenchmark.grade;
+      
+      const riskPill = document.getElementById('clone-risk-pill');
+      riskPill.innerText = currentBenchmark.cloneRisk;
+      riskPill.className = `clone-risk-pill ${currentBenchmark.totalScore >= 80 ? 'risk-low' : 'risk-high'}`;
+
+      document.getElementById('incumbent-threat-badge').innerText = currentBenchmark.incumbentRisk.awsThreatLevel;
+      document.getElementById('incumbent-threat-badge').style.color = currentBenchmark.totalScore >= 80 ? 'var(--accent-emerald)' : 'var(--accent-rose)';
+      document.getElementById('incumbent-analysis').innerText = currentBenchmark.incumbentRisk.analysis;
+
+      // Pillars
+      const pillarsContainer = document.getElementById('pillars-container');
+      pillarsContainer.innerHTML = '';
+      currentBenchmark.pillars.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'pillar-card';
+        card.innerHTML = `
+          <div class="pillar-header">
+            <span class="pillar-name">${p.name}</span>
+            <span class="pillar-score">${p.score} / 100</span>
+          </div>
+          <div class="pillar-bar-bg">
+            <div class="pillar-bar-fill" style="width:${p.score}%;"></div>
+          </div>
+          <div class="pillar-rationale">${p.rationale}</div>
+        `;
+        pillarsContainer.appendChild(card);
+      });
+
+      // Blueprint
+      const bpContainer = document.getElementById('blueprint-container');
+      bpContainer.innerHTML = '';
+      currentBenchmark.defenseBlueprint.forEach(bp => {
+        const item = document.createElement('div');
+        item.className = 'blueprint-item';
+        item.innerHTML = `<span>🛡️</span> <span>${bp}</span>`;
+        bpContainer.appendChild(item);
+      });
+    }
+
+    async function runLiveAudit() {
+      const company = document.getElementById('audit-company').value.trim() || 'Custom Project';
+      const domain = document.getElementById('audit-domain').value.trim() || 'AI System';
+
+      try {
+        const res = await fetch('/api/v1/agent/moat/audit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            companyName: company,
+            domain: domain,
+            pillars: [
+              { name: 'Proprietary Data & Edge Feedback Loop', score: 92, rationale: 'Self-hosted offline vector index and telemetry dataset.' },
+              { name: 'Direct & Indirect Network Effects', score: 88, rationale: 'Bilateral developer and judge participant ecosystem.' },
+              { name: 'Switching Costs & Deep Embeddedness', score: 85, rationale: 'Integrated with custom GitHub CI and Devpost submissions.' },
+              { name: 'Technical Complexity & IP', score: 95, rationale: 'Micro-kernel orchestration with sub-10ms latency guarantees.' },
+              { name: 'Regulatory & Physical World Moat', score: 89, rationale: 'Compliance certification and local edge hardware binding.' }
+            ]
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('moat-total-score').innerText = data.compositeScore;
+          document.getElementById('moat-grade').innerText = data.grade;
+          document.getElementById('clone-risk-pill').innerText = `${data.cloneRisk} (Audited)`;
+          document.getElementById('clone-risk-pill').className = 'clone-risk-pill risk-low';
+
+          const bpContainer = document.getElementById('blueprint-container');
+          bpContainer.innerHTML = '';
+          data.fortificationPlan.forEach(plan => {
+            const item = document.createElement('div');
+            item.className = 'blueprint-item';
+            item.innerHTML = `<span>⚔️</span> <span>${plan}</span>`;
+            bpContainer.appendChild(item);
+          });
+
+          showToast(`Audit completed for ${company}!`);
+        }
+      } catch (err) {
+        alert('Audit failed: ' + err.message);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

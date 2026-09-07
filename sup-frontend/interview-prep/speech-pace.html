@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interview Anxiety & Speech Pace Biofeedback | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(192, 132, 252, 0.15);
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      color: var(--accent-purple);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2.25rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 850px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(192, 132, 252, 0.1);
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      color: var(--accent-purple);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover {
+      background: rgba(192, 132, 252, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* Workbench Grid */
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Audio Waveform Canvas */
+    .waveform-box {
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      height: 90px;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .wave-bar {
+      width: 4px;
+      margin: 0 2px;
+      background: var(--accent-purple);
+      border-radius: 2px;
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    @keyframes wave {
+      0%, 100% { height: 8px; }
+      50% { height: 60px; }
+    }
+
+    .mic-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .btn-mic {
+      background: linear-gradient(135deg, #e11d48, #be123c);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .transcript-textarea {
+      width: 100%;
+      height: 160px;
+      background: rgba(10, 15, 28, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      color: #fff;
+      padding: 0.85rem;
+      font-family: inherit;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      outline: none;
+      resize: none;
+      margin-bottom: 1rem;
+    }
+
+    .btn-analyze {
+      background: linear-gradient(135deg, #7c3aed, #6366f1);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.75rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.35);
+      transition: all 0.2s;
+    }
+    .btn-analyze:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
+    }
+
+    /* Results HUD */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .metric-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1.1rem;
+    }
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.3rem;
+    }
+    .metric-val {
+      font-size: 1.75rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+    }
+    .metric-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    /* Cadence Inspector */
+    .highlighted-box {
+      background: rgba(10, 15, 28, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 1.25rem;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: #e2e8f0;
+      margin-top: 1rem;
+    }
+    .filler-highlight {
+      background: rgba(244, 63, 94, 0.25);
+      color: #fda4af;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      border-bottom: 2px solid var(--accent-rose);
+      font-weight: 700;
+    }
+    .power-highlight {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      border-bottom: 2px solid var(--accent-emerald);
+      font-weight: 700;
+    }
+
+    .feedback-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+    .feedback-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border-left: 3px solid var(--accent-purple);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0f172a;
+      border: 1px solid var(--accent-emerald);
+      color: var(--accent-emerald);
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🎙️</span>
+      <span>Phoenix OS</span>
+      <span class="nav-badge">Pillar 1 • Feature 18</span>
+    </div>
+    <div class="nav-links">
+      <a href="/interview-prep/micro-drills.html">Micro-Drills</a>
+      <a href="/interview-prep/pair-programming.html">Pair-Programming</a>
+      <a href="/interview-prep/offer-comparator.html">Offer Comparator</a>
+      <a href="/interview-prep/star-vault.html">STAR Vault</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Interview Anxiety & Speech Pace Biofeedback</h1>
+      <p class="hero-subtitle">
+        AI voice prosody evaluation quantifying Words-Per-Minute (WPM), hesitation acoustic pauses, filler word density, and executive authority tone for technical & behavioral FAANG interviews.
+      </p>
+
+      <!-- Presets -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">TEST BENCHMARKS:</span>
+        <button class="preset-btn" id="btn-preset-anxious" onclick="loadSpeechPreset('anxious_rapid')">Anxious & Rapid (185 WPM, 14 Fillers)</button>
+        <button class="preset-btn" id="btn-preset-staff" onclick="loadSpeechPreset('executive_staff')">Executive Staff Delivery (Optimal 140 WPM)</button>
+        <button class="preset-btn" id="btn-preset-slow" onclick="loadSpeechPreset('hesitant_slow')">Hesitant & Monotone (82 WPM)</button>
+      </div>
+    </div>
+
+    <!-- Main Workbench -->
+    <div class="workbench-grid">
+      <!-- Left: Audio & Transcript Input -->
+      <div class="panel">
+        <h2 class="panel-title"><span>🎙️</span> Voice Audio & Transcript Input</h2>
+
+        <!-- Simulated Oscilloscope Waveform -->
+        <div class="waveform-box" id="waveform-box">
+          <div class="wave-bar" style="animation-delay: 0.1s;"></div>
+          <div class="wave-bar" style="animation-delay: 0.3s;"></div>
+          <div class="wave-bar" style="animation-delay: 0.5s;"></div>
+          <div class="wave-bar" style="animation-delay: 0.2s;"></div>
+          <div class="wave-bar" style="animation-delay: 0.4s;"></div>
+          <div class="wave-bar" style="animation-delay: 0.6s;"></div>
+          <div class="wave-bar" style="animation-delay: 0.15s;"></div>
+          <div class="wave-bar" style="animation-delay: 0.35s;"></div>
+          <div class="wave-bar" style="animation-delay: 0.45s;"></div>
+          <div class="wave-bar" style="animation-delay: 0.25s;"></div>
+        </div>
+
+        <div class="mic-controls">
+          <button class="btn-mic" id="btn-mic-toggle" onclick="toggleMicRecording()">
+            <span id="mic-icon">🔴</span> <span id="mic-label">Simulate Live Mic (45s)</span>
+          </button>
+          <div style="font-size:0.85rem; color:var(--text-muted);">
+            Spoken Duration: <strong id="duration-display" style="color:#fff;">45s</strong>
+          </div>
+        </div>
+
+        <textarea class="transcript-textarea" id="speech-transcript" placeholder="Paste your spoken interview response transcript here, or click one of the benchmark presets above..."></textarea>
+
+        <button class="btn-analyze" id="btn-analyze-speech" onclick="analyzeSpeechProsody()">
+          <span>⚡</span> Analyze Speech Delivery & Prosody
+        </button>
+      </div>
+
+      <!-- Right: Real-Time Results & Feedback -->
+      <div class="panel" id="results-panel" style="display:none;">
+        <h2 class="panel-title"><span>📊</span> Prosody & Acoustic Biofeedback</h2>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Speaking Rate (WPM)</div>
+            <div class="metric-val" id="res-wpm">140</div>
+            <div class="metric-sub" id="res-pacing">Optimal (120-160 WPM)</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Confidence Index</div>
+            <div class="metric-val" id="res-confidence" style="color:var(--accent-emerald);">92 / 100</div>
+            <div class="metric-sub" id="res-tone">Assertive & Authority</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Vocal Clarity Score</div>
+            <div class="metric-val" id="res-clarity">95%</div>
+            <div class="metric-sub">0% Delivery Deduction</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Filler Word Density</div>
+            <div class="metric-val" id="res-fillers" style="color:var(--accent-rose);">0.0%</div>
+            <div class="metric-sub" id="res-filler-count">0 Fillers Detected</div>
+          </div>
+        </div>
+
+        <h3 style="font-size:0.95rem; font-weight:700; margin-top:1rem; color:var(--accent-cyan);">
+          Word-by-Word Cadence Inspector:
+        </h3>
+        <div class="highlighted-box" id="highlighted-transcript">
+          <!-- Populated by JS -->
+        </div>
+
+        <h3 style="font-size:0.95rem; font-weight:700; margin-top:1.25rem; color:var(--accent-purple);">
+          Actionable Delivery Coaching:
+        </h3>
+        <ul class="feedback-list" id="feedback-list">
+          <!-- Populated by JS -->
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-msg">Prosody analysis complete!</div>
+
+  <script>
+    let presetsCache = [];
+    let currentDurationSeconds = 45;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/prep/speech/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          presetsCache = data.presets;
+          loadSpeechPreset('executive_staff');
+        }
+      } catch (err) {
+        console.error('Failed to load speech presets:', err);
+      }
+    }
+
+    function loadSpeechPreset(presetId) {
+      const p = presetsCache.find(item => item.id === presetId);
+      if (p) {
+        document.getElementById('speech-transcript').value = p.sampleText;
+        currentDurationSeconds = p.durationSeconds;
+        document.getElementById('duration-display').innerText = `${p.durationSeconds}s`;
+        showToast(`Loaded preset: ${p.title}`);
+      }
+    }
+
+    function toggleMicRecording() {
+      showToast('Simulating live voice stream...');
+      document.getElementById('speech-transcript').value = 'During our high-throughput payment processing scale test, I architected a distributed two-tier Redis caching cluster with circuit breaker fallbacks, reducing P99 latency by 76 percent.';
+      currentDurationSeconds = 40;
+      document.getElementById('duration-display').innerText = '40s';
+      analyzeSpeechProsody();
+    }
+
+    async function analyzeSpeechProsody() {
+      const transcript = document.getElementById('speech-transcript').value;
+      if (!transcript.trim()) {
+        alert('Please enter or select a transcript to analyze.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/v1/prep/analyze-speech', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            transcript: transcript,
+            durationSeconds: currentDurationSeconds
+          })
+        });
+
+        const data = await res.json();
+        displayResults(data, transcript);
+      } catch (err) {
+        alert('Failed to analyze speech: ' + err.message);
+      }
+    }
+
+    function displayResults(data, rawTranscript) {
+      document.getElementById('results-panel').style.display = 'block';
+
+      document.getElementById('res-wpm').innerText = `${data.wpm} WPM`;
+      document.getElementById('res-pacing').innerText = data.pacingRating;
+      document.getElementById('res-confidence').innerText = `${data.confidenceIndex} / 100`;
+      document.getElementById('res-tone').innerText = data.tone;
+      document.getElementById('res-clarity').innerText = `${data.clarityScore}%`;
+      document.getElementById('res-fillers').innerText = `${data.fillerDensityPercent}%`;
+      document.getElementById('res-filler-count').innerText = `${data.fillerCount} Fillers Detected`;
+
+      // Highlight filler words & power words
+      const fillers = ['um', 'uh', 'like', 'basically', 'actually', 'you know', 'sort of', 'honestly', 'literally', 'obviously'];
+      const powerWords = ['architected', 'optimized', 'designed', 'measured', 'achieved', 'spearheaded', 'implemented'];
+
+      const tokens = rawTranscript.split(/(\s+)/);
+      const highlightedHtml = tokens.map(token => {
+        const clean = token.toLowerCase().replace(/[^a-z]/g, '');
+        if (fillers.includes(clean)) {
+          return `<span class="filler-highlight">${token}</span>`;
+        } else if (powerWords.includes(clean)) {
+          return `<span class="power-highlight">${token}</span>`;
+        }
+        return token;
+      }).join('');
+
+      document.getElementById('highlighted-transcript').innerHTML = highlightedHtml;
+
+      // Coaching feedback
+      const list = document.getElementById('feedback-list');
+      list.innerHTML = '';
+      data.feedback.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'feedback-item';
+        li.innerHTML = `<span>💡</span> <span>${item}</span>`;
+        list.appendChild(li);
+      });
+
+      showToast('Speech prosody analysis complete!');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

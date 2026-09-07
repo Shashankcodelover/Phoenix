@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../../middleware/authMiddleware');
+const { protect, protectOptional } = require('../../middleware/authMiddleware');
 const { tokenBucketLimiter } = require('../../middleware/tokenBucketRateLimiter');
 
-// Globally protect all horizon routes
-router.use(protect);
+// Allow optional auth for all horizon routes so guests can read roadmaps
+router.use(protectOptional);
 
 // PU CS Module
 const { getPuSyllabusGapAnalysis, getPuMonthByMonthRoadmap, getPuEntranceExamPrep, getPuBoardPyqs, getPuResources } = require('./cs-pu/puCurriculumEngine');

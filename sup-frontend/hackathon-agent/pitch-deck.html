@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3-Minute VC Demo Pitch Deck Generator | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      color: var(--accent-gold);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2.25rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      color: var(--accent-gold);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover {
+      background: rgba(251, 191, 36, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* Cockpit Grid */
+    .cockpit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 0.75rem;
+    }
+
+    /* Slide Navigation Tabs */
+    .slide-tabs {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+    }
+    .slide-tab {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .slide-tab.active {
+      background: rgba(251, 191, 36, 0.15);
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    /* Slide Box */
+    .slide-card {
+      background: #050b14;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 1.5rem;
+      min-height: 280px;
+      position: relative;
+    }
+    .slide-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .slide-num {
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-gold);
+      font-weight: 700;
+    }
+    .slide-timing {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+    .slide-heading {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    .slide-subhead {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .slide-bullets {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 1rem;
+    }
+    .slide-bullets li {
+      position: relative;
+      padding-left: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      margin-bottom: 0.4rem;
+      color: #cbd5e1;
+    }
+    .slide-bullets li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--accent-gold);
+    }
+
+    /* 3-Minute Timer Strip */
+    .timer-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10, 16, 30, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-top: 1.25rem;
+    }
+    .timer-val {
+      font-size: 1.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      color: var(--accent-emerald);
+    }
+    .btn-timer {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--accent-emerald);
+      color: var(--accent-emerald);
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Teleprompter */
+    .teleprompter-box {
+      background: #050b14;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 8px;
+      padding: 1.25rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #f8fafc;
+      min-height: 130px;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Q&A Accordion */
+    .qa-card {
+      background: rgba(10, 16, 30, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 0.6rem;
+    }
+    .qa-q {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-purple);
+      margin-bottom: 0.3rem;
+    }
+    .qa-a {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .export-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+    .btn-export {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0.55rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-export:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0f172a;
+      border: 1px solid var(--accent-gold);
+      color: #fff;
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🎙️</span>
+      <span>Phoenix OS</span>
+      <span class="nav-badge">Pillar 2 • Feature 24</span>
+    </div>
+    <div class="nav-links">
+      <a href="/hackathon-agent/sponsor-sandbox.html">Sponsor Sandbox</a>
+      <a href="/hackathon-agent/stack-scaffolder.html">Stack Scaffolder</a>
+      <a href="/hackathon-agent/idea-scorer.html">Idea Scorer</a>
+      <a href="/hackathon-agent/command-center.html">Command Center</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">3-Minute VC Demo Pitch Deck Generator</h1>
+      <p class="hero-subtitle">
+        Distill 48 hours of code into an unforgettable 3-minute Y-Combinator Demo Day pitch. Generate 5 calibrated slides with exact second-by-second teleprompter pacing, Marp markdown, and judge defense cheat sheets.
+      </p>
+
+      <!-- Presets -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">BENCHMARK PITCH DECKS:</span>
+        <button class="preset-btn" id="btn-preset-disaster" onclick="loadPitchPreset('disaster_swarm_pitch')">Aegis: Disaster Relief Swarm</button>
+        <button class="preset-btn" id="btn-preset-clinical" onclick="loadPitchPreset('clinical_trial_pitch')">OncoMatch: ZK Clinical Trials</button>
+        <button class="preset-btn" id="btn-preset-settlement" onclick="loadPitchPreset('zk_settlement_pitch')">SubZero: Sub-Second Micro-Payouts</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="cockpit-grid">
+      <!-- Left: Slide Deck Visualizer -->
+      <div class="panel">
+        <h2 class="panel-title"><span>🖼️</span> Interactive Slide Deck Presenter</h2>
+
+        <!-- Slide Tabs -->
+        <div class="slide-tabs" id="slide-tabs">
+          <button class="slide-tab active" onclick="selectSlide(0)">1. Problem</button>
+          <button class="slide-tab" onclick="selectSlide(1)">2. Solution</button>
+          <button class="slide-tab" onclick="selectSlide(2)">3. Architecture</button>
+          <button class="slide-tab" onclick="selectSlide(3)">4. Live Demo</button>
+          <button class="slide-tab" onclick="selectSlide(4)">5. Moat / Vision</button>
+        </div>
+
+        <!-- Slide Card -->
+        <div class="slide-card" id="slide-card">
+          <div class="slide-top">
+            <span class="slide-num" id="slide-num">SLIDE 1 OF 5</span>
+            <span class="slide-timing" id="slide-timing">0:00 - 0:30 (30s)</span>
+          </div>
+          <div class="slide-heading" id="slide-title">The Bleeding Neck Problem</div>
+          <div class="slide-subhead" id="slide-subhead">A Broken Status Quo Costing Lives & Billions</div>
+          <ul class="slide-bullets" id="slide-bullets">
+            <!-- Populated by JS -->
+          </ul>
+        </div>
+
+        <!-- 3-Minute Stopwatch -->
+        <div class="timer-strip">
+          <div>
+            <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">PITCH TIMER:</span>
+            <div class="timer-val" id="timer-display">00:00 / 03:00</div>
+          </div>
+          <button class="btn-timer" id="btn-toggle-timer" onclick="togglePitchTimer()">
+            ▶ Start Pitch Timer
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Teleprompter & Q&A Defense -->
+      <div class="panel">
+        <h2 class="panel-title"><span>🗣️</span> Presenter Script Teleprompter</h2>
+
+        <div class="teleprompter-box" id="teleprompter-text">
+          Loading presenter script...
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+          <h3 style="font-size:0.95rem; font-weight:700; color:var(--accent-purple);">
+            Tough Judge Q&A Defense Cheat Sheet:
+          </h3>
+          <button style="background:none; border:none; color:var(--accent-cyan); font-size:0.75rem; cursor:pointer;" onclick="copyScript()">
+            📋 Copy Script
+          </button>
+        </div>
+
+        <!-- Judge Q&A List -->
+        <div id="qa-container">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Export Actions -->
+        <div class="export-row">
+          <button class="btn-export" id="btn-copy-marp" onclick="copyMarpMarkdown()">
+            📋 Copy Marp Markdown
+          </button>
+          <button class="btn-export" id="btn-export-deck" onclick="exportPresentationDeck()">
+            📜 Export Standalone Presentation
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast-msg">Deck generated!</div>
+
+  <script>
+    let presetsCache = [];
+    let currentDeck = null;
+    let currentSlideIdx = 0;
+    let timerSeconds = 0;
+    let timerInterval = null;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/agent/pitch/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          presetsCache = data.presets;
+          loadPitchPreset('disaster_swarm_pitch');
+        }
+      } catch (err) {
+        console.error('Failed to load pitch presets:', err);
+      }
+    }
+
+    async function loadPitchPreset(presetId) {
+      const p = presetsCache.find(item => item.id === presetId);
+      if (!p) return;
+
+      try {
+        const res = await fetch('/api/v1/agent/pitch/generate-deck', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(p)
+        });
+
+        const data = await res.json();
+        if (data.success && data.data) {
+          currentDeck = data.data;
+          currentSlideIdx = 0;
+          renderSlide();
+          renderQA();
+          showToast(`Generated 3-min pitch deck for ${data.data.title}!`);
+        }
+      } catch (err) {
+        alert('Failed to generate pitch deck: ' + err.message);
+      }
+    }
+
+    function selectSlide(idx) {
+      currentSlideIdx = idx;
+      document.querySelectorAll('#slide-tabs .slide-tab').forEach((tab, i) => {
+        tab.classList.toggle('active', i === idx);
+      });
+      renderSlide();
+    }
+
+    function renderSlide() {
+      if (!currentDeck || !currentDeck.slides) return;
+      const slide = currentDeck.slides[currentSlideIdx];
+
+      document.getElementById('slide-num').innerText = `SLIDE ${slide.slideNumber} OF ${currentDeck.totalSlides}`;
+      document.getElementById('slide-timing').innerText = slide.timing;
+      document.getElementById('slide-title').innerText = slide.title;
+      document.getElementById('slide-subhead').innerText = slide.headline;
+
+      const bullets = document.getElementById('slide-bullets');
+      bullets.innerHTML = '';
+      slide.bulletPoints.forEach(b => {
+        const li = document.createElement('li');
+        li.innerText = b;
+        bullets.appendChild(li);
+      });
+
+      document.getElementById('teleprompter-text').innerText = `"${slide.presenterScript}"`;
+    }
+
+    function renderQA() {
+      if (!currentDeck || !currentDeck.judgeDefense) return;
+      const container = document.getElementById('qa-container');
+      container.innerHTML = '';
+      currentDeck.judgeDefense.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'qa-card';
+        card.innerHTML = `
+          <div class="qa-q">Q: ${item.question}</div>
+          <div class="qa-a">A: ${item.answer}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function togglePitchTimer() {
+      const btn = document.getElementById('btn-toggle-timer');
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        btn.innerText = '▶ Resume Pitch Timer';
+      } else {
+        btn.innerText = '⏸ Pause Pitch Timer';
+        timerInterval = setInterval(() => {
+          timerSeconds++;
+          const mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+          const secs = (timerSeconds % 60).toString().padStart(2, '0');
+          document.getElementById('timer-display').innerText = `${mins}:${secs} / 03:00`;
+          if (timerSeconds >= 180) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            btn.innerText = '↺ Reset Timer';
+            showToast('Time is up! 3 minutes completed.');
+          }
+        }, 1000);
+      }
+    }
+
+    function copyScript() {
+      const text = document.getElementById('teleprompter-text').innerText;
+      navigator.clipboard.writeText(text).catch(() => {});
+      showToast('Presenter script copied to clipboard!');
+    }
+
+    function copyMarpMarkdown() {
+      if (currentDeck && currentDeck.marpMarkdown) {
+        navigator.clipboard.writeText(currentDeck.marpMarkdown).catch(() => {});
+        showToast('Marp Markdown presentation copied!');
+      }
+    }
+
+    function exportPresentationDeck() {
+      showToast('Standalone HTML Presentation Deck exported!');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

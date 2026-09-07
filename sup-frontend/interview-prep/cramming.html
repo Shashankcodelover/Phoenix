@@ -3,215 +3,862 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cramming Mode - Phoenix</title>
-  <link rel="stylesheet" href="../phoenix.css">
+  <title>Last-Minute Formula & Pattern Cramming Sheets — Phoenix Placement OS</title>
+  <meta name="description" content="High-yield algorithmic pattern cheat sheets, asymptotic recurrence master matrix, mental model intuition diagrams, and space-repetition flash drills.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      background: #030308 !important;
-      color: #fff !important;
+    :root {
+      --bg-dark: #030712;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --bg-card-hover: rgba(30, 41, 59, 0.95);
+      --border-glass: rgba(255, 255, 255, 0.08);
+
+      --purple-primary: #8b5cf6;
+      --purple-light: #a78bfa;
+      --cyan-primary: #06b6d4;
+      --cyan-light: #22d3ee;
+      --emerald-primary: #10b981;
+      --emerald-light: #34d399;
+      --amber-primary: #f59e0b;
+      --coral-primary: #f43f5e;
+      --coral-light: #fda4af;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 26px;
     }
 
-    .cramming-container {
-      max-width: 500px;
-      margin: 40px auto;
-      padding: 0 16px;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 10% 15%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 90% 25%, rgba(6, 182, 212, 0.10) 0%, transparent 50%),
+        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 16px 28px 80px;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+    }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+    }
+    .brand-logo {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple-primary), var(--cyan-primary));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+    }
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff, var(--purple-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .top-nav-links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .nav-btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .nav-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    /* Hero Header */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.7));
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-xl);
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      max-width: 750px;
+      margin-top: 4px;
+    }
+    .hero-stats-row {
+      display: flex;
+      gap: 16px;
+    }
+    .stat-pill {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
       text-align: center;
     }
+    .stat-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--cyan-light);
+    }
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
 
-    /* Flashcard Flip Animation */
-    .flashcard {
+    /* Section Tabs */
+    .section-tabs-bar {
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-glass);
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+    .section-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .section-tab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .section-tab-btn.active {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(6, 182, 212, 0.25));
+      border-color: var(--purple-primary);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+    }
+
+    /* Search Toolbar */
+    .search-toolbar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 14px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 10px 16px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+    .btn-print-sheet {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-print-sheet:hover { background: rgba(255,255,255,0.12); }
+
+    /* TAB 1: 14 Patterns Grid */
+    .patterns-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 20px;
+    }
+    .pattern-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .pattern-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .pattern-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .pattern-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .pattern-badge {
+      font-size: 10.5px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--cyan-light);
+    }
+    .pattern-intuition {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+    .invariant-proof-box {
+      background: rgba(0, 0, 0, 0.4);
+      border-left: 3px solid var(--emerald-primary);
+      padding: 10px 14px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 12px;
+      color: var(--emerald-light);
+      margin-bottom: 14px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .complexity-pills-row {
+      display: flex;
+      gap: 10px;
+      font-size: 11.5px;
+      font-family: 'JetBrains Mono', monospace;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-glass);
+    }
+
+    /* TAB 2: Master Theorem Matrix */
+    .matrix-table-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      overflow-x: auto;
+    }
+    .matrix-table {
       width: 100%;
-      height: 320px;
-      perspective: 1000px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .matrix-table th {
+      text-align: left;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--cyan-light);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-glass);
+    }
+    .matrix-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-glass);
+      color: var(--text-muted);
+    }
+    .matrix-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+    }
+    .mono-cell {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--purple-light);
+      font-weight: 600;
+    }
+
+    /* TAB 4: 3D Flashcard Drill */
+    .drill-stage {
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .flashcard-3d {
+      width: 100%;
+      height: 380px;
+      perspective: 1200px;
       cursor: pointer;
       margin-bottom: 24px;
     }
-
-    .flashcard-inner {
+    .flashcard-3d-inner {
       position: relative;
       width: 100%;
       height: 100%;
       text-align: center;
-      transition: transform 0.6s;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       transform-style: preserve-3d;
     }
-
-    .flashcard.flipped .flashcard-inner {
+    .flashcard-3d.flipped .flashcard-3d-inner {
       transform: rotateY(180deg);
     }
-
-    .flashcard-front, .flashcard-back {
+    .card-face {
       position: absolute;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       backface-visibility: hidden;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--cyan);
-      box-shadow: var(--shadow-glow-cyan);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-glass);
+      padding: 32px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 24px;
     }
-
-    .flashcard-front {
-      background: rgba(0, 245, 255, 0.03);
-      color: #fff;
+    .card-front {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.15);
+      border-color: rgba(6, 182, 212, 0.3);
     }
-
-    .flashcard-back {
-      background: rgba(123, 47, 247, 0.05);
-      color: var(--cyan);
+    .card-back {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(49, 23, 86, 0.9));
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+      border-color: rgba(139, 92, 246, 0.4);
       transform: rotateY(180deg);
-      border-color: var(--purple);
-      box-shadow: var(--shadow-glow-purple);
+      text-align: left;
+      align-items: flex-start;
       overflow-y: auto;
     }
-
-    .swipe-btn {
+    .card-category-pill {
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--cyan-light);
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+    .drill-actions {
+      display: flex;
+      gap: 16px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .btn-swipe-fail {
       flex: 1;
       padding: 14px;
-      font-size: 1rem;
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid var(--coral-primary);
+      border-radius: var(--radius-md);
+      color: var(--coral-light);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
     }
+    .btn-swipe-fail:hover { background: var(--coral-primary); color: #fff; }
+    .btn-swipe-pass {
+      flex: 1;
+      padding: 14px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--emerald-primary);
+      border-radius: var(--radius-md);
+      color: var(--emerald-light);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-swipe-pass:hover { background: var(--emerald-primary); color: #fff; }
   </style>
 </head>
 <body>
+  <div class="ambient-glow"></div>
 
-  <!-- Navigation -->
-  <nav class="navbar">
-    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">PHOENIX</div>
-    <ul class="nav-links">
-      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
-      <li><a href="./roadmap.html">Roadmap</a></li>
-      <li><a href="#" id="logoutBtn" style="color: var(--coral);">Logout</a></li>
-    </ul>
-  </nav>
-
-  <div class="cramming-container">
-    <div style="margin-bottom: 24px; text-align: left;">
-      <h1 class="font-space" style="font-size: 1.5rem; color: var(--coral); display: inline-flex; align-items: center; gap: 8px;">
-        ⚡ Cramming Mode
-      </h1>
-      <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">
-        Rapid-fire technical question grills. Tap card to flip and check details.
-      </p>
-    </div>
-
-    <!-- Flashcard -->
-    <div class="flashcard" onclick="flipCard()">
-      <div class="flashcard-inner" id="cardInner">
-        <div class="flashcard-front">
-          <span id="cardCategory" class="badge badge-cyan" style="margin-bottom: 16px;">DSA</span>
-          <h2 id="cardTitle" class="font-space" style="font-size: 1.35rem; line-height: 1.4;">Loading question...</h2>
-          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 30px;">👉 Tap to reveal details</p>
+  <div class="app-container">
+    <!-- Top Nav -->
+    <header class="top-nav">
+      <div class="brand-section" onclick="window.location.href='./questions.html'">
+        <div class="brand-logo">⚡</div>
+        <div>
+          <div class="brand-title">PHOENIX PLACEMENT OS</div>
         </div>
-        <div class="flashcard-back">
-          <h3 class="font-space" style="font-size: 1rem; margin-bottom: 12px; color: #fff;">Answer & Description</h3>
-          <p id="cardDescription" style="font-size: 0.85rem; line-height: 1.6; text-align: left;"></p>
-          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 20px;">👉 Tap to flip back</p>
+      </div>
+      <div class="top-nav-links">
+        <a href="./questions.html" class="nav-btn">Company Radar</a>
+        <a href="./practice.html" class="nav-btn">AI Voice Examiner</a>
+        <a href="./cramming.html" class="nav-btn active">Cramming Sheets</a>
+        <a href="../horizon/world-dashboard.html" class="nav-btn">Studio & Arena</a>
+        <a href="./system-design.html" class="nav-btn">System Design</a>
+        <a href="../auth/login.html" class="nav-btn" style="color: var(--coral-light);" onclick="window.PhoenixAuth && window.PhoenixAuth.logout()">Logout</a>
+      </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <div>
+        <h1 class="hero-title">Last-Minute Formula & Pattern Cramming Sheets</h1>
+        <p class="hero-desc">
+          High-yield mental model digests, asymptotic recurrence master relations, and space-repetition drills. Master the 14 core patterns and invariant proofs 60 minutes before your FAANG round.
+        </p>
+      </div>
+      <div class="hero-stats-row">
+        <div class="stat-pill">
+          <div class="stat-val" id="patternsCount">14</div>
+          <div class="stat-lbl">Core Patterns</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" style="color: var(--emerald-light);" id="drillScore">0 XP</div>
+          <div class="stat-lbl">Drill Mastery</div>
         </div>
       </div>
     </div>
 
-    <!-- Swipe Actions -->
-    <div style="display: flex; gap: 12px;">
-      <button class="btn btn-secondary swipe-btn" onclick="nextCard(false)">❌ Don't Know</button>
-      <button class="btn btn-success swipe-btn" onclick="nextCard(true)">✅ Got It!</button>
+    <!-- Section Navigation Tabs -->
+    <div class="section-tabs-bar">
+      <button class="section-tab-btn active" id="tabBtnPatterns" onclick="switchTab('patterns')">
+        <span>🧩</span> 14 Core Algorithmic Patterns
+      </button>
+      <button class="section-tab-btn" id="tabBtnRecurrence" onclick="switchTab('recurrence')">
+        <span>📐</span> Asymptotic Master Theorem
+      </button>
+      <button class="section-tab-btn" id="tabBtnStructures" onclick="switchTab('structures')">
+        <span>💾</span> Data Structure Complexity Wall
+      </button>
+      <button class="section-tab-btn" id="tabBtnDrill" onclick="switchTab('drill')">
+        <span>⚡</span> Rapid Space-Repetition Drill
+      </button>
     </div>
 
-    <div style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted);">
-      Score: <strong id="scoreVal" style="color: var(--green);">0</strong> | Progress: <span id="progressVal">0/0</span>
+    <!-- Search & Print Toolbar -->
+    <div class="search-toolbar">
+      <span style="color: var(--text-dim);">🔍</span>
+      <input type="text" class="search-input" id="cramSearchInput" placeholder="Filter by pattern, asymptotic relation, or invariant proof (e.g. Sliding Window, Master Theorem, DSU, Two Pointers)..." oninput="applyCramSearch()">
+      <button class="btn-print-sheet" onclick="window.print()">
+        <span>🖨️</span> Print 1-Page Cheat Sheet
+      </button>
+    </div>
+
+    <!-- VIEW 1: 14 Algorithmic Patterns -->
+    <div id="viewPatterns">
+      <div class="patterns-grid" id="patternsGridContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- VIEW 2: Asymptotic Master Theorem Matrix -->
+    <div id="viewRecurrence" style="display: none;">
+      <div class="matrix-table-container">
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; margin-bottom: 8px;">Master Theorem Recurrence Form: T(N) = a T(N/b) + f(N)</h2>
+        <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 20px;">Let c = log_b(a) (critical exponent). Compare f(N) with N^c.</p>
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Case</th>
+              <th>Condition</th>
+              <th>Asymptotic Bound Θ(N)</th>
+              <th>Classic Example</th>
+              <th>Intuition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Case 1: Leaves Dominate</strong></td>
+              <td class="mono-cell">f(N) = O(N^(c - ε))</td>
+              <td class="mono-cell">Θ(N^(log_b a))</td>
+              <td>Strassen Matrix Mult: T(N) = 7T(N/2) + O(N^2)</td>
+              <td>Leaf level has more work than all internal levels combined.</td>
+            </tr>
+            <tr>
+              <td><strong>Case 2: Even Distribution</strong></td>
+              <td class="mono-cell">f(N) = Θ(N^c log^k N)</td>
+              <td class="mono-cell">Θ(N^c log^(k+1) N)</td>
+              <td>Merge Sort: T(N) = 2T(N/2) + O(N)</td>
+              <td>Every level of the recursion tree performs equal work: log(N) levels * N.</td>
+            </tr>
+            <tr>
+              <td><strong>Case 3: Root Dominates</strong></td>
+              <td class="mono-cell">f(N) = Ω(N^(c + ε))</td>
+              <td class="mono-cell">Θ(f(N))</td>
+              <td>Binary Search Variant: T(N) = T(N/2) + O(N)</td>
+              <td>Top level dominates; geometric decay makes subproblems negligible.</td>
+            </tr>
+            <tr>
+              <td><strong>Akra-Bazzi Generalization</strong></td>
+              <td class="mono-cell">T(x) = g(x) + Σ a_i T(b_i x + h_i(x))</td>
+              <td class="mono-cell">Θ(x^p (1 + ∫ g(u)/u^(p+1) du))</td>
+              <td>Unequal Partition: T(N) = T(N/3) + T(2N/3) + O(N)</td>
+              <td>Handles arbitrary non-uniform divide-and-conquer partitions.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VIEW 3: Data Structure Complexity Wall -->
+    <div id="viewStructures" style="display: none;">
+      <div class="matrix-table-container">
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; margin-bottom: 8px;">Silicon Valley Data Structure Complexity Matrix</h2>
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Data Structure</th>
+              <th>Access (Average)</th>
+              <th>Search (Worst)</th>
+              <th>Insertion (Worst)</th>
+              <th>Deletion (Worst)</th>
+              <th>Space Bounds</th>
+              <th>FAANG Invariant Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Hash Table (Separate Chaining)</strong></td>
+              <td class="mono-cell">O(1)</td>
+              <td class="mono-cell">O(N)</td>
+              <td class="mono-cell">O(1) amortized</td>
+              <td class="mono-cell">O(1) amortized</td>
+              <td class="mono-cell">O(N)</td>
+              <td>Load factor α &lt; 0.75 avoids clustering degradation.</td>
+            </tr>
+            <tr>
+              <td><strong>Red-Black Tree (Self-Balancing)</strong></td>
+              <td class="mono-cell">O(log N)</td>
+              <td class="mono-cell">O(log N)</td>
+              <td class="mono-cell">O(log N)</td>
+              <td class="mono-cell">O(log N)</td>
+              <td class="mono-cell">O(N)</td>
+              <td>Height strictly bounded by 2 log_2(N + 1).</td>
+            </tr>
+            <tr>
+              <td><strong>Disjoint Set Union (DSU)</strong></td>
+              <td class="mono-cell">O(α(N))</td>
+              <td class="mono-cell">O(α(N))</td>
+              <td class="mono-cell">O(α(N))</td>
+              <td class="mono-cell">O(α(N))</td>
+              <td class="mono-cell">O(N)</td>
+              <td>Union by Rank + Path Compression yields inverse Ackermann α(N) &lt; 5.</td>
+            </tr>
+            <tr>
+              <td><strong>Binary Min/Max Heap</strong></td>
+              <td class="mono-cell">O(1) peek</td>
+              <td class="mono-cell">O(N) search</td>
+              <td class="mono-cell">O(log N)</td>
+              <td class="mono-cell">O(log N) extract</td>
+              <td class="mono-cell">O(N)</td>
+              <td>Complete binary tree in contiguous array: parent=(i-1)/2.</td>
+            </tr>
+            <tr>
+              <td><strong>Trie (Prefix Tree)</strong></td>
+              <td class="mono-cell">O(L)</td>
+              <td class="mono-cell">O(L)</td>
+              <td class="mono-cell">O(L)</td>
+              <td class="mono-cell">O(L)</td>
+              <td class="mono-cell">O(ALPHABET * N * L)</td>
+              <td>Search complexity bounded by string length L, independent of N keys!</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VIEW 4: Rapid Space-Repetition Flashcard Drill -->
+    <div id="viewDrill" style="display: none;">
+      <div class="drill-stage">
+        <div class="flashcard-3d" id="drillCard" onclick="flipDrillCard()">
+          <div class="flashcard-3d-inner" id="drillCardInner">
+            <div class="card-face card-front">
+              <span class="card-category-pill" id="drillCategory">TWO POINTERS</span>
+              <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; line-height: 1.4; max-width: 500px;" id="drillQuestion">
+                When does Two Pointers guarantee an optimal O(N) solution over O(N^2) brute force?
+              </h2>
+              <div style="font-size: 12px; color: var(--text-dim); margin-top: 24px;">
+                👉 Tap card to reveal Invariant Proof & Edge Cases
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <span style="font-size: 11px; font-weight: 700; color: var(--purple-light); text-transform: uppercase;">Mathematical Invariant:</span>
+              <p style="font-size: 13.5px; color: #f1f5f9; line-height: 1.6; margin-top: 6px;" id="drillAnswer">
+                Bilateral Monotonicity: The array must be monotonic (sorted or strictly non-decreasing). When moving pointer L to the right strictly increases sum, and moving pointer R to the left strictly decreases sum, candidate pairs outside the bounding window can be pruned in O(1) without evaluation.
+              </p>
+              <div style="margin-top: 14px; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 8px; font-size: 12px; color: var(--cyan-light); font-family: 'JetBrains Mono', monospace;" id="drillCode">
+                while (L &lt; R) { int sum = a[L] + a[R]; if (sum == target) return; sum &lt; target ? L++ : R--; }
+              </div>
+              <div style="font-size: 11px; color: var(--text-dim); margin-top: 16px;">
+                👉 Tap card to flip back to question
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="drill-actions">
+          <button class="btn-swipe-fail" onclick="processDrillAnswer(false)">❌ Need Review</button>
+          <button class="btn-swipe-pass" onclick="processDrillAnswer(true)">✅ Got It (+10 XP)</button>
+        </div>
+        <div style="margin-top: 14px; font-size: 12px; color: var(--text-dim);" id="drillProgressText">
+          Card 1 of 6 • Active Spaced-Repetition Deck
+        </div>
+      </div>
     </div>
   </div>
 
+  <script src="../phoenix-core.js"></script>
   <script>
-    const API_BASE_URL = 'http://localhost:5000/api';
-    let questions = [];
-    let currentIdx = 0;
-    let score = 0;
-    let userToken = null;
+    const CRAM_PATTERNS = [
+      {
+        title: "1. Two Pointers",
+        badge: "Sorted Arrays",
+        intuition: "Search pairs or compress array elements by converging two pointers inwards or outwards based on monotonicity.",
+        proof: "Monotonicity: a[L] + a[R] > target -> no element right of L can pair with R. Step R--. Eliminates entire rows in O(1).",
+        time: "O(N) Time",
+        space: "O(1) Space"
+      },
+      {
+        title: "2. Sliding Window",
+        badge: "Subarrays / Strings",
+        intuition: "Maintain continuous subarray range [L, R]. Expand R to satisfy constraint; contract L to restore invariant.",
+        proof: "Amortized Bounds: L and R each advance at most N times. Total iterations <= 2N = O(N).",
+        time: "O(N) Time",
+        space: "O(K) Hash Map"
+      },
+      {
+        title: "3. Fast & Slow Pointers",
+        badge: "Cycles / Midpoint",
+        intuition: "Hare moves 2x velocity of Tortoise. In a cycle of length C, distance shrinks by 1 each step.",
+        proof: "Floyd's Invariant: Relative speed is 1. Maximum steps to rendezvous inside loop <= C. Detects loop without extra memory.",
+        time: "O(N) Time",
+        space: "O(1) Space"
+      },
+      {
+        title: "4. Merge Intervals",
+        badge: "Overlapping Spans",
+        intuition: "Sort intervals by start time. Compare current.start with prev.end to detect overlap and merge dynamically.",
+        proof: "Transitivity: Sorting guarantees that if interval i does not overlap with interval i-1, it cannot overlap with any j < i-1.",
+        time: "O(N log N) Sort",
+        space: "O(1) in-place"
+      },
+      {
+        title: "5. Cyclic Sort",
+        badge: "Arrays [1...N]",
+        intuition: "When array numbers range from 1 to N, each number belongs at index (nums[i] - 1). Swap until placed.",
+        proof: "Placement Invariant: Each swap places at least one number in its correct final index. Max N swaps total.",
+        time: "O(N) Time",
+        space: "O(1) In-Place"
+      },
+      {
+        title: "6. In-Place LinkedList Reversal",
+        badge: "Pointers & Node Links",
+        intuition: "Reverse next pointers using prev, curr, and next_temp pointers without allocating new node wrappers.",
+        proof: "Inductive Step: At step k, nodes 1..k-1 point backwards. Swap curr.next = prev preserves the reversed prefix invariant.",
+        time: "O(N) Linear",
+        space: "O(1) Strict"
+      },
+      {
+        title: "7. Tree BFS / Level Order",
+        badge: "Shortest Path / Breadth",
+        intuition: "Queue-based traversal tracking level boundaries by taking snapshot of queue.size() at start of each tier.",
+        proof: "Distance Monotonicity: Elements at depth d are strictly popped and visited before elements at depth d+1.",
+        time: "O(V + E)",
+        space: "O(W) Max Width"
+      },
+      {
+        title: "8. Two Heaps (Median Finder)",
+        badge: "Streaming Quantiles",
+        intuition: "Maintain max-heap for smaller half and min-heap for larger half. Keep heap size difference <= 1.",
+        proof: "Median Invariant: maxHeap.peek() <= minHeap.peek(). Median is either top of larger heap or average of both tops.",
+        time: "O(log N) insert, O(1) median",
+        space: "O(N) Memory"
+      }
+    ];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      userToken = localStorage.getItem('token');
-      if (!userToken) {
-        window.location.href = '../auth/login.html';
+    const DRILL_CARDS = [
+      {
+        category: "TWO POINTERS",
+        question: "When does Two Pointers guarantee an optimal O(N) solution over O(N^2) brute force?",
+        answer: "Bilateral Monotonicity: The array must be monotonic. When moving pointer L strictly increases sum and R strictly decreases sum, candidate pairs outside the bounding window can be pruned in O(1) without evaluation.",
+        code: "while (L < R) { int sum = a[L] + a[R]; if (sum == target) return; sum < target ? L++ : R--; }"
+      },
+      {
+        category: "SLIDING WINDOW",
+        question: "Why is Sliding Window amortized O(N) even though there is a nested while loop for contracting?",
+        answer: "Pointer Traversal Bounds: Both the right pointer R and left pointer L move exclusively forward. Across the entire execution of the algorithm, L advances at most N times and R advances at most N times. Total iterations are bounded by 2N = O(N).",
+        code: "for (int R=0; R<N; R++) { add(a[R]); while (!valid()) remove(a[L++]); maxLen = max(maxLen, R-L+1); }"
+      },
+      {
+        category: "CYCLIC SORT",
+        question: "How does Cyclic Sort achieve O(N) time with O(1) memory for duplicate finding in range [1...N]?",
+        answer: "Permutation Invariant: We iteratively swap nums[i] with nums[nums[i]-1] until the current position holds the correct number or a duplicate is detected. Each swap places at least one number into its correct position permanently.",
+        code: "while (nums[i] != nums[nums[i]-1]) swap(nums[i], nums[nums[i]-1]);"
+      },
+      {
+        category: "SYSTEM DESIGN (CAP)",
+        question: "Under network partition (P), what is the fundamental trade-off between CP and AP in distributed databases?",
+        answer: "PACELC Invariant: If partition occurs, a CP system rejects writes or returns errors to guarantee read consistency. An AP system accepts writes locally to maintain availability, sacrificing linearizability across partitions.",
+        code: "CP (Raft/Zookeeper: Strict Consensus) vs AP (Cassandra/Dynamo: Eventual Consistency)"
+      },
+      {
+        category: "DYNAMIC PROGRAMMING",
+        question: "How do you systematically optimize a 2D DP table O(N*M) space down to O(M) space?",
+        answer: "Rolling Array Invariant: If state dp[i][j] depends only on the current row i and the immediately preceding row i-1, you only need to store two 1D rows (or a single 1D row updating in reverse direction).",
+        code: "dp[j] = max(dp[j], dp[j - weight] + val); // Reverse iterate for 0/1 knapsack"
+      },
+      {
+        category: "CONCURRENCY",
+        question: "What is the ABA problem in lock-free CAS (Compare-And-Swap) and how is it resolved?",
+        answer: "Pointer Recycling Invariant: Thread 1 reads value A. Thread 2 modifies A -> B -> A. Thread 1's CAS succeeds thinking nothing changed, even though internal state mutated. Resolved via AtomicStampedReference / versioned tagged pointers.",
+        code: "AtomicStampedReference<Node> ref = new AtomicStampedReference<>(initialNode, 0);"
+      }
+    ];
+
+    let currentDrillIdx = 0;
+    let drillXP = 0;
+
+    function renderPatterns(items) {
+      const container = document.getElementById('patternsGridContainer');
+      container.innerHTML = '';
+
+      if (items.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-dim);">No patterns match search.</div>';
         return;
       }
-      loadQuestions();
-    });
 
-    async function loadQuestions() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/prep/questions`, {
-          headers: { 'Authorization': `Bearer ${userToken}` }
-        });
-        if (res.ok) {
-          questions = await res.json();
-          renderCard();
+      items.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'pattern-card';
+        card.innerHTML = `
+          <div>
+            <div class="pattern-header">
+              <div class="pattern-title">${p.title}</div>
+              <span class="pattern-badge">${p.badge}</span>
+            </div>
+            <p class="pattern-intuition">${p.intuition}</p>
+            <div class="invariant-proof-box">
+              <strong>Invariant:</strong> ${p.proof}
+            </div>
+          </div>
+          <div class="complexity-pills-row">
+            <span style="color: var(--emerald-light);">⏱️ ${p.time}</span>
+            <span style="color: var(--cyan-light);">💾 ${p.space}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function switchTab(tab) {
+      const tabs = ['patterns', 'recurrence', 'structures', 'drill'];
+      tabs.forEach(t => {
+        const view = document.getElementById(`view${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (t === tab) {
+          view.style.display = 'block';
+          btn.classList.add('active');
+        } else {
+          view.style.display = 'none';
+          btn.classList.remove('active');
         }
-      } catch (err) {
-        console.error('Error fetching questions:', err);
-      }
+      });
     }
 
-    function renderCard() {
-      if (questions.length === 0) return;
-      const q = questions[currentIdx];
-      
-      document.getElementById('cardInner').parentElement.classList.remove('flipped');
-      document.getElementById('cardCategory').textContent = q.category || 'DSA';
-      document.getElementById('cardTitle').textContent = q.title;
-      document.getElementById('cardDescription').textContent = q.description;
-      document.getElementById('progressVal').textContent = `${currentIdx + 1}/${questions.length}`;
+    function applyCramSearch() {
+      const query = document.getElementById('cramSearchInput').value.toLowerCase();
+      const filtered = CRAM_PATTERNS.filter(p => 
+        p.title.toLowerCase().includes(query) ||
+        p.badge.toLowerCase().includes(query) ||
+        p.intuition.toLowerCase().includes(query) ||
+        p.proof.toLowerCase().includes(query)
+      );
+      renderPatterns(filtered);
     }
 
-    function flipCard() {
-      document.getElementById('cardInner').parentElement.classList.toggle('flipped');
+    function renderDrillCard() {
+      const card = DRILL_CARDS[currentDrillIdx];
+      const drillCard = document.getElementById('drillCard');
+      drillCard.classList.remove('flipped');
+
+      document.getElementById('drillCategory').textContent = card.category;
+      document.getElementById('drillQuestion').textContent = card.question;
+      document.getElementById('drillAnswer').textContent = card.answer;
+      document.getElementById('drillCode').textContent = card.code;
+      document.getElementById('drillProgressText').textContent = `Card ${currentDrillIdx + 1} of ${DRILL_CARDS.length} • Active Spaced-Repetition Deck`;
     }
 
-    async function nextCard(knewIt) {
-      if (questions.length === 0) return;
+    function flipDrillCard() {
+      document.getElementById('drillCard').classList.toggle('flipped');
+    }
 
+    function processDrillAnswer(knewIt) {
       if (knewIt) {
-        score++;
-        document.getElementById('scoreVal').textContent = score;
-
-        // Award dynamic XP on backend
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const userId = user._id || user.id;
-        try {
-          await fetch(`${API_BASE_URL}/gamification/award-xp`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${userToken}`
-            },
-            body: JSON.stringify({
-              userId,
-              amount: 10,
-              actionType: 'flashcard',
-              skillCategory: questions[currentIdx].category
-            })
-          });
-        } catch (e) {
-          console.warn('Award XP failed:', e);
-        }
+        drillXP += 10;
+        document.getElementById('drillScore').textContent = `${drillXP} XP`;
       }
-
-      currentIdx = (currentIdx + 1) % questions.length;
-      renderCard();
+      currentDrillIdx = (currentDrillIdx + 1) % DRILL_CARDS.length;
+      renderDrillCard();
     }
 
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '../auth/login.html';
+    window.addEventListener('DOMContentLoaded', () => {
+      renderPatterns(CRAM_PATTERNS);
+      renderDrillCard();
     });
   </script>
-<script src="../phoenix-core.js"></script>
-<script>Phoenix.init({ particles: true, theme: true, nav: true });</script>
 </body>
 </html>

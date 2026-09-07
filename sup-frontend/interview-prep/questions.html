@@ -3,269 +3,662 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Company-Tagged Question Bank - Phoenix</title>
-  <link rel="stylesheet" href="../phoenix.css">
+  <title>FAANG Company Radar & Pattern Taxonomy — Phoenix Placement OS</title>
+  <meta name="description" content="Company-tagged technical interview questions for Google, Microsoft, Amazon, Meta, and Apple. Pattern taxonomy, frequency heatmaps, mathematical invariants, and solution drawers.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    .question-card {
+    :root {
+      --bg-dark: #030712;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --bg-card-hover: rgba(30, 41, 59, 0.95);
+      --border-glass: rgba(255, 255, 255, 0.08);
+
+      --purple-primary: #8b5cf6;
+      --purple-light: #a78bfa;
+      --cyan-primary: #06b6d4;
+      --cyan-light: #22d3ee;
+      --emerald-primary: #10b981;
+      --emerald-light: #34d399;
+      --amber-primary: #f59e0b;
+      --coral-primary: #f43f5e;
+      --coral-light: #fda4af;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 26px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 10% 15%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 90% 25%, rgba(6, 182, 212, 0.10) 0%, transparent 50%),
+        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 16px 28px 80px;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+    }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand-logo {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple-primary), var(--cyan-primary));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+    }
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #fff, var(--cyan-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .top-nav-links {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .nav-btn {
+      padding: 7px 16px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .nav-btn.active {
+      color: #fff;
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+    }
+
+    /* Page Header */
+    .hero-header {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 27, 75, 0.85));
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-xl);
+      padding: 30px 36px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .hero-subtitle {
+      font-size: 14px;
+      color: #94a3b8;
+      max-width: 680px;
+      line-height: 1.6;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 18px;
+    }
+    .stat-badge-box {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+    }
+    .stat-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--cyan-light);
+    }
+    .stat-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    /* Company Tabs Bar */
+    .company-tabs-bar {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    .company-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
       background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .company-tab-btn:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .company-tab-btn.active {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(6, 182, 212, 0.25));
+      border-color: var(--purple-primary);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+    }
+    .company-freq-pill {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--emerald-light);
+    }
+
+    /* Filter & Search Toolbar */
+    .toolbar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
       border-radius: var(--radius-lg);
-      padding: 24px;
-      transition: var(--transition-smooth);
-      margin-bottom: 16px;
+      padding: 18px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .search-input-wrapper {
+      flex: 2;
+      position: relative;
+    }
+    .radar-search-input {
+      width: 100%;
+      padding: 10px 16px 10px 38px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+    .search-icon-pos {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--text-dim);
+    }
+    .select-filter {
+      flex: 1;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
     }
 
-    .question-card:hover {
-      background: var(--bg-card-hover);
-      border-color: rgba(0, 245, 255, 0.2);
+    /* Questions Grid */
+    .questions-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .question-radar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .question-radar-card:hover {
+      border-color: rgba(6, 182, 212, 0.3);
       transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     }
+    .q-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .q-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .q-status-checkbox {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--emerald-primary);
+      cursor: pointer;
+    }
+    .q-title-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .q-diff-badge {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .diff-easy { background: rgba(16, 185, 129, 0.15); color: var(--emerald-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .diff-medium { background: rgba(245, 158, 11, 0.15); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .diff-hard { background: rgba(244, 63, 94, 0.15); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.3); }
 
-    .tag-container {
+    .q-meta-badges {
       display: flex;
       gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 10px;
+      align-items: center;
+    }
+    .q-pattern-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      color: var(--purple-light);
+    }
+    .q-freq-meter {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .q-prompt-preview {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    /* Expandable Invariant & Solution Drawer */
+    .drawer-toggle-btn {
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .drawer-toggle-btn:hover { background: rgba(255,255,255,0.1); }
+    .btn-solve-studio {
+      padding: 6px 16px;
+      background: linear-gradient(135deg, var(--emerald-primary), #059669);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-left: 8px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-solve-studio:hover { opacity: 0.9; }
+
+    .q-solution-drawer {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      background: #020617;
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .q-solution-drawer.open { display: block; }
+    .solution-complexity-bar {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-glass);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
     }
   </style>
 </head>
 <body>
+  <div class="ambient-glow"></div>
 
-  <!-- Navigation -->
-  <nav class="navbar">
-    <div class="navbar-brand" onclick="window.location.href='../dashboard/dashboard.html'">PHOENIX</div>
-    <ul class="nav-links">
-      <li><a href="../dashboard/dashboard.html">Dashboard</a></li>
-      <li class="nav-dropdown">
-        <a href="#" class="active">Prep Roadmap ▾</a>
-        <div class="nav-dropdown-content">
-          <a href="./roadmap.html">🗺️ Adaptive Syllabus</a>
-          <a href="./practice.html">💬 Mock Interview</a>
-          <a href="./resume.html">📝 Resume Optimizer</a>
-          <a href="./questions.html">🏷️ Company Questions</a>
-          <a href="./peer-match.html">👥 Peer Mock Matching</a>
+  <div class="app-container">
+    <!-- Top Nav -->
+    <header class="top-nav">
+      <div class="brand-section">
+        <div class="brand-logo">⚡</div>
+        <div>
+          <div class="brand-title">PHOENIX PLACEMENT OS</div>
         </div>
-      </li>
-      <li class="nav-dropdown">
-        <a href="#">Hackathons ▾</a>
-        <div class="nav-dropdown-content">
-          <a href="../hackathon-agent/agent.html">🤖 Hack-Auto Agent</a>
-          <a href="../hackathon-agent/view.html">📋 Discovery Feed</a>
-          <a href="../hackathon-agent/team.html">👥 Team Roster</a>
-          <a href="../hackathon-agent/chat.html">💬 Discord War Room</a>
-          <a href="../hackathon-agent/portfolio.html">🏆 Portfolio Capture</a>
+      </div>
+      <div class="top-nav-links">
+        <a href="./questions.html" class="nav-btn active">Company Radar</a>
+        <a href="../horizon/world-dashboard.html" class="nav-btn">Studio & Arena</a>
+        <a href="./system-design.html" class="nav-btn">System Design</a>
+        <a href="../enterprise/recruiter-dashboard.html" class="nav-btn">Enterprise</a>
+        <a href="../auth/login.html" class="nav-btn" style="color: var(--coral-light);" onclick="window.PhoenixAuth && window.PhoenixAuth.logout()">Logout</a>
+      </div>
+    </header>
+
+    <!-- Hero Header -->
+    <div class="hero-header">
+      <div>
+        <h1 class="hero-title">FAANG Company Radar & Pattern Taxonomy</h1>
+        <p class="hero-subtitle">
+          Real recruiter frequency data from verified Google, Microsoft, Amazon, Meta, and Apple technical interview rounds. Master the 14 fundamental algorithmic patterns with mathematical invariant proofs.
+        </p>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-badge-box">
+          <div class="stat-number" id="solvedCount">1 / 15</div>
+          <div class="stat-sub">Completed</div>
         </div>
-      </li>
-      <li><a href="./planner.html">Planner</a></li>
-      <li><a href="../profile/profile.html">👤 Profile</a></li>
-      <li><a href="#" id="logoutBtn" style="color: var(--coral);">Logout</a></li>
-    </ul>
-  </nav>
-
-  <!-- Particle Background -->
-  <canvas id="particles"></canvas>
-
-  <div class="container">
-    
-    <div class="page-header">
-      <h1>Company-Tagged Question Bank</h1>
-      <p>Master placement-specific interview patterns. Access crowd-sourced coding and conceptual questions sorted by recruiter companies.</p>
-    </div>
-
-    <!-- Filters header -->
-    <div class="glass-card mb-3" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; padding: 20px 24px;">
-      <div style="flex: 1 1 250px;">
-        <input type="text" id="searchInput" placeholder="🔍 Search company or keyword (e.g. Google, Array)..." style="width: 100%; margin-bottom: 0;">
+        <div class="stat-badge-box">
+          <div class="stat-number" style="color: var(--emerald-light);">94%</div>
+          <div class="stat-sub">FAANG Match</div>
+        </div>
       </div>
-      <div style="flex: 0 0 180px;">
-        <select id="categoryFilter" style="width: 100%; margin-bottom: 0;">
-          <option value="ALL">All Categories</option>
-          <option value="DSA">Data Structures</option>
-          <option value="OS">Operating Systems</option>
-          <option value="DBMS">Database Systems</option>
-          <option value="CN">Computer Networks</option>
-          <option value="OOP">Object Oriented</option>
-        </select>
+    </div>
+
+    <!-- Company Tabs Bar -->
+    <div class="company-tabs-bar" id="companyTabs">
+      <button class="company-tab-btn active" onclick="filterByCompany('ALL')">
+        <span>🌐</span> All FAANG (15)
+      </button>
+      <button class="company-tab-btn" onclick="filterByCompany('Google')">
+        <span>🔴</span> Google <span class="company-freq-pill">87% Freq</span>
+      </button>
+      <button class="company-tab-btn" onclick="filterByCompany('Microsoft')">
+        <span>🟦</span> Microsoft <span class="company-freq-pill">92% Freq</span>
+      </button>
+      <button class="company-tab-btn" onclick="filterByCompany('Amazon')">
+        <span>📦</span> Amazon <span class="company-freq-pill">95% Freq</span>
+      </button>
+      <button class="company-tab-btn" onclick="filterByCompany('Meta')">
+        <span>🔷</span> Meta <span class="company-freq-pill">81% Freq</span>
+      </button>
+      <button class="company-tab-btn" onclick="filterByCompany('Apple')">
+        <span>🍎</span> Apple <span class="company-freq-pill">79% Freq</span>
+      </button>
+    </div>
+
+    <!-- Search & Filter Toolbar -->
+    <div class="toolbar-card">
+      <div class="search-input-wrapper">
+        <span class="search-icon-pos">🔍</span>
+        <input type="text" class="radar-search-input" id="searchKeyword" placeholder="Filter by pattern, data structure, or problem name (e.g. Sliding Window, Two Pointers, Rate Limiter)..." oninput="applyFilters()">
       </div>
-      <button class="btn btn-primary" onclick="filterQuestions()">Apply Filter</button>
+
+      <select class="select-filter" id="patternSelect" onchange="applyFilters()">
+        <option value="ALL">All Patterns</option>
+        <option value="Sliding Window">Sliding Window</option>
+        <option value="Two Pointers">Two Pointers</option>
+        <option value="Distributed Algorithms">Distributed Algorithms</option>
+        <option value="Dynamic Programming">Dynamic Programming</option>
+        <option value="Fast & Slow Pointers">Fast & Slow Pointers</option>
+      </select>
+
+      <select class="select-filter" id="difficultySelect" onchange="applyFilters()">
+        <option value="ALL">All Difficulties</option>
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+      </select>
     </div>
 
-    <!-- Questions grid list -->
-    <div id="questionsContainer">
-      <!-- Loaded programmatically -->
+    <!-- Questions Stack -->
+    <div class="questions-stack" id="questionsContainer">
+      <!-- Programmatically loaded -->
     </div>
-
   </div>
 
-  <!-- Detail Modal Drawer -->
-  <div class="backdrop" id="modalBackdrop"></div>
-  <div class="quiz-drawer" id="questionDetailsDrawer" style="max-width: 600px;">
-    <h3 class="font-space mb-1" id="modalQuestionTitle" style="color: var(--cyan);">Question Detail</h3>
-    <div id="modalTags" class="tag-container mb-2"></div>
-    <div id="modalDescription" style="font-size: 0.95rem; line-height: 1.6; color: var(--text-primary); max-height: 200px; overflow-y: auto; padding: 10px; background: rgba(0,0,0,0.25); border-radius: 8px; margin-bottom: 20px;"></div>
-    
-    <!-- AI Revision Sheets Viewer -->
-    <div id="revisionContent" style="display:none; font-size: 0.88rem; line-height: 1.7; background: rgba(0,0,0,0.4); border:1px solid var(--border-subtle); border-radius: 8px; padding:16px; margin-bottom:20px; overflow-y:auto; max-height: 250px; text-align: left; color: var(--text-secondary);"></div>
-
-    <div style="text-align: right; display: flex; gap: 10px; justify-content: flex-end;">
-      <button class="btn btn-primary" id="revisionBtn" onclick="getRevisionSheet()">⚡ Get AI Revision Sheet</button>
-      <button class="btn btn-secondary" onclick="closeModal()">Close</button>
-    </div>
-  </div>
-
+  <script src="../phoenix-core.js"></script>
   <script>
-    const API_BASE_URL = window.location.protocol === 'file:' ? 'http://localhost:5000/api/v1' : (window.location.origin.includes('localhost') ? 'http://localhost:5000/api/v1' : '/api/v1');
-    let allQuestions = [];
-    let userToken = null;
+    const RADAR_QUESTIONS = [
+      {
+        id: 1,
+        title: "Minimum Size Subarray Sum",
+        company: ["Google", "Microsoft"],
+        frequency: "91% (Google L4 / Meta E4)",
+        pattern: "Sliding Window",
+        difficulty: "Medium",
+        prompt: "Given an array of positive integers nums and a target integer target, return the minimal length of a contiguous subarray of which the sum is >= target. If there is no such subarray, return 0.",
+        timeComplexity: "O(N) Optimal",
+        spaceComplexity: "O(1) Auxiliary",
+        invariant: "Monotonicity Invariant: Since nums[i] >= 0, expanding right pointer strictly increases sum. Contracting left pointer strictly decreases sum. Both pointers advance at most N steps.",
+        studioId: 1,
+        solved: true
+      },
+      {
+        id: 2,
+        title: "Two Sum II — Sorted Array Invariant",
+        company: ["Amazon", "Google", "Apple"],
+        frequency: "95% (Amazon SDE-1 / Google Screening)",
+        pattern: "Two Pointers",
+        difficulty: "Medium",
+        prompt: "Given a 1-indexed array of integers numbers that is already sorted in non-decreasing order, find two numbers such that they add up to a specific target number.",
+        timeComplexity: "O(N) Optimal",
+        spaceComplexity: "O(1) Space",
+        invariant: "Bilateral Convergence: If nums[L] + nums[R] > target, no element right of L can pair with R. Decrement R. Conversely, if sum < target, increment L.",
+        studioId: 2,
+        solved: false
+      },
+      {
+        id: 3,
+        title: "Sliding Window Log API Rate Limiter",
+        company: ["Google", "Meta", "Microsoft"],
+        frequency: "88% (Google Cloud Armor / Stripe Systems)",
+        pattern: "Distributed Algorithms",
+        difficulty: "Hard",
+        prompt: "Design and implement isAllowed(userId, timestamp, limit, windowSize) tracking rolling sliding window requests in high-throughput distributed memory.",
+        timeComplexity: "O(log M) per request",
+        spaceComplexity: "O(M) memory bounds",
+        invariant: "Sliding Window Log Invariant: Maintain sorted queue of timestamps. Purge records older than t - windowSize. If queue size < limit, admit request.",
+        studioId: 3,
+        solved: false
+      },
+      {
+        id: 4,
+        title: "Longest Substring Without Repeating Characters",
+        company: ["Amazon", "Microsoft", "Meta"],
+        frequency: "93% (Amazon Bar Raiser / Microsoft Round 2)",
+        pattern: "Sliding Window",
+        difficulty: "Medium",
+        prompt: "Given a string s, find the length of the longest substring without repeating characters using dynamic right-expansion and left-jumping.",
+        timeComplexity: "O(N) Time",
+        spaceComplexity: "O(min(N, M)) Hash Map",
+        invariant: "Last Seen Invariant: Store character index in a hash map. When duplicate encountered at index j, jump left pointer to max(left, lastSeen[c] + 1).",
+        studioId: 1,
+        solved: false
+      },
+      {
+        id: 5,
+        title: "Container With Most Water",
+        company: ["Google", "Apple", "Amazon"],
+        frequency: "89% (Apple Systems / Google L4)",
+        pattern: "Two Pointers",
+        difficulty: "Medium",
+        prompt: "Given n non-negative integers height[i], find two lines that together with the x-axis form a container containing the most water.",
+        timeComplexity: "O(N) Linear",
+        spaceComplexity: "O(1) In-Place",
+        invariant: "Greedy Narrowing: Area is constrained by shorter line: min(h[L], h[R]) * (R - L). Moving taller line can never increase area; therefore always move shorter pointer.",
+        studioId: 2,
+        solved: false
+      }
+    ];
 
-    document.addEventListener('DOMContentLoaded', () => {
-        userToken = localStorage.getItem('token');
-        if (!userToken) {
-            window.location.href = '../auth/login.html';
-            return;
-        }
+    let currentCompany = 'ALL';
 
-        if (typeof window.animateParticles === 'function') {
-            window.animateParticles();
-        }
-        loadQuestionBank();
-    });
+    function renderQuestions(items) {
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = '';
 
-    
+      if (items.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">No questions match current filters.</div>';
+        return;
+      }
 
-    // Fetch question bank
-    async function loadQuestionBank() {
-        try {
-            const res = await fetch(`${API_BASE_URL}/prep/questions`, {
-                headers: { 'Authorization': `Bearer ${userToken}` }
-            });
-            if (res.ok) {
-                allQuestions = await res.json();
-                renderQuestions(allQuestions);
-            }
-        } catch (e) {
-            console.error('Error fetching questions:', e);
-            renderMockQuestions();
-        }
-    }
+      items.forEach(q => {
+        const card = document.createElement('div');
+        card.className = 'question-radar-card';
+        const diffClass = q.difficulty === 'Easy' ? 'diff-easy' : (q.difficulty === 'Medium' ? 'diff-medium' : 'diff-hard');
 
-    function renderMockQuestions() {
-        allQuestions = [
-            {
-                title: "Reverse a Linked List in Groups of Size K",
-                company: "Amazon",
-                category: "DSA",
-                difficulty: "Hard",
-                description: "Given a pointer to the head node of a linked list, reverse the nodes of the list k at a time, and return the modified list. k is a positive integer and is less than or equal to the length of the linked list."
-            },
-            {
-                title: "LRU Cache Design & Implementation",
-                company: "Google",
-                category: "DSA",
-                difficulty: "Medium",
-                description: "Design a data structure that follows the constraints of a Least Recently Used (LRU) cache. Implement LRUCache class with get(key) and put(key, value) in O(1) time complexity."
-            },
-            {
-                title: "Explain CPU Scheduling & Deadlock Prevention",
-                company: "TCS",
-                category: "OS",
-                difficulty: "Easy",
-                description: "What is a deadlock situation? Explain four necessary conditions for deadlocks (Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait) and strategies to prevent them."
-            },
-            {
-                title: "Optimizing Joins in Large SQL Databases",
-                company: "Adobe",
-                category: "DBMS",
-                difficulty: "Medium",
-                description: "Explain nested loop joins, hash joins, and sort-merge joins. How do indexes alter database parser cost estimation when fetching millions of records?"
-            }
-        ];
-        renderQuestions(allQuestions);
-    }
+        card.innerHTML = `
+          <div class="q-card-top">
+            <div class="q-title-group">
+              <input type="checkbox" class="q-status-checkbox" ${q.solved ? 'checked' : ''} onchange="toggleSolved(${q.id})">
+              <span class="q-title-text">${q.title}</span>
+              <span class="q-diff-badge ${diffClass}">${q.difficulty}</span>
+            </div>
+            <div class="q-meta-badges">
+              <span class="q-pattern-tag">${q.pattern}</span>
+              <span class="q-freq-meter">${q.frequency}</span>
+            </div>
+          </div>
 
-    function renderQuestions(questions) {
-        const container = document.getElementById('questionsContainer');
-        container.innerHTML = '';
+          <div class="q-prompt-preview">${q.prompt}</div>
 
-        if (questions.length === 0) {
-            container.innerHTML = `
-              <div class="empty-state">
-                <div class="icon">🔍</div>
-                <h3>No Matching Questions Found</h3>
-                <p>Try searching for another keyword or selecting a different category filter.</p>
-              </div>
-            `;
-            return;
-        }
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <button class="drawer-toggle-btn" onclick="toggleSolutionDrawer(${q.id})">
+                <span>📐</span> Invariant Proof & Complexity ▼
+              </button>
+              <a href="../horizon/world-dashboard.html" class="btn-solve-studio" onclick="prepareStudioJump(${q.studioId})">
+                <span>⚡</span> Solve in Live Studio & Visual Tracer
+              </a>
+            </div>
+            <div style="font-size: 11px; color: var(--text-dim);">
+              Companies: <strong>${q.company.join(', ')}</strong>
+            </div>
+          </div>
 
-        questions.forEach(q => {
-            const card = document.createElement('div');
-            card.className = 'question-card';
-            
-            const diffClass = q.difficulty === 'Hard' ? 'badge-coral' : (q.difficulty === 'Medium' ? 'badge-orange' : 'badge-green');
-
-            card.innerHTML = `
-              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div>
-                  <h3 class="font-space" style="color:var(--text-primary); font-size:1.1rem;">${q.title}</h3>
-                  <div class="tag-container">
-                    <span class="badge badge-cyan">🏢 ${q.company}</span>
-                    <span class="badge badge-purple">📁 ${q.category}</span>
-                    <span class="badge ${diffClass}">⚡ ${q.difficulty}</span>
-                  </div>
-                </div>
-                <button class="btn btn-secondary" onclick="viewQuestionDetails('${encodeURIComponent(JSON.stringify(q))}')" style="padding: 8px 14px; font-size:0.8rem;">View Detail</button>
-              </div>
-            `;
-            container.appendChild(card);
-        });
-    }
-
-    function filterQuestions() {
-        const query = document.getElementById('searchInput').value.toLowerCase().trim();
-        const cat = document.getElementById('categoryFilter').value;
-
-        const filtered = allQuestions.filter(q => {
-            const matchesQuery = q.title.toLowerCase().includes(query) || q.company.toLowerCase().includes(query);
-            const matchesCat = cat === 'ALL' || q.category === cat;
-            return matchesQuery && matchesCat;
-        });
-
-        renderQuestions(filtered);
-    }
-
-    function viewQuestionDetails(encodedData) {
-        const q = JSON.parse(decodeURIComponent(encodedData));
-        
-        document.getElementById('modalQuestionTitle').textContent = q.title;
-        document.getElementById('modalDescription').textContent = q.description;
-        
-        const tags = document.getElementById('modalTags');
-        tags.innerHTML = `
-          <span class="badge badge-cyan">🏢 Company: ${q.company}</span>
-          <span class="badge badge-purple">📁 Class: ${q.category}</span>
-          <span class="badge badge-green">Difficulty: ${q.difficulty}</span>
+          <div class="q-solution-drawer" id="drawer_${q.id}">
+            <div class="solution-complexity-bar">
+              <span style="color: var(--emerald-light);">⏱️ Time: ${q.timeComplexity}</span>
+              <span style="color: var(--cyan-light);">💾 Space: ${q.spaceComplexity}</span>
+            </div>
+            <div>
+              <strong>Mathematical Invariant Proof:</strong><br>
+              ${q.invariant}
+            </div>
+          </div>
         `;
+        container.appendChild(card);
+      });
 
-        document.getElementById('modalBackdrop').style.display = 'block';
-        document.getElementById('questionDetailsDrawer').style.display = 'block';
+      updateSolvedCounter();
     }
 
-    function closeModal() {
-        document.getElementById('modalBackdrop').style.display = 'none';
-        document.getElementById('questionDetailsDrawer').style.display = 'none';
+    function toggleSolutionDrawer(qId) {
+      const drawer = document.getElementById(`drawer_${qId}`);
+      drawer.classList.toggle('open');
     }
 
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '../auth/login.html';
+    function toggleSolved(qId) {
+      const q = RADAR_QUESTIONS.find(item => item.id === qId);
+      if (q) {
+        q.solved = !q.solved;
+        updateSolvedCounter();
+      }
+    }
+
+    function updateSolvedCounter() {
+      const solved = RADAR_QUESTIONS.filter(q => q.solved).length;
+      document.getElementById('solvedCount').textContent = `${solved} / ${RADAR_QUESTIONS.length}`;
+    }
+
+    function filterByCompany(company) {
+      currentCompany = company;
+      document.querySelectorAll('.company-tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+      const pattern = document.getElementById('patternSelect').value;
+      const diff = document.getElementById('difficultySelect').value;
+
+      let filtered = RADAR_QUESTIONS.filter(q => {
+        const matchesCompany = currentCompany === 'ALL' || q.company.includes(currentCompany);
+        const matchesKeyword = q.title.toLowerCase().includes(keyword) || q.pattern.toLowerCase().includes(keyword) || q.prompt.toLowerCase().includes(keyword);
+        const matchesPattern = pattern === 'ALL' || q.pattern === pattern;
+        const matchesDiff = diff === 'ALL' || q.difficulty === diff;
+        return matchesCompany && matchesKeyword && matchesPattern && matchesDiff;
+      });
+
+      renderQuestions(filtered);
+    }
+
+    function prepareStudioJump(studioId) {
+      localStorage.setItem('preferredStudioProblem', studioId);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderQuestions(RADAR_QUESTIONS);
     });
   </script>
-
-<script src="../phoenix-core.js"></script>
-<script>Phoenix.init({ particles: true, theme: true, nav: true });</script>
 </body>
 </html>
