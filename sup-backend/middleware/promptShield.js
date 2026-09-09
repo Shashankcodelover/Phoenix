@@ -199,8 +199,11 @@ const createPromptShield = (options = {}) => {
       // 3. Scan for prompt injection and XSS
       const threat = scanObject(req.body);
 
+      const url = req.originalUrl || req.url || '';
+      const isCodeExecutionRoute = url.includes('/drills/') || url.includes('/code-canvas/') || url.includes('/sandbox/') || url.includes('/code-review');
+
       if (threat) {
-        if (threat.isInjection) {
+        if (threat.isInjection && !isCodeExecutionRoute) {
           logSuspicious(ip, 'PROMPT_INJECTION', { field: threat.flaggedField });
           if (blockOnInjection) {
             return res.status(400).json({
@@ -219,8 +222,6 @@ const createPromptShield = (options = {}) => {
 
       // 4. Sanitize all string inputs (strip HTML, escape special chars)
       // Preserves valid programming code syntax (e.g. `<` and `>`) on code execution and review routes
-      const url = req.originalUrl || req.url || '';
-      const isCodeExecutionRoute = url.includes('/drills/') || url.includes('/code-canvas/') || url.includes('/sandbox/') || url.includes('/code-review');
       if (sanitize && !isCodeExecutionRoute) {
         req.body = sanitizeDeep(req.body);
       }

@@ -84,6 +84,49 @@ class TeamSynergyEngine {
     };
   }
 
+  evaluateTeamSynergy(payload = {}) {
+    const { members = [] } = payload;
+    const coveredArchetypes = [];
+    
+    members.forEach(member => {
+      const skillsArr = member.primarySkills || member.skills || [];
+      const skillsStr = skillsArr.join(' ').toLowerCase();
+      if (skillsStr.includes('react') || skillsStr.includes('next.js') || skillsStr.includes('ui/ux') || skillsStr.includes('tailwind')) {
+        coveredArchetypes.push({ role: 'Frontend & UI/UX Storyteller', assignedTo: member.name });
+      } else if (skillsStr.includes('node') || skillsStr.includes('redis') || skillsStr.includes('distributed') || skillsStr.includes('backend') || skillsStr.includes('cockroach')) {
+        coveredArchetypes.push({ role: 'Backend & Distributed Systems Architect', assignedTo: member.name });
+      } else if (skillsStr.includes('python') || skillsStr.includes('rag') || skillsStr.includes('ai') || skillsStr.includes('ast')) {
+        coveredArchetypes.push({ role: 'AI/ML & RAG Specialist', assignedTo: member.name });
+      } else if (skillsStr.includes('pitch') || skillsStr.includes('vc') || skillsStr.includes('marp') || skillsStr.includes('speaking')) {
+        coveredArchetypes.push({ role: 'Pitch Lead & Business Moat Presenter', assignedTo: member.name });
+      }
+    });
+
+    const uniqueRolesCount = new Set(coveredArchetypes.map(c => c.role)).size;
+    const synergyScore = Math.min(100, Math.round((uniqueRolesCount / 4) * 96 + (members.length >= 4 ? 4 : 0)));
+    const archetypesList = [
+      'Frontend & UI/UX Storyteller',
+      'Backend & Distributed Systems Architect',
+      'AI/ML & RAG Specialist',
+      'Pitch Lead & Business Moat Presenter'
+    ];
+
+    return {
+      success: true,
+      teamSize: members.length,
+      synergyScore: `${synergyScore}/100`,
+      podiumWinProbability: synergyScore >= 90 ? '94% (Grand Prize Podium Contender)' : '72% (Solid Finalist)',
+      archetypeCoverage: coveredArchetypes,
+      missingArchetypes: archetypesList.filter(role => !coveredArchetypes.some(c => c.role === role)),
+      recommendedSprintDeliverables: [
+        { member: members[0]?.name || 'Member 1', deliverable: 'Ship Glassmorphic interactive Next.js 15 client with live visualizer gauges.' },
+        { member: members[1]?.name || 'Member 2', deliverable: 'Mount sharded Redis LRU cache with multi-key failover and 50,000 RPS chaos tests.' },
+        { member: members[2]?.name || 'Member 3', deliverable: 'Fine-tune Two-Stage Vector RAG retriever and static AST Big-O profiler.' },
+        { member: members[3]?.name || 'Member 4', deliverable: 'Rehearse 180s teleprompter pitch and compile Marp 5-slide deck PDF.' }
+      ].slice(0, Math.max(members.length, 1))
+    };
+  }
+
   evaluateTeam(payload = {}) {
     const {
       members = PRESETS[0].members,
@@ -94,7 +137,7 @@ class TeamSynergyEngine {
     const coveredRoles = [];
     const memberSkillsFlat = members.map(m => ({
       name: m.name,
-      skills: (m.skills || []).join(' ').toLowerCase()
+      skills: ((m.skills || m.primarySkills) || []).join(' ').toLowerCase()
     }));
 
     WINNING_ARCHETYPES.forEach(arch => {

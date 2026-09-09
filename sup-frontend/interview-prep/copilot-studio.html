@@ -491,6 +491,8 @@
       <button class="preset-btn" onclick="loadPreset('twosum')">Two Sum Brute Force (O(N²))</button>
       <button class="preset-btn" onclick="loadPreset('fib')">Naive Fibonacci (O(2^N))</button>
       <button class="preset-btn" onclick="loadPreset('sqli')">SQL Injection Hazard (OWASP Top 1)</button>
+      <button class="preset-btn" onclick="loadPreset('secrets')">Exposed Secret Leak (CWE-798)</button>
+      <button class="preset-btn" onclick="loadPreset('cmdi')">Command Injection (OWASP Top 3)</button>
       <button class="preset-btn" onclick="loadPreset('memleak')">Interval Memory Leak</button>
       <button class="preset-btn" onclick="loadPreset('optimal')">Optimal Hash Map (O(N))</button>
     </div>
@@ -656,6 +658,29 @@ function getUserRecord(req, res, db) {
   const query = "SELECT * FROM users WHERE id = '" + userId + "'";
   db.query(query, (err, results) => {
     res.json(results);
+  });
+}`,
+      secrets: `// Critical Security Risk: Hardcoded API Secret (CWE-798)
+const stripeClient = require('stripe');
+const STRIPE_SECRET_KEY = "DEMO_EXPOSED_API_SECRET_TOKEN_XYZ123";
+
+async function chargeCustomer(amount, customerId) {
+  const payment = await stripeClient(STRIPE_SECRET_KEY).charges.create({
+    amount,
+    currency: 'usd',
+    customer: customerId
+  });
+  return payment;
+}`,
+      cmdi: `// Critical Security Risk: Command Injection (OWASP Top 3)
+const { exec } = require('child_process');
+
+function pingServer(req, res) {
+  const targetHost = req.body.host;
+  // Dangerous: direct untrusted argument concatenation into OS shell
+  exec("ping -c 4 " + targetHost, (err, stdout, stderr) => {
+    if (err) return res.status(500).send(stderr);
+    res.send(stdout);
   });
 }`,
       memleak: `// Memory Leak: Unbounded timer registration

@@ -96,6 +96,78 @@ function getUserRecord(req, res, db) {
     }
 
 
+    // Hardcoded API Keys / Secrets / Tokens check
+    if (/(?:api[_-]?key|secret|token|password|auth[_-]?token|private[_-]?key)\s*[:=]\s*['"`][A-Za-z0-9_\-\.]{12,}['"`]/i.test(line)) {
+      securityScore = Math.max(15, securityScore - 60);
+      findings.push({
+        type: 'SECURITY',
+        severity: 'CRITICAL',
+        line: lineNum,
+        issue: 'Hardcoded Secret / API Token detected in source code (CWE-798).',
+        fix: 'Extract secret into environment variables (`process.env.API_KEY`) and load via secret manager.'
+      });
+      lineAnnotations.push({
+        line: lineNum,
+        severity: 'CRITICAL',
+        message: 'Security leak: Exposed plaintext secret or credential.',
+        suggestion: 'Replace with process.env lookup.'
+      });
+    }
+
+    // Command Injection check (child_process.exec, os.system)
+    if (/child_process|exec\s*\(|execSync\s*\(|spawn\s*\(|os\.system\s*\(|subprocess\.Popen/.test(line) && (/\+|concat|\$\{/.test(line) || /req\.|params|body/i.test(line))) {
+      securityScore = Math.max(20, securityScore - 50);
+      findings.push({
+        type: 'SECURITY',
+        severity: 'CRITICAL',
+        line: lineNum,
+        issue: 'Command Injection vulnerability: Untrusted input concatenated directly into OS command execution (OWASP Top 3).',
+        fix: 'Use `execFile` or `spawn` with argument array, or avoid invoking system shell directly.'
+      });
+      lineAnnotations.push({
+        line: lineNum,
+        severity: 'CRITICAL',
+        message: 'Command injection hazard: Unescaped OS shell argument.',
+        suggestion: 'Use parameterized spawn arguments.'
+      });
+    }
+
+    // Prototype Pollution check (__proto__, constructor.prototype)
+    if (/__proto__|constructor\.prototype/.test(line)) {
+      securityScore = Math.max(30, securityScore - 40);
+      findings.push({
+        type: 'SECURITY',
+        severity: 'HIGH',
+        line: lineNum,
+        issue: 'Prototype Pollution pattern detected modifying Object prototype (CWE-1321).',
+        fix: 'Use `Object.create(null)` or validate object keys against `__proto__` and `constructor` before assignment.'
+      });
+      lineAnnotations.push({
+        line: lineNum,
+        severity: 'HIGH',
+        message: 'Prototype pollution hazard: Direct modification of prototype.',
+        suggestion: 'Use Object.create(null) or Map.'
+      });
+    }
+
+    // Insecure Deserialization / pickle / yaml load
+    if (/deserialize\s*\(|unserialize\s*\(|pickle\.loads|yaml\.load\s*\([^,)]*\)/.test(line)) {
+      securityScore = Math.max(25, securityScore - 45);
+      findings.push({
+        type: 'SECURITY',
+        severity: 'CRITICAL',
+        line: lineNum,
+        issue: 'Insecure Object Deserialization vector (CWE-502).',
+        fix: 'Use safe serialization standards like JSON or `yaml.safe_load()`.'
+      });
+      lineAnnotations.push({
+        line: lineNum,
+        severity: 'CRITICAL',
+        message: 'Insecure deserialization: Untrusted object reconstitution.',
+        suggestion: 'Use JSON.parse or yaml.safe_load.'
+      });
+    }
+
     // Memory leaks
     if (/setInterval\s*\(/.test(line) && !code.includes('clearInterval')) {
       findings.push({
