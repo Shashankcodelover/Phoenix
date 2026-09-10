@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visa & Immigration Readiness Simulator // Phoenix Horizon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg-dark) 60%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-emerald), var(--accent-cyan));
+      color: #04121e;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 2.2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(to right, #ffffff, var(--accent-emerald), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 950px;
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    /* Scoreboard */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-card.hero-stat {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-header h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Presets */
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: var(--accent-emerald);
+    }
+    .preset-chip.active {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--accent-emerald);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+    }
+    .preset-sub {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--accent-emerald);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent-emerald), #059669);
+      border: none;
+      border-radius: 8px;
+      color: #04121e;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    }
+
+    /* Mock Interviewer Section */
+    .mock-box {
+      background: rgba(30, 41, 59, 0.45);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .eval-pill {
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .eval-excellent { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .eval-redflag { background: rgba(244, 63, 94, 0.25); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.5); }
+
+    .model-answer-box {
+      background: rgba(15, 23, 42, 0.7);
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+      margin-top: 0.75rem;
+      font-size: 0.86rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout { grid-template-columns: 1fr; }
+      .scoreboard { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>🛂</span>
+      <span>PHOENIX HORIZON // VISA READINESS</span>
+      <span class="nav-badge">Feature 56</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="alumni-connector.html">Alumni Network</a>
+      <a href="research-matcher.html">Research Labs</a>
+      <a href="study-abroad.html">Study Abroad</a>
+      <a href="exam-planner.html">Sprint Planner</a>
+      <a href="internship-tracker.html">Internship Pipeline</a>
+      <a href="skill-gap-auditor.html">Skill Gap Auditor</a>
+      <a href="sop-synthesizer.html">SOP Synthesizer</a>
+      <a href="lor-drafter.html">LOR Drafter</a>
+      <a href="visa-readiness.html" class="active">Visa Readiness</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Visa & Immigration Readiness Simulator</h1>
+      <p>
+        Calibrates financial proof coverage, audits INA 214(b) immigrant intent risks, detects TAL 221(g) administrative processing flags, and simulates high-stakes consular interviews with real-time response critique.
+      </p>
+    </section>
+
+    <!-- Scoreboard HUD -->
+    <div class="scoreboard">
+      <div class="stat-card hero-stat">
+        <span class="stat-label">Financial Proof Ratio</span>
+        <div class="stat-value" id="displayCoverageRatio" style="color: var(--accent-emerald);">--x</div>
+        <span class="stat-sub" id="displayFinancialStatus">Coverage of 1st Year Cost</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">214(b) Immigrant Intent Risk</span>
+        <div class="stat-value" id="displayImmigrantRisk" style="color: var(--accent-cyan);">-- / 100</div>
+        <span class="stat-sub" id="displayRiskBand">Non-Immigrant Tie Rating</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Approval Probability</span>
+        <div class="stat-value" id="displayApprovalProb" style="color: var(--accent-gold);">--%</div>
+        <span class="stat-sub">Consular Grant Likelihood</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">TAL 221(g) Status</span>
+        <div class="stat-value" id="displayTalStatus" style="font-size: 1.15rem; color: #fff; padding-top: 0.4rem;">--</div>
+        <span class="stat-sub">Admin Processing Audit</span>
+      </div>
+    </div>
+
+    <div class="grid-layout">
+      <!-- Left Column: Controls & Presets -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>⚡ Fast Presets</h2>
+          <span style="font-size: 0.72rem; color: var(--accent-emerald); font-family: 'JetBrains Mono';">1-CLICK LOAD</span>
+        </div>
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="visaForm">
+          <div class="panel-header" style="margin-top: 1rem;">
+            <h2>🎯 Financial & Visa Context</h2>
+          </div>
+
+          <div class="form-group">
+            <label for="visaTypeSelect">Target Visa Category</label>
+            <select id="visaTypeSelect" class="form-control" onchange="runEvaluation()">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="i20Cost">1st Year Cost ($ USD)</label>
+              <input type="number" id="i20Cost" class="form-control" value="78000" required>
+            </div>
+            <div class="form-group">
+              <label for="liquidFunds">Liquid Savings ($ USD)</label>
+              <input type="number" id="liquidFunds" class="form-control" value="45000" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="loanSanction">Loan Sanction ($ USD)</label>
+              <input type="number" id="loanSanction" class="form-control" value="75000" required>
+            </div>
+            <div class="form-group">
+              <label for="sponsorRelation">Sponsor Profile</label>
+              <input type="text" id="sponsorRelation" class="form-control" value="Parents (Director)">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="postStudyPlan">Post-Graduation Intent Statement</label>
+            <textarea id="postStudyPlan" class="form-control" rows="2">Return to Bengaluru to join India burgeoning AI infrastructure sector as Senior Systems Engineer.</textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="researchArea">Proposed Research Specialization</label>
+            <input type="text" id="researchArea" class="form-control" value="Natural Language Processing & Distributed Systems">
+          </div>
+
+          <button type="submit" class="btn-action" id="btnEvaluateVisa">
+            <span>🛂</span>
+            <span>Evaluate Readiness & Solvency</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Right Column: Consular Mock Interview & Protocols -->
+      <section class="results-column">
+        <!-- Mock Interview Box -->
+        <div class="mock-box">
+          <div class="panel-header" style="border: none; margin-bottom: 0.75rem;">
+            <h2>🎙️ Consular Officer Mock Interview Simulator</h2>
+            <span class="eval-pill eval-excellent" id="evalStatusBadge">READY</span>
+          </div>
+
+          <div class="form-group">
+            <label for="questionSelect">High-Stakes Consular Question</label>
+            <select id="questionSelect" class="form-control" onchange="loadSelectedQuestion()">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="candidateAnswer">Your Verbal Defense Response</label>
+            <textarea id="candidateAnswer" class="form-control" rows="3" placeholder="Draft your concise 20-30 second response..."></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button type="button" class="btn-action" style="width: auto; padding: 0.6rem 1.4rem; margin: 0;" onclick="submitAnswer()">
+              <span>⚖️</span>
+              <span>Score Consular Defense</span>
+            </button>
+            <span style="font-size: 0.85rem; color: var(--text-muted);" id="answerWordCount">0 words</span>
+          </div>
+
+          <!-- Answer Feedback -->
+          <div id="feedbackContainer" style="margin-top: 1rem; display: none;">
+            <div style="font-size: 0.9rem; color: #fff; margin-bottom: 0.35rem;" id="evalFeedbackText"></div>
+            <div class="model-answer-box">
+              <strong style="color: var(--accent-cyan);">⭐ Gold-Standard Exemplary Response:</strong>
+              <p id="modelAnswerText" style="margin-top: 0.35rem;"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Consular Defense Protocols -->
+        <div style="background: rgba(30, 41, 59, 0.5); border: 1px solid var(--panel-border); border-radius: 12px; padding: 1.25rem 1.5rem;">
+          <div style="color: var(--accent-emerald); font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem;">
+            <span>🛡️ Consular Defense Protocols & Strategic Advice</span>
+          </div>
+          <div id="defensesList">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let categoriesData = [];
+    let questionsData = [];
+    let presetsData = [];
+
+    async function init() {
+      try {
+        const [catRes, qRes, preRes] = await Promise.all([
+          fetch('/api/v1/horizon/visa/categories'),
+          fetch('/api/v1/horizon/visa/questions'),
+          fetch('/api/v1/horizon/visa/presets')
+        ]);
+
+        const catJson = await catRes.json();
+        const qJson = await qRes.json();
+        const preJson = await preRes.json();
+
+        if (catJson.success) {
+          categoriesData = catJson.categories;
+          populateCategories();
+        }
+
+        if (qJson.success) {
+          questionsData = qJson.questions;
+          populateQuestions();
+        }
+
+        if (preJson.success) {
+          presetsData = preJson.presets;
+          renderPresets();
+        }
+
+        runEvaluation();
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    function populateCategories() {
+      const select = document.getElementById('visaTypeSelect');
+      select.innerHTML = categoriesData.map(c => `
+        <option value="${c.id}">${c.name} (${c.country})</option>
+      `).join('');
+    }
+
+    function populateQuestions() {
+      const select = document.getElementById('questionSelect');
+      select.innerHTML = questionsData.map(q => `
+        <option value="${q.id}">${q.question}</option>
+      `).join('');
+
+      loadSelectedQuestion();
+    }
+
+    function loadSelectedQuestion() {
+      const qId = document.getElementById('questionSelect').value;
+      const qObj = questionsData.find(q => q.id === qId);
+      if (qObj) {
+        document.getElementById('candidateAnswer').value = qObj.sampleModelAnswer;
+        document.getElementById('feedbackContainer').style.display = 'none';
+        document.getElementById('evalStatusBadge').className = 'eval-pill eval-excellent';
+        document.getElementById('evalStatusBadge').innerText = 'READY';
+      }
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+          <span class="preset-sub">${p.universityName} • I-20: $${p.firstYearCostUsd.toLocaleString()}</span>
+        </button>
+      `).join('');
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.label));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('visaTypeSelect').value = p.visaType;
+      document.getElementById('i20Cost').value = p.firstYearCostUsd;
+      document.getElementById('liquidFunds').value = p.liquidFundsUsd;
+      document.getElementById('loanSanction').value = p.loanSanctionUsd;
+      document.getElementById('sponsorRelation').value = p.sponsorRelationship;
+      document.getElementById('postStudyPlan').value = p.postStudyPlan;
+      document.getElementById('researchArea').value = p.researchArea;
+
+      runEvaluation();
+    }
+
+    async function runEvaluation() {
+      const visaType = document.getElementById('visaTypeSelect').value;
+      const firstYearCostUsd = parseFloat(document.getElementById('i20Cost').value);
+      const liquidFundsUsd = parseFloat(document.getElementById('liquidFunds').value);
+      const loanSanctionUsd = parseFloat(document.getElementById('loanSanction').value);
+      const postStudyPlan = document.getElementById('postStudyPlan').value;
+      const researchArea = document.getElementById('researchArea').value;
+
+      try {
+        const res = await fetch('/api/v1/horizon/visa/evaluate-risk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            visaType,
+            firstYearCostUsd,
+            liquidFundsUsd,
+            loanSanctionUsd,
+            postStudyPlan,
+            researchArea
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          renderEvaluation(data.evaluation);
+        }
+      } catch (err) {
+        console.error('Error running visa evaluation:', err);
+      }
+    }
+
+    function renderEvaluation(ev) {
+      document.getElementById('displayCoverageRatio').innerText = ev.financialCoverageRatio + 'x';
+      document.getElementById('displayFinancialStatus').innerText = ev.financialStatus;
+      document.getElementById('displayImmigrantRisk').innerText = ev.immigrantIntentRiskScore + ' / 100';
+      document.getElementById('displayRiskBand').innerText = ev.riskBand;
+      document.getElementById('displayApprovalProb').innerText = ev.approvalProbabilityPct + '%';
+      document.getElementById('displayTalStatus').innerText = ev.talAdministrativeCheck221g.includes('Clear') ? 'Clear (Standard)' : '221(g) TAL Check';
+
+      const defCont = document.getElementById('defensesList');
+      defCont.innerHTML = ev.consularDefenses.map(d => `
+        <div style="display: flex; gap: 0.5rem; font-size: 0.86rem; color: #cbd5e1; margin-bottom: 0.45rem;">
+          <span>✔️</span>
+          <span>${d}</span>
+        </div>
+      `).join('');
+    }
+
+    async function submitAnswer() {
+      const questionId = document.getElementById('questionSelect').value;
+      const answerText = document.getElementById('candidateAnswer').value;
+
+      try {
+        const res = await fetch('/api/v1/horizon/visa/score-answer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ questionId, answerText })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          const s = data.scored;
+          document.getElementById('feedbackContainer').style.display = 'block';
+          document.getElementById('evalFeedbackText').innerText = `Score: ${s.clarityScore}/100 — ${s.feedback}`;
+          document.getElementById('modelAnswerText').innerText = s.modelAnswer;
+          document.getElementById('answerWordCount').innerText = `${s.answerWordCount} words`;
+
+          const badge = document.getElementById('evalStatusBadge');
+          if (s.status.includes('RED FLAG')) {
+            badge.className = 'eval-pill eval-redflag';
+            badge.innerText = 'RED FLAG DETECTED';
+          } else {
+            badge.className = 'eval-pill eval-excellent';
+            badge.innerText = `SCORE: ${s.clarityScore}/100`;
+          }
+        }
+      } catch (err) {
+        console.error('Error scoring consular answer:', err);
+      }
+    }
+
+    document.getElementById('visaForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      runEvaluation();
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

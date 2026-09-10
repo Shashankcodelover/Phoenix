@@ -273,6 +273,7 @@ const internshipEngine = require('./industryInternshipTrackerEngine');
 const skillGapEngine = require('./dynamicSkillGapAuditorEngine');
 const sopEngine = require('./highStakesSopSynthesizerEngine');
 const lorEngine = require('./facultyLorDrafterEngine');
+const visaEngine = require('./visaImmigrationSimulatorEngine');
 
 router.get('/study-abroad/universities', (req, res) => {
   res.json(studyAbroadEngine.getUniversities());
@@ -407,6 +408,37 @@ router.post('/lor/draft', (req, res) => {
   try {
     const draft = lorEngine.draftLOR(req.body);
     res.json({ success: true, draft });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 56: Visa & Immigration Readiness Simulator
+router.get('/visa/categories', (req, res) => {
+  res.json({ success: true, categories: visaEngine.getVisaCategories() });
+});
+
+router.get('/visa/questions', (req, res) => {
+  res.json({ success: true, questions: visaEngine.getMockQuestions() });
+});
+
+router.get('/visa/presets', (req, res) => {
+  res.json({ success: true, presets: visaEngine.getPresets() });
+});
+
+router.post('/visa/evaluate-risk', (req, res) => {
+  try {
+    const evaluation = visaEngine.evaluateVisaReadiness(req.body);
+    res.json({ success: true, evaluation });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/visa/score-answer', (req, res) => {
+  try {
+    const scored = visaEngine.scoreConsularAnswer(req.body.questionId, req.body.answerText);
+    res.json({ success: true, scored });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
