@@ -14,6 +14,10 @@ const {
   evaluatePanelAnswer, 
   getPanelScenarios 
 } = require('./multiAgentPanelEngine');
+const { 
+  injectArchitectureChaos, 
+  getTopologies 
+} = require('./flamegraphStressEngine');
 
 router.use(protectOptional);
 
@@ -157,6 +161,40 @@ router.post('/panel-evaluate', (req, res) => {
     res.json({
       success: true,
       evaluation
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/flamegraph-topologies
+ * Returns standard microservice trace topologies
+ */
+router.get('/flamegraph-topologies', (req, res) => {
+  try {
+    const topologies = getTopologies();
+    res.json({
+      success: true,
+      standard: 'Astra Neural Microservice Flamegraph & Chaos Engine',
+      topologies
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/flamegraph-chaos-inject
+ * Triggers simulated latency spike and evaluates tail dropped packets
+ */
+router.post('/flamegraph-chaos-inject', (req, res) => {
+  try {
+    const { faultType } = req.body || {};
+    const result = injectArchitectureChaos(faultType);
+    res.json({
+      success: true,
+      result
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

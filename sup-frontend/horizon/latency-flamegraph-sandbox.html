@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra Neural System Architecture Stress & Latency Flamegraph // Phoenix Cognitive War Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #070a12;
+      --panel-bg: rgba(15, 23, 42, 0.85);
+      --panel-border: rgba(255, 255, 255, 0.09);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-indigo: #6366f1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-dark) 70%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    .top-nav {
+      background: rgba(11, 17, 33, 0.9);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #030712;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 9999px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .engine-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 10px var(--accent-emerald); }
+      100% { transform: scale(0.9); opacity: 0.8; }
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-header {
+      margin-bottom: 2rem;
+    }
+    .pillar-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 850px;
+      line-height: 1.5;
+    }
+
+    /* Chaos Trigger Bar */
+    .chaos-bar {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .chaos-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .btn-chaos {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 0.55rem 1.1rem;
+      border-radius: 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-chaos:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+    }
+    .btn-chaos.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(168, 85, 247, 0.25));
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .panel-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    /* Flamegraph Visual Canvas */
+    .flame-container {
+      background: #040711;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.85rem;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .span-bar {
+      border-radius: 0.4rem;
+      padding: 0.5rem 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .span-bar:hover {
+      filter: brightness(1.2);
+      transform: scale(1.01);
+    }
+    .span-ok { background: linear-gradient(90deg, #0284c7, #38bdf8); color: #030712; }
+    .span-degraded { background: linear-gradient(90deg, #d97706, #f59e0b); color: #030712; }
+    .span-error { background: linear-gradient(90deg, #be123c, #f43f5e); color: #ffffff; }
+
+    /* Latency Percentiles Grid */
+    .percentile-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .percentile-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.75rem;
+      padding: 0.85rem;
+      text-align: center;
+    }
+    .percentile-label {
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+    .percentile-val {
+      font-size: 1.25rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+    }
+
+    /* Resilience Score Meter */
+    .resilience-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(56, 189, 248, 0.15));
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+    .resilience-score {
+      font-size: 3rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      background: linear-gradient(135deg, var(--accent-emerald), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.25rem;
+    }
+
+    /* Span Details Drawer */
+    .inspector-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.85rem;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+    }
+    .inspector-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .inspector-line:last-child { border-bottom: none; }
+
+    /* Diagnostic Console */
+    .diagnostic-console {
+      background: #040711;
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 1rem;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    @media (max-width: 992px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .percentile-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🏛️ PHOENIX HORIZON</span>
+      <span class="nav-badge">PILLAR 4 • FEATURE 64</span>
+    </div>
+    <div class="engine-status">
+      <div class="pulse-dot"></div>
+      <span>FLAMEGRAPH APM PROCTOR: ONLINE & TRACING</span>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header class="hero-header">
+      <div class="pillar-tag">
+        <span>⚡ FEATURE 64 OF MASTER PRODUCTION SUITE</span>
+        <span>•</span>
+        <span>DATADOG APM & BYTEBYTEGO ARCHITECTURE STANDARD</span>
+      </div>
+      <h1 class="hero-title">Neural System Architecture Stress & Latency Flamegraph</h1>
+      <p class="hero-sub">
+        Simulates microsecond distributed call cascades, cross-region replication latency flamegraphs, and chaos fault injections (Cache Stampedes, Split-Brain Raft consensus loss, and DB Pool Starvation) to evaluate Staff-level system design defenses.
+      </p>
+    </header>
+
+    <!-- Chaos Injection Controls -->
+    <section class="chaos-bar">
+      <div>
+        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace;">
+          Chaos Fault Injection Scenario
+        </div>
+        <div class="chaos-buttons" id="chaosButtons">
+          <button class="btn-chaos active" data-id="steady_state">
+            <span>🛡️ Steady State</span>
+            <span style="font-size: 0.7rem; color: var(--accent-emerald);">(P99: 14.1ms • 0% Error)</span>
+          </button>
+          <button class="btn-chaos" data-id="cache_stampede">
+            <span>💥 Cache Stampede</span>
+            <span style="font-size: 0.7rem; color: var(--accent-amber);">(P99: 840ms • 24.5% Error)</span>
+          </button>
+          <button class="btn-chaos" data-id="split_brain_partition">
+            <span>⚡ Split-Brain Quorum Drop</span>
+            <span style="font-size: 0.7rem; color: var(--accent-rose);">(P99: 1850ms • 52% Error)</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Grid -->
+    <div class="dashboard-grid">
+
+      <!-- Left: Flamegraph Span Hierarchy -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🔥 Microsecond Distributed Trace Flamegraph</span>
+          </div>
+          <div class="panel-badge" id="hudFlameStatus">ACTIVE ACTIVE CLUSTER (5 SPANS)</div>
+        </div>
+
+        <!-- Flamegraph Spans Container -->
+        <div class="flame-container" id="flameContainer">
+          <!-- Ingress -->
+          <div class="span-bar span-ok" style="width: 100%;" data-span="envoy-ingress.gateway" data-dur="14.1ms" data-self="0.8ms" data-svc="ingress">
+            <span>envoy-ingress.gateway</span>
+            <span>14.1ms</span>
+          </div>
+          <!-- Auth -->
+          <div class="span-bar span-ok" style="width: 25%; margin-left: 5%;" data-span="auth-jwt.verifyToken" data-dur="2.1ms" data-self="2.1ms" data-svc="auth-service">
+            <span>auth-jwt.verifyToken</span>
+            <span>2.1ms</span>
+          </div>
+          <!-- Catalog -->
+          <div class="span-bar span-ok" style="width: 70%; margin-left: 30%;" data-span="catalog-service.query" data-dur="11.2ms" data-self="1.4ms" data-svc="catalog-core">
+            <span>catalog-service.query</span>
+            <span>11.2ms</span>
+          </div>
+          <!-- Redis -->
+          <div class="span-bar span-ok" style="width: 20%; margin-left: 32%;" data-span="redis-cache.mget" data-dur="1.8ms" data-self="1.8ms" data-svc="redis-cluster">
+            <span>redis-cache.mget</span>
+            <span>1.8ms</span>
+          </div>
+          <!-- Postgres -->
+          <div class="span-bar span-ok" style="width: 45%; margin-left: 55%;" data-span="postgres.readReplica" data-dur="8.0ms" data-self="8.0ms" data-svc="postgres-pool">
+            <span>postgres.readReplica</span>
+            <span>8.0ms</span>
+          </div>
+        </div>
+
+        <!-- Latency Percentiles Grid -->
+        <div class="percentile-grid">
+          <div class="percentile-card">
+            <div class="percentile-label">P50 LATENCY</div>
+            <div class="percentile-val" id="valP50">4.2ms</div>
+          </div>
+          <div class="percentile-card">
+            <div class="percentile-label">P90 LATENCY</div>
+            <div class="percentile-val" id="valP90">8.5ms</div>
+          </div>
+          <div class="percentile-card">
+            <div class="percentile-label">P99 LATENCY</div>
+            <div class="percentile-val" id="valP99">14.1ms</div>
+          </div>
+          <div class="percentile-card">
+            <div class="percentile-label">P99.9 LATENCY</div>
+            <div class="percentile-val" id="valP999">22.4ms</div>
+          </div>
+        </div>
+
+        <!-- Diagnostic Console -->
+        <div class="diagnostic-console" id="displayDiagnostic">
+          Cluster operating within nominal FAANG SLA. Cache hit ratio is 98.4% with zero thread contention.
+        </div>
+      </div>
+
+      <!-- Right: Span Inspector & Architectural Resilience -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🛡️ Fault-Tolerance Resilience Index</span>
+          </div>
+          <div class="panel-badge">SLO COMPLIANCE</div>
+        </div>
+
+        <!-- Resilience Gauge -->
+        <div class="resilience-box" id="resilienceBox">
+          <div class="resilience-score" id="displayResilienceScore">98</div>
+          <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem;" id="displayResilienceGrade">
+            STAFF FAANG INVARIANT (Grade A+)
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);" id="displayErrorRate">
+            Error Rate: 0.0% • 0 Circuit Breaker Trips
+          </div>
+        </div>
+
+        <!-- Span Detail Inspector -->
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🔍 Span Causality Inspector</span>
+          </div>
+          <div class="panel-badge" id="badgeInspectedSpan">envoy-ingress.gateway</div>
+        </div>
+
+        <div class="inspector-box" id="inspectorBox">
+          <div class="inspector-line">
+            <span style="color: var(--text-muted);">Span Identifier:</span>
+            <span id="inspectSpanName" style="color: var(--accent-cyan);">envoy-ingress.gateway</span>
+          </div>
+          <div class="inspector-line">
+            <span style="color: var(--text-muted);">Target Microservice:</span>
+            <span id="inspectService">ingress</span>
+          </div>
+          <div class="inspector-line">
+            <span style="color: var(--text-muted);">Execution Duration:</span>
+            <span id="inspectDuration">14.1 ms</span>
+          </div>
+          <div class="inspector-line">
+            <span style="color: var(--text-muted);">Self Compute Time:</span>
+            <span id="inspectSelf">0.8 ms</span>
+          </div>
+          <div class="inspector-line">
+            <span style="color: var(--text-muted);">Health State:</span>
+            <span id="inspectStatus" style="color: var(--accent-emerald);">OK (200 SUCCESS)</span>
+          </div>
+        </div>
+
+        <!-- Architectural Defense Rubric -->
+        <div style="font-size: 0.8rem; line-height: 1.6; color: var(--text-muted); background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.05);">
+          <div style="font-weight: 700; color: var(--text-main); margin-bottom: 0.35rem;">Staff Architectural Invariant:</div>
+          Under catastrophic cache failure, systems must degrade gracefully via connection pooling throttles and localized circuit tripouts rather than cascading into complete service outages.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    let currentScenario = 'steady_state';
+
+    const flameContainer = document.getElementById('flameContainer');
+    const valP50 = document.getElementById('valP50');
+    const valP90 = document.getElementById('valP90');
+    const valP99 = document.getElementById('valP99');
+    const valP999 = document.getElementById('valP999');
+    const displayResilienceScore = document.getElementById('displayResilienceScore');
+    const displayResilienceGrade = document.getElementById('displayResilienceGrade');
+    const displayErrorRate = document.getElementById('displayErrorRate');
+    const displayDiagnostic = document.getElementById('displayDiagnostic');
+    const hudFlameStatus = document.getElementById('hudFlameStatus');
+
+    const inspectSpanName = document.getElementById('inspectSpanName');
+    const inspectService = document.getElementById('inspectService');
+    const inspectDuration = document.getElementById('inspectDuration');
+    const inspectSelf = document.getElementById('inspectSelf');
+    const inspectStatus = document.getElementById('inspectStatus');
+    const badgeInspectedSpan = document.getElementById('badgeInspectedSpan');
+
+    function applyScenario(id) {
+      currentScenario = id;
+      document.querySelectorAll('.btn-chaos').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+
+      if (id === 'steady_state') {
+        valP50.innerText = '4.2ms';
+        valP90.innerText = '8.5ms';
+        valP99.innerText = '14.1ms';
+        valP999.innerText = '22.4ms';
+        displayResilienceScore.innerText = '98';
+        displayResilienceGrade.innerText = 'STAFF FAANG INVARIANT (Grade A+)';
+        displayErrorRate.innerText = 'Error Rate: 0.0% • 0 Circuit Breaker Trips';
+        hudFlameStatus.innerText = 'ACTIVE ACTIVE CLUSTER (5 SPANS)';
+        displayDiagnostic.innerText = 'Cluster operating within nominal FAANG SLA. Cache hit ratio is 98.4% with zero thread contention.';
+
+        flameContainer.innerHTML = `
+          <div class="span-bar span-ok" style="width: 100%;" onclick="inspect('envoy-ingress.gateway', 'ingress', '14.1ms', '0.8ms', 'OK (200 SUCCESS)')">
+            <span>envoy-ingress.gateway</span>
+            <span>14.1ms</span>
+          </div>
+          <div class="span-bar span-ok" style="width: 25%; margin-left: 5%;" onclick="inspect('auth-jwt.verifyToken', 'auth-service', '2.1ms', '2.1ms', 'OK')">
+            <span>auth-jwt.verifyToken</span>
+            <span>2.1ms</span>
+          </div>
+          <div class="span-bar span-ok" style="width: 70%; margin-left: 30%;" onclick="inspect('catalog-service.query', 'catalog-core', '11.2ms', '1.4ms', 'OK')">
+            <span>catalog-service.query</span>
+            <span>11.2ms</span>
+          </div>
+          <div class="span-bar span-ok" style="width: 20%; margin-left: 32%;" onclick="inspect('redis-cache.mget', 'redis-cluster', '1.8ms', '1.8ms', 'CACHE_HIT')">
+            <span>redis-cache.mget</span>
+            <span>1.8ms</span>
+          </div>
+          <div class="span-bar span-ok" style="width: 45%; margin-left: 55%;" onclick="inspect('postgres.readReplica', 'postgres-pool', '8.0ms', '8.0ms', 'OK')">
+            <span>postgres.readReplica</span>
+            <span>8.0ms</span>
+          </div>
+        `;
+        inspect('envoy-ingress.gateway', 'ingress', '14.1ms', '0.8ms', 'OK (200 SUCCESS)');
+      } else if (id === 'cache_stampede') {
+        valP50.innerText = '145.0ms';
+        valP90.innerText = '480.0ms';
+        valP99.innerText = '840.0ms';
+        valP999.innerText = '1420.0ms';
+        displayResilienceScore.innerText = '42';
+        displayResilienceGrade.innerText = 'SATURATED POOL DEGRADATION (Grade D)';
+        displayErrorRate.innerText = 'Error Rate: 24.5% • 18 Circuit Breakers Tripped';
+        hudFlameStatus.innerText = 'CACHE STAMPEDE DETECTED (P99: 840ms)';
+        displayDiagnostic.innerText = 'Severe connection pool exhaustion. Mitigation required: Distributed Mutex locking on cache miss + Probabilistic early expiration (XFetch algorithm).';
+
+        flameContainer.innerHTML = `
+          <div class="span-bar span-degraded" style="width: 100%;" onclick="inspect('envoy-ingress.gateway', 'ingress', '840.0ms', '12.0ms', 'DEGRADED (504 RETRY)')">
+            <span>envoy-ingress.gateway</span>
+            <span>840.0ms</span>
+          </div>
+          <div class="span-bar span-ok" style="width: 15%; margin-left: 3%;" onclick="inspect('auth-jwt.verifyToken', 'auth-service', '4.2ms', '4.2ms', 'OK')">
+            <span>auth-jwt.verifyToken</span>
+            <span>4.2ms</span>
+          </div>
+          <div class="span-bar span-error" style="width: 80%; margin-left: 20%;" onclick="inspect('catalog-service.query', 'catalog-core', '823.8ms', '22.0ms', 'TIMEOUT')">
+            <span>catalog-service.query [TIMEOUT]</span>
+            <span>823.8ms</span>
+          </div>
+          <div class="span-bar span-degraded" style="width: 12%; margin-left: 22%;" onclick="inspect('redis-cache.miss', 'redis-cluster', '1.8ms', '1.8ms', 'CACHE_MISS')">
+            <span>redis-cache.miss</span>
+            <span>1.8ms</span>
+          </div>
+          <div class="span-bar span-error" style="width: 65%; margin-left: 35%;" onclick="inspect('postgres.primaryLockContention', 'postgres-pool', '800.0ms', '800.0ms', 'SATURATED LOCK')">
+            <span>postgres.primaryLockContention</span>
+            <span>800.0ms</span>
+          </div>
+        `;
+        inspect('postgres.primaryLockContention', 'postgres-pool', '800.0ms', '800.0ms', 'SATURATED LOCK (THREAD POOL EXHAUSTION)');
+      } else if (id === 'split_brain_partition') {
+        valP50.innerText = '320.0ms';
+        valP90.innerText = '980.0ms';
+        valP99.innerText = '1850.0ms';
+        valP999.innerText = '3200.0ms';
+        displayResilienceScore.innerText = '28';
+        displayResilienceGrade.innerText = 'CONSENSUS QUORUM LOST (Grade F)';
+        displayErrorRate.innerText = 'Error Rate: 52.0% • Partition Split Active';
+        hudFlameStatus.innerText = 'TRANSATLANTIC WAN PARTITION (P99: 1850ms)';
+        displayDiagnostic.innerText = 'Majority quorum unavailable in minority partition. Writes rejected with 503 Service Unavailable to preserve strict linearizability.';
+
+        flameContainer.innerHTML = `
+          <div class="span-bar span-error" style="width: 100%;" onclick="inspect('envoy-ingress.gateway', 'ingress', '1850.0ms', '30.0ms', 'ERROR (503 UNAVAILABLE)')">
+            <span>envoy-ingress.gateway</span>
+            <span>1850.0ms</span>
+          </div>
+          <div class="span-bar span-error" style="width: 90%; margin-left: 5%;" onclick="inspect('raft-consensus.appendEntries', 'consensus-engine', '1820.0ms', '1200.0ms', 'QUORUM_LOST')">
+            <span>raft-consensus.appendEntries [QUORUM_LOST]</span>
+            <span>1820.0ms</span>
+          </div>
+          <div class="span-bar span-error" style="width: 40%; margin-left: 55%;" onclick="inspect('wan-heartbeat.probe', 'cross-region-link', '620.0ms', '620.0ms', 'TRANSATLANTIC CUT')">
+            <span>wan-heartbeat.probe</span>
+            <span>620.0ms</span>
+          </div>
+        `;
+        inspect('raft-consensus.appendEntries', 'consensus-engine', '1820.0ms', '1200.0ms', 'QUORUM_LOST (MINORITY PARTITION)');
+      }
+    }
+
+    function inspect(name, svc, dur, self, status) {
+      badgeInspectedSpan.innerText = name;
+      inspectSpanName.innerText = name;
+      inspectService.innerText = svc;
+      inspectDuration.innerText = dur;
+      inspectSelf.innerText = self;
+      inspectStatus.innerText = status;
+      inspectStatus.style.color = status.includes('OK') ? '#10b981' : status.includes('TIMEOUT') || status.includes('SATURATED') || status.includes('QUORUM') ? '#f43f5e' : '#f59e0b';
+    }
+
+    document.querySelectorAll('.btn-chaos').forEach(btn => {
+      btn.addEventListener('click', () => applyScenario(btn.dataset.id));
+    });
+  </script>
+</body>
+</html>
