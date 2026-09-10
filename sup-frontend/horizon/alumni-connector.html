@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alumni Mentorship & Career Network Connector | Phoenix Horizon</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0d1e38 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: var(--accent-cyan);
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1380px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2.2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(to right, #ffffff, var(--accent-cyan), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 880px;
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 410px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: var(--accent-cyan);
+    }
+    .preset-chip.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+    }
+    .preset-sub {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent-cyan), #0284c7);
+      border: none;
+      border-radius: 8px;
+      color: #04121e;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+    }
+
+    /* Section Title */
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    /* Alumni Directory Cards */
+    .alumni-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .alum-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .alum-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-cyan);
+    }
+    .alum-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+    .alum-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+    .company-badge {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: var(--accent-cyan);
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+    }
+    .alum-role {
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      margin-bottom: 0.25rem;
+    }
+    .alum-college {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .alum-bio {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+      margin-bottom: 1rem;
+    }
+    .topic-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 1rem;
+    }
+    .topic-tag {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      color: #94a3b8;
+    }
+    .btn-book {
+      width: 100%;
+      padding: 0.6rem;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid var(--accent-cyan);
+      border-radius: 6px;
+      color: var(--accent-cyan);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-book:hover {
+      background: var(--accent-cyan);
+      color: #04121e;
+    }
+
+    /* Outbox Intro Note Preview */
+    .note-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .response-badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent-emerald);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+    }
+    .subject-line {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: var(--accent-cyan);
+      background: rgba(30, 41, 59, 0.6);
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .note-body {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      font-family: inherit;
+    }
+
+    /* Booking Confirmation Panel */
+    .booking-box {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: none;
+    }
+    .booking-ref {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-emerald);
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>🌐</span>
+      <span>PHOENIX HORIZON // ALUMNI CONNECTOR</span>
+      <span class="nav-badge">Feature 48</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="alumni-connector.html" class="active">Alumni Network</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Alumni Mentorship & Career Network Connector</h1>
+      <p>
+        Graph-based institutional alumni directory connecting aspiring engineers with seniors across FAANG, global unicorns, and top-5 grad schools. Features dynamic high-response cold outreach synthesis and 1:1 mentorship booking.
+      </p>
+    </section>
+
+    <div class="grid-layout">
+      <!-- Left Panel: Form & Presets -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>🎯 Warm Intro Generator</h2>
+          <span style="font-size: 0.75rem; color: var(--accent-cyan); font-family: 'JetBrains Mono';">PRESETS</span>
+        </div>
+
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="introForm">
+          <div class="form-group">
+            <label for="mentorSelect">Target Senior Alumnus</label>
+            <select id="mentorSelect" class="form-control">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="frameworkSelect">Outreach Framework Strategy</label>
+            <select id="frameworkSelect" class="form-control">
+              <option value="ALMA_MATER_QUESTION">Shared Alma Mater & Specific Question (92% Response)</option>
+              <option value="PROJECT_RESEARCH_FEEDBACK">Technical Architecture & Project Feedback (87% Response)</option>
+              <option value="REFERRAL_POW">Direct Referral Request with Proof-of-Work (85% Response)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="studentNameInput">Your Name</label>
+            <input type="text" id="studentNameInput" class="form-control" value="Harshith Gowda" required>
+          </div>
+
+          <div class="form-group">
+            <label for="studentCollegeInput">Your Institution</label>
+            <input type="text" id="studentCollegeInput" class="form-control" value="RV College of Engineering" required>
+          </div>
+
+          <div class="form-group">
+            <label for="targetRoleInput">Target Role</label>
+            <input type="text" id="targetRoleInput" class="form-control" value="Software Development Engineer - Cloud Systems" required>
+          </div>
+
+          <div class="form-group">
+            <label for="projectHighlightInput">Proof-of-Work / Project Highlight</label>
+            <textarea id="projectHighlightInput" class="form-control" rows="3" required>Built a Raft-consensus distributed key-value store in Go with 99.9% uptime test suite</textarea>
+          </div>
+
+          <button type="submit" class="btn-action" id="btnGenerate">
+            <span>✨</span>
+            <span>Synthesize High-Impact Intro Note</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Right Panel: Alumni Directory & Output -->
+      <section class="results-column">
+        <!-- Booking Confirmation (if clicked) -->
+        <div class="booking-box" id="bookingBox">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <div style="font-size: 1.1rem; font-weight: 800; color: #fff;">🎉 1:1 Mentorship Session Confirmed!</div>
+            <span class="booking-ref" id="bookingRefDisplay">PHX-MENTOR</span>
+          </div>
+          <p id="bookingDetails" style="font-size: 0.9rem; color: #cbd5e1; margin-bottom: 0.75rem;"></p>
+          <div style="font-size: 0.85rem; color: var(--accent-emerald);" id="meetingLinkDisplay"></div>
+        </div>
+
+        <!-- Synthesized Intro Note -->
+        <div class="note-card">
+          <div class="note-header">
+            <div class="section-title" style="margin-bottom: 0;">
+              <span>📬</span>
+              <span>Generated Warm InMail / Email Note</span>
+            </div>
+            <span class="response-badge" id="displayResponseRate">92% Response Rate</span>
+          </div>
+
+          <div class="subject-line" id="displaySubject">Subject: Loading...</div>
+          <div class="note-body" id="displayBody">Click 'Synthesize High-Impact Intro Note' to generate.</div>
+        </div>
+
+        <!-- Verified Alumni Directory -->
+        <div>
+          <div class="section-title">
+            <span>🎓</span>
+            <span>Verified Global Alumni Directory (FAANG & Unicorns)</span>
+          </div>
+          <div class="alumni-grid" id="alumniGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let alumniData = [];
+    let presetsData = [];
+
+    async function init() {
+      try {
+        const [dirRes, presetsRes] = await Promise.all([
+          fetch('/api/v1/horizon/alumni/directory'),
+          fetch('/api/v1/horizon/alumni/presets')
+        ]);
+        const dirJson = await dirRes.json();
+        const presetsJson = await presetsRes.json();
+
+        if (dirJson.success) {
+          alumniData = dirJson.alumni;
+          populateMentorDropdown();
+          renderAlumniGrid();
+        }
+
+        if (presetsJson.success) {
+          presetsData = presetsJson.presets;
+          renderPresets();
+        }
+
+        runGenerate();
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    function populateMentorDropdown() {
+      const select = document.getElementById('mentorSelect');
+      select.innerHTML = alumniData.map(a => `<option value="${a.id}">${a.name} (${a.company} • ${a.almaMater})</option>`).join('');
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+          <span class="preset-sub">${p.studentName} • ${p.studentCollege}</span>
+        </button>
+      `).join('');
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.label));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('mentorSelect').value = p.alumnusId;
+      document.getElementById('frameworkSelect').value = p.frameworkKey;
+      document.getElementById('studentNameInput').value = p.studentName;
+      document.getElementById('studentCollegeInput').value = p.studentCollege;
+      document.getElementById('targetRoleInput').value = p.targetRole;
+      document.getElementById('projectHighlightInput').value = p.projectHighlight;
+
+      runGenerate();
+    }
+
+    function renderAlumniGrid() {
+      const grid = document.getElementById('alumniGrid');
+      grid.innerHTML = alumniData.map(a => `
+        <div class="alum-card">
+          <div>
+            <div class="alum-header">
+              <span class="alum-name">${a.name}</span>
+              <span class="company-badge">${a.company}</span>
+            </div>
+            <div class="alum-role">${a.currentRole}</div>
+            <div class="alum-college">🎓 ${a.almaMater} ('${a.batchYear}) • 📍 ${a.location}</div>
+            <div class="alum-bio">${a.bio}</div>
+            <div class="topic-tags">
+              ${a.topics.map(t => `<span class="topic-tag">${t}</span>`).join('')}
+            </div>
+          </div>
+          <button type="button" class="btn-book" onclick="bookSessionWith('${a.id}')">
+            📅 Book 1:1 Mentorship (${a.availableSlots[0]})
+          </button>
+        </div>
+      `).join('');
+    }
+
+    async function runGenerate() {
+      const payload = {
+        alumnusId: document.getElementById('mentorSelect').value,
+        frameworkKey: document.getElementById('frameworkSelect').value,
+        studentName: document.getElementById('studentNameInput').value,
+        studentCollege: document.getElementById('studentCollegeInput').value,
+        targetRole: document.getElementById('targetRoleInput').value,
+        projectHighlight: document.getElementById('projectHighlightInput').value
+      };
+
+      try {
+        const res = await fetch('/api/v1/horizon/alumni/generate-intro-note', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('displaySubject').innerText = data.subject;
+          document.getElementById('displayBody').innerText = data.body;
+          document.getElementById('displayResponseRate').innerText = data.estimatedResponseRate;
+        }
+      } catch (err) {
+        console.error('Note generation error:', err);
+      }
+    }
+
+    async function bookSessionWith(alumnusId) {
+      const a = alumniData.find(item => item.id === alumnusId);
+      if (!a) return;
+
+      const payload = {
+        alumnusId,
+        studentName: document.getElementById('studentNameInput').value,
+        selectedSlot: a.availableSlots[0],
+        sessionTopic: a.topics[0]
+      };
+
+      try {
+        const res = await fetch('/api/v1/horizon/alumni/book-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          const box = document.getElementById('bookingBox');
+          box.style.display = 'block';
+          document.getElementById('bookingRefDisplay').innerText = data.bookingRef;
+          document.getElementById('bookingDetails').innerText = `Confirmed with ${data.sessionDetails.mentorName} (${data.sessionDetails.mentorCompany}) for ${data.sessionDetails.slot} regarding ${data.sessionDetails.topic}.`;
+          document.getElementById('meetingLinkDisplay').innerHTML = `🔗 Meeting Link: <a href="${data.sessionDetails.meetingLink}" target="_blank" style="color: var(--accent-emerald); font-family: 'JetBrains Mono';">${data.sessionDetails.meetingLink}</a>`;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } catch (err) {
+        console.error('Booking error:', err);
+      }
+    }
+
+    document.getElementById('introForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      runGenerate();
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

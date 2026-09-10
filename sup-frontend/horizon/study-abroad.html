@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Abroad & Global MS/PhD Admissions Engine | Phoenix Horizon</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0d1e38 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: var(--accent-cyan);
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1380px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2.2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(to right, #ffffff, var(--accent-cyan), var(--accent-emerald));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 900px;
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: var(--accent-cyan);
+    }
+    .preset-chip.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+    }
+    .preset-sub {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent-cyan), #0284c7);
+      border: none;
+      border-radius: 8px;
+      color: #04121e;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+    }
+
+    /* Scoreboard */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-card.hero-stat {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+    }
+    .stat-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* Tier Sections */
+    .tier-section {
+      margin-bottom: 2rem;
+    }
+    .tier-heading {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .uni-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .uni-card.ambitious {
+      border-left: 4px solid var(--accent-rose);
+    }
+    .uni-card.target {
+      border-left: 4px solid var(--accent-gold);
+    }
+    .uni-card.safe {
+      border-left: 4px solid var(--accent-emerald);
+    }
+    .uni-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.3rem;
+    }
+    .uni-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .country-tag {
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+    }
+    .uni-prog {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .uni-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      margin-bottom: 0.75rem;
+      background: rgba(15, 23, 42, 0.5);
+      padding: 0.6rem;
+      border-radius: 6px;
+    }
+    .uni-cost {
+      font-size: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--accent-gold);
+      margin-top: 0.5rem;
+    }
+
+    /* Financial Box */
+    .financial-box {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+    .fin-item {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.6rem;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+    .fin-item:last-child {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+      .scoreboard {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>✈️</span>
+      <span>PHOENIX HORIZON // STUDY ABROAD</span>
+      <span class="nav-badge">Feature 50</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="alumni-connector.html">Alumni Network</a>
+      <a href="research-matcher.html">Research Labs</a>
+      <a href="study-abroad.html" class="active">Study Abroad</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Study Abroad & Global MS/PhD Admissions Engine</h1>
+      <p>
+        Evaluates undergraduate transcripts and standardized test metrics (GRE, TOEFL, IELTS) against global graduate admissions standards, generating tri-tier university categorizations (Ambitious, Target, Safe) and I-20 financial proof blueprints.
+      </p>
+    </section>
+
+    <div class="grid-layout">
+      <!-- Left Panel: Form & Presets -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>🎯 Applicant Profile</h2>
+          <span style="font-size: 0.75rem; color: var(--accent-cyan); font-family: 'JetBrains Mono';">PRESETS</span>
+        </div>
+
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="studyForm">
+          <div class="form-group">
+            <label for="nameInput">Full Name</label>
+            <input type="text" id="nameInput" class="form-control" value="Varun K. Bharadwaj" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cgpaInput">10-Point CGPA</label>
+              <input type="number" id="cgpaInput" class="form-control" step="0.01" min="0" max="10" value="9.25" required>
+            </div>
+            <div class="form-group">
+              <label for="budgetInput">Budget Cap ($ USD)</label>
+              <input type="number" id="budgetInput" class="form-control" min="10000" max="120000" value="85000" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="quantInput">GRE Quant (130-170)</label>
+              <input type="number" id="quantInput" class="form-control" min="130" max="170" value="169" required>
+            </div>
+            <div class="form-group">
+              <label for="verbalInput">GRE Verbal (130-170)</label>
+              <input type="number" id="verbalInput" class="form-control" min="130" max="170" value="161" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="toeflInput">TOEFL Score (0-120)</label>
+              <input type="number" id="toeflInput" class="form-control" min="0" max="120" value="112" required>
+            </div>
+            <div class="form-group">
+              <label for="ieltsInput">IELTS Band (0-9)</label>
+              <input type="number" id="ieltsInput" class="form-control" step="0.5" min="0" max="9" value="8.5" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-action" id="btnEvaluate">
+            <span>✈️</span>
+            <span>Evaluate Admissions & Categorize</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Right Panel: Admissions & Categorization -->
+      <section class="results-column">
+        <!-- Scoreboard -->
+        <div class="scoreboard">
+          <div class="stat-card hero-stat">
+            <span class="stat-label">Estimated WES GPA</span>
+            <div class="stat-value" id="displayWesGpa">-- / 4.0</div>
+            <span class="stat-sub">US Academic Equivalence</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Total GRE Score</span>
+            <div class="stat-value" id="displayGre" style="color: var(--accent-gold);">-- / 340</div>
+            <span class="stat-sub" id="displayGreSplit">Q: -- | V: --</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Liquid Fund Proof</span>
+            <div class="stat-value" id="displayLiquidUsd" style="color: var(--accent-emerald);">$--</div>
+            <span class="stat-sub" id="displayLiquidInr">₹-- Lakhs Proof</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">English Readiness</span>
+            <div class="stat-value" id="displayEngStatus" style="font-size: 1.25rem; color: #fff; padding-top: 0.4rem;">--</div>
+            <span class="stat-sub">TOEFL / IELTS Ready</span>
+          </div>
+        </div>
+
+        <!-- Tier 1: Ambitious -->
+        <div class="tier-section">
+          <div class="tier-heading" style="color: var(--accent-rose);">
+            <span>🚀</span>
+            <span id="headingAmbitious">Ambitious Universities (Top Reach)</span>
+          </div>
+          <div class="cards-grid" id="gridAmbitious">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Tier 2: Target -->
+        <div class="tier-section">
+          <div class="tier-heading" style="color: var(--accent-gold);">
+            <span>🎯</span>
+            <span id="headingTarget">Target Universities (Competitive Fit)</span>
+          </div>
+          <div class="cards-grid" id="gridTarget">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Tier 3: Safe -->
+        <div class="tier-section">
+          <div class="tier-heading" style="color: var(--accent-emerald);">
+            <span>🛡️</span>
+            <span id="headingSafe">Safe Universities (High Probability)</span>
+          </div>
+          <div class="cards-grid" id="gridSafe">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Financial Proof Blueprint -->
+        <div class="financial-box">
+          <div class="section-title" style="color: var(--accent-emerald); margin-bottom: 0.75rem;">
+            <span>💵</span>
+            <span>I-20 Financial Proof & Visa Readiness Protocol</span>
+          </div>
+          <div id="financialAdviceList">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let presetsData = [];
+
+    async function init() {
+      try {
+        const presetsRes = await fetch('/api/v1/horizon/study-abroad/presets');
+        const presetsJson = await presetsRes.json();
+
+        if (presetsJson.success) {
+          presetsData = presetsJson.presets;
+          renderPresets();
+        }
+
+        runEvaluation();
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+          <span class="preset-sub">${p.studentName} • GRE ${p.greQuant + p.greVerbal} • CGPA ${p.cgpa}</span>
+        </button>
+      `).join('');
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.label));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('nameInput').value = p.studentName;
+      document.getElementById('cgpaInput').value = p.cgpa;
+      document.getElementById('budgetInput').value = p.budgetCeilingUsd;
+      document.getElementById('quantInput').value = p.greQuant;
+      document.getElementById('verbalInput').value = p.greVerbal;
+      document.getElementById('toeflInput').value = p.toeflScore;
+      document.getElementById('ieltsInput').value = p.ieltsScore;
+
+      runEvaluation();
+    }
+
+    async function runEvaluation() {
+      const payload = {
+        cgpa: parseFloat(document.getElementById('cgpaInput').value),
+        budgetCeilingUsd: parseInt(document.getElementById('budgetInput').value, 10),
+        greQuant: parseInt(document.getElementById('quantInput').value, 10),
+        greVerbal: parseInt(document.getElementById('verbalInput').value, 10),
+        toeflScore: parseInt(document.getElementById('toeflInput').value, 10),
+        ieltsScore: parseFloat(document.getElementById('ieltsInput').value)
+      };
+
+      try {
+        const res = await fetch('/api/v1/horizon/study-abroad/evaluate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderEvaluationResults(data);
+        }
+      } catch (err) {
+        console.error('Evaluation error:', err);
+      }
+    }
+
+    function renderEvaluationResults(data) {
+      const p = data.profileSummary;
+      const cat = data.categorization;
+      const fin = data.financialProofPlan;
+
+      // Scoreboard
+      document.getElementById('displayWesGpa').innerText = `${p.wesGpaEstimated.toFixed(1)} / 4.0`;
+      document.getElementById('displayGre').innerText = `${p.totalGre} / 340`;
+      document.getElementById('displayGreSplit').innerText = `Q: ${p.greQuant} | V: ${p.totalGre - p.greQuant}`;
+      document.getElementById('displayLiquidUsd').innerText = `$${fin.recommendedLiquidFundUsd.toLocaleString()}`;
+      document.getElementById('displayLiquidInr').innerText = `₹${(fin.recommendedLiquidFundInr / 100000).toFixed(1)} Lakhs Proof`;
+      document.getElementById('displayEngStatus').innerText = (p.toefl >= 100 || p.ielts >= 7.5) ? '✓ EXCELLENT' : '✓ QUALIFIED';
+
+      // Grids
+      renderUniGrid('Ambitious', cat.ambitious.universities, 'ambitious');
+      renderUniGrid('Target', cat.target.universities, 'target');
+      renderUniGrid('Safe', cat.safe.universities, 'safe');
+
+      document.getElementById('headingAmbitious').innerText = `Ambitious Universities (${cat.ambitious.count} Reach Options)`;
+      document.getElementById('headingTarget').innerText = `Target Universities (${cat.target.count} Competitive Options)`;
+      document.getElementById('headingSafe').innerText = `Safe Universities (${cat.safe.count} High-Probability Options)`;
+
+      // Financial Advice
+      const finContainer = document.getElementById('financialAdviceList');
+      finContainer.innerHTML = fin.visaFinancialAdvice.map(a => `
+        <div class="fin-item">
+          <span style="color: var(--accent-emerald);">✓</span>
+          <span>${a}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderUniGrid(key, list, cardClass) {
+      const container = document.getElementById(`grid${key}`);
+      container.innerHTML = list.map(u => `
+        <div class="uni-card ${cardClass}">
+          <div>
+            <div class="uni-top">
+              <span class="uni-name">${u.name}</span>
+              <span class="country-tag">${u.country}</span>
+            </div>
+            <div class="uni-prog">${u.program} • ${u.tierLevel}</div>
+            <div class="uni-stats-grid">
+              <div>🎯 Min GPA: <strong>${u.minGpaWes.toFixed(1)}</strong></div>
+              <div>⚡ GRE Q: <strong>${u.recommendedGreQuant}+</strong></div>
+              <div>📅 Deadline: <strong>${u.fallDeadline}</strong></div>
+              <div>📊 Accept: <strong>${u.acceptanceRatePct}%</strong></div>
+            </div>
+          </div>
+          <div class="uni-cost">
+            1st Year Cost: $${(u.estimated1stYearCostUsd).toLocaleString()} (₹${(u.estimated1stYearCostInr / 100000).toFixed(1)}L)
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('studyForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      runEvaluation();
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

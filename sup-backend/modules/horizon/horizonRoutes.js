@@ -208,4 +208,82 @@ router.post('/gatekeeper/evaluate', (req, res) => {
   }
 });
 
+// Feature 48: Alumni Mentorship & Career Network Connector (Public/Optional Auth)
+const { alumniNetworkEngine } = require('./alumniNetworkEngine');
+
+router.get('/alumni/directory', (req, res) => {
+  res.json(alumniNetworkEngine.getDirectory(req.query));
+});
+
+router.get('/alumni/presets', (req, res) => {
+  res.json({ success: true, presets: alumniNetworkEngine.getPresets() });
+});
+
+router.post('/alumni/generate-intro-note', (req, res) => {
+  try {
+    const result = alumniNetworkEngine.generateIntroNote(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/alumni/book-session', (req, res) => {
+  try {
+    const result = alumniNetworkEngine.bookSession(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 49: Research Publication & Lab Matcher (Public/Optional Auth)
+const { researchLabMatcherEngine } = require('./researchLabMatcherEngine');
+
+router.get('/research/labs', (req, res) => {
+  res.json(researchLabMatcherEngine.getLabsList());
+});
+
+router.get('/research/presets', (req, res) => {
+  res.json({ success: true, presets: researchLabMatcherEngine.getPresets() });
+});
+
+router.post('/research/match', (req, res) => {
+  try {
+    const result = researchLabMatcherEngine.match(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/research/generate-statement', (req, res) => {
+  try {
+    const result = researchLabMatcherEngine.generateStatement(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 50: Study Abroad & Global MS/PhD Admissions Engine (Public/Optional Auth)
+const { studyAbroadEngine } = require('./studyAbroadEngine');
+
+router.get('/study-abroad/universities', (req, res) => {
+  res.json(studyAbroadEngine.getUniversities());
+});
+
+router.get('/study-abroad/presets', (req, res) => {
+  res.json({ success: true, presets: studyAbroadEngine.getPresets() });
+});
+
+router.post('/study-abroad/evaluate', (req, res) => {
+  try {
+    const result = studyAbroadEngine.evaluate(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;

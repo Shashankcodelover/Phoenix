@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Publication & Lab Matcher | Phoenix Horizon</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0d1e38 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: var(--accent-gold);
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1380px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2.2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(to right, #ffffff, var(--accent-gold), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 900px;
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 410px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(251, 191, 36, 0.12);
+      border-color: var(--accent-gold);
+    }
+    .preset-chip.active {
+      background: rgba(251, 191, 36, 0.2);
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 12px rgba(251, 191, 36, 0.25);
+    }
+    .preset-sub {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--accent-gold);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent-gold), #d97706);
+      border: none;
+      border-radius: 8px;
+      color: #04121e;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(251, 191, 36, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(251, 191, 36, 0.5);
+    }
+
+    /* Section Title */
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    /* Top Matched Lab Showcase */
+    .showcase-card {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      border-radius: 14px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+    }
+    .showcase-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .lab-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .lab-pi {
+      font-size: 0.95rem;
+      color: var(--accent-gold);
+      margin-top: 0.25rem;
+    }
+    .fit-gauge {
+      text-align: right;
+    }
+    .fit-number {
+      font-size: 2.2rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-gold);
+    }
+    .fit-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .paper-box {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      margin-bottom: 1rem;
+    }
+    .skills-row {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.82rem;
+    }
+    .skill-chip {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin-right: 0.3rem;
+      margin-bottom: 0.3rem;
+    }
+    .skill-chip.match {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent-emerald);
+    }
+    .skill-chip.missing {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--accent-amber);
+    }
+
+    /* Outbox Research Statement Preview */
+    .note-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .subject-line {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: var(--accent-cyan);
+      background: rgba(30, 41, 59, 0.6);
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .note-body {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+    }
+
+    /* Checklist Protocol */
+    .protocol-box {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .protocol-item {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+    .protocol-item:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Global Labs Directory Grid */
+    .labs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .lab-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .lab-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+    .lab-card-inst {
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      margin-bottom: 0.6rem;
+    }
+    .lab-card-paper {
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+      margin-bottom: 0.75rem;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>🔬</span>
+      <span>PHOENIX HORIZON // RESEARCH MATCHER</span>
+      <span class="nav-badge">Feature 49</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="alumni-connector.html">Alumni Network</a>
+      <a href="research-matcher.html" class="active">Research Labs</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Research Publication & Lab Matcher</h1>
+      <p>
+        Matches undergraduate students with apex faculty research laboratories (IISc, IIT Madras, CMU, Stanford, TU Munich), computes mathematical affinity scores, and synthesizes publication-grade research statements conforming to IEEE/ACM guidelines.
+      </p>
+    </section>
+
+    <div class="grid-layout">
+      <!-- Left Panel: Form & Presets -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>🎯 Researcher Profile</h2>
+          <span style="font-size: 0.75rem; color: var(--accent-gold); font-family: 'JetBrains Mono';">PRESETS</span>
+        </div>
+
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="researchForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="studentNameInput">Full Name</label>
+              <input type="text" id="studentNameInput" class="form-control" value="Ananya Kulkarni" required>
+            </div>
+            <div class="form-group">
+              <label for="collegeInput">Current Institution</label>
+              <input type="text" id="collegeInput" class="form-control" value="RV College of Engineering" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="majorInput">Degree / Major</label>
+              <input type="text" id="majorInput" class="form-control" value="Computer Science and Engineering" required>
+            </div>
+            <div class="form-group">
+              <label for="cgpaInput">CGPA</label>
+              <input type="number" id="cgpaInput" class="form-control" step="0.01" min="0" max="10" value="9.35" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="domainSelect">Primary Research Domain</label>
+            <select id="domainSelect" class="form-control">
+              <option value="Foundations of Machine Learning & Kernel Optimization">ML Foundations & Kernel Optimization</option>
+              <option value="3D Computer Vision, SLAM & Aerial Autonomy">3D Computer Vision, SLAM & Robotics</option>
+              <option value="Reinforcement Learning & Graph Neural Networks">Reinforcement Learning & Graph Neural Networks</option>
+              <option value="Efficient Foundation Models & Sub-Quadratic Architectures">Efficient Foundation Models & Systems</option>
+              <option value="Neuromorphic Computing & Human-Robot Collaboration">Neuromorphic Computing & Humanoids</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="skillsInput">Core Technical Skills (Comma-separated)</label>
+            <input type="text" id="skillsInput" class="form-control" value="Linear Algebra, Optimization, PyTorch, C++" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pubsInput">Prior Publications Count</label>
+              <input type="number" id="pubsInput" class="form-control" min="0" max="10" value="1" required>
+            </div>
+            <div class="form-group">
+              <label for="timelineInput">Target Opportunity</label>
+              <select id="timelineInput" class="form-control">
+                <option value="Summer Research Intern">Summer Research Intern</option>
+                <option value="Pre-Doc Fellow">Pre-Doc Fellow (1-2 Year)</option>
+                <option value="Visiting Student Researcher">Visiting Student Researcher</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-action" id="btnMatch">
+            <span>🔬</span>
+            <span>Match Apex Labs & Generate Letter</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Right Panel: Matching Results -->
+      <section class="results-column">
+        <!-- Top Matched Lab Showcase -->
+        <div class="showcase-card">
+          <div class="showcase-top">
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent-gold); letter-spacing: 1px; font-weight: 700;">
+                ⭐ Top Matched Research Laboratory
+              </div>
+              <div class="lab-title" id="displayLabName">--</div>
+              <div class="lab-pi" id="displayLabPi">Lead PI: --</div>
+            </div>
+            <div class="fit-gauge">
+              <div class="fit-number" id="displayFitScore">--%</div>
+              <div class="fit-label" id="displayFitBand">Awaiting Simulation</div>
+            </div>
+          </div>
+
+          <div class="paper-box">
+            <strong>Recent Key Publication:</strong> <span id="displayRecentPaper">--</span>
+          </div>
+
+          <div class="skills-row">
+            <div>
+              <strong style="color: var(--accent-emerald);">Matching Skills:</strong>
+              <div id="matchingSkillsContainer" style="margin-top: 0.4rem;"></div>
+            </div>
+            <div>
+              <strong style="color: var(--accent-amber);">Prerequisite Gaps:</strong>
+              <div id="missingSkillsContainer" style="margin-top: 0.4rem;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Synthesized Statement & Outreach -->
+        <div class="note-card">
+          <div class="section-title" style="margin-bottom: 0.75rem;">
+            <span>✉️</span>
+            <span>Publication-Grade Professor Cold Outreach Statement</span>
+          </div>
+
+          <div class="subject-line" id="displaySubject">Subject: Loading...</div>
+          <div class="note-body" id="displayStatement">Click 'Match Apex Labs & Generate Letter' to synthesize.</div>
+        </div>
+
+        <!-- Academic Protocol Checklist -->
+        <div class="protocol-box">
+          <div class="section-title" style="color: var(--accent-emerald); margin-bottom: 0.75rem;">
+            <span>📋</span>
+            <span>IEEE / ACM Faculty Outreach Protocol</span>
+          </div>
+          <div id="protocolList">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Global Apex Labs Explorer -->
+        <div>
+          <div class="section-title">
+            <span>🌐</span>
+            <span>Apex Research Labs Network (IISc, IIT, CMU, Stanford, TUM)</span>
+          </div>
+          <div class="labs-grid" id="labsGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let labsData = [];
+    let presetsData = [];
+
+    async function init() {
+      try {
+        const [labsRes, presetsRes] = await Promise.all([
+          fetch('/api/v1/horizon/research/labs'),
+          fetch('/api/v1/horizon/research/presets')
+        ]);
+        const labsJson = await labsRes.json();
+        const presetsJson = await presetsRes.json();
+
+        if (labsJson.success) {
+          labsData = labsJson.labs;
+          renderLabsGrid(labsData);
+        }
+
+        if (presetsJson.success) {
+          presetsData = presetsJson.presets;
+          renderPresets();
+        }
+
+        runMatch();
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+          <span class="preset-sub">${p.studentName} • ${p.studentCollege} • CGPA ${p.cgpa}</span>
+        </button>
+      `).join('');
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.label));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('studentNameInput').value = p.studentName;
+      document.getElementById('collegeInput').value = p.studentCollege;
+      document.getElementById('majorInput').value = p.major;
+      document.getElementById('cgpaInput').value = p.cgpa;
+      document.getElementById('domainSelect').value = p.selectedDomain;
+      document.getElementById('skillsInput').value = p.studentSkills.join(', ');
+      document.getElementById('pubsInput').value = p.priorPubCount;
+      document.getElementById('timelineInput').value = p.targetPosition;
+
+      runMatch();
+    }
+
+    function renderLabsGrid(labs) {
+      const container = document.getElementById('labsGrid');
+      container.innerHTML = labs.map(l => `
+        <div class="lab-card">
+          <div>
+            <div class="lab-card-title">${l.name}</div>
+            <div class="lab-card-inst">${l.institution} • ${l.pi}</div>
+            <div class="lab-card-paper">📄 ${l.recentPaper}</div>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--accent-emerald); font-family: 'JetBrains Mono'; margin-top: 0.5rem;">
+            Open: ${l.openPositions}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function runMatch() {
+      const skillsArray = document.getElementById('skillsInput').value
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const matchPayload = {
+        studentSkills: skillsArray,
+        selectedDomain: document.getElementById('domainSelect').value,
+        cgpa: parseFloat(document.getElementById('cgpaInput').value),
+        priorPubCount: parseInt(document.getElementById('pubsInput').value, 10)
+      };
+
+      try {
+        const matchRes = await fetch('/api/v1/horizon/research/match', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(matchPayload)
+        });
+        const matchData = await matchRes.json();
+
+        if (matchData.success) {
+          const top = matchData.topMatchedLab;
+          document.getElementById('displayLabName').innerText = `${top.name} // ${top.institution}`;
+          document.getElementById('displayLabPi').innerText = `Principal Investigator: ${top.pi} (${top.tier})`;
+          document.getElementById('displayFitScore').innerText = `${top.fitScore}%`;
+          document.getElementById('displayFitBand').innerText = top.fitBand;
+          document.getElementById('displayRecentPaper').innerText = top.recentPaper;
+
+          const matchCont = document.getElementById('matchingSkillsContainer');
+          matchCont.innerHTML = top.matchingSkills.length
+            ? top.matchingSkills.map(s => `<span class="skill-chip match">✓ ${s}</span>`).join('')
+            : '<span style="color: var(--text-muted);">None</span>';
+
+          const missCont = document.getElementById('missingSkillsContainer');
+          missCont.innerHTML = top.missingSkills.length
+            ? top.missingSkills.map(s => `<span class="skill-chip missing">Missing: ${s}</span>`).join('')
+            : '<span style="color: var(--accent-emerald);">All Desired Skills Fulfilled</span>';
+
+          // Now generate outreach statement
+          generateOutreachStatement(top.id);
+        }
+      } catch (err) {
+        console.error('Match error:', err);
+      }
+    }
+
+    async function generateOutreachStatement(labId) {
+      const payload = {
+        labId,
+        studentName: document.getElementById('studentNameInput').value,
+        studentCollege: document.getElementById('collegeInput').value,
+        major: document.getElementById('majorInput').value,
+        cgpa: parseFloat(document.getElementById('cgpaInput').value),
+        priorProject: 'Engineered GPU-accelerated sparse matrix kernels with 3.2x speedup',
+        proposedExtension: 'Extending your 2024 published framework to multi-agent distributed architectures'
+      };
+
+      try {
+        const res = await fetch('/api/v1/horizon/research/generate-statement', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('displaySubject').innerText = data.subject;
+          document.getElementById('displayStatement').innerText = data.statement;
+
+          const protCont = document.getElementById('protocolList');
+          protCont.innerHTML = data.protocolChecklist.map(p => `
+            <div class="protocol-item">
+              <span style="color: var(--accent-emerald);">✓</span>
+              <span>${p}</span>
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        console.error('Statement error:', err);
+      }
+    }
+
+    document.getElementById('researchForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      runMatch();
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
