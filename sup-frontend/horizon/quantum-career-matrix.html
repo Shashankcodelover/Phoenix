@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra Quantum Career Opportunity Matrix & Market Arbitrage // Phoenix Cognitive War Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #070a12;
+      --panel-bg: rgba(15, 23, 42, 0.85);
+      --panel-border: rgba(255, 255, 255, 0.09);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-indigo: #6366f1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-dark) 70%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    .top-nav {
+      background: rgba(11, 17, 33, 0.9);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #030712;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 9999px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .engine-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 10px var(--accent-emerald); }
+      100% { transform: scale(0.9); opacity: 0.8; }
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-header {
+      margin-bottom: 2rem;
+    }
+    .pillar-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 850px;
+      line-height: 1.5;
+    }
+
+    /* Offer Selector Bar */
+    .offer-bar {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 1.25rem;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .offer-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .btn-offer {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 0.55rem 1.1rem;
+      border-radius: 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-offer:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+    }
+    .btn-offer.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(168, 85, 247, 0.25));
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    /* City Arbitrage Switcher */
+    .city-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    .btn-city {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      padding: 0.45rem 0.9rem;
+      border-radius: 0.65rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-city:hover { color: var(--text-main); border-color: rgba(255, 255, 255, 0.2); }
+    .btn-city.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .panel-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    /* Wealth Trajectory Box */
+    .wealth-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(56, 189, 248, 0.15));
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .wealth-num {
+      font-size: 3.2rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      background: linear-gradient(135deg, var(--accent-emerald), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.25rem;
+    }
+    .wealth-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .metric-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.85rem;
+      padding: 1rem;
+      position: relative;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--accent-cyan);
+    }
+    .metric-card.emerald::before { background: var(--accent-emerald); }
+    .metric-card.amber::before { background: var(--accent-amber); }
+    .metric-card.purple::before { background: var(--accent-purple); }
+
+    .metric-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+    }
+    .metric-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Equity Simulation Slider */
+    .slider-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.85rem;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    .range-slider {
+      width: 100%;
+      accent-color: var(--accent-cyan);
+      cursor: pointer;
+    }
+
+    @media (max-width: 992px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🏛️ PHOENIX HORIZON</span>
+      <span class="nav-badge">PILLAR 4 • FEATURE 65</span>
+    </div>
+    <div class="engine-status">
+      <div class="pulse-dot"></div>
+      <span>MACRO VALUATION & PPP ARBITRAGE: LIVE</span>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header class="hero-header">
+      <div class="pillar-tag">
+        <span>⚡ FEATURE 65 OF MASTER PRODUCTION SUITE</span>
+        <span>•</span>
+        <span>LEVELS.FYI PREMIUM & CARTA TOTAL COMP STANDARD</span>
+      </div>
+      <h1 class="hero-title">Quantum Career Opportunity Matrix & Market Arbitrage</h1>
+      <p class="hero-sub">
+        Calculates 4-year total compensation, cross-city tax brackets, rent indexes, and purchasing power parity (PPP) arbitrage across global tech hubs with real-time equity valuation curves and tech layoff risk indices.
+      </p>
+    </header>
+
+    <!-- Offer Selector Deck -->
+    <section class="offer-bar">
+      <div>
+        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace;">
+          Target FAANG Compensation Offer
+        </div>
+        <div class="offer-chips" id="offerChips">
+          <button class="btn-offer active" data-id="google_l6">
+            <span>🛡️ Google Staff L6</span>
+            <span style="font-size: 0.7rem; color: var(--accent-cyan);">($501k Gross • SF Bay Area)</span>
+          </button>
+          <button class="btn-offer" data-id="meta_e6">
+            <span>🌐 Meta E6 Director</span>
+            <span style="font-size: 0.7rem; color: var(--accent-emerald);">($548k Gross • Seattle, WA)</span>
+          </button>
+          <button class="btn-offer" data-id="stripe_l5">
+            <span>⚡ Stripe L5 Staff Core</span>
+            <span style="font-size: 0.7rem; color: var(--accent-purple);">($480k Gross • 94 Safety)</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Global City Arbitrage Switcher -->
+    <div class="city-tabs" id="cityTabs">
+      <button class="btn-city active" data-city="sf_bay_area">San Francisco / Silicon Valley (38.5% Tax)</button>
+      <button class="btn-city" data-city="seattle">Seattle, WA (26.5% Tax • 0% State Tax)</button>
+      <button class="btn-city" data-city="zurich">Zurich, Switzerland (22.0% Tax)</button>
+      <button class="btn-city" data-city="london">London, UK (42.0% Tax)</button>
+      <button class="btn-city" data-city="bangalore">Bangalore, India (3.6x PPP Multiplier)</button>
+      <button class="btn-city" data-city="singapore">Singapore (18.0% Tax)</button>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="dashboard-grid">
+
+      <!-- Left: Net Discretionary Wealth & City Comparison -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>💰 Net Discretionary Wealth & PPP Trajectory</span>
+          </div>
+          <div class="panel-badge" id="badgeCitySelected">SAN FRANCISCO (US)</div>
+        </div>
+
+        <!-- Wealth Display -->
+        <div class="wealth-box">
+          <div class="wealth-num" id="displayWealthNum">$1,069,600</div>
+          <div class="wealth-sub" id="displayWealthSub">
+            4-Year Net Discretionary Savings (After Taxes & Housing)
+          </div>
+        </div>
+
+        <!-- 4 Core Metrics Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card emerald">
+            <div class="metric-label">Gross Annual Comp</div>
+            <div class="metric-val" id="valGross">$501,250</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Effective Income Tax</div>
+            <div class="metric-val" id="valTax">38.5% <span style="font-size: 0.8rem; color: var(--text-muted);">($192k)</span></div>
+          </div>
+          <div class="metric-card amber">
+            <div class="metric-label">Annual Housing / Rent</div>
+            <div class="metric-val" id="valRent">$40,800</div>
+          </div>
+          <div class="metric-card purple">
+            <div class="metric-label">PPP Adjusted Equivalent</div>
+            <div class="metric-val" id="valPpp">$267,400 <span style="font-size: 0.8rem; color: var(--text-muted);">/yr</span></div>
+          </div>
+        </div>
+
+        <!-- Equity Appreciation Slider -->
+        <div class="slider-box">
+          <div class="slider-header">
+            <span>4-Year Company Equity Growth Multiplier</span>
+            <span id="displayMultiplier" style="color: var(--accent-cyan);">1.0x (Baseline $170k/yr)</span>
+          </div>
+          <input type="range" class="range-slider" id="equitySlider" min="50" max="300" value="100">
+        </div>
+      </div>
+
+      <!-- Right: Macro Risk & Layoff Resistance Radar -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🛡️ Macro Layoff Resistance Radar</span>
+          </div>
+          <div class="panel-badge">ENTERPRISE RESILIENCE</div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(168,85,247,0.15)); border: 1px solid rgba(168,85,247,0.3); border-radius: 1rem; padding: 1.25rem; text-align: center; margin-bottom: 1.25rem;">
+          <div style="font-size: 2.8rem; font-weight: 900; font-family: 'JetBrains Mono', monospace; color: var(--accent-cyan); line-height: 1; margin-bottom: 0.35rem;" id="valResistanceScore">
+            92 / 100
+          </div>
+          <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem;">
+            TIER-1 HIGH SAFETY BUFFER
+          </div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);" id="valTrend">
+            Headcount Trend: GROWING_AI_INFRA
+          </div>
+        </div>
+
+        <!-- Compensation Breakdown Ledger -->
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.85rem; padding: 1rem; margin-bottom: 1rem;">
+          <div style="display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <span style="color: var(--text-muted);">Base Salary:</span>
+            <span id="breakdownBase">$265,000</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <span style="color: var(--text-muted);">Annual Bonus (25%):</span>
+            <span id="breakdownBonus">$66,250</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <span style="color: var(--text-muted);">Annual RSU Equity (1/4):</span>
+            <span id="breakdownEquity" style="color: var(--accent-cyan);">$170,000</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 0.4rem 0;">
+            <span style="color: var(--text-muted);">First Year Sign-On:</span>
+            <span id="breakdownSignOn" style="color: var(--accent-emerald);">$50,000</span>
+          </div>
+        </div>
+
+        <div style="font-size: 0.8rem; line-height: 1.6; color: var(--text-muted); background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.05);">
+          <div style="font-weight: 700; color: var(--text-main); margin-bottom: 0.35rem;">Market Arbitrage Insight:</div>
+          Relocating from San Francisco to Seattle preserves ~$60,000 annually in avoided California state income tax alone, yielding an extra $240,000 in net wealth over a 4-year vest cycle.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    let currentOfferId = 'google_l6';
+    let currentCityId = 'sf_bay_area';
+    let equityMultiplier = 1.0;
+
+    const OFFERS = {
+      google_l6: { company: 'Google', level: 'Staff L6', base: 265000, bonusPct: 25, equity4Yr: 680000, signOn: 50000, safety: 92, trend: 'GROWING_AI_INFRA' },
+      meta_e6: { company: 'Meta', level: 'Director E6', base: 275000, bonusPct: 25, equity4Yr: 820000, signOn: 75000, safety: 88, trend: 'EXPANDING_GENAI' },
+      stripe_l5: { company: 'Stripe', level: 'Staff L5', base: 255000, bonusPct: 15, equity4Yr: 750000, signOn: 40000, safety: 94, trend: 'PROFITABLE_EXPANSION' }
+    };
+
+    const CITIES = {
+      sf_bay_area: { name: 'SAN FRANCISCO (US)', taxPct: 38.5, rentMo: 3400, colFactor: 1.0 },
+      seattle: { name: 'SEATTLE, WA (0% STATE TAX)', taxPct: 26.5, rentMo: 2400, colFactor: 0.88 },
+      zurich: { name: 'ZURICH (SWITZERLAND)', taxPct: 22.0, rentMo: 2900, colFactor: 1.15 },
+      london: { name: 'LONDON (UK)', taxPct: 42.0, rentMo: 2600, colFactor: 0.85 },
+      bangalore: { name: 'BANGALORE (3.6x PPP)', taxPct: 31.2, rentMo: 650, colFactor: 0.28 },
+      singapore: { name: 'SINGAPORE (18% TAX)', taxPct: 18.0, rentMo: 3100, colFactor: 0.95 }
+    };
+
+    const displayWealthNum = document.getElementById('displayWealthNum');
+    const valGross = document.getElementById('valGross');
+    const valTax = document.getElementById('valTax');
+    const valRent = document.getElementById('valRent');
+    const valPpp = document.getElementById('valPpp');
+    const badgeCitySelected = document.getElementById('badgeCitySelected');
+    const valResistanceScore = document.getElementById('valResistanceScore');
+    const valTrend = document.getElementById('valTrend');
+    const breakdownBase = document.getElementById('breakdownBase');
+    const breakdownBonus = document.getElementById('breakdownBonus');
+    const breakdownEquity = document.getElementById('breakdownEquity');
+    const breakdownSignOn = document.getElementById('breakdownSignOn');
+    const equitySlider = document.getElementById('equitySlider');
+    const displayMultiplier = document.getElementById('displayMultiplier');
+
+    function calculate() {
+      const offer = OFFERS[currentOfferId];
+      const city = CITIES[currentCityId];
+
+      const base = offer.base;
+      const bonus = base * (offer.bonusPct / 100);
+      const annualEquity = (offer.equity4Yr / 4) * equityMultiplier;
+      const gross = base + bonus + annualEquity;
+
+      const taxPaid = gross * (city.taxPct / 100);
+      const netTakeHome = gross - taxPaid;
+      const rentAnnual = city.rentMo * 12;
+      const discAnnual = Math.max(0, netTakeHome - rentAnnual);
+      const fourYrWealth = discAnnual * 4;
+      const pppAdjusted = Math.round(discAnnual / city.colFactor);
+
+      valGross.innerText = `$${Math.round(gross).toLocaleString()}`;
+      valTax.innerHTML = `${city.taxPct}% <span style="font-size: 0.8rem; color: var(--text-muted);">($${Math.round(taxPaid / 1000)}k)</span>`;
+      valRent.innerText = `$${Math.round(rentAnnual).toLocaleString()}`;
+      valPpp.innerHTML = `$${Math.round(pppAdjusted).toLocaleString()} <span style="font-size: 0.8rem; color: var(--text-muted);">/yr</span>`;
+      displayWealthNum.innerText = `$${Math.round(fourYrWealth).toLocaleString()}`;
+      badgeCitySelected.innerText = city.name;
+
+      valResistanceScore.innerText = `${offer.safety} / 100`;
+      valTrend.innerText = `Headcount Trend: ${offer.trend}`;
+
+      breakdownBase.innerText = `$${offer.base.toLocaleString()}`;
+      breakdownBonus.innerText = `$${Math.round(bonus).toLocaleString()} (${offer.bonusPct}%)`;
+      breakdownEquity.innerText = `$${Math.round(annualEquity).toLocaleString()} (x${equityMultiplier.toFixed(1)})`;
+      breakdownSignOn.innerText = `$${offer.signOn.toLocaleString()}`;
+    }
+
+    document.querySelectorAll('.btn-offer').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.btn-offer').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        currentOfferId = b.dataset.id;
+        calculate();
+      });
+    });
+
+    document.querySelectorAll('.btn-city').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.btn-city').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        currentCityId = b.dataset.city;
+        calculate();
+      });
+    });
+
+    equitySlider.addEventListener('input', (e) => {
+      equityMultiplier = Number(e.target.value) / 100;
+      displayMultiplier.innerText = `${equityMultiplier.toFixed(1)}x (Adjusted)`;
+      calculate();
+    });
+
+    calculate();
+  </script>
+</body>
+</html>

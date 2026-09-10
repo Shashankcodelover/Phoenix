@@ -18,6 +18,10 @@ const {
   injectArchitectureChaos, 
   getTopologies 
 } = require('./flamegraphStressEngine');
+const { 
+  computeArbitrage, 
+  getArbitrageData 
+} = require('./careerArbitrageEngine');
 
 router.use(protectOptional);
 
@@ -195,6 +199,40 @@ router.post('/flamegraph-chaos-inject', (req, res) => {
     res.json({
       success: true,
       result
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/market-arbitrage
+ * Returns global cities, tax brackets, and FAANG compensation models
+ */
+router.get('/market-arbitrage', (req, res) => {
+  try {
+    const data = getArbitrageData();
+    res.json({
+      success: true,
+      standard: 'Astra Global Career Opportunity Matrix & Market Arbitrage Engine',
+      ...data
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/simulate-equity-arbitrage
+ * Simulates net take-home and equity growth trajectory
+ */
+router.post('/simulate-equity-arbitrage', (req, res) => {
+  try {
+    const { offer, cityKey, equityMultiplier } = req.body || {};
+    const report = computeArbitrage(offer, cityKey, Number(equityMultiplier) || 1.0);
+    res.json({
+      success: true,
+      report
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
