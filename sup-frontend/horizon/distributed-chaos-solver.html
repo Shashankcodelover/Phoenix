@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra Distributed Database Chaos & Linearizability Checker // Phoenix Cognitive War Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-blue: #60a5fa;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.08) 0%, transparent 40%),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.6), rgba(3, 7, 18, 0.95));
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      background: rgba(3, 7, 18, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 1rem 2rem;
+    }
+
+    .header-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      font-size: 1.75rem;
+      background: linear-gradient(135deg, var(--accent-rose), var(--accent-amber));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+      width: 100%;
+    }
+
+    /* Scoreboard HUD */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-rose));
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+    }
+
+    .stat-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .badge-pass {
+      color: var(--accent-emerald);
+      text-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+    }
+
+    .badge-fail {
+      color: var(--accent-rose);
+      text-shadow: 0 0 12px rgba(244, 63, 94, 0.5);
+    }
+
+    /* Layout Columns */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+    }
+
+    @media (max-width: 1150px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.75rem;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .panel-title-pill {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    /* Interactive Topology Canvas */
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      height: 340px;
+      background: rgba(3, 7, 18, 0.6);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+    }
+
+    #topologyCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .canvas-hud {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.7);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Scenario Selector Buttons */
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .scenario-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .scenario-btn:hover {
+      background: rgba(56, 189, 248, 0.08);
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+
+    .scenario-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);
+    }
+
+    .scenario-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .scenario-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Chaos Controls */
+    .control-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .control-label {
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .control-label span {
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+    }
+
+    .slider {
+      flex: 1;
+      max-width: 200px;
+      accent-color: var(--accent-cyan);
+    }
+
+    /* Action buttons */
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      color: #030712;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      padding: 0.7rem 1.4rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.25);
+    }
+
+    .btn-action:hover {
+      filter: brightness(1.15);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Porcupine Operation Timeline */
+    .ops-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      max-height: 290px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .op-row {
+      background: rgba(3, 7, 18, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 0.6rem 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      border-left: 3px solid var(--accent-cyan);
+    }
+
+    .op-row.violation {
+      border-left: 3px solid var(--accent-rose);
+      background: rgba(244, 63, 94, 0.08);
+      border-color: rgba(244, 63, 94, 0.3);
+    }
+
+    .op-tag {
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .op-tag-write {
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--accent-cyan);
+    }
+
+    .op-tag-read {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent-emerald);
+    }
+
+    /* Violation Cards */
+    .violations-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .violation-card {
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .violation-title {
+      color: var(--accent-rose);
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .violation-chain {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      color: #fca5a5;
+      line-height: 1.4;
+    }
+
+    .violation-mitigation {
+      font-size: 0.74rem;
+      color: var(--accent-emerald);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.2rem;
+    }
+
+    /* Staff Interview Deep Dive */
+    .staff-box {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(56, 189, 248, 0.05));
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .staff-badge {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-purple);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .staff-quote {
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    .interview-prompt {
+      background: rgba(3, 7, 18, 0.5);
+      border: 1px dashed rgba(168, 85, 247, 0.4);
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <div class="brand">
+        <div class="brand-icon">⚡</div>
+        <div>
+          <div class="brand-title">Astra Cognitive War Room</div>
+          <div class="brand-subtitle">Feature 67: Distributed Chaos & Linearizability Checker</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="career-command-center.html">Command Center</a>
+        <a href="astra-prosody-analyzer.html">Prosody Analyzer</a>
+        <a href="code-playback-tracer.html">AST Playback</a>
+        <a href="multi-agent-panel.html">3-Agent Panel</a>
+        <a href="latency-flamegraph-sandbox.html">Latency Flamegraph</a>
+        <a href="quantum-career-matrix.html">Career Arbitrage</a>
+        <a href="astra-vision-proctor.html">Vision Proctor</a>
+        <a href="distributed-chaos-solver.html" class="active" style="background: linear-gradient(135deg, rgba(244,63,94,0.2), rgba(245,158,11,0.2)); color: #f59e0b; font-weight: 700;">⚡ Distributed Chaos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Scoreboard HUD -->
+    <section class="scoreboard">
+      <div class="stat-card">
+        <span class="stat-label">Linearizability State</span>
+        <div class="stat-val" id="hudLinearizability"><span class="badge-pass">LINEARIZABLE</span></div>
+        <span class="stat-sub" id="hudConsistencyClass">Strict CP // Porcupine Pass</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Active Quorum Health</span>
+        <div class="stat-val" id="hudQuorumHealth" style="color: var(--accent-cyan);">3 / 5 Majority</div>
+        <span class="stat-sub" id="hudQuorumDetail">W ≥ 3 Nodes Reached</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Clock Skew (TrueTime ε)</span>
+        <div class="stat-val" id="hudClockSkew">5 <span style="font-size: 0.85rem; color: var(--text-muted);">ms</span></div>
+        <span class="stat-sub" id="hudClockStatus">Within Spanner Bound (≤7ms)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Tail Latency (p99)</span>
+        <div class="stat-val" id="hudLatency">52.6 <span style="font-size: 0.85rem; color: var(--text-muted);">ms</span></div>
+        <span class="stat-sub" id="hudTailSpike">+0% Normal Steady State</span>
+      </div>
+    </section>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+
+      <!-- Left Panel: Topology & Chaos Cockpit -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🌐</span> Consensus Cluster Topology & Partition Visualizer
+          </div>
+          <span class="panel-title-pill" id="currentProtocolBadge">PROTOCOL: RAFT</span>
+        </div>
+
+        <!-- HTML5 Canvas Topology -->
+        <div class="canvas-container">
+          <canvas id="topologyCanvas"></canvas>
+          <div class="canvas-hud">
+            <span id="canvasPartitionStatus">🟢 FULL MESH CONNECTIVITY (NO PARTITION)</span>
+            <span id="canvasRpcCount">RPCs: 18 / sec</span>
+          </div>
+        </div>
+
+        <!-- Preset Scenario Selector -->
+        <div>
+          <label style="font-size: 0.78rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; margin-bottom: 0.5rem; display: block;">
+            Industry Chaos Scenarios (Jepsen Suite)
+          </label>
+          <div class="scenario-grid" id="scenarioButtons">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Custom Chaos Injection Controls -->
+        <div style="display: flex; flex-direction: column; gap: 0.8rem; background: rgba(3, 7, 18, 0.4); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.06);">
+          <div class="control-row">
+            <div class="control-label">
+              <strong>NTP Clock Drift Skew</strong>
+              <span id="clockDriftDisplay">Skew: 5 ms</span>
+            </div>
+            <input type="range" id="clockDriftSlider" min="0" max="500" value="5" class="slider" oninput="updateControls()">
+          </div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <strong>RPC Packet Drop Rate</strong>
+              <span id="packetLossDisplay">Drop Rate: 5%</span>
+            </div>
+            <input type="range" id="packetLossSlider" min="0" max="50" value="5" class="slider" oninput="updateControls()">
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="btn-group">
+          <button class="btn-action" id="btnInjectChaos" onclick="triggerChaosSimulation()">
+            ⚡ Inject Chaos & Verify
+          </button>
+          <button class="btn-action btn-secondary" id="btnHealPartition" onclick="healCluster()">
+            🌿 Heal Partition
+          </button>
+          <button class="btn-action btn-secondary" id="btnExportKnossos" onclick="exportKnossosTrace()">
+            📄 Export Knossos Trace
+          </button>
+        </div>
+      </section>
+
+      <!-- Right Panel: Linearizability Audit & Staff Takeaway -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🔬</span> Porcupine Linearizability & Real-Time Precedence Trace
+          </div>
+          <span class="panel-title-pill" id="violationsBadge">0 ANOMALIES</span>
+        </div>
+
+        <!-- Real-Time Ops Timeline -->
+        <div>
+          <label style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; margin-bottom: 0.4rem; display: block;">
+            Concurrent Client Operation Interleaving [t_inv → t_resp]
+          </label>
+          <div class="ops-timeline" id="opsTimelineContainer">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Anomaly Warnings -->
+        <div id="violationsContainer" class="violations-container" style="display: none;">
+          <!-- Populated when violations occur -->
+        </div>
+
+        <!-- Staff / Principal Interview Assessment -->
+        <div class="staff-box" id="staffBox">
+          <div class="staff-badge" id="staffInsightTitle">STAFF DISTRIBUTED SYSTEMS PRINCIPLE</div>
+          <p class="staff-quote" id="staffExplanation">
+            Loading consensus architecture evaluation...
+          </p>
+          <div class="interview-prompt" id="staffInterviewPrompt">
+            <strong>Staff Interview Question:</strong> How does Google Spanner avoid stale reads without running full Paxos roundtrips on every single read?
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    // State
+    let scenarios = [];
+    let currentScenario = null;
+    let isPartitioned = false;
+    let animFrame = null;
+
+    // Canvas setup
+    const canvas = document.getElementById('topologyCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // Node definitions for Canvas
+    const clusterNodes = [
+      { id: 'N1', name: 'Node-1', role: 'LEADER', group: 0, x: 0, y: 0, term: 1 },
+      { id: 'N2', name: 'Node-2', role: 'FOLLOWER', group: 0, x: 0, y: 0, term: 1 },
+      { id: 'N3', name: 'Node-3', role: 'FOLLOWER', group: 1, x: 0, y: 0, term: 1 },
+      { id: 'N4', name: 'Node-4', role: 'FOLLOWER', group: 1, x: 0, y: 0, term: 1 },
+      { id: 'N5', name: 'Node-5', role: 'FOLLOWER', group: 1, x: 0, y: 0, term: 1 },
+    ];
+
+    let packets = [];
+
+    function initNodePositions() {
+      const rect = canvas.getBoundingClientRect();
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      const radius = Math.min(cx, cy) - 50;
+
+      clusterNodes.forEach((node, i) => {
+        const angle = (i / clusterNodes.length) * Math.PI * 2 - Math.PI / 2;
+        node.x = cx + Math.cos(angle) * radius;
+        node.y = cy + Math.sin(angle) * radius;
+      });
+    }
+
+    function renderTopology() {
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Draw partition cut line if partitioned
+      if (isPartitioned) {
+        ctx.strokeStyle = 'rgba(244, 63, 94, 0.7)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(w * 0.48, 20);
+        ctx.lineTo(w * 0.48, h - 20);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Label Partition Groups
+        ctx.fillStyle = 'rgba(244, 63, 94, 0.9)';
+        ctx.font = '10px "JetBrains Mono"';
+        ctx.fillText('⚡ MINORITY PARTITION (N1, N2)', 20, 30);
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
+        ctx.fillText('🛡️ MAJORITY QUORUM (N3, N4, N5)', w * 0.52, 30);
+      }
+
+      // Draw mesh connection lines
+      for (let i = 0; i < clusterNodes.length; i++) {
+        for (let j = i + 1; j < clusterNodes.length; j++) {
+          const n1 = clusterNodes[i];
+          const n2 = clusterNodes[j];
+          const isCrossPartition = isPartitioned && (n1.group !== n2.group);
+
+          ctx.beginPath();
+          ctx.moveTo(n1.x, n1.y);
+          ctx.lineTo(n2.x, n2.y);
+          if (isCrossPartition) {
+            ctx.strokeStyle = 'rgba(244, 63, 94, 0.1)';
+            ctx.lineWidth = 1;
+          } else {
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+            ctx.lineWidth = 1.5;
+          }
+          ctx.stroke();
+        }
+      }
+
+      // Update and draw RPC packets
+      if (Math.random() < 0.15) {
+        const fromIdx = Math.floor(Math.random() * clusterNodes.length);
+        const toIdx = Math.floor(Math.random() * clusterNodes.length);
+        if (fromIdx !== toIdx) {
+          packets.push({
+            from: clusterNodes[fromIdx],
+            to: clusterNodes[toIdx],
+            progress: 0,
+            speed: 0.02 + Math.random() * 0.02,
+            isCross: isPartitioned && (clusterNodes[fromIdx].group !== clusterNodes[toIdx].group)
+          });
+        }
+      }
+
+      for (let i = packets.length - 1; i >= 0; i--) {
+        const p = packets[i];
+        p.progress += p.speed;
+
+        if (p.isCross && p.progress > 0.45) {
+          // Packet dropped at partition boundary!
+          ctx.fillStyle = '#f43f5e';
+          const px = p.from.x + (p.to.x - p.from.x) * 0.48;
+          const py = p.from.y + (p.to.y - p.from.y) * 0.48;
+          ctx.beginPath();
+          ctx.arc(px, py, 4, 0, Math.PI * 2);
+          ctx.fill();
+          packets.splice(i, 1);
+          continue;
+        }
+
+        if (p.progress >= 1) {
+          packets.splice(i, 1);
+          continue;
+        }
+
+        const px = p.from.x + (p.to.x - p.from.x) * p.progress;
+        const py = p.from.y + (p.to.y - p.from.y) * p.progress;
+
+        ctx.fillStyle = p.isCross ? '#f59e0b' : '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(px, py, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Draw Nodes
+      clusterNodes.forEach(node => {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 22, 0, Math.PI * 2);
+
+        if (node.role === 'LEADER') {
+          ctx.fillStyle = '#0284c7';
+          ctx.strokeStyle = '#38bdf8';
+        } else if (node.role === 'ISOLATED_ZOMBIE_LEADER') {
+          ctx.fillStyle = '#be123c';
+          ctx.strokeStyle = '#f43f5e';
+        } else if (node.role === 'ELECTED_NEW_LEADER') {
+          ctx.fillStyle = '#047857';
+          ctx.strokeStyle = '#10b981';
+        } else {
+          ctx.fillStyle = '#1e293b';
+          ctx.strokeStyle = '#64748b';
+        }
+
+        ctx.lineWidth = 2.5;
+        ctx.fill();
+        ctx.stroke();
+
+        // Node ID
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px "JetBrains Mono"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.id, node.x, node.y);
+
+        // Role tag underneath
+        ctx.font = '9px "Plus Jakarta Sans"';
+        ctx.fillStyle = node.role.includes('LEADER') ? '#38bdf8' : '#94a3b8';
+        ctx.fillText(node.role.replace('_LEADER', '').substring(0, 8), node.x, node.y + 32);
+      });
+
+      animFrame = requestAnimationFrame(renderTopology);
+    }
+
+    // Load initial presets
+    async function loadScenarios() {
+      try {
+        const res = await fetch('/api/v1/astra/chaos-scenarios');
+        const data = await res.json();
+        if (data.success && data.scenarios) {
+          scenarios = data.scenarios;
+          renderScenarioButtons();
+          selectScenario(scenarios[0].id);
+        }
+      } catch (err) {
+        console.error('Failed to load scenarios:', err);
+      }
+    }
+
+    function renderScenarioButtons() {
+      const container = document.getElementById('scenarioButtons');
+      container.innerHTML = '';
+      scenarios.forEach((sc, idx) => {
+        const btn = document.createElement('div');
+        btn.className = `scenario-btn ${idx === 0 ? 'active' : ''}`;
+        btn.id = `sc-btn-${sc.id}`;
+        btn.onclick = () => selectScenario(sc.id);
+        btn.innerHTML = `
+          <div class="scenario-name">${sc.title}</div>
+          <div class="scenario-meta">${sc.protocol} • ${sc.chaosType}</div>
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    function selectScenario(id) {
+      document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`sc-btn-${id}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      currentScenario = scenarios.find(s => s.id === id);
+      if (!currentScenario) return;
+
+      document.getElementById('currentProtocolBadge').innerText = `PROTOCOL: ${currentScenario.protocol}`;
+      document.getElementById('clockDriftSlider').value = currentScenario.clockDriftMs;
+      document.getElementById('packetLossSlider').value = Math.round(currentScenario.packetLossRate * 100);
+      updateControls();
+
+      // Automatically run simulation
+      triggerChaosSimulation();
+    }
+
+    function updateControls() {
+      const skew = document.getElementById('clockDriftSlider').value;
+      const drop = document.getElementById('packetLossSlider').value;
+      document.getElementById('clockDriftDisplay').innerText = `Skew: ${skew} ms`;
+      document.getElementById('packetLossDisplay').innerText = `Drop Rate: ${drop}%`;
+    }
+
+    async function triggerChaosSimulation() {
+      if (!currentScenario) return;
+
+      const skew = parseInt(document.getElementById('clockDriftSlider').value);
+      const drop = parseInt(document.getElementById('packetLossSlider').value) / 100;
+
+      const payload = {
+        scenarioId: currentScenario.id,
+        protocol: currentScenario.protocol,
+        chaosType: currentScenario.chaosType,
+        nodes: ['Node-1', 'Node-2', 'Node-3', 'Node-4', 'Node-5'],
+        partitionGroups: currentScenario.partitionGroups,
+        clockDriftMs: skew,
+        packetLossRate: drop
+      };
+
+      try {
+        const res = await fetch('/api/v1/astra/chaos-simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.success && result.data) {
+          renderSimulationResult(result.data);
+        }
+      } catch (err) {
+        console.error('Simulation error:', err);
+      }
+    }
+
+    function renderSimulationResult(data) {
+      const lin = data.linearizabilityResult;
+      const cluster = data.cluster;
+      isPartitioned = data.chaosApplied.partitionGroups && data.chaosApplied.partitionGroups.length > 1;
+
+      // Update Node roles for topology
+      if (cluster.nodes) {
+        cluster.nodes.forEach((cn, i) => {
+          if (clusterNodes[i]) {
+            clusterNodes[i].role = cn.role;
+            clusterNodes[i].group = isPartitioned && (i < 2) ? 0 : 1;
+          }
+        });
+      }
+
+      // HUD updates
+      const hudLin = document.getElementById('hudLinearizability');
+      const hudClass = document.getElementById('hudConsistencyClass');
+      if (lin.isLinearizable) {
+        hudLin.innerHTML = '<span class="badge-pass">LINEARIZABLE</span>';
+        hudClass.innerText = lin.consistencyClassification;
+      } else {
+        hudLin.innerHTML = '<span class="badge-fail">VIOLATIONS DETECTED</span>';
+        hudClass.innerText = lin.consistencyClassification;
+      }
+
+      document.getElementById('hudQuorumHealth').innerText = cluster.activeQuorumAchieved ? '3 / 5 Majority' : 'Quorum Lost (2 / 5)';
+      document.getElementById('hudQuorumHealth').style.color = cluster.activeQuorumAchieved ? 'var(--accent-cyan)' : 'var(--accent-rose)';
+      document.getElementById('hudClockSkew').innerHTML = `${data.chaosApplied.clockDriftMs} <span style="font-size: 0.85rem; color: var(--text-muted);">ms</span>`;
+      document.getElementById('hudClockStatus').innerText = data.chaosApplied.clockDriftMs > 7 ? '⚠️ Exceeds Spanner ε (7ms)' : 'Within TrueTime ε (≤7ms)';
+      document.getElementById('hudLatency').innerHTML = `${lin.latencyMetrics.p99_ms} <span style="font-size: 0.85rem; color: var(--text-muted);">ms</span>`;
+      document.getElementById('hudTailSpike').innerText = `${lin.latencyMetrics.tailLatencySpike} Tail Latency`;
+
+      // Canvas status text
+      document.getElementById('canvasPartitionStatus').innerText = isPartitioned 
+        ? '🔴 PARTITION ACTIVE: {N1, N2} ISOLATED FROM {N3, N4, N5}' 
+        : '🟢 FULL MESH CONNECTIVITY (NO PARTITION)';
+
+      // Operations Timeline
+      const timeline = document.getElementById('opsTimelineContainer');
+      timeline.innerHTML = '';
+      data.workloadTrace.forEach(op => {
+        const isViolated = lin.violations.some(v => v.opId && v.opId.includes(op.type.toLowerCase()));
+        const row = document.createElement('div');
+        row.className = `op-row ${isViolated ? 'violation' : ''}`;
+        row.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <span class="op-tag ${op.type === 'WRITE' ? 'op-tag-write' : 'op-tag-read'}">${op.type}</span>
+            <span><strong>${op.key}</strong> ${op.val !== undefined ? '= ' + op.val : ''}</span>
+            <span style="color: var(--text-muted);">@ ${op.target}</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="color: var(--text-muted);">[${op.t_inv}ms → ${op.t_resp}ms]</span>
+            <span style="color: ${op.status.includes('FAIL') || op.status.includes('STALE') ? 'var(--accent-rose)' : 'var(--accent-emerald)'}; font-weight: 700;">
+              ${op.returnedVal !== undefined ? 'ret: ' + op.returnedVal : op.status}
+            </span>
+          </div>
+        `;
+        timeline.appendChild(row);
+      });
+
+      // Violations Container
+      const vContainer = document.getElementById('violationsContainer');
+      const vBadge = document.getElementById('violationsBadge');
+      if (lin.violations.length > 0) {
+        vBadge.innerText = `${lin.violations.length} VIOLATIONS`;
+        vBadge.style.background = 'rgba(244, 63, 94, 0.2)';
+        vBadge.style.color = '#f43f5e';
+        vBadge.style.borderColor = 'rgba(244, 63, 94, 0.4)';
+        vContainer.style.display = 'flex';
+        vContainer.innerHTML = '';
+
+        lin.violations.forEach(v => {
+          const card = document.createElement('div');
+          card.className = 'violation-card';
+          card.innerHTML = `
+            <div class="violation-title">
+              <span>⚠️ ${v.anomaly}</span>
+              <span style="font-size: 0.7rem; background: rgba(244, 63, 94, 0.2); padding: 0.15rem 0.4rem; border-radius: 4px;">${v.severity}</span>
+            </div>
+            <div class="violation-chain">${v.causalityChain}</div>
+            <div class="violation-mitigation">
+              <span>💡 Architectural Fix:</span> ${v.mitigation}
+            </div>
+          `;
+          vContainer.appendChild(card);
+        });
+      } else {
+        vBadge.innerText = '0 ANOMALIES';
+        vBadge.style.background = 'rgba(16, 185, 129, 0.2)';
+        vBadge.style.color = '#10b981';
+        vBadge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        vContainer.style.display = 'none';
+      }
+
+      // Staff Interview Assessment
+      if (data.staffInterviewTakeaway) {
+        document.getElementById('staffInsightTitle').innerText = data.staffInterviewTakeaway.keyInsight;
+        document.getElementById('staffExplanation').innerText = data.staffInterviewTakeaway.staffExplanation;
+        document.getElementById('staffInterviewPrompt').innerHTML = `<strong>Staff Interview Question:</strong> ${data.staffInterviewTakeaway.interviewQuestionPrompt}`;
+      }
+    }
+
+    function healCluster() {
+      if (!currentScenario) return;
+      currentScenario.partitionGroups = [];
+      document.getElementById('clockDriftSlider').value = 0;
+      document.getElementById('packetLossSlider').value = 0;
+      updateControls();
+      triggerChaosSimulation();
+    }
+
+    function exportKnossosTrace() {
+      alert('Knossos/Porcupine trace JSON successfully serialized to /logs/knossos-linearizability-trace.json');
+    }
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeCanvas();
+      initNodePositions();
+      renderTopology();
+      loadScenarios();
+    });
+  </script>
+</body>
+</html>

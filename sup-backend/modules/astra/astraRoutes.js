@@ -26,6 +26,7 @@ const {
   analyzeVisionTelemetry, 
   getVisionBenchmarks 
 } = require('./visionProctorEngine');
+const distributedChaosEngine = require('./distributedChaosEngine');
 
 router.use(protectOptional);
 
@@ -276,6 +277,39 @@ router.post('/vision-telemetry-analyze', (req, res) => {
     res.json({
       success: true,
       report
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/chaos-scenarios
+ * Returns preset distributed system chaos scenarios (Raft, Dynamo, 2PC, Multi-Paxos)
+ */
+router.get('/chaos-scenarios', (req, res) => {
+  try {
+    const scenarios = distributedChaosEngine.getPresetScenarios();
+    res.json({
+      success: true,
+      standard: 'Astra Distributed Database Chaos & Linearizability Checker (Jepsen-Knossos Class)',
+      scenarios
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/chaos-simulate
+ * Executes cluster chaos run and Porcupine real-time linearizability verification
+ */
+router.post('/chaos-simulate', (req, res) => {
+  try {
+    const simulationResult = distributedChaosEngine.simulateClusterRun(req.body || {});
+    res.json({
+      success: true,
+      data: simulationResult
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
