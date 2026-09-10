@@ -163,6 +163,7 @@ const codeReviewRoutes = require('./modules/code-review/codeReviewRoutes');
 const botRoutes = require('./modules/bot/botRoutes');
 const horizonRoutes = require('./modules/horizon/horizonRoutes');
 const csPipelineRoutes = require('./modules/horizon/csPipelineRoutes');
+const astraRoutes = require('./modules/astra/astraRoutes');
 const { inputSecurityMiddleware } = require('./middleware/inputSanitizer');
 const { createPromptShield } = require('./middleware/promptShield');
 const { createRateLimiter } = require('./middleware/rateLimiter');
@@ -210,7 +211,8 @@ const getHealthStatus = (req, res) => {
         triPillar: [
           'Pillar 1: Placement & Interview Preparation OS',
           'Pillar 2: Hackathon Builder Defense Engine',
-          'Pillar 3: Phoenix Horizon Universal Career Foundation'
+          'Pillar 3: Phoenix Horizon Universal Career Foundation',
+          'Pillar 4: Astra Cognitive War Room & Agentic Intelligence'
         ],
         securityGuards: [
           'Token Bucket Rate Limiter with Memory Leak Safeguard',
@@ -249,6 +251,8 @@ app.use('/api/v1/code-review', codeReviewRoutes);
 app.use('/api/v1/bot', aiRateLimiter, botRoutes);
 app.use('/api/v1/horizon', horizonRoutes);
 app.use('/api/v1/horizon', csPipelineRoutes);
+app.use('/api/v1/astra', astraRoutes);
+app.use('/api/astra', astraRoutes);
 
 // Fallback compatibility
 app.use('/api/hackathons', hackathonRoutes);

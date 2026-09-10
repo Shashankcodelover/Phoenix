@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra Real-Time Speech Prosody & Pitch Analyzer // Phoenix Cognitive War Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #070a12;
+      --panel-bg: rgba(15, 23, 42, 0.85);
+      --panel-border: rgba(255, 255, 255, 0.09);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-indigo: #6366f1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-dark) 70%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    .top-nav {
+      background: rgba(11, 17, 33, 0.9);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #030712;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 9999px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .engine-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 10px var(--accent-emerald); }
+      100% { transform: scale(0.9); opacity: 0.8; }
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-header {
+      margin-bottom: 2rem;
+    }
+    .pillar-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 850px;
+      line-height: 1.5;
+    }
+
+    /* Archetype Switcher Bar */
+    .archetype-selector {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 1rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .archetype-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .preset-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 0.55rem 1.1rem;
+      border-radius: 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .preset-chip:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+      transform: translateY(-1px);
+    }
+    .preset-chip.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(168, 85, 247, 0.25));
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    .action-controls {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .btn-sim {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+      color: #030712;
+      border: none;
+      padding: 0.6rem 1.25rem;
+      border-radius: 0.75rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .btn-sim:hover {
+      opacity: 0.9;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    }
+    .btn-mic {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      padding: 0.6rem 1.25rem;
+      border-radius: 0.75rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .btn-mic:hover {
+      background: rgba(244, 63, 94, 0.25);
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .panel-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    /* Canvas Styles */
+    .canvas-container {
+      background: #040711;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.85rem;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 170px;
+    }
+    .canvas-overlay-label {
+      position: absolute;
+      top: 0.6rem;
+      left: 0.8rem;
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Telemetry Metrics Cards */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .metric-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.85rem;
+      padding: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--accent-cyan);
+    }
+    .metric-card.emerald::before { background: var(--accent-emerald); }
+    .metric-card.amber::before { background: var(--accent-amber); }
+    .metric-card.purple::before { background: var(--accent-purple); }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+    }
+    .metric-val {
+      font-size: 1.5rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.2rem;
+    }
+    .metric-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Executive Presence Score Meter */
+    .presence-meter-box {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+    .presence-score-num {
+      font-size: 3.2rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.35rem;
+    }
+    .presence-grade {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Real-Time Coaching Feed */
+    .coaching-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .coaching-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.75rem;
+      padding: 0.85rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+    .coaching-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.35rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .tag-optimal { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); }
+    .tag-warning { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
+    .tag-alert { background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); }
+    .coaching-content {
+      font-size: 0.82rem;
+      line-height: 1.4;
+      color: var(--text-main);
+    }
+
+    @media (max-width: 992px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🏛️ PHOENIX HORIZON</span>
+      <span class="nav-badge">PILLAR 4 • ASTRA WAR ROOM</span>
+    </div>
+    <div class="engine-status">
+      <div class="pulse-dot"></div>
+      <span>ASTRA COGNITIVE TELEMETRY: ONLINE</span>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header class="hero-header">
+      <div class="pillar-tag">
+        <span>⚡ FEATURE 61 OF MASTER PRODUCTION SUITE</span>
+        <span>•</span>
+        <span>GOOGLE PROJECT ASTRA & OPENAI REALTIME STANDARD</span>
+      </div>
+      <h1 class="hero-title">Astra Multi-Modal Speech Prosody & Pitch Analyzer</h1>
+      <p class="hero-sub">
+        Real-time acoustic telemetry tracking fundamental frequency ($F_0$), speech cadence (WPM), cognitive pause jitter, and executive resonance to ensure candidates project FAANG Staff-level technical authority.
+      </p>
+    </header>
+
+    <!-- Archetype Switcher & Calibration Controls -->
+    <section class="archetype-selector">
+      <div>
+        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace;">
+          Candidate Calibration Benchmark
+        </div>
+        <div class="archetype-chips" id="archetypeChips">
+          <button class="preset-chip active" data-id="staff_architect">
+            <span>🛡️ Elena Rostova</span>
+            <span style="font-size: 0.7rem; color: var(--accent-cyan);">(Google Staff L6)</span>
+          </button>
+          <button class="preset-chip" data-id="nervous_junior">
+            <span>⚡ Rohan Verma</span>
+            <span style="font-size: 0.7rem; color: var(--accent-rose);">(New Grad Rush)</span>
+          </button>
+          <button class="preset-chip" data-id="monotone_theorist">
+            <span>📘 Dr. Marcus Vance</span>
+            <span style="font-size: 0.7rem; color: var(--accent-amber);">(Monotone Theorist)</span>
+          </button>
+        </div>
+      </div>
+      <div class="action-controls">
+        <button class="btn-sim" id="btnRunSimulation">
+          <span>▶ Re-Stream Acoustic Telemetry</span>
+        </button>
+        <button class="btn-mic" id="btnToggleMic">
+          <span>🎙️ Live Mic Stream</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Dashboard Grid -->
+    <div class="dashboard-grid">
+
+      <!-- Left Column: Visualizers -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📊 Real-Time Acoustic Spectral Waveform</span>
+          </div>
+          <div class="panel-badge" id="hudAcousticState">STREAMING (144.5 Hz)</div>
+        </div>
+
+        <!-- Canvas 1: Animated Audio Waveform -->
+        <div class="canvas-container">
+          <div class="canvas-overlay-label">Fourier Harmonics & Energy Envelope</div>
+          <canvas id="waveformCanvas" width="700" height="170"></canvas>
+        </div>
+
+        <!-- Canvas 2: Pitch F0 Contour vs FAANG Corridor -->
+        <div class="panel-header" style="margin-top: 1.5rem;">
+          <div class="panel-title">
+            <span>📈 Fundamental Pitch Contour (\(F_0\) Trajectory vs FAANG Corridor)</span>
+          </div>
+          <div class="panel-badge">CORRIDOR: 110Hz - 210Hz</div>
+        </div>
+        <div class="canvas-container">
+          <div class="canvas-overlay-label">Pitch Modulation (Hz) vs Time (s)</div>
+          <canvas id="pitchCanvas" width="700" height="170"></canvas>
+        </div>
+
+        <!-- Target Corridor Explainer -->
+        <div style="display: flex; gap: 1rem; font-size: 0.75rem; color: var(--text-muted); padding: 0.5rem 0;">
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <div style="width: 10px; height: 10px; background: rgba(56, 189, 248, 0.4); border-radius: 2px;"></div>
+            <span>FAANG Target Corridor (110 - 210 Hz)</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <div style="width: 10px; height: 2px; background: #38bdf8;"></div>
+            <span>Live Candidate Pitch Trajectory</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Scores & Real-Time Coaching Feed -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🧠 Astra Cognitive Presence Index</span>
+          </div>
+          <div class="panel-badge">INVARIANT METRIC</div>
+        </div>
+
+        <!-- Presence Score Gauge -->
+        <div class="presence-meter-box">
+          <div class="presence-score-num" id="displayConfidenceScore">96</div>
+          <div class="presence-grade" id="displayPresenceGrade">A+ (Staff/Principal Standard)</div>
+          <p style="font-size: 0.78rem; color: var(--text-muted);" id="displayHeadline">
+            Flawless Executive Resonance & Steady Cadence
+          </p>
+        </div>
+
+        <!-- 4 Core Metrics -->
+        <div class="metrics-grid">
+          <div class="metric-card emerald">
+            <div class="metric-label">Mean Pitch (\(F_0\))</div>
+            <div class="metric-val" id="valMeanPitch">144.5 <span style="font-size: 0.8rem;">Hz</span></div>
+            <div class="metric-sub" id="subPitchVar">StdDev: 34.2 Hz (Optimal)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Speech Cadence</div>
+            <div class="metric-val" id="valSpeechRate">138 <span style="font-size: 0.8rem;">WPM</span></div>
+            <div class="metric-sub" id="subSpeechRate">3.2 syl/sec (Target: 142)</div>
+          </div>
+          <div class="metric-card amber">
+            <div class="metric-label">Hesitation Latency</div>
+            <div class="metric-val" id="valHesitation">4.0%</div>
+            <div class="metric-sub" id="subHesitation">0 fillers detected</div>
+          </div>
+          <div class="metric-card purple">
+            <div class="metric-label">Articulation Clarity</div>
+            <div class="metric-val" id="valArticulation">94%</div>
+            <div class="metric-sub">Harmonic SNR: 22.4 dB</div>
+          </div>
+        </div>
+
+        <!-- Real-Time Coaching Interventions -->
+        <div class="panel-header" style="margin-top: 1rem;">
+          <div class="panel-title">
+            <span>🎙️ Real-Time Coaching Interventions</span>
+          </div>
+          <div class="panel-badge" id="badgeAlertCount">1 OPTIMAL NOTICE</div>
+        </div>
+
+        <div class="coaching-feed" id="coachingFeed">
+          <div class="coaching-item">
+            <span class="coaching-tag tag-optimal">OPTIMAL</span>
+            <div class="coaching-content">
+              Pitch contour demonstrates grounded certainty with natural inflection. Zero uptalk on invariants.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // State & Benchmark Data Cache
+    let currentArchetype = 'staff_architect';
+    let benchmarksData = null;
+    let isMicActive = false;
+    let animationFrameId = null;
+    let wavePhase = 0;
+
+    // Pitch trajectory buffer
+    let pitchTrajectory = [142, 148, 139, 144, 135, 146, 151, 140];
+    let candidateMetrics = {
+      avgPitchHz: 144.5,
+      pitchVariance: 34.2,
+      wpm: 138,
+      hesitationRatio: 0.04,
+      fillersDetected: 0,
+      confidenceScore: 96,
+      articulationIndex: 94
+    };
+
+    // DOM Elements
+    const waveformCanvas = document.getElementById('waveformCanvas');
+    const pitchCanvas = document.getElementById('pitchCanvas');
+    const ctxWave = waveformCanvas.getContext('2d');
+    const ctxPitch = pitchCanvas.getContext('2d');
+
+    const displayConfidenceScore = document.getElementById('displayConfidenceScore');
+    const displayPresenceGrade = document.getElementById('displayPresenceGrade');
+    const displayHeadline = document.getElementById('displayHeadline');
+    const valMeanPitch = document.getElementById('valMeanPitch');
+    const subPitchVar = document.getElementById('subPitchVar');
+    const valSpeechRate = document.getElementById('valSpeechRate');
+    const subSpeechRate = document.getElementById('subSpeechRate');
+    const valHesitation = document.getElementById('valHesitation');
+    const subHesitation = document.getElementById('subHesitation');
+    const valArticulation = document.getElementById('valArticulation');
+    const hudAcousticState = document.getElementById('hudAcousticState');
+    const coachingFeed = document.getElementById('coachingFeed');
+    const badgeAlertCount = document.getElementById('badgeAlertCount');
+
+    // Load Benchmarks from Server API
+    async function loadBenchmarks() {
+      try {
+        const res = await fetch('/api/v1/astra/benchmarks');
+        const data = await res.json();
+        if (data.success) {
+          benchmarksData = data.archetypes;
+        }
+      } catch (e) {
+        console.warn('Fallback to local archetype state:', e.message);
+      }
+    }
+
+    // Render Audio Waveform Animation
+    function renderWaveform() {
+      const w = waveformCanvas.width;
+      const h = waveformCanvas.height;
+      ctxWave.clearRect(0, 0, w, h);
+
+      // Background subtle grid
+      ctxWave.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+      ctxWave.lineWidth = 1;
+      for (let x = 0; x < w; x += 40) {
+        ctxWave.beginPath();
+        ctxWave.moveTo(x, 0);
+        ctxWave.lineTo(x, h);
+        ctxWave.stroke();
+      }
+
+      // Sine + Harmonic waves
+      ctxWave.beginPath();
+      ctxWave.strokeStyle = currentArchetype === 'nervous_junior' ? '#f43f5e' : currentArchetype === 'monotone_theorist' ? '#f59e0b' : '#38bdf8';
+      ctxWave.lineWidth = 2.5;
+
+      const midY = h / 2;
+      const freq = currentArchetype === 'nervous_junior' ? 0.08 : currentArchetype === 'monotone_theorist' ? 0.025 : 0.045;
+      const amp = currentArchetype === 'nervous_junior' ? 45 : currentArchetype === 'monotone_theorist' ? 18 : 32;
+
+      for (let x = 0; x < w; x++) {
+        const y = midY + Math.sin(x * freq + wavePhase) * amp * Math.sin(x * 0.01 + wavePhase * 0.5) 
+                       + Math.sin(x * 0.12 + wavePhase * 2) * (amp * 0.35);
+        if (x === 0) ctxWave.moveTo(x, y);
+        else ctxWave.lineTo(x, y);
+      }
+      ctxWave.stroke();
+
+      wavePhase += 0.06;
+      animationFrameId = requestAnimationFrame(renderWaveform);
+    }
+
+    // Render Pitch Corridor Canvas
+    function renderPitchCanvas() {
+      const w = pitchCanvas.width;
+      const h = pitchCanvas.height;
+      ctxPitch.clearRect(0, 0, w, h);
+
+      // FAANG Corridor (110Hz to 210Hz)
+      // Map Hz 80Hz - 280Hz to canvas height
+      const minHz = 80, maxHz = 280;
+      const getY = (hz) => h - ((hz - minHz) / (maxHz - minHz)) * h;
+
+      const corridorTop = getY(210);
+      const corridorBottom = getY(110);
+
+      // Shaded corridor
+      ctxPitch.fillStyle = 'rgba(56, 189, 248, 0.08)';
+      ctxPitch.fillRect(0, corridorTop, w, corridorBottom - corridorTop);
+
+      // Corridor boundary lines
+      ctxPitch.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+      ctxPitch.setLineDash([4, 4]);
+      ctxPitch.beginPath();
+      ctxPitch.moveTo(0, corridorTop);
+      ctxPitch.lineTo(w, corridorTop);
+      ctxPitch.moveTo(0, corridorBottom);
+      ctxPitch.lineTo(w, corridorBottom);
+      ctxPitch.stroke();
+      ctxPitch.setLineDash([]);
+
+      // Draw trajectory points
+      if (pitchTrajectory.length > 1) {
+        ctxPitch.beginPath();
+        ctxPitch.strokeStyle = currentArchetype === 'nervous_junior' ? '#f43f5e' : currentArchetype === 'monotone_theorist' ? '#f59e0b' : '#38bdf8';
+        ctxPitch.lineWidth = 3;
+
+        const stepX = w / (pitchTrajectory.length - 1);
+        pitchTrajectory.forEach((pt, idx) => {
+          const x = idx * stepX;
+          const y = getY(pt);
+          if (idx === 0) ctxPitch.moveTo(x, y);
+          else ctxPitch.lineTo(x, y);
+        });
+        ctxPitch.stroke();
+
+        // Point nodes
+        pitchTrajectory.forEach((pt, idx) => {
+          const x = idx * stepX;
+          const y = getY(pt);
+          ctxPitch.fillStyle = '#ffffff';
+          ctxPitch.beginPath();
+          ctxPitch.arc(x, y, 4, 0, Math.PI * 2);
+          ctxPitch.fill();
+        });
+      }
+    }
+
+    // Switch Archetype
+    function applyArchetype(id) {
+      currentArchetype = id;
+      document.querySelectorAll('.preset-chip').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.id === id);
+      });
+
+      if (id === 'staff_architect') {
+        pitchTrajectory = [142, 148, 139, 144, 135, 146, 151, 140];
+        displayConfidenceScore.innerText = '96';
+        displayPresenceGrade.innerText = 'A+ (Staff/Principal Standard)';
+        displayHeadline.innerText = 'Flawless Executive Resonance & Steady Cadence';
+        valMeanPitch.innerHTML = '144.5 <span style="font-size: 0.8rem;">Hz</span>';
+        subPitchVar.innerText = 'StdDev: 34.2 Hz (Optimal)';
+        valSpeechRate.innerHTML = '138 <span style="font-size: 0.8rem;">WPM</span>';
+        subSpeechRate.innerText = '3.2 syl/sec (Target: 142)';
+        valHesitation.innerText = '4.0%';
+        subHesitation.innerText = '0 fillers detected';
+        valArticulation.innerText = '94%';
+        hudAcousticState.innerText = 'STREAMING (144.5 Hz)';
+        hudAcousticState.style.color = '#10b981';
+
+        badgeAlertCount.innerText = '1 OPTIMAL NOTICE';
+        coachingFeed.innerHTML = `
+          <div class="coaching-item">
+            <span class="coaching-tag tag-optimal">OPTIMAL</span>
+            <div class="coaching-content">
+              Pitch contour demonstrates grounded certainty with natural inflection. Zero uptalk detected on architectural invariant assertions.
+            </div>
+          </div>
+          <div class="coaching-item">
+            <span class="coaching-tag tag-optimal">OPTIMAL</span>
+            <div class="coaching-content">
+              Speech rate is 138 WPM. Pacing leaves ample cognitive headroom for interviewer follow-ups.
+            </div>
+          </div>
+        `;
+      } else if (id === 'nervous_junior') {
+        pitchTrajectory = [195, 235, 210, 245, 180, 260, 220, 255];
+        displayConfidenceScore.innerText = '54';
+        displayPresenceGrade.innerText = 'C (High Stress Rush Detected)';
+        displayHeadline.innerText = 'Acoustic Jitter & Rapid Speech Surge Detected';
+        valMeanPitch.innerHTML = '225.0 <span style="font-size: 0.8rem;">Hz</span>';
+        subPitchVar.innerText = 'StdDev: 68.5 Hz (Erratic)';
+        valSpeechRate.innerHTML = '188 <span style="font-size: 0.8rem;">WPM</span>';
+        subSpeechRate.innerText = '4.4 syl/sec (32% above FAANG target)';
+        valHesitation.innerText = '24.0%';
+        subHesitation.innerText = '7 fillers ("um", "like")';
+        valArticulation.innerText = '61%';
+        hudAcousticState.innerText = 'HIGH JITTER (225.0 Hz)';
+        hudAcousticState.style.color = '#f43f5e';
+
+        badgeAlertCount.innerText = '2 HIGH-PRIORITY ALERTS';
+        coachingFeed.innerHTML = `
+          <div class="coaching-item">
+            <span class="coaching-tag tag-alert">ALERT</span>
+            <div class="coaching-content">
+              Cadence is 188 WPM (30% above FAANG target). Slow down on complex data structures to prevent interviewer cognitive overload.
+            </div>
+          </div>
+          <div class="coaching-item">
+            <span class="coaching-tag tag-warning">WARNING</span>
+            <div class="coaching-content">
+              Frequent rising inflection (uptalk) detected at sentence ends, causing assertions to sound hesitant.
+            </div>
+          </div>
+        `;
+      } else if (id === 'monotone_theorist') {
+        pitchTrajectory = [115, 116, 114, 115, 113, 115, 116, 114];
+        displayConfidenceScore.innerText = '72';
+        displayPresenceGrade.innerText = 'B (Monotone Risk)';
+        displayHeadline.innerText = 'Severe Pitch Compression & Flat Engagement Curve';
+        valMeanPitch.innerHTML = '114.8 <span style="font-size: 0.8rem;">Hz</span>';
+        subPitchVar.innerText = 'StdDev: 4.6 Hz (Low Variance)';
+        valSpeechRate.innerHTML = '118 <span style="font-size: 0.8rem;">WPM</span>';
+        subSpeechRate.innerText = '2.7 syl/sec (Slow Pace)';
+        valHesitation.innerText = '8.0%';
+        subHesitation.innerText = '1 filler detected';
+        valArticulation.innerText = '78%';
+        hudAcousticState.innerText = 'MONOTONE (114.8 Hz)';
+        hudAcousticState.style.color = '#f59e0b';
+
+        badgeAlertCount.innerText = '1 WARNING';
+        coachingFeed.innerHTML = `
+          <div class="coaching-item">
+            <span class="coaching-tag tag-warning">WARNING</span>
+            <div class="coaching-content">
+              Pitch variance is only 4.6 Hz (FAANG minimum: 22 Hz). Expression lacks vocal dynamic range, risking interviewer fatigue.
+            </div>
+          </div>
+          <div class="coaching-item">
+            <span class="coaching-tag tag-optimal">INFO</span>
+            <div class="coaching-content">
+              Inject deliberate vocal energy when transitioning from theoretical complexity proofs to concrete system implementations.
+            </div>
+          </div>
+        `;
+      }
+
+      renderPitchCanvas();
+    }
+
+    // Attach Event Listeners
+    document.querySelectorAll('.preset-chip').forEach(btn => {
+      btn.addEventListener('click', () => applyArchetype(btn.dataset.id));
+    });
+
+    document.getElementById('btnRunSimulation').addEventListener('click', () => {
+      // Simulate live streaming ticks
+      let step = 0;
+      const origTrajectory = [...pitchTrajectory];
+      const timer = setInterval(() => {
+        pitchTrajectory = origTrajectory.map(v => v + (Math.random() * 8 - 4));
+        renderPitchCanvas();
+        step++;
+        if (step > 6) clearInterval(timer);
+      }, 200);
+    });
+
+    document.getElementById('btnToggleMic').addEventListener('click', () => {
+      isMicActive = !isMicActive;
+      const btn = document.getElementById('btnToggleMic');
+      if (isMicActive) {
+        btn.innerHTML = '<span>🔴 Stop Mic Stream</span>';
+        btn.style.background = 'rgba(244, 63, 94, 0.4)';
+        hudAcousticState.innerText = 'LIVE MIC CAPTURE ACTIVE';
+      } else {
+        btn.innerHTML = '<span>🎙️ Live Mic Stream</span>';
+        btn.style.background = 'rgba(244, 63, 94, 0.15)';
+        hudAcousticState.innerText = `STREAMING (${currentArchetype})`;
+      }
+    });
+
+    // Boot
+    loadBenchmarks();
+    renderWaveform();
+    renderPitchCanvas();
+  </script>
+</body>
+</html>
