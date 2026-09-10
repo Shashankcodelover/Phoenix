@@ -272,6 +272,7 @@ const competitiveExamEngine = require('./competitiveExamPlannerEngine');
 const internshipEngine = require('./industryInternshipTrackerEngine');
 const skillGapEngine = require('./dynamicSkillGapAuditorEngine');
 const sopEngine = require('./highStakesSopSynthesizerEngine');
+const lorEngine = require('./facultyLorDrafterEngine');
 
 router.get('/study-abroad/universities', (req, res) => {
   res.json(studyAbroadEngine.getUniversities());
@@ -388,6 +389,24 @@ router.post('/sop/synthesize', (req, res) => {
   try {
     const sop = sopEngine.synthesizeSOP(req.body);
     res.json({ success: true, sop });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 55: Faculty Recommendation Letter (LOR) Drafter
+router.get('/lor/archetypes', (req, res) => {
+  res.json({ success: true, archetypes: lorEngine.getLorArchetypes() });
+});
+
+router.get('/lor/presets', (req, res) => {
+  res.json({ success: true, presets: lorEngine.getPresets() });
+});
+
+router.post('/lor/draft', (req, res) => {
+  try {
+    const draft = lorEngine.draftLOR(req.body);
+    res.json({ success: true, draft });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
