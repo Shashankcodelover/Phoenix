@@ -71,4 +71,141 @@ router.post('/admissions/predict', (req, res) => {
   }
 });
 
+// Feature 42: Institutional Tier & Accreditation Matrix (Public/Optional Auth)
+const { institutionalTierMatrixEngine } = require('./institutionalTierMatrixEngine');
+
+router.get('/tiers/catalog', (req, res) => {
+  res.json({ success: true, catalog: institutionalTierMatrixEngine.getCatalog() });
+});
+
+router.get('/tiers/college/:code', (req, res) => {
+  try {
+    const result = institutionalTierMatrixEngine.getInstitution(req.params.code);
+    res.json(result);
+  } catch (error) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/tiers/compare', (req, res) => {
+  try {
+    const { colleges } = req.body;
+    const result = institutionalTierMatrixEngine.compareInstitutions(colleges);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/tiers/roi-calculator', (req, res) => {
+  try {
+    const { collegeCode, customTuitionInr } = req.body;
+    const inst = institutionalTierMatrixEngine.getInstitution(collegeCode);
+    const customRoi = institutionalTierMatrixEngine.calculateRoiMetrics(inst.institution, customTuitionInr);
+    res.json({ success: true, college: inst.institution.name, roiMetrics: customRoi });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 43: Scholarship & Financial Aid Eligibility Matcher (Public/Optional Auth)
+const { universalScholarshipMatcherEngine } = require('./universalScholarshipMatcherEngine');
+
+router.get('/scholarships/v2/catalog', (req, res) => {
+  res.json({ success: true, catalog: universalScholarshipMatcherEngine.getCatalog() });
+});
+
+router.get('/scholarships/v2/presets', (req, res) => {
+  res.json({ success: true, presets: universalScholarshipMatcherEngine.getPresets() });
+});
+
+router.post('/scholarships/v2/match', (req, res) => {
+  try {
+    const result = universalScholarshipMatcherEngine.matchScholarships(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 44: Branch Transition & Career Pivot Simulator (Public/Optional Auth)
+const { branchTransitionEngine } = require('./branchTransitionEngine');
+
+router.get('/branch-pivot/colleges', (req, res) => {
+  res.json(branchTransitionEngine.getCollegesAndBranches());
+});
+
+router.get('/branch-pivot/presets', (req, res) => {
+  res.json({ success: true, presets: branchTransitionEngine.getPresets() });
+});
+
+router.post('/branch-pivot/simulate', (req, res) => {
+  try {
+    const result = branchTransitionEngine.simulate(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 45: Universal Credit Transfer & Transcript Evaluator (Public/Optional Auth)
+const { universalTranscriptEvaluatorEngine } = require('./universalTranscriptEvaluatorEngine');
+
+router.get('/transcript-eval/grading-systems', (req, res) => {
+  res.json(universalTranscriptEvaluatorEngine.getGradingSystems());
+});
+
+router.get('/transcript-eval/presets', (req, res) => {
+  res.json({ success: true, presets: universalTranscriptEvaluatorEngine.getPresets() });
+});
+
+router.post('/transcript-eval/evaluate', (req, res) => {
+  try {
+    const result = universalTranscriptEvaluatorEngine.evaluate(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 46: Campus Placement Intelligence & Offer Histograms (Public/Optional Auth)
+const { campusPlacementIntelEngine } = require('./campusPlacementIntelEngine');
+
+router.get('/placement-intel/colleges', (req, res) => {
+  res.json(campusPlacementIntelEngine.getCollegesList());
+});
+
+router.get('/placement-intel/presets', (req, res) => {
+  res.json({ success: true, presets: campusPlacementIntelEngine.getPresets() });
+});
+
+router.post('/placement-intel/analyze', (req, res) => {
+  try {
+    const result = campusPlacementIntelEngine.analyze(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 47: Institutional Gatekeeper Assessment Engine (Public/Optional Auth)
+const { institutionalGatekeeperEngine } = require('./institutionalGatekeeperEngine');
+
+router.get('/gatekeeper/exam-schema', (req, res) => {
+  res.json(institutionalGatekeeperEngine.getExamSchema());
+});
+
+router.get('/gatekeeper/presets', (req, res) => {
+  res.json({ success: true, presets: institutionalGatekeeperEngine.getPresets() });
+});
+
+router.post('/gatekeeper/evaluate', (req, res) => {
+  try {
+    const result = institutionalGatekeeperEngine.evaluate(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;

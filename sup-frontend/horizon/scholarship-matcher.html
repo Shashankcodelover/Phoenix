@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scholarship & Financial Aid Matcher | Phoenix Horizon</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0d1e38 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: var(--accent-gold);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-gold);
+    }
+
+    .container {
+      max-width: 1480px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, #fbbf24, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 900px;
+      line-height: 1.5;
+    }
+
+    /* Studio Grid */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      gap: 1.75rem;
+    }
+    @media (max-width: 1080px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+
+    /* Presets list */
+    .preset-card {
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.65rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-card:hover, .preset-card.selected {
+      border-color: var(--accent-gold);
+      background: rgba(251, 191, 36, 0.08);
+      transform: translateX(4px);
+    }
+    .preset-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+    .preset-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+    .text-input, .select-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.85rem;
+    }
+    .select-input option {
+      background: #0f172a;
+      color: #fff;
+    }
+    .text-input:focus, .select-input:focus {
+      outline: none;
+      border-color: var(--accent-gold);
+    }
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .btn-match {
+      width: 100%;
+      background: linear-gradient(135deg, #d97706, #10b981);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      transition: all 0.2s;
+    }
+    .btn-match:hover {
+      box-shadow: 0 0 16px rgba(251, 191, 36, 0.5);
+      transform: translateY(-1px);
+    }
+
+    /* Scoreboard */
+    .aid-scoreboard {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.85));
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .aid-headline {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+    .aid-val {
+      font-size: 2.6rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-gold);
+      line-height: 1;
+    }
+    .meta-metrics {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .metric-chip {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 0.6rem 1.1rem;
+      text-align: center;
+    }
+    .metric-num {
+      font-size: 1.25rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-emerald);
+    }
+    .metric-lbl {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* Scheme Cards Grid */
+    .schemes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .scheme-card {
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+    .scheme-card:hover {
+      border-color: var(--accent-gold);
+      transform: translateY(-2px);
+    }
+    .scheme-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+    .scheme-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .grant-badge {
+      font-size: 0.85rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
+    }
+    .sponsor-name {
+      font-size: 0.78rem;
+      color: var(--accent-cyan);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .scheme-desc {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+      margin-bottom: 0.75rem;
+    }
+
+    .deadline-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.75rem;
+    }
+    .countdown-tag {
+      color: var(--accent-rose);
+      font-weight: 700;
+    }
+
+    .docs-list {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 0.5rem;
+    }
+
+    /* Action Checklist */
+    .checklist-box {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .checklist-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--accent-emerald);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .checklist-item {
+      font-size: 0.82rem;
+      color: #e2e8f0;
+      margin-bottom: 0.4rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>💰</span>
+      <span>PHOENIX HORIZON // SCHOLARSHIP MATCHER</span>
+      <span class="nav-badge">Feature 43</span>
+    </div>
+    <div class="nav-links">
+      <a href="/horizon/admissions-predictor.html">Admissions</a>
+      <a href="/horizon/tier-matrix.html">Tier Matrix</a>
+      <a href="/horizon/world-dashboard.html">Dashboard</a>
+      <a href="#" class="active" style="color: var(--accent-gold); font-weight: 700;">Scholarships</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <header class="hero-banner">
+      <h1 class="hero-title">Scholarship & Financial Aid Eligibility Matcher</h1>
+      <p class="hero-subtitle">
+        Scans government welfare portals (Karnataka SSP, NSP Central), corporate diversity tech scholarships (Google, Amazon, Reliance, Tata), and institutional supernumerary fee waivers. Matches criteria and audits maximum combinable financial aid.
+      </p>
+    </header>
+
+    <div class="studio-grid">
+      <!-- Left Panel: Profile & Inputs -->
+      <aside class="glass-panel">
+        <div class="panel-title">
+          <span>🎯 Student Profile</span>
+          <span style="font-size: 0.75rem; color: var(--accent-gold); font-family: 'JetBrains Mono';">PRESETS</span>
+        </div>
+
+        <div id="presetsContainer">
+          <!-- Populated by JS -->
+          <div style="color: var(--text-muted); font-size: 0.85rem;">Loading student presets...</div>
+        </div>
+
+        <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+          <div class="grid-2col">
+            <div class="form-group">
+              <label class="form-label">Gender</label>
+              <select id="selectGender" class="select-input">
+                <option value="Female" selected>Female</option>
+                <option value="Male">Male</option>
+                <option value="Non-Binary">Non-Binary</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select id="selectCategory" class="select-input">
+                <option value="2A" selected>Cat-2A (OBC)</option>
+                <option value="GM">General Merit (GM)</option>
+                <option value="Cat-1">Category-1</option>
+                <option value="2B">Cat-2B</option>
+                <option value="3A">Cat-3A</option>
+                <option value="3B">Cat-3B</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-2col">
+            <div class="form-group">
+              <label class="form-label">Family Income (LPA)</label>
+              <input type="number" id="inputIncome" class="text-input" step="0.5" value="2.2">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Academic Score (%)</label>
+              <input type="number" id="inputMarks" class="text-input" step="0.5" value="91.5">
+            </div>
+          </div>
+
+          <div class="form-group" style="display: flex; gap: 0.75rem; align-items: center; margin-top: 0.5rem;">
+            <input type="checkbox" id="chkHosteller" checked>
+            <label for="chkHosteller" style="font-size: 0.82rem; color: #cbd5e1; cursor: pointer;">Hosteller (Living away from home)</label>
+          </div>
+
+          <div class="form-group" style="display: flex; gap: 0.75rem; align-items: center;">
+            <input type="checkbox" id="chkNpci" checked>
+            <label for="chkNpci" style="font-size: 0.82rem; color: #cbd5e1; cursor: pointer;">Aadhaar NPCI Bank Account Seeded</label>
+          </div>
+
+          <button id="btnScan" class="btn-match">
+            <span>⚡</span> Scan Eligible Scholarships
+          </button>
+        </div>
+      </aside>
+
+      <!-- Right Panel: Financial Aid Studio -->
+      <main class="glass-panel" id="aidStudio">
+        <!-- Scoreboard -->
+        <div class="aid-scoreboard">
+          <div>
+            <div class="aid-headline">Max Combinable Financial Aid Pool</div>
+            <div class="aid-val" id="displayMaxAid">₹2,42,000</div>
+          </div>
+          <div class="meta-metrics">
+            <div class="metric-chip">
+              <div class="metric-num" id="displayCount">4</div>
+              <div class="metric-lbl">Matched Schemes</div>
+            </div>
+            <div class="metric-chip">
+              <div class="metric-num" id="displayGross">₹5,37,000</div>
+              <div class="metric-lbl">Total Gross Value</div>
+            </div>
+            <div class="metric-chip">
+              <div class="metric-num" id="displayNpci" style="color: var(--accent-emerald);">READY</div>
+              <div class="metric-lbl">NPCI DBT Status</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Matched Schemes Grid -->
+        <div class="panel-title" style="font-size: 1rem; margin-bottom: 0.75rem;">
+          <span>🏆 Verified Eligible Scholarships</span>
+        </div>
+        <div class="schemes-grid" id="schemesGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Action Plan & Next Steps -->
+        <div class="checklist-box">
+          <div class="checklist-title">
+            <span>📋</span>
+            <span>Application Strategy & Next Steps</span>
+          </div>
+          <div id="checklistContainer">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    let presets = [];
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/horizon/scholarships/v2/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          presets = data.presets;
+          renderPresets();
+        }
+        scanScholarships();
+      } catch (e) {
+        console.error('Presets init failed:', e);
+      }
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsContainer');
+      container.innerHTML = presets.map((p, idx) => `
+        <div class="preset-card ${idx === 0 ? 'selected' : ''}" onclick="selectPreset('${p.id}')" data-id="${p.id}">
+          <div class="preset-name">${p.name}</div>
+          <div class="preset-sub">${p.profile.gender} • ${p.profile.category} • ₹${p.profile.annualIncomeLpa}L Income • ${p.profile.academicPercent}%</div>
+        </div>
+      `).join('');
+    }
+
+    function selectPreset(id) {
+      document.querySelectorAll('.preset-card').forEach(c => {
+        c.classList.toggle('selected', c.getAttribute('data-id') === id);
+      });
+      const p = presets.find(x => x.id === id);
+      if (p) {
+        document.getElementById('selectGender').value = p.profile.gender;
+        document.getElementById('selectCategory').value = p.profile.category;
+        document.getElementById('inputIncome').value = p.profile.annualIncomeLpa;
+        document.getElementById('inputMarks').value = p.profile.academicPercent;
+        document.getElementById('chkHosteller').checked = p.profile.isHosteller;
+        document.getElementById('chkNpci').checked = p.profile.hasNpciSeededBank;
+      }
+      scanScholarships();
+    }
+
+    async function scanScholarships() {
+      const payload = {
+        gender: document.getElementById('selectGender').value,
+        category: document.getElementById('selectCategory').value,
+        annualIncomeLpa: Number(document.getElementById('inputIncome').value),
+        academicPercent: Number(document.getElementById('inputMarks').value),
+        isHosteller: document.getElementById('chkHosteller').checked,
+        hasNpciSeededBank: document.getElementById('chkNpci').checked
+      };
+
+      try {
+        const res = await fetch('/api/v1/horizon/scholarships/v2/match', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderResults(data);
+        }
+      } catch (err) {
+        console.error('Scan error:', err);
+      }
+    }
+
+    function renderResults(data) {
+      document.getElementById('displayMaxAid').innerText = `₹${data.metrics.estimatedMaxCombinableAidInr.toLocaleString()}`;
+      document.getElementById('displayCount').innerText = data.metrics.totalEligibleSchemes;
+      document.getElementById('displayGross').innerText = `₹${data.metrics.totalGrossGrantsInr.toLocaleString()}`;
+      document.getElementById('displayNpci').innerText = data.metrics.npciSeedingReady ? 'READY' : 'ACTION REQ.';
+      document.getElementById('displayNpci').style.color = data.metrics.npciSeedingReady ? 'var(--accent-emerald)' : 'var(--accent-rose)';
+
+      // Render Schemes Grid
+      const grid = document.getElementById('schemesGrid');
+      grid.innerHTML = data.eligibleSchemes.map(s => `
+        <div class="scheme-card">
+          <div>
+            <div class="scheme-header">
+              <span class="scheme-name">${s.name}</span>
+              <span class="grant-badge">₹${s.annualGrantInr.toLocaleString()}</span>
+            </div>
+            <div class="sponsor-name">${s.sponsor} • ${s.category}</div>
+            <div class="scheme-desc">${s.description}</div>
+            
+            <div class="deadline-row">
+              <span>Deadline: <strong>${s.deadline}</strong></span>
+              <span class="countdown-tag">⏳ ${s.daysRemaining} Days Left</span>
+            </div>
+          </div>
+
+          <div class="docs-list">
+            <strong>Key Documents:</strong> ${s.documentsRequired.join(', ')}
+          </div>
+        </div>
+      `).join('');
+
+      // Render Checklist
+      const checklistContainer = document.getElementById('checklistContainer');
+      checklistContainer.innerHTML = data.actionPlan.map(item => `
+        <div class="checklist-item">
+          <span style="color: var(--accent-emerald);">✓</span>
+          <span>${item}</span>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('btnScan').addEventListener('click', scanScholarships);
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

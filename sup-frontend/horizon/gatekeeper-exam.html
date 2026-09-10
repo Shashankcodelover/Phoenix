@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Institutional Gatekeeper Assessment Engine | Phoenix Horizon</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0d1e38 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: var(--accent-rose);
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1380px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2.2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(to right, #ffffff, var(--accent-rose), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 880px;
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 410px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(244, 63, 94, 0.12);
+      border-color: var(--accent-rose);
+    }
+    .preset-chip.active {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: var(--accent-rose);
+      box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+    }
+    .preset-sub {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--accent-rose);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .sub-section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-rose);
+      margin: 1.25rem 0 0.75rem 0;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent-rose), #e11d48);
+      border: none;
+      border-radius: 8px;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(244, 63, 94, 0.5);
+    }
+
+    /* Scoreboard */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-card.hero-stat {
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-rose);
+    }
+    .stat-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* Verdict Banner */
+    .verdict-banner {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .verdict-status {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: 0.3rem;
+    }
+    .verdict-rec {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    /* Sectional Cards */
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .sections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .section-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sec-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .sec-score {
+      font-size: 1.75rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+    }
+    .sec-badge {
+      display: inline-block;
+      margin-top: 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+    }
+    .sec-badge.passed {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent-emerald);
+    }
+    .sec-badge.failed {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--accent-amber);
+    }
+
+    /* Integrity Box */
+    .integrity-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .integrity-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .int-metric {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 0.85rem;
+      text-align: center;
+    }
+    .int-val {
+      font-size: 1.3rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+    }
+    .int-lbl {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+      .scoreboard {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>🛡️</span>
+      <span>PHOENIX HORIZON // GATEKEEPER ASSESSOR</span>
+      <span class="nav-badge">Feature 47</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="gatekeeper-exam.html" class="active">Gatekeeper Exam</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Institutional Gatekeeper Assessment Engine</h1>
+      <p>
+        Simulates campus gatekeeper screening tests (Mettl / HackerRank Campus / CoCubes) across Quantitative Aptitude, Logical Reasoning, Technical MCQs, and Coding Challenges, with behavioral anti-cheat heuristics, tab-switch monitoring, and automated percentile ranking.
+      </p>
+    </section>
+
+    <div class="grid-layout">
+      <!-- Left Panel: Form & Presets -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>📝 Candidate Submission</h2>
+          <span style="font-size: 0.75rem; color: var(--accent-rose); font-family: 'JetBrains Mono';">PRESETS</span>
+        </div>
+
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="examForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nameInput">Candidate Name</label>
+              <input type="text" id="nameInput" class="form-control" value="Aditya Shenoy" required>
+            </div>
+            <div class="form-group">
+              <label for="usnInput">College USN / ID</label>
+              <input type="text" id="usnInput" class="form-control" value="1RV21CS018" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="collegeInput">Institution Name</label>
+            <input type="text" id="collegeInput" class="form-control" value="RV College of Engineering" required>
+          </div>
+
+          <div class="sub-section-title">Test Scores by Section (Max 25 Each)</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="quantInput">Quantitative Aptitude</label>
+              <input type="number" id="quantInput" class="form-control" min="0" max="25" value="24" required>
+            </div>
+            <div class="form-group">
+              <label for="logicalInput">Logical Reasoning</label>
+              <input type="number" id="logicalInput" class="form-control" min="0" max="25" value="23" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="techInput">Tech MCQ (OS/DBMS/DSA)</label>
+              <input type="number" id="techInput" class="form-control" min="0" max="25" value="25" required>
+            </div>
+            <div class="form-group">
+              <label for="codingCasesInput">Coding Cases Passed (/10)</label>
+              <input type="number" id="codingCasesInput" class="form-control" min="0" max="10" value="10" required>
+            </div>
+          </div>
+
+          <div class="sub-section-title">Anti-Cheat & Proctoring Telemetry</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tabSwitchInput">Tab Switch Events</label>
+              <input type="number" id="tabSwitchInput" class="form-control" min="0" max="50" value="0" required>
+            </div>
+            <div class="form-group">
+              <label for="pasteInput">Copy-Paste Events</label>
+              <input type="number" id="pasteInput" class="form-control" min="0" max="50" value="0" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="timeSpentInput">Time Spent (Minutes)</label>
+            <input type="number" id="timeSpentInput" class="form-control" min="10" max="90" value="72" required>
+          </div>
+
+          <button type="submit" class="btn-action" id="btnAudit">
+            <span>🛡️</span>
+            <span>Audit & Grade Submission</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Right Panel: Grading Results -->
+      <section class="results-column">
+        <!-- Scoreboard -->
+        <div class="scoreboard">
+          <div class="stat-card hero-stat">
+            <span class="stat-label">Total Score</span>
+            <div class="stat-value" id="displayTotalScore">-- / 100</div>
+            <span class="stat-sub" id="displayAssessmentId">GATEKEEPER-AUDIT</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Batch Percentile</span>
+            <div class="stat-value" id="displayPercentile" style="color: var(--accent-cyan);">--</div>
+            <span class="stat-sub">Gaussian 10,000 Cohort</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Proctor Integrity</span>
+            <div class="stat-value" id="displayIntegrityScore" style="color: var(--accent-emerald);">--</div>
+            <span class="stat-sub" id="displayIntegrityLabel">Clean Verified</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Cutoff Clearance</span>
+            <div class="stat-value" id="displayCutoffsStatus" style="font-size: 1.25rem; color: #fff; padding-top: 0.4rem;">--</div>
+            <span class="stat-sub">Min 60% Per Section</span>
+          </div>
+        </div>
+
+        <!-- Official Verdict Banner -->
+        <div class="verdict-banner">
+          <div>
+            <div class="stat-label" style="margin-bottom: 0.2rem;">Official Institutional Shortlist Verdict</div>
+            <div class="verdict-status" id="displayVerdictStatus">--</div>
+            <p class="verdict-rec" id="displayRecommendation">--</p>
+          </div>
+        </div>
+
+        <!-- Sectional Performance Grid -->
+        <div style="margin-bottom: 2rem;">
+          <div class="section-title">
+            <span>📊</span>
+            <span>Sectional Cutoff Clearance Audit</span>
+          </div>
+          <div class="sections-grid">
+            <div class="section-card">
+              <span class="sec-name">1. Quantitative Aptitude</span>
+              <div class="sec-score" id="secScoreQuant">-- / 25</div>
+              <span class="sec-badge passed" id="secBadgeQuant">Passed</span>
+            </div>
+            <div class="section-card">
+              <span class="sec-name">2. Logical Reasoning</span>
+              <div class="sec-score" id="secScoreLogical">-- / 25</div>
+              <span class="sec-badge passed" id="secBadgeLogical">Passed</span>
+            </div>
+            <div class="section-card">
+              <span class="sec-name">3. Core Computer Science</span>
+              <div class="sec-score" id="secScoreTech">-- / 25</div>
+              <span class="sec-badge passed" id="secBadgeTech">Passed</span>
+            </div>
+            <div class="section-card">
+              <span class="sec-name">4. Algorithmic Coding</span>
+              <div class="sec-score" id="secScoreCoding">-- / 25</div>
+              <span class="sec-badge passed" id="secBadgeCoding">Passed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Behavioral Anti-Cheat Diagnostics -->
+        <div class="integrity-box">
+          <div class="section-title" style="margin-bottom: 0.5rem;">
+            <span>🔍</span>
+            <span>Proctoring & Anti-Cheat Telemetry Audit</span>
+          </div>
+          <div class="integrity-metrics">
+            <div class="int-metric">
+              <div class="int-val" id="telemetryTabs">0</div>
+              <div class="int-lbl">Tab-Switch Events</div>
+            </div>
+            <div class="int-metric">
+              <div class="int-val" id="telemetryPastes">0</div>
+              <div class="int-lbl">Clipboard Paste Events</div>
+            </div>
+            <div class="int-metric">
+              <div class="int-val" id="telemetryTime">72m</div>
+              <div class="int-lbl">Pacing / Time Spent</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let presetsData = [];
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/horizon/gatekeeper/presets');
+        const json = await res.json();
+        if (json.success) {
+          presetsData = json.presets;
+          renderPresets();
+        }
+        runAudit();
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+          <span class="preset-sub">${p.candidateName} • ${p.collegeName} • ${p.tabSwitchCount} Tabs</span>
+        </button>
+      `).join('');
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.label));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('nameInput').value = p.candidateName;
+      document.getElementById('usnInput').value = p.usn;
+      document.getElementById('collegeInput').value = p.collegeName;
+      document.getElementById('quantInput').value = p.quantScore;
+      document.getElementById('logicalInput').value = p.logicalScore;
+      document.getElementById('techInput').value = p.techMcqScore;
+      document.getElementById('codingCasesInput').value = p.codingTestCasesPassed;
+      document.getElementById('tabSwitchInput').value = p.tabSwitchCount;
+      document.getElementById('pasteInput').value = p.pasteEventsCount;
+      document.getElementById('timeSpentInput').value = p.timeSpentMins;
+
+      runAudit();
+    }
+
+    async function runAudit() {
+      const payload = {
+        candidateName: document.getElementById('nameInput').value,
+        usn: document.getElementById('usnInput').value,
+        collegeName: document.getElementById('collegeInput').value,
+        quantScore: parseFloat(document.getElementById('quantInput').value),
+        logicalScore: parseFloat(document.getElementById('logicalInput').value),
+        techMcqScore: parseFloat(document.getElementById('techInput').value),
+        codingTestCasesPassed: parseInt(document.getElementById('codingCasesInput').value, 10),
+        codingTotalTestCases: 10,
+        tabSwitchCount: parseInt(document.getElementById('tabSwitchInput').value, 10),
+        pasteEventsCount: parseInt(document.getElementById('pasteInput').value, 10),
+        timeSpentMins: parseInt(document.getElementById('timeSpentInput').value, 10)
+      };
+
+      try {
+        const res = await fetch('/api/v1/horizon/gatekeeper/evaluate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderAuditResults(data);
+        }
+      } catch (err) {
+        console.error('Audit error:', err);
+      }
+    }
+
+    function renderAuditResults(data) {
+      // Scoreboard
+      document.getElementById('displayTotalScore').innerText = `${data.scores.totalScore} / 100`;
+      document.getElementById('displayAssessmentId').innerText = data.assessmentId;
+      document.getElementById('displayPercentile').innerText = `${data.scores.percentile}th %ile`;
+
+      const intScoreElem = document.getElementById('displayIntegrityScore');
+      intScoreElem.innerText = `${data.integrity.score} / 100`;
+      intScoreElem.style.color = data.integrity.score >= 80 ? 'var(--accent-emerald)' :
+                                data.integrity.score >= 60 ? 'var(--accent-amber)' : 'var(--accent-rose)';
+      document.getElementById('displayIntegrityLabel').innerText = data.integrity.label;
+
+      const cutoffsStatusElem = document.getElementById('displayCutoffsStatus');
+      cutoffsStatusElem.innerText = data.verdict.allSectionsPassed ? 'ALL PASSED' : 'SECTIONAL FAIL';
+      cutoffsStatusElem.style.color = data.verdict.allSectionsPassed ? 'var(--accent-emerald)' : 'var(--accent-amber)';
+
+      // Verdict Banner
+      const verdictElem = document.getElementById('displayVerdictStatus');
+      verdictElem.innerText = data.verdict.shortlistVerdict;
+      verdictElem.style.color = data.verdict.verdictColor;
+      document.getElementById('displayRecommendation').innerText = data.verdict.recommendation;
+
+      // Sectional Grid
+      const sec = data.sectionalAudit;
+      setSectionItem('Quant', sec.quant);
+      setSectionItem('Logical', sec.logical);
+      setSectionItem('Tech', sec.tech_mcq);
+      setSectionItem('Coding', sec.coding);
+
+      // Telemetry
+      document.getElementById('telemetryTabs').innerText = data.integrity.tabSwitches;
+      document.getElementById('telemetryPastes').innerText = data.integrity.pasteEvents;
+      document.getElementById('telemetryTime').innerText = `${data.scores.timeSpentMins} mins`;
+    }
+
+    function setSectionItem(key, obj) {
+      document.getElementById(`secScore${key}`).innerText = `${obj.score} / ${obj.max}`;
+      const badge = document.getElementById(`secBadge${key}`);
+      badge.innerText = obj.passed ? '✓ Passed Cutoff' : '⚠️ Cutoff Missed';
+      badge.className = `sec-badge ${obj.passed ? 'passed' : 'failed'}`;
+    }
+
+    document.getElementById('examForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      runAudit();
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

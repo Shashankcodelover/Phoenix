@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Branch Transition & Career Pivot Simulator | Phoenix Horizon</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0d1e38 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: var(--accent-cyan);
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1380px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2.2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(to right, #ffffff, var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 860px;
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: var(--accent-cyan);
+    }
+    .preset-chip.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+    }
+    .preset-sub {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent-cyan), #0284c7);
+      border: none;
+      border-radius: 8px;
+      color: #04121e;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+    }
+
+    /* Scoreboard */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-card.hero-stat {
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+    .stat-value {
+      font-size: 2.1rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+    }
+    .stat-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* Verdict Card */
+    .verdict-box {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .verdict-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .verdict-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+      margin-bottom: 1.25rem;
+    }
+    .rules-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .rules-list li {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .rules-list li::before {
+      content: "•";
+      color: var(--accent-cyan);
+      font-weight: bold;
+    }
+
+    /* Tabs & Section Header */
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    /* Minor Degree Curriculum */
+    .curriculum-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .course-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .course-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .course-sem {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+    .course-credits {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent-gold);
+    }
+    .course-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.4rem;
+    }
+    .course-focus {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Roadmap Timeline */
+    .timeline-container {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .timeline-step {
+      display: flex;
+      gap: 1.25rem;
+      padding-bottom: 1.25rem;
+      position: relative;
+    }
+    .timeline-step:last-child {
+      padding-bottom: 0;
+    }
+    .timeline-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 17px;
+      top: 36px;
+      bottom: 0;
+      width: 2px;
+      background: rgba(56, 189, 248, 0.2);
+    }
+    .step-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--accent-cyan);
+      flex-shrink: 0;
+    }
+    .step-body {
+      flex: 1;
+    }
+    .step-phase {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+    .step-target {
+      font-size: 0.85rem;
+      color: var(--accent-cyan);
+      margin-bottom: 0.5rem;
+    }
+    .milestones-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .milestone-tag {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      color: #cbd5e1;
+    }
+
+    /* Action Checklist */
+    .checklist-card {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+    .checklist-item {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+    .checklist-item:last-child {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+      .scoreboard {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>🔀</span>
+      <span>PHOENIX HORIZON // BRANCH TRANSITION</span>
+      <span class="nav-badge">Feature 44</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html" class="active">Branch Pivot</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Branch Transition & Career Pivot Simulator</h1>
+      <p>
+        Models 1st-year institutional branch change CGPA threshold cutoff algorithms (RVCE, BMSCE, MSRIT, PES, NITK), computes vacancy seat probabilities, evaluates active backlog disqualification criteria, and synthesizes official NEP 2020 Minor Degree (18-credit) curricula with cross-branch placement bridge pathways.
+      </p>
+    </section>
+
+    <div class="grid-layout">
+      <!-- Left Panel: Form & Presets -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>🎯 Candidate Profile</h2>
+          <span style="font-size: 0.75rem; color: var(--accent-cyan); font-family: 'JetBrains Mono';">PRESETS</span>
+        </div>
+
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="pivotForm">
+          <div class="form-group">
+            <label for="collegeSelect">Target Institution</label>
+            <select id="collegeSelect" class="form-control">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="currentBranchSelect">Current Branch</label>
+              <select id="currentBranchSelect" class="form-control">
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="targetBranchSelect">Target Branch</label>
+              <select id="targetBranchSelect" class="form-control">
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cgpaInput">Year 1 CGPA</label>
+              <input type="number" id="cgpaInput" class="form-control" step="0.01" min="0" max="10" value="9.45" required>
+            </div>
+            <div class="form-group">
+              <label for="categorySelect">Category</label>
+              <select id="categorySelect" class="form-control">
+                <option value="GM">General Merit (GM)</option>
+                <option value="OBC">OBC (2A / 2B / 3A / 3B)</option>
+                <option value="SC/ST">SC / ST</option>
+                <option value="EWS">Economically Weaker (EWS)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="backlogsInput">Active Backlogs (End of Sem 2)</label>
+            <input type="number" id="backlogsInput" class="form-control" min="0" max="10" value="0" required>
+          </div>
+
+          <button type="submit" class="btn-action" id="btnSimulate">
+            <span>⚡</span>
+            <span>Simulate Transition Feasibility</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Right Panel: Results -->
+      <section class="results-column">
+        <!-- Scoreboard -->
+        <div class="scoreboard">
+          <div class="stat-card hero-stat">
+            <span class="stat-label">Transition Probability</span>
+            <div class="stat-value" id="displayProb">--%</div>
+            <span class="stat-sub" id="displayFeasibility">Simulate to view chance</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Historical Cutoff</span>
+            <div class="stat-value" id="displayCutoff" style="font-size: 1.6rem; color: #fff;">--</div>
+            <span class="stat-sub" id="displayMargin">Margin: --</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Seat Vacancy Trend</span>
+            <div class="stat-value" id="displayVacancy" style="font-size: 1.1rem; color: var(--accent-amber); padding-top: 0.4rem;">--</div>
+            <span class="stat-sub" id="displayCap">Cap: --%</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Application Status</span>
+            <div class="stat-value" id="displayEligibility" style="font-size: 1.2rem; color: var(--accent-emerald); padding-top: 0.4rem;">--</div>
+            <span class="stat-sub" id="displayPolicy">Institutional Merit</span>
+          </div>
+        </div>
+
+        <!-- Institutional Verdict -->
+        <div class="verdict-box">
+          <div class="verdict-title">
+            <span>🏛️</span>
+            <span id="verdictHeading">Institutional Branch Change Verdict</span>
+          </div>
+          <p class="verdict-text" id="verdictBody">
+            Click 'Simulate Transition Feasibility' or select any candidate preset to audit branch transition cutoffs and university guidelines.
+          </p>
+          <ul class="rules-list" id="rulesList">
+            <!-- Populated by JS -->
+          </ul>
+        </div>
+
+        <!-- Alternative Dual Pathway: NEP 2020 Minor Degree -->
+        <div style="margin-bottom: 2rem;">
+          <div class="section-title">
+            <span>🎓</span>
+            <span>NEP 2020 Minor Degree Alternative (18 Credits Roadmap)</span>
+          </div>
+          <div class="curriculum-grid" id="curriculumGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Industry Bridge Timeline -->
+        <div>
+          <div class="section-title">
+            <span>🚀</span>
+            <span>Cross-Branch Tech Placement Bridge (DSA & Systems)</span>
+          </div>
+          <div class="timeline-container" id="timelineContainer">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Action Advice -->
+        <div class="checklist-card">
+          <div class="section-title" style="color: var(--accent-emerald); margin-bottom: 0.75rem;">
+            <span>📋</span>
+            <span>Strategic Action Plan & Recommendations</span>
+          </div>
+          <div id="actionList">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let collegesData = [];
+    let presetsData = [];
+
+    async function init() {
+      try {
+        const [collegesRes, presetsRes] = await Promise.all([
+          fetch('/api/v1/horizon/branch-pivot/colleges'),
+          fetch('/api/v1/horizon/branch-pivot/presets')
+        ]);
+        const collegesJson = await collegesRes.json();
+        const presetsJson = await presetsRes.json();
+
+        if (collegesJson.success) {
+          collegesData = collegesJson.colleges;
+          populateCollegesDropdown();
+        }
+
+        if (presetsJson.success) {
+          presetsData = presetsJson.presets;
+          renderPresets();
+        }
+
+        // Run default simulation
+        runSimulation();
+      } catch (err) {
+        console.error('Initialization error:', err);
+      }
+    }
+
+    function populateCollegesDropdown() {
+      const select = document.getElementById('collegeSelect');
+      select.innerHTML = collegesData.map(c => `<option value="${c.code}">${c.name}</option>`).join('');
+      select.addEventListener('change', onCollegeChange);
+      onCollegeChange();
+    }
+
+    function onCollegeChange() {
+      const collegeCode = document.getElementById('collegeSelect').value;
+      const inst = collegesData.find(c => c.code === collegeCode) || collegesData[0];
+      if (!inst) return;
+
+      const currentSelect = document.getElementById('currentBranchSelect');
+      const targetSelect = document.getElementById('targetBranchSelect');
+
+      const optionsHtml = inst.branches.map(b => `<option value="${b.code}">${b.code} - ${b.name}</option>`).join('');
+      currentSelect.innerHTML = optionsHtml;
+      targetSelect.innerHTML = optionsHtml;
+
+      // Sensible defaults
+      if (inst.branches.some(b => b.code === 'MECH')) currentSelect.value = 'MECH';
+      if (inst.branches.some(b => b.code === 'CSE')) targetSelect.value = 'CSE';
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+          <span class="preset-sub">${p.collegeCode} • From ${p.currentBranch} to ${p.targetBranch} • CGPA ${p.cgpa}</span>
+        </button>
+      `).join('');
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.label));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('collegeSelect').value = p.collegeCode;
+      onCollegeChange();
+
+      document.getElementById('currentBranchSelect').value = p.currentBranch;
+      document.getElementById('targetBranchSelect').value = p.targetBranch;
+      document.getElementById('cgpaInput').value = p.cgpa;
+      document.getElementById('categorySelect').value = p.category;
+      document.getElementById('backlogsInput').value = p.backlogsCount;
+
+      runSimulation();
+    }
+
+    async function runSimulation() {
+      const payload = {
+        collegeCode: document.getElementById('collegeSelect').value,
+        currentBranch: document.getElementById('currentBranchSelect').value,
+        targetBranch: document.getElementById('targetBranchSelect').value,
+        cgpa: parseFloat(document.getElementById('cgpaInput').value),
+        category: document.getElementById('categorySelect').value,
+        backlogsCount: parseInt(document.getElementById('backlogsInput').value, 10) || 0
+      };
+
+      try {
+        const res = await fetch('/api/v1/horizon/branch-pivot/simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderSimulationResults(data);
+        }
+      } catch (err) {
+        console.error('Simulation error:', err);
+      }
+    }
+
+    function renderSimulationResults(data) {
+      // Probability & Feasibility
+      const probElem = document.getElementById('displayProb');
+      probElem.innerText = `${data.probabilityScore}%`;
+      probElem.style.color = data.probabilityScore >= 80 ? 'var(--accent-emerald)' :
+                             data.probabilityScore >= 50 ? 'var(--accent-cyan)' : 'var(--accent-rose)';
+
+      document.getElementById('displayFeasibility').innerText = data.feasibilityLabel;
+
+      // Cutoff & Margin
+      document.getElementById('displayCutoff').innerText = data.cutoffThreshold ? data.cutoffThreshold.toFixed(2) : '--';
+      document.getElementById('displayMargin').innerText = `Margin: ${data.cgpaMargin || '--'}`;
+
+      // Vacancy & Cap
+      document.getElementById('displayVacancy').innerText = data.vacancyTrend || 'Strict Merit Quota';
+      document.getElementById('displayCap').innerText = data.maxCapPercent ? `Max Cap: +${data.maxCapPercent}%` : 'Cap: Standard';
+
+      // Eligibility
+      const eligElem = document.getElementById('displayEligibility');
+      eligElem.innerText = data.eligibleToApply ? 'ELIGIBLE' : 'INELIGIBLE';
+      eligElem.style.color = data.eligibleToApply ? 'var(--accent-emerald)' : 'var(--accent-rose)';
+      document.getElementById('displayPolicy').innerText = data.policyType || 'Institutional Policy';
+
+      // Verdict
+      document.getElementById('verdictHeading').innerText = `${data.institutionName} // ${data.targetBranchName}`;
+      document.getElementById('verdictBody').innerText = data.verdictSummary;
+
+      const rulesContainer = document.getElementById('rulesList');
+      if (data.rules && data.rules.length) {
+        rulesContainer.innerHTML = data.rules.map(r => `<li>${r}</li>`).join('');
+      } else {
+        rulesContainer.innerHTML = '<li>Merit list computed strictly on 1st-year cumulative CGPA.</li>';
+      }
+
+      // Minor Degree Curriculum
+      if (data.minorDegreeAlternative && data.minorDegreeAlternative.curriculum) {
+        const cGrid = document.getElementById('curriculumGrid');
+        cGrid.innerHTML = data.minorDegreeAlternative.curriculum.map(c => `
+          <div class="course-card">
+            <div>
+              <div class="course-top">
+                <span class="course-sem">${c.sem} • ${c.courseCode}</span>
+                <span class="course-credits">${c.credits} Credits</span>
+              </div>
+              <div class="course-title">${c.title}</div>
+              <div class="course-focus">${c.focus}</div>
+            </div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.5rem;">
+              Type: ${c.type}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Timeline Bridge
+      if (data.bridgeRoadmap && data.bridgeRoadmap.length) {
+        const tContainer = document.getElementById('timelineContainer');
+        tContainer.innerHTML = data.bridgeRoadmap.map((step, idx) => `
+          <div class="timeline-step">
+            <div class="step-icon">${idx + 1}</div>
+            <div class="step-body">
+              <div class="step-phase">${step.phase}</div>
+              <div class="step-target">🎯 ${step.target}</div>
+              <div class="milestones-chips">
+                ${step.milestones.map(m => `<span class="milestone-tag">${m}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Action Advice
+      if (data.actionAdvice && data.actionAdvice.length) {
+        const aContainer = document.getElementById('actionList');
+        aContainer.innerHTML = data.actionAdvice.map(a => `
+          <div class="checklist-item">
+            <span style="color: var(--accent-emerald);">✓</span>
+            <span>${a}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    document.getElementById('pivotForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      runSimulation();
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
