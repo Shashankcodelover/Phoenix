@@ -270,6 +270,7 @@ router.post('/research/generate-statement', (req, res) => {
 const { studyAbroadEngine } = require('./studyAbroadEngine');
 const competitiveExamEngine = require('./competitiveExamPlannerEngine');
 const internshipEngine = require('./industryInternshipTrackerEngine');
+const skillGapEngine = require('./dynamicSkillGapAuditorEngine');
 
 router.get('/study-abroad/universities', (req, res) => {
   res.json(studyAbroadEngine.getUniversities());
@@ -346,6 +347,28 @@ router.post('/internships/pipeline-summary', (req, res) => {
   try {
     const summary = internshipEngine.summarizePipeline(req.body.applications);
     res.json({ success: true, summary });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 53: Dynamic Skill Gap & Certification Pathway Auditor
+router.get('/skill-gap/certifications', (req, res) => {
+  res.json({ success: true, certifications: skillGapEngine.getCertifications() });
+});
+
+router.get('/skill-gap/archetypes', (req, res) => {
+  res.json({ success: true, archetypes: skillGapEngine.getJobArchetypes() });
+});
+
+router.get('/skill-gap/presets', (req, res) => {
+  res.json({ success: true, presets: skillGapEngine.getPresets() });
+});
+
+router.post('/skill-gap/audit', (req, res) => {
+  try {
+    const result = skillGapEngine.auditSkillGap(req.body);
+    res.json({ success: true, audit: result });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

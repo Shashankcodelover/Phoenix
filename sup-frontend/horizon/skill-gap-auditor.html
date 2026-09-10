@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Skill Gap & Certification Pathway Auditor // Phoenix Horizon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-dark) 60%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      color: #04121e;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 2.2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(to right, #ffffff, var(--accent-purple), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 950px;
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    /* Scoreboard */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-card.hero-stat {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-header h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Presets */
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(168, 85, 247, 0.12);
+      border-color: var(--accent-purple);
+    }
+    .preset-chip.active {
+      background: rgba(168, 85, 247, 0.2);
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
+    }
+    .preset-sub {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--accent-purple);
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent-purple), #7c3aed);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    }
+
+    /* Competency Matrix */
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .matrix-card {
+      background: rgba(30, 41, 59, 0.45);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+    }
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+    .tag-strength {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .tag-deficit {
+      background: rgba(244, 63, 94, 0.18);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: #fda4af;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Recommended Cert Card */
+    .cert-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .cert-badge-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .cert-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* Sprints Grid */
+    .sprint-timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .sprint-step {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.85rem;
+      font-size: 0.8rem;
+    }
+    .sprint-week {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout { grid-template-columns: 1fr; }
+      .scoreboard { grid-template-columns: 1fr 1fr; }
+      .matrix-grid { grid-template-columns: 1fr; }
+      .sprint-timeline { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>🧬</span>
+      <span>PHOENIX HORIZON // SKILL GAP AUDITOR</span>
+      <span class="nav-badge">Feature 53</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="alumni-connector.html">Alumni Network</a>
+      <a href="research-matcher.html">Research Labs</a>
+      <a href="study-abroad.html">Study Abroad</a>
+      <a href="exam-planner.html">Sprint Planner</a>
+      <a href="internship-tracker.html">Internship Pipeline</a>
+      <a href="skill-gap-auditor.html" class="active">Skill Gap Auditor</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Dynamic Skill Gap & Certification Pathway Auditor</h1>
+      <p>
+        Analyzes JD role competencies against academic transcripts and project repositories. Calculates instant Match Readiness %, isolates critical competency deficits, and maps high-ROI industry certification roadmaps (CKA, AWS SAA, GCP PCA, Terraform).
+      </p>
+    </section>
+
+    <!-- Scoreboard HUD -->
+    <div class="scoreboard">
+      <div class="stat-card hero-stat">
+        <span class="stat-label">JD Match Readiness</span>
+        <div class="stat-value" id="displayMatchPct" style="color: var(--accent-purple);">--%</div>
+        <span class="stat-sub" id="displayTargetRoleName">Target Role Match</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Readiness Classification</span>
+        <div class="stat-value" id="displayGrade" style="font-size: 1.25rem; color: var(--accent-cyan); padding-top: 0.4rem;">--</div>
+        <span class="stat-sub">Applicant Competitiveness</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Verified Strengths</span>
+        <div class="stat-value" id="displayStrengthCount" style="color: var(--accent-emerald);">--</div>
+        <span class="stat-sub">Skills Meeting JD Criteria</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Critical Deficits</span>
+        <div class="stat-value" id="displayDeficitCount" style="color: var(--accent-rose);">--</div>
+        <span class="stat-sub">To Close via Certification</span>
+      </div>
+    </div>
+
+    <div class="grid-layout">
+      <!-- Left Panel: Form & Presets -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>⚡ Fast Presets</h2>
+          <span style="font-size: 0.72rem; color: var(--accent-purple); font-family: 'JetBrains Mono';">1-CLICK LOAD</span>
+        </div>
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="auditForm">
+          <div class="panel-header" style="margin-top: 1rem;">
+            <h2>🎯 Audit Configuration</h2>
+          </div>
+
+          <div class="form-group">
+            <label for="candidateName">Candidate Name</label>
+            <input type="text" id="candidateName" class="form-control" value="Sanjay Krishnan" required>
+          </div>
+
+          <div class="form-group">
+            <label for="targetRoleSelect">Target Job Archetype</label>
+            <select id="targetRoleSelect" class="form-control" onchange="runAudit()">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="transcriptCourses">Academic Transcript Courses</label>
+            <textarea id="transcriptCourses" class="form-control" rows="3">Operating Systems, Computer Networks, Database Systems, Linux Administration</textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="existingSkills">Current Practical Skills & Tools</label>
+            <textarea id="existingSkills" class="form-control" rows="3">Linux internals, Docker, Python, Git, CI/CD pipelines</textarea>
+          </div>
+
+          <button type="submit" class="btn-action" id="btnRunAudit">
+            <span>🧬</span>
+            <span>Execute Gap Audit & Cert Roadmap</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Right Column: Competency Matrix & Cert Roadmap -->
+      <section class="results-column">
+        <!-- Competency Matrix -->
+        <div class="matrix-grid">
+          <div class="matrix-card">
+            <div style="color: var(--accent-emerald); font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span>✅</span>
+              <span>Verified Matched Competencies</span>
+            </div>
+            <div class="tag-container" id="strengthsContainer">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <div class="matrix-card">
+            <div style="color: var(--accent-rose); font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span>⚠️</span>
+              <span>Missing Skill Deficits</span>
+            </div>
+            <div class="tag-container" id="deficitsContainer">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommended Certification Card -->
+        <div class="cert-card" id="certCard">
+          <div class="cert-badge-row">
+            <div>
+              <span id="certIssuer" style="font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px;">CNCF / Linux Foundation</span>
+              <div class="cert-title" id="certName">☸️ Certified Kubernetes Administrator (CKA)</div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Est. Prep</span>
+              <div style="font-size: 1.15rem; font-family: 'JetBrains Mono'; font-weight: 800; color: var(--accent-purple);" id="certDuration">8 Weeks</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 1.5rem; font-size: 0.82rem; color: var(--text-muted); margin: 0.75rem 0; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <span>📈 Avg Salary Uplift: <strong style="color: var(--accent-emerald);" id="certUplift">+24%</strong></span>
+            <span>🔥 Market Demand: <strong style="color: var(--accent-gold);" id="certDemand">96 / 100</strong></span>
+            <span>🎯 Exam Rigor: <strong style="color: #fff;" id="certDifficulty">High (Hands-On Lab)</strong></span>
+          </div>
+
+          <!-- Weekly Sprints -->
+          <div style="font-size: 0.85rem; font-weight: 700; color: #fff; margin-top: 0.75rem;">
+            🗺️ Recommended Agile Certification Roadmap
+          </div>
+          <div class="sprint-timeline" id="sprintTimeline">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Strategic Synthesis Box -->
+        <div style="background: rgba(30, 41, 59, 0.5); border: 1px solid var(--panel-border); border-radius: 12px; padding: 1.25rem 1.5rem;">
+          <div style="color: var(--accent-cyan); font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem;">
+            <span>💡 Strategic Takeaway</span>
+          </div>
+          <p id="auditSummaryText" style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.55;">
+            <!-- Populated by JS -->
+          </p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let archetypesData = [];
+    let presetsData = [];
+
+    async function init() {
+      try {
+        const [archRes, presetsRes] = await Promise.all([
+          fetch('/api/v1/horizon/skill-gap/archetypes'),
+          fetch('/api/v1/horizon/skill-gap/presets')
+        ]);
+
+        const archJson = await archRes.json();
+        const presetsJson = await presetsRes.json();
+
+        if (archJson.success) {
+          archetypesData = archJson.archetypes;
+          populateArchetypeSelect();
+        }
+
+        if (presetsJson.success) {
+          presetsData = presetsJson.presets;
+          renderPresets();
+        }
+
+        runAudit();
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    function populateArchetypeSelect() {
+      const select = document.getElementById('targetRoleSelect');
+      select.innerHTML = archetypesData.map(a => `
+        <option value="${a.id}">${a.title}</option>
+      `).join('');
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+          <span class="preset-sub">${p.studentName} • ${p.targetRoleId.replace(/_/g, ' ')}</span>
+        </button>
+      `).join('');
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.label));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('candidateName').value = p.studentName;
+      document.getElementById('targetRoleSelect').value = p.targetRoleId;
+      document.getElementById('transcriptCourses').value = p.transcriptCourses.join(', ');
+      document.getElementById('existingSkills').value = p.existingSkills.join(', ');
+
+      runAudit();
+    }
+
+    async function runAudit() {
+      const studentName = document.getElementById('candidateName').value;
+      const targetRoleId = document.getElementById('targetRoleSelect').value;
+      const transcriptCourses = document.getElementById('transcriptCourses').value.split(',').map(s => s.trim()).filter(Boolean);
+      const existingSkills = document.getElementById('existingSkills').value.split(',').map(s => s.trim()).filter(Boolean);
+
+      try {
+        const res = await fetch('/api/v1/horizon/skill-gap/audit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studentName,
+            targetRoleId,
+            transcriptCourses,
+            existingSkills
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          renderAuditResults(data.audit);
+        }
+      } catch (err) {
+        console.error('Error running skill gap audit:', err);
+      }
+    }
+
+    function renderAuditResults(audit) {
+      // Scoreboard
+      document.getElementById('displayMatchPct').innerText = audit.matchRatePct + '%';
+      document.getElementById('displayTargetRoleName').innerText = audit.targetRole;
+      document.getElementById('displayGrade').innerText = audit.readinessGrade;
+      document.getElementById('displayStrengthCount').innerText = audit.matchedStrengths.length + ' / ' + audit.totalRequiredSkills;
+      document.getElementById('displayDeficitCount').innerText = audit.missingDeficits.length;
+
+      // Strengths tags
+      const strContainer = document.getElementById('strengthsContainer');
+      strContainer.innerHTML = audit.matchedStrengths.map(s => `
+        <span class="tag-strength">✓ ${s}</span>
+      `).join('');
+
+      // Deficits tags
+      const defContainer = document.getElementById('deficitsContainer');
+      defContainer.innerHTML = audit.missingDeficits.map(d => `
+        <span class="tag-deficit">✕ ${d}</span>
+      `).join('');
+
+      // Recommended Cert
+      const cert = audit.recommendedCertification;
+      document.getElementById('certIssuer').innerText = cert.issuer;
+      document.getElementById('certName').innerText = `${cert.badge} ${cert.name}`;
+      document.getElementById('certDuration').innerText = `${cert.prepDurationWeeks} Weeks`;
+      document.getElementById('certUplift').innerText = `+${cert.avgSalaryUpliftPct}%`;
+      document.getElementById('certDemand').innerText = `${cert.marketDemandScore} / 100`;
+      document.getElementById('certDifficulty').innerText = cert.difficulty;
+
+      // Sprints
+      const sprintCont = document.getElementById('sprintTimeline');
+      sprintCont.innerHTML = cert.weeklySprint.map(sp => `
+        <div class="sprint-step">
+          <div class="sprint-week">${sp.week}</div>
+          <div style="color: #cbd5e1; line-height: 1.4;">${sp.focus}</div>
+        </div>
+      `).join('');
+
+      // Summary
+      document.getElementById('auditSummaryText').innerText = audit.auditSummary;
+    }
+
+    document.getElementById('auditForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      runAudit();
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
