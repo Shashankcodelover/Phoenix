@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universal Sovereign Career Credential Command Center // Phoenix Horizon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-dark) 60%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    .top-nav {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+      color: #04121e;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-gold);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 27, 75, 0.85), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #fbbf24, #a855f7, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 900px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+    .stat-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--panel-border);
+    }
+    .panel-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Preset Chips */
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(251, 191, 36, 0.12);
+      border-color: var(--accent-gold);
+    }
+    .preset-chip.active {
+      background: rgba(251, 191, 36, 0.2);
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 12px rgba(251, 191, 36, 0.25);
+    }
+
+    /* Passport Card */
+    .passport-card {
+      background: linear-gradient(135deg, rgba(30, 27, 75, 0.7), rgba(15, 23, 42, 0.9));
+      border: 2px solid rgba(251, 191, 36, 0.4);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .passport-card::before {
+      content: 'SOVEREIGN CREDENTIAL';
+      position: absolute;
+      right: -20px;
+      bottom: 20px;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.02);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .passport-badge {
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      color: #04121e;
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+    .passport-name {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .passport-sub {
+      color: var(--accent-cyan);
+      font-size: 0.92rem;
+      margin-bottom: 1.5rem;
+    }
+    .hash-badge {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent-emerald);
+      word-break: break-all;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Pillars Verification Checkmarks */
+    .pillar-checklist {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .pillar-item {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout { grid-template-columns: 1fr; }
+      .scoreboard { grid-template-columns: 1fr 1fr; }
+      .pillar-checklist { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>👑</span>
+      <span>PHOENIX HORIZON // SOVEREIGN CREDENTIAL</span>
+      <span class="nav-badge">Feature 60 Capstone</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="alumni-connector.html">Alumni Network</a>
+      <a href="research-matcher.html">Research Labs</a>
+      <a href="study-abroad.html">Study Abroad</a>
+      <a href="exam-planner.html">Sprint Planner</a>
+      <a href="internship-tracker.html">Internship Pipeline</a>
+      <a href="skill-gap-auditor.html">Skill Gap Auditor</a>
+      <a href="sop-synthesizer.html">SOP Synthesizer</a>
+      <a href="lor-drafter.html">LOR Drafter</a>
+      <a href="visa-readiness.html">Visa Readiness</a>
+      <a href="tpo-analytics.html">TPO Analytics</a>
+      <a href="cost-of-living.html">PPP Cost of Living</a>
+      <a href="career-trajectory.html">Trajectory Forecaster</a>
+      <a href="career-command-center.html" class="active">Command Center</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Universal Sovereign Career Credential Command Center</h1>
+      <p>
+        Pillar 3 Capstone Engine: Aggregates verified admission ranks, transcript equivalencies, gatekeeper assessments, internship records, SOPs, and LOR endorsements into an immutable cryptographically hashed career passport.
+      </p>
+    </section>
+
+    <!-- Scoreboard HUD -->
+    <div class="scoreboard">
+      <div class="stat-card">
+        <span class="stat-label">Sovereign Composite Score</span>
+        <div class="stat-value" id="displayCompositeScore" style="color: var(--accent-gold);">942 / 1000</div>
+        <span class="stat-sub">Holistic Career Merit Index</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Academic WES Conversion</span>
+        <div class="stat-value" id="displayWesGpa" style="color: var(--accent-cyan);">3.92 GPA</div>
+        <span class="stat-sub" id="displayRawGpa">Raw CGPA: 9.18 / 10.0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Verified Experience</span>
+        <div class="stat-value" id="displayInternCount" style="color: var(--accent-emerald);">2 Internships</div>
+        <span class="stat-sub">Google R&D • Postman</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Verification Anchor</span>
+        <div class="stat-value" id="displayProofNetwork" style="font-size: 1.0rem; color: #fff; padding-top: 0.4rem;">Polygon Sovereign ID</div>
+        <span class="stat-sub">Cryptographic Testnet Proof</span>
+      </div>
+    </div>
+
+    <div class="grid-layout">
+      <!-- Left Column: Fast Candidate Selector -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>⚡ Candidate Portfolios</h2>
+          <span style="font-size: 0.72rem; color: var(--accent-gold); font-family: 'JetBrains Mono';">1-CLICK PASSPORT</span>
+        </div>
+        <div class="presets-container" id="portfoliosList">
+          <!-- Populated by JS -->
+        </div>
+
+        <div style="margin-top: 1.5rem; background: rgba(30, 41, 59, 0.5); border: 1px solid var(--panel-border); border-radius: 10px; padding: 1.15rem;">
+          <div style="font-weight: 700; color: var(--accent-gold); font-size: 0.9rem; margin-bottom: 0.35rem;">
+            🛡️ Pillar 3 Verification Complete
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+            This passport synthesizes all 20 features in Pillar 3 into a single exportable credential format compatible with WES, LinkedIn, and corporate recruiters.
+          </p>
+        </div>
+      </aside>
+
+      <!-- Right Column: Sovereign Passport Display -->
+      <section>
+        <div class="passport-card">
+          <span class="passport-badge" id="displayTierBadge">GLOBAL TIER-1 DIAMOND SCHOLAR</span>
+          <div class="passport-name" id="displayCandidateName">Aditya Shenoy</div>
+          <div class="passport-sub" id="displayDegreeInstitution">
+            Bachelor of Technology (Computer Science & Engineering) • National Institute of Technology Karnataka (NITK)
+          </div>
+
+          <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.35rem;">
+            Cryptographic Tamper-Proof Passport SHA-256 Hash:
+          </div>
+          <div class="hash-badge" id="displayPassportHash">
+            0x4f89d3a1e...
+          </div>
+
+          <!-- 5 Pillars Proof Checklist -->
+          <div style="font-weight: 700; font-size: 0.95rem; color: #fff; margin-bottom: 0.5rem;">
+            ✅ Verified Proof Manifest
+          </div>
+          <div class="pillar-checklist" id="pillarChecklist">
+            <div class="pillar-item">
+              <span style="color: var(--accent-emerald);">✔</span>
+              <span>Admissions Cutoff & GATE Score Verified</span>
+            </div>
+            <div class="pillar-item">
+              <span style="color: var(--accent-emerald);">✔</span>
+              <span>WES Transcript Equivalency (3.92/4.0)</span>
+            </div>
+            <div class="pillar-item">
+              <span style="color: var(--accent-emerald);">✔</span>
+              <span>2 Official Industry Internships Anchored</span>
+            </div>
+            <div class="pillar-item">
+              <span style="color: var(--accent-emerald);">✔</span>
+              <span>Tier-1 SOP & 3 Faculty LOR Endorsements</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exportable JSON-LD Schema Box -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2>📜 Schema.org Open Credential JSON-LD Payload</h2>
+            <span style="font-size: 0.75rem; color: var(--accent-cyan); font-family: 'JetBrains Mono';">MACHINE-READABLE</span>
+          </div>
+          <pre style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--panel-border); border-radius: 8px; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #cbd5e1; overflow-x: auto;" id="displayJsonLd">
+          </pre>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let portfoliosData = [];
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/horizon/credential/portfolios');
+        const json = await res.json();
+
+        if (json.success) {
+          portfoliosData = json.portfolios;
+          renderPortfolios();
+          loadPassport(portfoliosData[0].id);
+        }
+      } catch (err) {
+        console.error('Credential Init Error:', err);
+      }
+    }
+
+    function renderPortfolios() {
+      const container = document.getElementById('portfoliosList');
+      container.innerHTML = portfoliosData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="loadPassport('${p.id}')">
+          <strong>${p.candidateName}</strong>
+          <span style="display:block; font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem;">
+            ${p.degreeProgram.split('(')[0]} • ${p.institution.split('(')[0]}
+          </span>
+        </button>
+      `).join('');
+    }
+
+    async function loadPassport(portfolioId) {
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(portfolioId));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      try {
+        const res = await fetch(`/api/v1/horizon/credential/passport/${portfolioId}`);
+        const json = await res.json();
+
+        if (json.success) {
+          renderPassport(json.passport);
+        }
+      } catch (err) {
+        console.error('Error loading passport:', err);
+      }
+    }
+
+    function renderPassport(pass) {
+      const p = pass.portfolio;
+      document.getElementById('displayCompositeScore').innerText = `${pass.compositeScore} / 1000`;
+      document.getElementById('displayWesGpa').innerText = `${p.wesEquivalentGpa} GPA`;
+      document.getElementById('displayRawGpa').innerText = `Raw CGPA: ${p.cumulativeGpa} / 10.0`;
+      document.getElementById('displayInternCount').innerText = `${p.verifiedInternships.length} Internships`;
+
+      document.getElementById('displayTierBadge').innerText = pass.tierBadge;
+      document.getElementById('displayCandidateName').innerText = p.candidateName;
+      document.getElementById('displayDegreeInstitution').innerText = `${p.degreeProgram} • ${p.institution}`;
+      document.getElementById('displayPassportHash').innerText = pass.sovereignHash;
+
+      document.getElementById('displayJsonLd').innerText = JSON.stringify(pass.exportableJsonLd, null, 2);
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

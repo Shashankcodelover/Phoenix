@@ -513,7 +513,24 @@ router.post('/trajectory/forecast', (req, res) => {
   }
 });
 
+// Feature 60: Universal Sovereign Career Credential Command Center (Pillar 3 Capstone)
+const { sovereignCareerCredentialEngine } = require('./sovereignCareerCredentialEngine');
+
+router.get('/credential/portfolios', (req, res) => {
+  res.json({ success: true, portfolios: sovereignCareerCredentialEngine.getAvailablePortfolios() });
+});
+
+router.get('/credential/passport/:portfolioId', (req, res) => {
+  try {
+    const passport = sovereignCareerCredentialEngine.generateSovereignPassport(req.params.portfolioId);
+    res.json({ success: true, passport });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;
+
 
 
 
