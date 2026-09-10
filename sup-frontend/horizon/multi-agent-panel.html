@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra Autonomous Multi-Agent Mock Interview Panel (FAANG Trio) // Phoenix Cognitive War Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #070a12;
+      --panel-bg: rgba(15, 23, 42, 0.85);
+      --panel-border: rgba(255, 255, 255, 0.09);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-indigo: #6366f1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-dark) 70%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    .top-nav {
+      background: rgba(11, 17, 33, 0.9);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #030712;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 9999px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .engine-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 10px var(--accent-emerald); }
+      100% { transform: scale(0.9); opacity: 0.8; }
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-header {
+      margin-bottom: 2rem;
+    }
+    .pillar-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 850px;
+      line-height: 1.5;
+    }
+
+    /* Scenario Question Box */
+    .scenario-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .scenario-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-purple);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+    .scenario-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+    .scenario-question {
+      font-size: 0.95rem;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.08);
+      border-left: 3px solid var(--accent-cyan);
+      padding: 0.75rem 1rem;
+      border-radius: 0 0.5rem 0.5rem 0;
+      line-height: 1.5;
+    }
+
+    /* 3 Agent Cards Grid */
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .agent-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .agent-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+    .agent-header {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .agent-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-indigo));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+    }
+    .agent-name {
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+    .agent-role {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .agent-verdict-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.5rem;
+      font-weight: 800;
+      display: inline-block;
+      margin-bottom: 0.85rem;
+    }
+    .verdict-strong-hire { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.35); }
+    .verdict-no-hire { background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.35); }
+
+    .agent-bubble {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.75rem;
+      padding: 0.9rem;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+      margin-bottom: 1rem;
+      flex: 1;
+    }
+    .agent-probe {
+      background: rgba(168, 85, 247, 0.08);
+      border-left: 2px solid var(--accent-purple);
+      padding: 0.65rem 0.85rem;
+      border-radius: 0 0.5rem 0.5rem 0;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Deliberation Matrix & Response Terminal */
+    .deliberation-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 1.5rem;
+    }
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .panel-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    /* Consensus Score Box */
+    .consensus-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(56, 189, 248, 0.15));
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .consensus-verdict {
+      font-size: 2.2rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      background: linear-gradient(135deg, var(--accent-emerald), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.25rem;
+    }
+    .consensus-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Response Presets & Textarea */
+    .preset-buttons {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn-preset {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 0.65rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-preset:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+    }
+    .btn-preset.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(168, 85, 247, 0.25));
+      border-color: var(--accent-cyan);
+    }
+
+    .response-input {
+      width: 100%;
+      background: #040711;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.85rem;
+      padding: 1rem;
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      height: 160px;
+      resize: vertical;
+      margin-bottom: 1rem;
+    }
+    .response-input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    .btn-evaluate {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+      color: #030712;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .btn-evaluate:hover {
+      opacity: 0.92;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    }
+
+    @media (max-width: 992px) {
+      .agent-grid { grid-template-columns: 1fr; }
+      .deliberation-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🏛️ PHOENIX HORIZON</span>
+      <span class="nav-badge">PILLAR 4 • FEATURE 63</span>
+    </div>
+    <div class="engine-status">
+      <div class="pulse-dot"></div>
+      <span>3-AGENT CONSENSUS ORCHESTRATOR: ACTIVE</span>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header class="hero-header">
+      <div class="pillar-tag">
+        <span>⚡ FEATURE 63 OF MASTER PRODUCTION SUITE</span>
+        <span>•</span>
+        <span>GOOGLE PEER INTERVIEW & INTERVIEWING.IO STANDARD</span>
+      </div>
+      <h1 class="hero-title">Autonomous Multi-Agent Mock Interview Panel</h1>
+      <p class="hero-sub">
+        Simultaneously engages 3 autonomous FAANG interview personas (Algorithms Bar Raiser, Systems Architect, and Culture VP) who cross-examine candidate answers, probe edge invariants, and reach a weighted hiring consensus.
+      </p>
+    </header>
+
+    <!-- Question Scenario Card -->
+    <section class="scenario-card">
+      <div class="scenario-badge">SYSTEM DESIGN & ARCHITECTURAL INVARIANTS • ROUND 3</div>
+      <div class="scenario-title" id="displayScenarioTitle">Designing Globally Distributed Key-Value Store with Multi-Region Active-Active Replication</div>
+      <div class="scenario-question" id="displayScenarioQuestion">
+        "How do you guarantee monotonic read consistency across cross-continental replicas without incurring two-phase commit latency penalties on the write path?"
+      </div>
+    </section>
+
+    <!-- 3 Agent Interviewer Cards -->
+    <section class="agent-grid">
+
+      <!-- Agent 1: Bar Raiser -->
+      <div class="agent-card" id="cardAgent1">
+        <div>
+          <div class="agent-header">
+            <div class="agent-avatar">⚖️</div>
+            <div>
+              <div class="agent-name">Dr. Evelyn Vance</div>
+              <div class="agent-role">Google Staff L7 Bar Raiser (Algorithms)</div>
+            </div>
+          </div>
+          <div class="agent-verdict-pill verdict-strong-hire" id="pillAgent1">STRONG HIRE (94/100)</div>
+          <div class="agent-bubble" id="bubbleAgent1">
+            "Crisp causal consistency formulation. Vector clock overhead is bounded O(Regions) which is O(1) relative to total keys."
+          </div>
+        </div>
+        <div class="agent-probe" id="probeAgent1">
+          <strong>Follow-up Probe:</strong> "What is the exact asymptotic cost of vector clock synchronization as regional clusters scale from 3 to 20?"
+        </div>
+      </div>
+
+      <!-- Agent 2: Systems Architect -->
+      <div class="agent-card" id="cardAgent2">
+        <div>
+          <div class="agent-header">
+            <div class="agent-avatar" style="background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));">🌐</div>
+            <div>
+              <div class="agent-name">Kaelen Thorne</div>
+              <div class="agent-role">Meta E6 Principal Architect (Systems)</div>
+            </div>
+          </div>
+          <div class="agent-verdict-pill verdict-strong-hire" id="pillAgent2">STRONG HIRE (98/100)</div>
+          <div class="agent-bubble" id="bubbleAgent2">
+            "Exceptional insight into CRDT state convergence. Decoupling the write path from inter-region cross-WAN round-trips protects P99 under 15ms."
+          </div>
+        </div>
+        <div class="agent-probe" id="probeAgent2">
+          <strong>Follow-up Probe:</strong> "How does your replication topology handle a complete transatlantic fiber cut with 45% traffic failover?"
+        </div>
+      </div>
+
+      <!-- Agent 3: Culture & Executive VP -->
+      <div class="agent-card" id="cardAgent3">
+        <div>
+          <div class="agent-header">
+            <div class="agent-avatar" style="background: linear-gradient(135deg, var(--accent-emerald), var(--accent-cyan));">🎯</div>
+            <div>
+              <div class="agent-name">Sarah Jenkins</div>
+              <div class="agent-role">Stripe VP of Engineering (Culture & Trade-offs)</div>
+            </div>
+          </div>
+          <div class="agent-verdict-pill verdict-strong-hire" id="pillAgent3">STRONG HIRE (92/100)</div>
+          <div class="agent-bubble" id="bubbleAgent3">
+            "Articulated trade-offs with calm technical certainty. Highlighted client-side cache complexity without evading implementation cost."
+          </div>
+        </div>
+        <div class="agent-probe" id="probeAgent3">
+          <strong>Follow-up Probe:</strong> "How would you explain the trade-offs of this consistency model to product managers requesting zero stale reads?"
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Deliberation Grid -->
+    <div class="deliberation-grid">
+
+      <!-- Left: Candidate Response Terminal -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🎙️ Candidate Solution Terminal</span>
+          </div>
+          <div class="panel-badge">ACTIVE RESPONSE SESSION</div>
+        </div>
+
+        <div class="preset-buttons">
+          <button class="btn-preset active" id="btnPresetStaff">
+            <span>🛡️ Elena Rostova (Staff L6 Solution)</span>
+          </button>
+          <button class="btn-preset" id="btnPresetNaive">
+            <span>⚡ Junior Brute-Force Solution</span>
+          </button>
+        </div>
+
+        <textarea class="response-input" id="answerInput">We adopt a hybrid clock model with Raft partitioned consensus per key-range. By leveraging vector clocks with CRDTs (Conflict-free Replicated Data Types) for state-based convergence, writes remain asynchronous across regions with local quorum ACKs (W=1, R=quorum). To prevent stale reads, clients cache a monotonic version vector and route reads to replicas that have observed at least that causal epoch.</textarea>
+
+        <button class="btn-evaluate" id="btnSubmitAnswer">
+          <span>⚡ Submit Answer for 3-Agent Consensus</span>
+        </button>
+      </div>
+
+      <!-- Right: Consensus Verdict Gauge -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🏛️ Weighted Panel Consensus Verdict</span>
+          </div>
+          <div class="panel-badge">FAANG HIRING COMMITTEE</div>
+        </div>
+
+        <div class="consensus-box" id="consensusBox">
+          <div class="consensus-verdict" id="displayConsensusVerdict">STRONG HIRE</div>
+          <div class="consensus-sub" id="displayConsensusSub">
+            Composite Score: 95/100 • Unanimous Panel Agreement
+          </div>
+        </div>
+
+        <div style="font-size: 0.8rem; line-height: 1.6; color: var(--text-muted); background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.05);">
+          <div style="font-weight: 700; color: var(--text-main); margin-bottom: 0.35rem;">Hiring Invariant Rule:</div>
+          A candidate must achieve &gt;= 70 from the Algorithm Bar Raiser and &gt;= 80 from the Systems Architect to cross the FAANG L6 threshold. Unanimous Strong Hire reflects top 0.5% engineering competence.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    const answerInput = document.getElementById('answerInput');
+    const btnPresetStaff = document.getElementById('btnPresetStaff');
+    const btnPresetNaive = document.getElementById('btnPresetNaive');
+    const btnSubmitAnswer = document.getElementById('btnSubmitAnswer');
+    const displayConsensusVerdict = document.getElementById('displayConsensusVerdict');
+    const displayConsensusSub = document.getElementById('displayConsensusSub');
+    const pillAgent1 = document.getElementById('pillAgent1');
+    const pillAgent2 = document.getElementById('pillAgent2');
+    const pillAgent3 = document.getElementById('pillAgent3');
+    const bubbleAgent1 = document.getElementById('bubbleAgent1');
+    const bubbleAgent2 = document.getElementById('bubbleAgent2');
+    const bubbleAgent3 = document.getElementById('bubbleAgent3');
+
+    const staffText = "We adopt a hybrid clock model with Raft partitioned consensus per key-range. By leveraging vector clocks with CRDTs (Conflict-free Replicated Data Types) for state-based convergence, writes remain asynchronous across regions with local quorum ACKs (W=1, R=quorum). To prevent stale reads, clients cache a monotonic version vector and route reads to replicas that have observed at least that causal epoch.";
+    const naiveText = "We can just use a single central MySQL database in US-East and have all European and Asian servers connect directly to it through a global load balancer. If it gets slow we can add a Redis cache in front of it.";
+
+    btnPresetStaff.addEventListener('click', () => {
+      btnPresetStaff.classList.add('active');
+      btnPresetNaive.classList.remove('active');
+      answerInput.value = staffText;
+      applyEvaluation({
+        compositeScore: 95,
+        consensus: 'STRONG HIRE',
+        sub: 'Composite Score: 95/100 • Unanimous Panel Agreement',
+        v1: 'STRONG HIRE (94/100)',
+        v2: 'STRONG HIRE (98/100)',
+        v3: 'STRONG HIRE (92/100)',
+        b1: '"Crisp causal consistency formulation. Vector clock overhead is bounded O(Regions) which is O(1) relative to total keys."',
+        b2: '"Exceptional insight into CRDT state convergence. Decoupling the write path from inter-region cross-WAN round-trips protects P99 under 15ms."',
+        b3: '"Articulated trade-offs with calm technical certainty. Highlighted client-side cache complexity without evading implementation cost."'
+      });
+    });
+
+    btnPresetNaive.addEventListener('click', () => {
+      btnPresetNaive.classList.add('active');
+      btnPresetStaff.classList.remove('active');
+      answerInput.value = naiveText;
+      applyEvaluation({
+        compositeScore: 41,
+        consensus: 'STRONG NO HIRE',
+        sub: 'Composite Score: 41/100 • Rejected by Bar Raiser & Systems Architect',
+        v1: 'STRONG NO HIRE (42/100)',
+        v2: 'STRONG NO HIRE (35/100)',
+        v3: 'LEAN NO HIRE (50/100)',
+        b1: '"Completely ignores physical speed-of-light latency across continents (~200ms RTT). No discussion of data structures or concurrency models."',
+        b2: '"Catastrophic single point of failure (SPOF). Redis cache stampedes will immediately bring down the primary DB during inter-region network partitions."',
+        b3: '"Did not ask clarifying questions regarding SLA, throughput (QPS), or availability targets before proposing trivial architecture."'
+      });
+    });
+
+    btnSubmitAnswer.addEventListener('click', async () => {
+      btnSubmitAnswer.innerText = 'Evaluating Consensus...';
+      try {
+        const res = await fetch('/api/v1/astra/panel-evaluate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answerText: answerInput.value })
+        });
+        const data = await res.json();
+        if (data.success) {
+          const eval = data.evaluation;
+          displayConsensusVerdict.innerText = eval.consensus.replace('_', ' ');
+          displayConsensusSub.innerText = `Composite Score: ${eval.compositeScore}/100`;
+          pillAgent1.innerText = `${eval.panelVotes.barRaiser.verdict} (${eval.panelVotes.barRaiser.score}/100)`;
+          pillAgent2.innerText = `${eval.panelVotes.systemsArchitect.verdict} (${eval.panelVotes.systemsArchitect.score}/100)`;
+          pillAgent3.innerText = `${eval.panelVotes.cultureVP.verdict} (${eval.panelVotes.cultureVP.score}/100)`;
+        }
+      } catch (e) {
+        console.warn('Fallback evaluation error:', e.message);
+      } finally {
+        btnSubmitAnswer.innerText = '⚡ Submit Answer for 3-Agent Consensus';
+      }
+    });
+
+    function applyEvaluation(data) {
+      displayConsensusVerdict.innerText = data.consensus;
+      displayConsensusSub.innerText = data.sub;
+
+      pillAgent1.innerText = data.v1;
+      pillAgent2.innerText = data.v2;
+      pillAgent3.innerText = data.v3;
+
+      pillAgent1.className = `agent-verdict-pill ${data.compositeScore >= 70 ? 'verdict-strong-hire' : 'verdict-no-hire'}`;
+      pillAgent2.className = `agent-verdict-pill ${data.compositeScore >= 70 ? 'verdict-strong-hire' : 'verdict-no-hire'}`;
+      pillAgent3.className = `agent-verdict-pill ${data.compositeScore >= 70 ? 'verdict-strong-hire' : 'verdict-no-hire'}`;
+
+      bubbleAgent1.innerText = data.b1;
+      bubbleAgent2.innerText = data.b2;
+      bubbleAgent3.innerText = data.b3;
+    }
+  </script>
+</body>
+</html>

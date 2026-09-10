@@ -10,6 +10,10 @@ const {
   analyzeCodePlayback, 
   getPlaybackBenchmarks 
 } = require('./codePlaybackEngine');
+const { 
+  evaluatePanelAnswer, 
+  getPanelScenarios 
+} = require('./multiAgentPanelEngine');
 
 router.use(protectOptional);
 
@@ -116,6 +120,43 @@ router.post('/code-playback-analyze', (req, res) => {
     res.json({
       success: true,
       report
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/panel-scenarios
+ * Returns mock interview panel scenarios and candidate response presets
+ */
+router.get('/panel-scenarios', (req, res) => {
+  try {
+    const scenarios = getPanelScenarios();
+    res.json({
+      success: true,
+      standard: 'Astra Autonomous Multi-Agent Mock Interview Panel (FAANG Trio)',
+      scenarios
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/panel-evaluate
+ * Evaluates candidate answer across 3 synchronized agents
+ */
+router.post('/panel-evaluate', (req, res) => {
+  try {
+    const { answerText, scenarioKey } = req.body || {};
+    const evaluation = evaluatePanelAnswer({
+      answerText,
+      scenarioKey
+    });
+    res.json({
+      success: true,
+      evaluation
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
