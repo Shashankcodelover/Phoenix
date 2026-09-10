@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salary Purchasing Power & Relocation Comparator // Phoenix Horizon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg-dark) 60%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    .top-nav {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-amber), var(--accent-rose));
+      color: #04121e;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-amber);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #f59e0b, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 900px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+    .stat-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--panel-border);
+    }
+    .panel-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Preset Chips */
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: var(--accent-amber);
+    }
+    .preset-chip.active {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--accent-amber);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--accent-amber);
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent-amber), #d97706);
+      border: none;
+      border-radius: 8px;
+      color: #04121e;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+    }
+
+    /* Comparison Head-to-Head Cards */
+    .compare-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .hub-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+    }
+    .hub-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+    .hub-currency {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.88rem;
+    }
+
+    .verdict-banner {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--accent-emerald);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout { grid-template-columns: 1fr; }
+      .scoreboard { grid-template-columns: 1fr 1fr; }
+      .compare-container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>🌐</span>
+      <span>PHOENIX HORIZON // COST OF LIVING</span>
+      <span class="nav-badge">Feature 58</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="alumni-connector.html">Alumni Network</a>
+      <a href="research-matcher.html">Research Labs</a>
+      <a href="study-abroad.html">Study Abroad</a>
+      <a href="exam-planner.html">Sprint Planner</a>
+      <a href="internship-tracker.html">Internship Pipeline</a>
+      <a href="skill-gap-auditor.html">Skill Gap Auditor</a>
+      <a href="sop-synthesizer.html">SOP Synthesizer</a>
+      <a href="lor-drafter.html">LOR Drafter</a>
+      <a href="visa-readiness.html">Visa Readiness</a>
+      <a href="tpo-analytics.html">TPO Analytics</a>
+      <a href="cost-of-living.html" class="active">PPP Cost of Living</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Salary Purchasing Power & Relocation Comparator</h1>
+      <p>
+        Calculates real Purchasing Power Parity (PPP) across global engineering hubs, factoring in local taxation brackets, median housing rents, and true wealth accumulation velocity.
+      </p>
+    </section>
+
+    <!-- Scoreboard HUD -->
+    <div class="scoreboard">
+      <div class="stat-card">
+        <span class="stat-label">PPP CoL Multiplier</span>
+        <div class="stat-value" id="displayColMultiplier" style="color: var(--accent-amber);">3.25x</div>
+        <span class="stat-sub">Relative Expense Index</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Source City Equivalent</span>
+        <div class="stat-value" id="displaySourceEquivalent" style="color: var(--accent-cyan);">₹47.2 LPA</div>
+        <span class="stat-sub">To Equal Target Living Standard</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Real Wealth Growth Factor</span>
+        <div class="stat-value" id="displayWealthFactor" style="color: var(--accent-emerald);">1.85x</div>
+        <span class="stat-sub">Annual Savings Expansion</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Relocation Verdict</span>
+        <div class="stat-value" id="displayVerdict" style="font-size: 1.05rem; color: #fff; padding-top: 0.4rem;">STRONG GAIN</div>
+        <span class="stat-sub">True Purchasing Power</span>
+      </div>
+    </div>
+
+    <div class="grid-layout">
+      <!-- Left Column: Fast Presets & Input Form -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>⚡ Relocation Presets</h2>
+          <span style="font-size: 0.72rem; color: var(--accent-amber); font-family: 'JetBrains Mono';">1-CLICK BENCHMARK</span>
+        </div>
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="relocationForm">
+          <div class="panel-header" style="margin-top: 1rem;">
+            <h2>📍 Source Offer (Current)</h2>
+          </div>
+          <div class="form-group">
+            <label for="sourceHubSelect">Source Tech Hub</label>
+            <select id="sourceHubSelect" class="form-control">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sourceSalaryInput">Base Salary (Local Currency)</label>
+            <input type="number" id="sourceSalaryInput" class="form-control" value="3500000" required>
+          </div>
+
+          <div class="panel-header" style="margin-top: 1.5rem;">
+            <h2>✈️ Target Offer (Relocation)</h2>
+          </div>
+          <div class="form-group">
+            <label for="targetHubSelect">Target Tech Hub</label>
+            <select id="targetHubSelect" class="form-control">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="targetSalaryInput">Target Base Salary (Local Currency)</label>
+            <input type="number" id="targetSalaryInput" class="form-control" value="180000" required>
+          </div>
+
+          <button type="submit" class="btn-action" id="btnCalculatePpp">
+            <span>⚖️</span>
+            <span>Calculate True Purchasing Power</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Right Column: Head-to-Head Comparison & Insights -->
+      <section>
+        <div class="verdict-banner" id="verdictBannerBox">
+          <h3 style="font-size: 1.1rem; color: var(--accent-emerald); margin-bottom: 0.35rem;" id="verdictHeadline">
+            ✅ Strong Purchasing Power Expansion
+          </h3>
+          <p style="font-size: 0.88rem; color: #cbd5e1;" id="verdictSummaryText">
+            The target offer provides 1.85x higher net discretionary savings even after accounting for high local rents and California state taxes.
+          </p>
+        </div>
+
+        <div class="compare-container">
+          <!-- Source Hub Card -->
+          <div class="hub-card">
+            <div class="hub-title" id="sourceCardTitle">Bengaluru</div>
+            <div class="hub-currency" id="sourceCardCurrency">Currency: INR</div>
+
+            <div class="metric-row">
+              <span style="color: var(--text-muted);">Nominal Local Salary</span>
+              <strong id="sourceNominalLocal">₹35,00,000</strong>
+            </div>
+            <div class="metric-row">
+              <span style="color: var(--text-muted);">USD Nominal Equivalent</span>
+              <span id="sourceNominalUsd">$40,698 USD</span>
+            </div>
+            <div class="metric-row">
+              <span style="color: var(--text-muted);">Post-Tax Net Income</span>
+              <span id="sourceNetUsd" style="color: var(--accent-cyan);">$31,744 USD</span>
+            </div>
+            <div class="metric-row">
+              <span style="color: var(--text-muted);">Annual Rent (1-Bed Median)</span>
+              <span id="sourceRentUsd" style="color: var(--accent-rose);">$5,040 USD</span>
+            </div>
+            <div class="metric-row" style="border: none; padding-top: 0.85rem;">
+              <strong style="color: var(--accent-emerald);">Est. Annual Discretionary Savings</strong>
+              <strong id="sourceSavingsUsd" style="color: var(--accent-emerald); font-family: 'JetBrains Mono';">$21,574 USD</strong>
+            </div>
+          </div>
+
+          <!-- Target Hub Card -->
+          <div class="hub-card">
+            <div class="hub-title" id="targetCardTitle">San Francisco (Bay Area)</div>
+            <div class="hub-currency" id="targetCardCurrency">Currency: USD</div>
+
+            <div class="metric-row">
+              <span style="color: var(--text-muted);">Nominal Local Salary</span>
+              <strong id="targetNominalLocal">$180,000</strong>
+            </div>
+            <div class="metric-row">
+              <span style="color: var(--text-muted);">USD Nominal Equivalent</span>
+              <span id="targetNominalUsd">$180,000 USD</span>
+            </div>
+            <div class="metric-row">
+              <span style="color: var(--text-muted);">Post-Tax Net Income</span>
+              <span id="targetNetUsd" style="color: var(--accent-cyan);">$112,500 USD</span>
+            </div>
+            <div class="metric-row">
+              <span style="color: var(--text-muted);">Annual Rent (1-Bed Median)</span>
+              <span id="targetRentUsd" style="color: var(--accent-rose);">$37,200 USD</span>
+            </div>
+            <div class="metric-row" style="border: none; padding-top: 0.85rem;">
+              <strong style="color: var(--accent-emerald);">Est. Annual Discretionary Savings</strong>
+              <strong id="targetSavingsUsd" style="color: var(--accent-emerald); font-family: 'JetBrains Mono';">$57,948 USD</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Breakdown Notes -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2>📋 Cost-of-Living & Tax Breakdown Notes</h2>
+          </div>
+          <ul id="breakdownNotesList" style="list-style: none; display: flex; flex-direction: column; gap: 0.65rem;">
+            <!-- Populated by JS -->
+          </ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let techHubsData = [];
+    let presetsData = [];
+
+    async function init() {
+      try {
+        const [hubsRes, preRes] = await Promise.all([
+          fetch('/api/v1/horizon/salary-ppp/hubs'),
+          fetch('/api/v1/horizon/salary-ppp/presets')
+        ]);
+
+        const hubsJson = await hubsRes.json();
+        const preJson = await preRes.json();
+
+        if (hubsJson.success) {
+          techHubsData = hubsJson.hubs;
+          populateHubDropdowns();
+        }
+
+        if (preJson.success) {
+          presetsData = preJson.presets;
+          renderPresets();
+        }
+
+        runComparison();
+      } catch (err) {
+        console.error('PPP Init Error:', err);
+      }
+    }
+
+    function populateHubDropdowns() {
+      const sourceSelect = document.getElementById('sourceHubSelect');
+      const targetSelect = document.getElementById('targetHubSelect');
+
+      const optionsHtml = techHubsData.map(h => `
+        <option value="${h.code}">${h.city} (${h.country}) - ${h.currency}</option>
+      `).join('');
+
+      sourceSelect.innerHTML = optionsHtml;
+      targetSelect.innerHTML = optionsHtml;
+
+      sourceSelect.value = 'BENGALURU';
+      targetSelect.value = 'SAN_FRANCISCO';
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+        </button>
+      `).join('');
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.label));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('sourceHubSelect').value = p.sourceHub;
+      document.getElementById('sourceSalaryInput').value = p.sourceSalaryLocal;
+      document.getElementById('targetHubSelect').value = p.targetHub;
+      document.getElementById('targetSalaryInput').value = p.targetSalaryLocal;
+
+      runComparison();
+    }
+
+    async function runComparison() {
+      const sourceHubCode = document.getElementById('sourceHubSelect').value;
+      const sourceSalaryLocal = parseFloat(document.getElementById('sourceSalaryInput').value);
+      const targetHubCode = document.getElementById('targetHubSelect').value;
+      const targetSalaryLocal = parseFloat(document.getElementById('targetSalaryInput').value);
+
+      try {
+        const res = await fetch('/api/v1/horizon/salary-ppp/compare', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sourceHubCode,
+            sourceSalaryLocal,
+            targetHubCode,
+            targetSalaryLocal
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          renderComparisonResult(data.comparison);
+        }
+      } catch (err) {
+        console.error('Comparison error:', err);
+      }
+    }
+
+    function renderComparisonResult(cmp) {
+      document.getElementById('displayColMultiplier').innerText = `${cmp.pppComparison.costOfLivingRatio}x`;
+      document.getElementById('displaySourceEquivalent').innerText = `${cmp.source.currency} ${cmp.pppComparison.targetEquivalentInSourceLocal.toLocaleString()}`;
+      document.getElementById('displayWealthFactor').innerText = `${cmp.pppComparison.realWealthGrowthFactor}x`;
+      document.getElementById('displayVerdict').innerText = cmp.pppComparison.verdict;
+
+      // Source card
+      document.getElementById('sourceCardTitle').innerText = cmp.source.city;
+      document.getElementById('sourceCardCurrency').innerText = `Currency: ${cmp.source.currency}`;
+      document.getElementById('sourceNominalLocal').innerText = `${cmp.source.currency} ${cmp.source.salaryLocal.toLocaleString()}`;
+      document.getElementById('sourceNominalUsd').innerText = `$${cmp.source.usdNominal.toLocaleString()} USD`;
+      document.getElementById('sourceNetUsd').innerText = `$${cmp.source.netAnnualUsd.toLocaleString()} USD`;
+      document.getElementById('sourceRentUsd').innerText = `$${cmp.source.annualRentUsd.toLocaleString()} USD`;
+      document.getElementById('sourceSavingsUsd').innerText = `$${cmp.source.estimatedAnnualSavingsUsd.toLocaleString()} USD`;
+
+      // Target card
+      document.getElementById('targetCardTitle').innerText = cmp.target.city;
+      document.getElementById('targetCardCurrency').innerText = `Currency: ${cmp.target.currency}`;
+      document.getElementById('targetNominalLocal').innerText = `${cmp.target.currency} ${cmp.target.salaryLocal.toLocaleString()}`;
+      document.getElementById('targetNominalUsd').innerText = `$${cmp.target.usdNominal.toLocaleString()} USD`;
+      document.getElementById('targetNetUsd').innerText = `$${cmp.target.netAnnualUsd.toLocaleString()} USD`;
+      document.getElementById('targetRentUsd').innerText = `$${cmp.target.annualRentUsd.toLocaleString()} USD`;
+      document.getElementById('targetSavingsUsd').innerText = `$${cmp.target.estimatedAnnualSavingsUsd.toLocaleString()} USD`;
+
+      // Verdict Banner
+      document.getElementById('verdictHeadline').innerText = `⚖️ ${cmp.pppComparison.verdict}`;
+      document.getElementById('verdictSummaryText').innerText =
+        `Moving to ${cmp.target.city} delivers a ${cmp.pppComparison.realWealthGrowthFactor}x real savings acceleration compared to ${cmp.source.city}.`;
+
+      // Notes
+      const notesUl = document.getElementById('breakdownNotesList');
+      notesUl.innerHTML = cmp.pppComparison.breakdownNotes.map(n => `
+        <li style="padding: 0.6rem 0.85rem; background: rgba(30, 41, 59, 0.4); border-left: 3px solid var(--accent-amber); border-radius: 4px; font-size: 0.85rem; color: #cbd5e1;">
+          ${n}
+        </li>
+      `).join('');
+    }
+
+    document.getElementById('relocationForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      runComparison();
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

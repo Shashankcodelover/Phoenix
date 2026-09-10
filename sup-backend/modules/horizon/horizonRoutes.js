@@ -473,5 +473,26 @@ router.post('/tpo/triage', (req, res) => {
   }
 });
 
+// Feature 58: Salary Purchasing Power & Relocation Comparator (PPP Engine)
+const { salaryPppRelocationEngine } = require('./salaryPppRelocationEngine');
+
+router.get('/salary-ppp/hubs', (req, res) => {
+  res.json({ success: true, hubs: salaryPppRelocationEngine.getTechHubs() });
+});
+
+router.get('/salary-ppp/presets', (req, res) => {
+  res.json({ success: true, presets: salaryPppRelocationEngine.getPresets() });
+});
+
+router.post('/salary-ppp/compare', (req, res) => {
+  try {
+    const comparison = salaryPppRelocationEngine.compareRelocationOffer(req.body);
+    res.json({ success: true, comparison });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;
+
 
