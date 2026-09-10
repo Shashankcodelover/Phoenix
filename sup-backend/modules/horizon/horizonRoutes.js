@@ -268,6 +268,7 @@ router.post('/research/generate-statement', (req, res) => {
 
 // Feature 50: Study Abroad & Global MS/PhD Admissions Engine (Public/Optional Auth)
 const { studyAbroadEngine } = require('./studyAbroadEngine');
+const competitiveExamEngine = require('./competitiveExamPlannerEngine');
 
 router.get('/study-abroad/universities', (req, res) => {
   res.json(studyAbroadEngine.getUniversities());
@@ -281,6 +282,33 @@ router.post('/study-abroad/evaluate', (req, res) => {
   try {
     const result = studyAbroadEngine.evaluate(req.body);
     res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 51: Competitive Exam Sprint Planner & Mock Proctor
+router.get('/exam-planner/exams', (req, res) => {
+  res.json({ success: true, exams: competitiveExamEngine.getExams() });
+});
+
+router.get('/exam-planner/presets', (req, res) => {
+  res.json({ success: true, presets: competitiveExamEngine.getPresets() });
+});
+
+router.post('/exam-planner/sprint-plan', (req, res) => {
+  try {
+    const plan = competitiveExamEngine.generateSprintPlan(req.body);
+    res.json({ success: true, plan });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/exam-planner/evaluate-mock', (req, res) => {
+  try {
+    const diagnostic = competitiveExamEngine.evaluateMockPerformance(req.body);
+    res.json({ success: true, diagnostic });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competitive Exam Sprint Planner & Mock Proctor // Phoenix Horizon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #38bdf8;
+      --accent-purple: #a855f7;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #172554 0%, var(--bg-dark) 55%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #04121e;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 2.2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(to right, #ffffff, var(--accent-cyan), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 950px;
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Exam Selector Tabs */
+    .exam-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      background: rgba(30, 41, 59, 0.5);
+      padding: 0.35rem;
+      border-radius: 10px;
+    }
+    .exam-tab {
+      flex: 1;
+      padding: 0.65rem 0.5rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .exam-tab.active {
+      background: var(--accent-cyan);
+      color: #04121e;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.35);
+    }
+
+    /* Presets */
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: var(--accent-cyan);
+    }
+    .preset-chip.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+    }
+    .preset-sub {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent-cyan), #0284c7);
+      border: none;
+      border-radius: 8px;
+      color: #04121e;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+    }
+
+    /* Scoreboard */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .stat-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-card.hero-stat {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Phase Timeline Cards */
+    .phases-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .phase-card {
+      background: rgba(30, 41, 59, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.4rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .phase-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+    }
+    .phase-1 { background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.4); }
+    .phase-2 { background: rgba(168, 85, 247, 0.2); color: var(--accent-purple); border: 1px solid rgba(168, 85, 247, 0.4); }
+    .phase-3 { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.4); }
+
+    .phase-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      line-height: 1.35;
+    }
+    .phase-meta {
+      font-size: 0.8rem;
+      color: var(--accent-amber);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.75rem;
+    }
+    .phase-desc {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+      margin-bottom: 0.75rem;
+    }
+    .phase-milestone {
+      background: rgba(15, 23, 42, 0.6);
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      border-left: 3px solid var(--accent-cyan);
+    }
+
+    /* Subjects Table */
+    .subjects-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .table-responsive {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+    th {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #e2e8f0;
+    }
+    .priority-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .badge-urgent { background: rgba(244, 63, 94, 0.25); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.5); }
+    .badge-critical { background: rgba(245, 158, 11, 0.2); color: #fde68a; }
+    .badge-high { background: rgba(56, 189, 248, 0.2); color: #bae6fd; }
+    .badge-mod { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+
+    /* Diagnostic Box */
+    .diagnostic-box {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+    .diag-item {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout { grid-template-columns: 1fr; }
+      .scoreboard { grid-template-columns: 1fr 1fr; }
+      .phases-container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>⚡</span>
+      <span>PHOENIX HORIZON // SPRINT PLANNER</span>
+      <span class="nav-badge">Feature 51</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="alumni-connector.html">Alumni Network</a>
+      <a href="research-matcher.html">Research Labs</a>
+      <a href="study-abroad.html">Study Abroad</a>
+      <a href="exam-planner.html" class="active">Sprint Planner</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Competitive Exam Sprint Planner & Mock Proctor</h1>
+      <p>
+        Generates adaptive milestone sprint schedules for high-stakes examinations (GATE CS, CAT MBA, GRE General). Features interactive mock error diagnostics, negative-marking leakage mitigation, and empirical percentile projection.
+      </p>
+    </section>
+
+    <div class="grid-layout">
+      <!-- Left Column: Controls, Presets & Mock Proctor -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>🎯 Target Exam</h2>
+          <span style="font-size: 0.75rem; color: var(--accent-cyan); font-family: 'JetBrains Mono';">EXAM ENGINE</span>
+        </div>
+
+        <div class="exam-tabs" id="examTabs">
+          <button type="button" class="exam-tab active" onclick="selectExam('GATE_CS')">GATE CS</button>
+          <button type="button" class="exam-tab" onclick="selectExam('CAT_MBA')">CAT MBA</button>
+          <button type="button" class="exam-tab" onclick="selectExam('GRE_GEN')">GRE Gen</button>
+        </div>
+
+        <div class="panel-header" style="margin-top: 1rem;">
+          <h2 style="font-size: 1rem;">⚡ Fast Presets</h2>
+          <span style="font-size: 0.72rem; color: var(--text-muted);">1-CLICK LOAD</span>
+        </div>
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="sprintForm">
+          <div class="panel-header" style="margin-top: 1rem;">
+            <h2 style="font-size: 1rem;">📅 Sprint Configuration</h2>
+          </div>
+
+          <div class="form-group">
+            <label for="candidateName">Candidate Name</label>
+            <input type="text" id="candidateName" class="form-control" value="Ananya Sharma" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="targetDays">Days Remaining</label>
+              <input type="number" id="targetDays" class="form-control" min="14" max="365" value="120" required>
+            </div>
+            <div class="form-group">
+              <label for="dailyHours">Daily Study Hours</label>
+              <input type="number" id="dailyHours" class="form-control" step="0.5" min="1" max="14" value="5.0" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="weakFocusArea">Flagged Weak Areas</label>
+            <input type="text" id="weakFocusArea" class="form-control" value="Computer Networks, Operating Systems" placeholder="e.g. Computer Networks, DILR">
+          </div>
+
+          <div class="panel-header" style="margin-top: 1.5rem;">
+            <h2 style="font-size: 1rem;">📝 Mock Test Diagnostic Simulator</h2>
+            <span style="font-size: 0.72rem; color: var(--accent-rose);">PROCTOR AI</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="mockAttempted">Total Attempted</label>
+              <input type="number" id="mockAttempted" class="form-control" min="0" max="100" value="52">
+            </div>
+            <div class="form-group">
+              <label for="mockCorrect">Correct Answers</label>
+              <input type="number" id="mockCorrect" class="form-control" min="0" max="100" value="38">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="mockIncorrect">Incorrect / Negative</label>
+              <input type="number" id="mockIncorrect" class="form-control" min="0" max="100" value="14">
+            </div>
+            <div class="form-group">
+              <label for="mockUnattempted">Unattempted</label>
+              <input type="number" id="mockUnattempted" class="form-control" min="0" max="100" value="13">
+            </div>
+          </div>
+
+          <button type="submit" class="btn-action" id="btnGenerateSprint">
+            <span>⚡</span>
+            <span>Compute Sprint Plan & Calibrate Score</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Right Column: HUD Scoreboard, Roadmap & Diagnostics -->
+      <section class="results-column">
+        <!-- HUD Scoreboard -->
+        <div class="scoreboard">
+          <div class="stat-card hero-stat">
+            <span class="stat-label">Mock Raw Score</span>
+            <div class="stat-value" id="displayRawScore" style="color: var(--accent-cyan);">--</div>
+            <span class="stat-sub" id="displayMaxScore">out of 100 max</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Accuracy Hit-Rate</span>
+            <div class="stat-value" id="displayAccuracy" style="color: var(--accent-emerald);">--%</div>
+            <span class="stat-sub" id="displayAttemptCount">-- / -- Attempted</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Negative Leakage</span>
+            <div class="stat-value" id="displayNegativeLoss" style="color: var(--accent-rose);">---</div>
+            <span class="stat-sub">Penalty Marks Incurred</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Projected Percentile</span>
+            <div class="stat-value" id="displayPercentile" style="color: var(--accent-amber);">--</div>
+            <span class="stat-sub" id="displayBandRank">Rank Prediction</span>
+          </div>
+        </div>
+
+        <!-- 3-Phase Roadmap -->
+        <div class="panel-header" style="margin-bottom: 1rem;">
+          <h2>📅 3-Phase Adaptive Sprint Roadmap</h2>
+          <span id="displayTotalHours" style="font-size: 0.82rem; color: var(--accent-cyan); font-family: 'JetBrains Mono';">Total Study Budget: 450 hrs</span>
+        </div>
+
+        <div class="phases-container" id="phasesGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Subjects Breakdown Table -->
+        <div class="subjects-panel">
+          <div class="panel-header" style="margin-bottom: 0.75rem;">
+            <h2>📚 Subject Weightage & Study Hours Allocation</h2>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">WEIGHTED BY DIFFICULTY</span>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Subject / Module</th>
+                  <th>Weight / Avg Yield</th>
+                  <th>Strategic Priority</th>
+                  <th>Allocated Study Hours</th>
+                </tr>
+              </thead>
+              <tbody id="subjectsTableBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Proctor Diagnostic Box -->
+        <div class="diagnostic-box">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: var(--accent-amber); font-weight: 700; font-size: 1rem;">
+            <span>🛡️</span>
+            <span>Mock Proctor Tactical Diagnostic</span>
+          </div>
+          <div id="diagnosticInsight" style="font-size: 0.92rem; color: #f8fafc; line-height: 1.5; margin-bottom: 0.75rem; font-weight: 500;">
+            <!-- Populated by JS -->
+          </div>
+          <div id="proctorRecommendationsList">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let currentExamId = 'GATE_CS';
+    let presetsData = [];
+
+    async function init() {
+      try {
+        const presetsRes = await fetch('/api/v1/horizon/exam-planner/presets');
+        const presetsJson = await presetsRes.json();
+        if (presetsJson.success) {
+          presetsData = presetsJson.presets;
+          renderPresets();
+        }
+        executeFullAnalysis();
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+          <span class="preset-sub">${p.studentName} • ${p.targetDateDays} Days • ${p.dailyHours} hrs/day</span>
+        </button>
+      `).join('');
+    }
+
+    function selectExam(examId) {
+      currentExamId = examId;
+      document.querySelectorAll('.exam-tab').forEach(tab => tab.classList.remove('active'));
+      const activeTab = Array.from(document.querySelectorAll('.exam-tab')).find(tab => tab.innerText.includes(examId.split('_')[0]));
+      if (activeTab) activeTab.classList.add('active');
+
+      if (examId === 'CAT_MBA') {
+        document.getElementById('mockAttempted').value = 45;
+        document.getElementById('mockCorrect').value = 34;
+        document.getElementById('mockIncorrect').value = 11;
+        document.getElementById('mockUnattempted').value = 21;
+        document.getElementById('weakFocusArea').value = 'DILR - Matrices, Arrangements';
+      } else if (examId === 'GRE_GEN') {
+        document.getElementById('mockAttempted').value = 54;
+        document.getElementById('mockCorrect').value = 42;
+        document.getElementById('mockIncorrect').value = 12;
+        document.getElementById('mockUnattempted').value = 0;
+        document.getElementById('weakFocusArea').value = 'Verbal - Text Completion';
+      } else {
+        document.getElementById('mockAttempted').value = 52;
+        document.getElementById('mockCorrect').value = 38;
+        document.getElementById('mockIncorrect').value = 14;
+        document.getElementById('mockUnattempted').value = 13;
+        document.getElementById('weakFocusArea').value = 'Computer Networks, Operating Systems';
+      }
+
+      executeFullAnalysis();
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.label));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      currentExamId = p.examId;
+      document.querySelectorAll('.exam-tab').forEach(tab => tab.classList.remove('active'));
+      const matchingTab = Array.from(document.querySelectorAll('.exam-tab')).find(tab => tab.innerText.includes(p.examId.split('_')[0]));
+      if (matchingTab) matchingTab.classList.add('active');
+
+      document.getElementById('candidateName').value = p.studentName;
+      document.getElementById('targetDays').value = p.targetDateDays;
+      document.getElementById('dailyHours').value = p.dailyHours;
+      document.getElementById('weakFocusArea').value = p.weakAreas.join(', ');
+
+      if (p.mockAttempt) {
+        document.getElementById('mockAttempted').value = p.mockAttempt.attempted;
+        document.getElementById('mockCorrect').value = p.mockAttempt.correct;
+        document.getElementById('mockIncorrect').value = p.mockAttempt.incorrect;
+        document.getElementById('mockUnattempted').value = p.mockAttempt.unattempted;
+      }
+
+      executeFullAnalysis();
+    }
+
+    async function executeFullAnalysis() {
+      const targetDays = parseInt(document.getElementById('targetDays').value, 10);
+      const dailyHours = parseFloat(document.getElementById('dailyHours').value);
+      const candidateName = document.getElementById('candidateName').value;
+      const weakAreas = document.getElementById('weakFocusArea').value
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const attempted = parseInt(document.getElementById('mockAttempted').value, 10);
+      const correct = parseInt(document.getElementById('mockCorrect').value, 10);
+      const incorrect = parseInt(document.getElementById('mockIncorrect').value, 10);
+      const unattempted = parseInt(document.getElementById('mockUnattempted').value, 10);
+
+      try {
+        const [planRes, mockRes] = await Promise.all([
+          fetch('/api/v1/horizon/exam-planner/sprint-plan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              examId: currentExamId,
+              studentName: candidateName,
+              targetDays,
+              dailyHours,
+              weakAreas
+            })
+          }),
+          fetch('/api/v1/horizon/exam-planner/evaluate-mock', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              examId: currentExamId,
+              attempted,
+              correct,
+              incorrect,
+              unattempted
+            })
+          })
+        ]);
+
+        const planJson = await planRes.json();
+        const mockJson = await mockRes.json();
+
+        if (planJson.success && mockJson.success) {
+          renderSprintAndDiagnostic(planJson.plan, mockJson.diagnostic);
+        }
+      } catch (err) {
+        console.error('Error executing exam analysis:', err);
+      }
+    }
+
+    function renderSprintAndDiagnostic(plan, diag) {
+      // Scoreboard
+      document.getElementById('displayRawScore').innerText = diag.rawScore;
+      document.getElementById('displayMaxScore').innerText = 'out of ' + diag.maxScore + ' max';
+      document.getElementById('displayAccuracy').innerText = diag.accuracyPct + '%';
+      document.getElementById('displayAttemptCount').innerText = diag.correct + ' correct / ' + diag.attempted + ' attempted';
+      
+      const negLossEl = document.getElementById('displayNegativeLoss');
+      if (diag.negativePenaltyMarks > 0) {
+        negLossEl.innerText = '-' + diag.negativePenaltyMarks;
+        negLossEl.style.color = 'var(--accent-rose)';
+      } else {
+        negLossEl.innerText = '0.0 (None)';
+        negLossEl.style.color = 'var(--accent-emerald)';
+      }
+
+      document.getElementById('displayPercentile').innerText = diag.estimatedPercentile + '%ile';
+      document.getElementById('displayBandRank').innerText = diag.predictedRankOrBand;
+
+      // Roadmap Phases
+      document.getElementById('displayTotalHours').innerText = 'Total Study Budget: ' + plan.totalStudyHours + ' hrs (' + plan.totalSprintDays + ' days)';
+      const phasesGrid = document.getElementById('phasesGrid');
+      phasesGrid.innerHTML = plan.phases.map(ph => `
+        <div class="phase-card">
+          <div>
+            <span class="phase-badge phase-${ph.phaseNumber}">Phase ${ph.phaseNumber}</span>
+            <div class="phase-title">${ph.title}</div>
+            <div class="phase-meta">⏱️ ${ph.durationDays} Days • ${ph.allocatedHours} Hours</div>
+            <div class="phase-desc">${ph.focus}</div>
+          </div>
+          <div>
+            <div class="phase-milestone"><strong>🎯 Milestone:</strong> ${ph.keyMilestone}</div>
+            <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 0.4rem;">Cadence: ${ph.weeklyMockCadence}</div>
+          </div>
+        </div>
+      `).join('');
+
+      // Subjects Table
+      const subjectsTbody = document.getElementById('subjectsTableBody');
+      subjectsTbody.innerHTML = plan.subjects.map(s => {
+        let badgeClass = 'badge-mod';
+        if (s.priority.includes('URGENT')) badgeClass = 'badge-urgent';
+        else if (s.priority.includes('Critical')) badgeClass = 'badge-critical';
+        else if (s.priority.includes('High')) badgeClass = 'badge-high';
+
+        return `
+          <tr>
+            <td>
+              <strong>${s.subject}</strong>
+              ${s.isWeakArea ? '<span style="color: #f43f5e; font-size: 0.72rem; margin-left: 0.4rem;">⚡ Focus Area</span>' : ''}
+            </td>
+            <td>${s.avgMarksOrQuestions} marks / questions</td>
+            <td><span class="priority-badge ${badgeClass}">${s.priority}</span></td>
+            <td><strong style="font-family: 'JetBrains Mono'; color: var(--accent-cyan);">${s.recommendedHours} hrs</strong></td>
+          </tr>
+        `;
+      }).join('');
+
+      // Diagnostic
+      document.getElementById('diagnosticInsight').innerText = diag.tacticalInsight;
+      const recList = document.getElementById('proctorRecommendationsList');
+      recList.innerHTML = plan.proctorRecommendations.map(r => `
+        <div class="diag-item">
+          <span>✔️</span>
+          <span>${r}</span>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('sprintForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      executeFullAnalysis();
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
