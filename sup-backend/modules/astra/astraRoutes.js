@@ -27,6 +27,7 @@ const {
   getVisionBenchmarks 
 } = require('./visionProctorEngine');
 const distributedChaosEngine = require('./distributedChaosEngine');
+const systemDesignSizerEngine = require('./systemDesignSizerEngine');
 
 router.use(protectOptional);
 
@@ -310,6 +311,39 @@ router.post('/chaos-simulate', (req, res) => {
     res.json({
       success: true,
       data: simulationResult
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/system-design-archetypes
+ * Returns standard system design architectures (YouTube, Twitter, Uber, Stripe)
+ */
+router.get('/system-design-archetypes', (req, res) => {
+  try {
+    const archetypes = systemDesignSizerEngine.getArchetypes();
+    res.json({
+      success: true,
+      standard: 'Astra Automated System Design Whiteboard Topology & Hardware Capacity Sizer',
+      archetypes
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/system-design-capacity-calc
+ * Computes exact quantitative back-of-the-envelope equations
+ */
+router.post('/system-design-capacity-calc', (req, res) => {
+  try {
+    const capacityReport = systemDesignSizerEngine.calculateCapacity(req.body || {});
+    res.json({
+      success: true,
+      data: capacityReport
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

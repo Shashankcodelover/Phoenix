@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra System Design Whiteboard Topology & Hardware Capacity Sizer // Phoenix Cognitive War Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-blue: #60a5fa;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.6), rgba(3, 7, 18, 0.95));
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      background: rgba(3, 7, 18, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 1rem 2rem;
+    }
+
+    .header-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      font-size: 1.75rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-emerald);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+      width: 100%;
+    }
+
+    /* Scoreboard HUD */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-emerald), var(--accent-cyan));
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-val {
+      font-size: 1.55rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+    }
+
+    .stat-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.75rem;
+    }
+
+    @media (max-width: 1150px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.75rem;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .panel-title-pill {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* Interactive Topology Canvas */
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      background: rgba(3, 7, 18, 0.7);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+    }
+
+    #whiteboardCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .canvas-hud {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.75);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Archetype Grid */
+    .archetype-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .archetype-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .archetype-btn:hover {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: var(--accent-emerald);
+      transform: translateY(-2px);
+    }
+
+    .archetype-btn.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--accent-emerald);
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.2);
+    }
+
+    .archetype-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .archetype-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Sliders */
+    .control-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.82rem;
+    }
+
+    .control-label {
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .control-label span {
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+    }
+
+    .slider {
+      flex: 1;
+      max-width: 200px;
+      accent-color: var(--accent-emerald);
+    }
+
+    /* Node Component Scales */
+    .components-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .comp-card {
+      background: rgba(3, 7, 18, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .comp-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .comp-scale {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      color: #e2e8f0;
+    }
+
+    .comp-role {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Bottleneck Cards */
+    .bottleneck-card {
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      border-radius: 8px;
+      padding: 0.85rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .bottleneck-title {
+      color: var(--accent-rose);
+      font-weight: 700;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .bottleneck-rec {
+      font-size: 0.75rem;
+      color: var(--accent-emerald);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Cost & Bar Raiser Box */
+    .cost-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(56, 189, 248, 0.05));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 10px;
+      padding: 1.1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cost-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--accent-emerald);
+    }
+
+    .rubric-box {
+      background: rgba(3, 7, 18, 0.6);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 8px;
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <div class="brand">
+        <div class="brand-icon">📐</div>
+        <div>
+          <div class="brand-title">Astra Cognitive War Room</div>
+          <div class="brand-subtitle">Feature 68: Automated Whiteboard Topology & Hardware Sizer</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="career-command-center.html">Command Center</a>
+        <a href="astra-prosody-analyzer.html">Prosody</a>
+        <a href="code-playback-tracer.html">AST Playback</a>
+        <a href="multi-agent-panel.html">3-Agent Panel</a>
+        <a href="latency-flamegraph-sandbox.html">Flamegraph</a>
+        <a href="quantum-career-matrix.html">Arbitrage</a>
+        <a href="astra-vision-proctor.html">Vision Proctor</a>
+        <a href="distributed-chaos-solver.html">Distributed Chaos</a>
+        <a href="system-design-sizer.html" class="active" style="background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(56,189,248,0.2)); color: #10b981; font-weight: 700;">📐 Architecture Sizer</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Scoreboard HUD -->
+    <section class="scoreboard">
+      <div class="stat-card">
+        <span class="stat-label">Peak Request Throughput</span>
+        <div class="stat-val" id="hudPeakQps">972,222 <span style="font-size: 0.85rem; color: var(--text-muted);">QPS</span></div>
+        <span class="stat-sub" id="hudAvgQps">Avg: 347,222 QPS (2.8x Peak Headroom)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Total Egress Bandwidth</span>
+        <div class="stat-val" id="hudEgressBandwidth" style="color: var(--accent-cyan);">40,283 <span style="font-size: 0.85rem; color: var(--text-muted);">Gbps</span></div>
+        <span class="stat-sub" id="hudIngressBandwidth">Ingress: 69.4 Gbps</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Pareto L2 Cache (80/20)</span>
+        <div class="stat-val" id="hudRamCache">82,980 <span style="font-size: 0.85rem; color: var(--text-muted);">TB</span></div>
+        <span class="stat-sub" id="hudRedisNodes">1,596 Redis Replica Nodes</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">5-Year S3 Storage Tier</span>
+        <div class="stat-val" id="hudStorage">448,124 <span style="font-size: 0.85rem; color: var(--text-muted);">PB</span></div>
+        <span class="stat-sub" id="hudStorageReplication">3x Replication + 20% Metadata</span>
+      </div>
+    </section>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+
+      <!-- Left Column: Interactive Whiteboard Architecture Canvas -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🌐</span> Multi-Tier Distributed Architecture Topology
+          </div>
+          <span class="panel-title-pill" id="activeArchetypeBadge">ARCHETYPE: YOUTUBE MEDIA PIPELINE</span>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-container">
+          <canvas id="whiteboardCanvas"></canvas>
+          <div class="canvas-hud">
+            <span id="canvasFlowRate">⚡ LIVE INGESTION: 972K QPS</span>
+            <span id="canvasScaleStatus">CLUSTERS AUTO-SCALED & OPTIMIZED</span>
+          </div>
+        </div>
+
+        <!-- Component Scales Breakdown -->
+        <div>
+          <label style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; margin-bottom: 0.5rem; display: block;">
+            Dynamically Sized Infrastructure Nodes
+          </label>
+          <div class="components-grid" id="componentsContainer">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Monthly AWS Bill Estimation -->
+        <div class="cost-card">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">
+              Estimated Monthly Cloud Infrastructure Cost (AWS / GCP)
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem;">
+              Includes EC2 compute, ElastiCache Redis, RDS Aurora sharding, S3 Glacier, and Egress transit
+            </div>
+          </div>
+          <div class="cost-num" id="costDisplay">$18,450,200 /mo</div>
+        </div>
+      </section>
+
+      <!-- Right Column: Capacity Controls & Bar Raiser Rubric -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🎛️</span> Quantitative Sizing Controls & Chokepoints
+          </div>
+          <span class="panel-title-pill" id="barRaiserStatusBadge">VERDICT: STRONG PASS</span>
+        </div>
+
+        <!-- Preset Archetypes -->
+        <div>
+          <label style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; margin-bottom: 0.4rem; display: block;">
+            Staff System Design Archetypes
+          </label>
+          <div class="archetype-grid" id="archetypeButtons">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Sliders -->
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(3, 7, 18, 0.4); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.06);">
+          <div class="control-row">
+            <div class="control-label">
+              <strong>Daily Active Users (DAU)</strong>
+              <span id="dauDisplay">2,000,000,000 Users</span>
+            </div>
+            <input type="range" id="dauSlider" min="1" max="2500" value="2000" class="slider" oninput="recalcCapacity()">
+          </div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <strong>Read Ratio vs Write Ratio</strong>
+              <span id="ratioDisplay">99% Reads / 1% Writes</span>
+            </div>
+            <input type="range" id="ratioSlider" min="50" max="99" value="99" class="slider" oninput="recalcCapacity()">
+          </div>
+
+          <div class="control-row">
+            <div class="control-label">
+              <strong>Average Read Payload</strong>
+              <span id="payloadDisplay">15,000 KB (15 MB)</span>
+            </div>
+            <input type="range" id="payloadSlider" min="2" max="50000" value="15000" class="slider" oninput="recalcCapacity()">
+          </div>
+        </div>
+
+        <!-- Bottlenecks & Architecture Chokepoints -->
+        <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+          <label style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; display: block;">
+            Architecture Chokepoints & Staff Mitigations
+          </label>
+          <div id="bottlenecksContainer" style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Staff Bar Raiser Rubric -->
+        <div class="rubric-box">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--accent-purple); font-weight: 700; text-transform: uppercase;">
+            Staff Bar Raiser Rubric Evaluation
+          </div>
+          <div style="color: #cbd5e1; font-size: 0.76rem; line-height: 1.4;" id="rubricEvaluation">
+            Rigorous mathematical justification for memory, network egress, and disk IOPS bounds. Demonstrates Staff-level trade-off articulation between cold storage tiering and hot RAM cache sizing.
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    let archetypes = [];
+    let currentArchetype = null;
+    let animFrame = null;
+
+    // Canvas setup
+    const canvas = document.getElementById('whiteboardCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // Topology Nodes for Canvas
+    const archNodes = [
+      { id: 'clients', name: 'Mobile / Web Clients', x: 70, y: 70, color: '#38bdf8' },
+      { id: 'cdn', name: 'Cloudflare / Edge CDN', x: 230, y: 70, color: '#60a5fa' },
+      { id: 'lb', name: 'Envoy L7 Load Balancer', x: 390, y: 70, color: '#818cf8' },
+      { id: 'gw', name: 'Stateless API Gateway', x: 550, y: 70, color: '#a855f7' },
+      { id: 'cache', name: 'Redis In-Memory L2', x: 230, y: 240, color: '#10b981' },
+      { id: 'kafka', name: 'Kafka Event Mesh', x: 390, y: 240, color: '#f59e0b' },
+      { id: 'db', name: 'Sharded DB Cluster', x: 550, y: 240, color: '#f43f5e' },
+      { id: 's3', name: 'AWS S3 Cold Storage', x: 710, y: 240, color: '#ec4899' }
+    ];
+
+    const flows = [
+      { from: 'clients', to: 'cdn' },
+      { from: 'cdn', to: 'lb' },
+      { from: 'lb', to: 'gw' },
+      { from: 'gw', to: 'cache' },
+      { from: 'gw', to: 'kafka' },
+      { from: 'kafka', to: 'db' },
+      { from: 'gw', to: 's3' }
+    ];
+
+    let flowParticles = [];
+
+    function renderWhiteboard() {
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Scale positions based on canvas width
+      const scaleX = w / 820;
+      const scaleY = h / 340;
+
+      // Draw connection wires
+      flows.forEach(flow => {
+        const n1 = archNodes.find(n => n.id === flow.from);
+        const n2 = archNodes.find(n => n.id === flow.to);
+        if (n1 && n2) {
+          ctx.beginPath();
+          ctx.moveTo(n1.x * scaleX, n1.y * scaleY);
+          ctx.lineTo(n2.x * scaleX, n2.y * scaleY);
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+      });
+
+      // Spawn traffic particles
+      if (Math.random() < 0.25) {
+        const flow = flows[Math.floor(Math.random() * flows.length)];
+        const n1 = archNodes.find(n => n.id === flow.from);
+        const n2 = archNodes.find(n => n.id === flow.to);
+        if (n1 && n2) {
+          flowParticles.push({
+            n1, n2, progress: 0, speed: 0.015 + Math.random() * 0.02
+          });
+        }
+      }
+
+      // Draw particles
+      for (let i = flowParticles.length - 1; i >= 0; i--) {
+        const p = flowParticles[i];
+        p.progress += p.speed;
+        if (p.progress >= 1) {
+          flowParticles.splice(i, 1);
+          continue;
+        }
+
+        const px = (p.n1.x + (p.n2.x - p.n1.x) * p.progress) * scaleX;
+        const py = (p.n1.y + (p.n2.y - p.n1.y) * p.progress) * scaleY;
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(px, py, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Draw Nodes
+      archNodes.forEach(node => {
+        const nx = node.x * scaleX;
+        const ny = node.y * scaleY;
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+        ctx.strokeStyle = node.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(nx - 55, ny - 28, 110, 56, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 9.5px "Plus Jakarta Sans"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.name.substring(0, 15), nx, ny - 6);
+
+        ctx.font = '8px "JetBrains Mono"';
+        ctx.fillStyle = node.color;
+        ctx.fillText(node.id.toUpperCase(), nx, ny + 10);
+      });
+
+      animFrame = requestAnimationFrame(renderWhiteboard);
+    }
+
+    async function loadArchetypes() {
+      try {
+        const res = await fetch('/api/v1/astra/system-design-archetypes');
+        const data = await res.json();
+        if (data.success && data.archetypes) {
+          archetypes = data.archetypes;
+          renderArchetypeButtons();
+          selectArchetype(archetypes[0].id);
+        }
+      } catch (err) {
+        console.error('Failed to load archetypes:', err);
+      }
+    }
+
+    function renderArchetypeButtons() {
+      const container = document.getElementById('archetypeButtons');
+      container.innerHTML = '';
+      archetypes.forEach((arch, idx) => {
+        const btn = document.createElement('div');
+        btn.className = `archetype-btn ${idx === 0 ? 'active' : ''}`;
+        btn.id = `arch-btn-${arch.id}`;
+        btn.onclick = () => selectArchetype(arch.id);
+        btn.innerHTML = `
+          <div class="archetype-title">${arch.title}</div>
+          <div class="archetype-meta">${(arch.dau / 1000000).toFixed(0)}M DAU • ${arch.readRatio}/${arch.writeRatio} R/W</div>
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    function selectArchetype(id) {
+      document.querySelectorAll('.archetype-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`arch-btn-${id}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      currentArchetype = archetypes.find(a => a.id === id);
+      if (!currentArchetype) return;
+
+      document.getElementById('activeArchetypeBadge').innerText = `ARCHETYPE: ${currentArchetype.title.toUpperCase()}`;
+      document.getElementById('dauSlider').value = Math.round(currentArchetype.dau / 1000000);
+      document.getElementById('ratioSlider').value = currentArchetype.readRatio;
+      document.getElementById('payloadSlider').value = currentArchetype.avgPayloadKb;
+
+      recalcCapacity();
+    }
+
+    async function recalcCapacity() {
+      const dauMillions = parseInt(document.getElementById('dauSlider').value);
+      const readRatio = parseInt(document.getElementById('ratioSlider').value);
+      const payloadKb = parseInt(document.getElementById('payloadSlider').value);
+
+      document.getElementById('dauDisplay').innerText = `${dauMillions.toLocaleString()} Million DAU`;
+      document.getElementById('ratioDisplay').innerText = `${readRatio}% Reads / ${100 - readRatio}% Writes`;
+      document.getElementById('payloadDisplay').innerText = `${payloadKb.toLocaleString()} KB`;
+
+      const payload = {
+        dau: dauMillions * 1000000,
+        readRatio: readRatio,
+        writeRatio: 100 - readRatio,
+        avgPayloadKb: payloadKb,
+        writePayloadKb: payloadKb * 3,
+        retentionDays: currentArchetype ? currentArchetype.retentionDays : 1825,
+        replicationFactor: currentArchetype ? currentArchetype.replicationFactor : 3
+      };
+
+      try {
+        const res = await fetch('/api/v1/astra/system-design-capacity-calc', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.success && result.data) {
+          renderCapacityReport(result.data);
+        }
+      } catch (err) {
+        console.error('Calculation error:', err);
+      }
+    }
+
+    function renderCapacityReport(data) {
+      // Scoreboard HUD
+      document.getElementById('hudPeakQps').innerHTML = `${data.trafficMetrics.peakQps.toLocaleString()} <span style="font-size: 0.85rem; color: var(--text-muted);">QPS</span>`;
+      document.getElementById('hudAvgQps').innerText = `Avg: ${data.trafficMetrics.avgQps.toLocaleString()} QPS (2.8x Peak Headroom)`;
+
+      document.getElementById('hudEgressBandwidth').innerHTML = `${data.bandwidthMetrics.egressGbps.toLocaleString()} <span style="font-size: 0.85rem; color: var(--text-muted);">Gbps</span>`;
+      document.getElementById('hudIngressBandwidth').innerText = `Ingress: ${data.bandwidthMetrics.ingressGbps.toLocaleString()} Gbps`;
+
+      document.getElementById('hudRamCache').innerHTML = `${data.cacheMetrics.ramCacheTb.toLocaleString()} <span style="font-size: 0.85rem; color: var(--text-muted);">TB</span>`;
+      document.getElementById('hudRedisNodes').innerText = `${data.clusterSizing.redisNodes.toLocaleString()} Redis Replica Nodes`;
+
+      document.getElementById('hudStorage').innerHTML = `${data.storageMetrics.totalStoragePb.toLocaleString()} <span style="font-size: 0.85rem; color: var(--text-muted);">PB</span>`;
+
+      // Monthly AWS Cost
+      document.getElementById('costDisplay').innerText = `$${data.clusterSizing.estimatedMonthlyAwsUsd.toLocaleString()} /mo`;
+
+      // Infrastructure components
+      const compContainer = document.getElementById('componentsContainer');
+      compContainer.innerHTML = '';
+      data.topologyComponents.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'comp-card';
+        card.innerHTML = `
+          <div class="comp-name">${c.name}</div>
+          <div class="comp-scale">${c.scale}</div>
+          <div class="comp-role">${c.role}</div>
+        `;
+        compContainer.appendChild(card);
+      });
+
+      // Bottlenecks
+      const bContainer = document.getElementById('bottlenecksContainer');
+      bContainer.innerHTML = '';
+      if (data.bottlenecks.length === 0) {
+        bContainer.innerHTML = '<div style="font-size: 0.78rem; color: var(--accent-emerald);">🛡️ Zero architectural bottlenecks detected at this scale.</div>';
+      } else {
+        data.bottlenecks.forEach(b => {
+          const bCard = document.createElement('div');
+          bCard.className = 'bottleneck-card';
+          bCard.innerHTML = `
+            <div class="bottleneck-title">
+              <span>⚠️ ${b.component}</span>
+              <span style="font-size: 0.7rem; background: rgba(244,63,94,0.2); padding: 0.15rem 0.4rem; border-radius: 4px;">${b.severity}</span>
+            </div>
+            <div style="font-size: 0.74rem; color: #fca5a5;">${b.issue}</div>
+            <div class="bottleneck-rec">
+              <span>💡 Staff Fix:</span> ${b.recommendation}
+            </div>
+          `;
+          bContainer.appendChild(bCard);
+        });
+      }
+
+      // Bar Raiser Rubric
+      document.getElementById('barRaiserStatusBadge').innerText = `VERDICT: ${data.staffBarRaiserRubric.verdict.replace(/_/g, ' ')}`;
+    }
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeCanvas();
+      renderWhiteboard();
+      loadArchetypes();
+    });
+  </script>
+</body>
+</html>
