@@ -6,6 +6,10 @@ const {
   getBenchmarkArchetypes, 
   FAANG_PROSODY_BENCHMARKS 
 } = require('./prosodyAnalyzerEngine');
+const { 
+  analyzeCodePlayback, 
+  getPlaybackBenchmarks 
+} = require('./codePlaybackEngine');
 
 router.use(protectOptional);
 
@@ -72,6 +76,46 @@ router.post('/telemetry-stream', (req, res) => {
         voiceActive: isVoiceActive,
         instantHarmonic: Math.sin(freq / 20) * rms
       }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/playback-benchmarks
+ * Returns standard code playback benchmarking sessions
+ */
+router.get('/playback-benchmarks', (req, res) => {
+  try {
+    const benchmarks = getPlaybackBenchmarks();
+    res.json({
+      success: true,
+      standard: 'Astra AST Cognitive Reasoning & Anti-Plagiarism Protocol',
+      benchmarks
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/code-playback-analyze
+ * Evaluates typing latency, backspaces, and AST transitions
+ */
+router.post('/code-playback-analyze', (req, res) => {
+  try {
+    const { durationSec, keystrokes, pasteEvents, backspaces, pastedChars } = req.body || {};
+    const report = analyzeCodePlayback({
+      durationSec,
+      keystrokes,
+      pasteEvents,
+      backspaces,
+      pastedChars
+    });
+    res.json({
+      success: true,
+      report
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
