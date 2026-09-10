@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Industry Internship Pipeline & Stipend Tracker // Phoenix Horizon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-dark) 60%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-emerald), var(--accent-cyan));
+      color: #04121e;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 2.2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(to right, #ffffff, var(--accent-emerald), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 950px;
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    /* Scoreboard */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-card.hero-stat {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-header h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Presets */
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: var(--accent-emerald);
+    }
+    .preset-chip.active {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--accent-emerald);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+    }
+    .preset-sub {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Filter Pills */
+    .filter-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .pill {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .pill:hover, .pill.active {
+      background: var(--accent-cyan);
+      color: #04121e;
+      border-color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    /* Internship Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .intern-card {
+      background: rgba(30, 41, 59, 0.45);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .intern-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+    .company-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .role-title {
+      font-size: 0.92rem;
+      color: #cbd5e1;
+      margin-top: 0.2rem;
+    }
+    .category-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      background: rgba(168, 85, 247, 0.2);
+      color: #d8b4fe;
+      border: 1px solid rgba(168, 85, 247, 0.4);
+    }
+    .stipend-badge {
+      font-size: 1.15rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      color: var(--accent-gold);
+    }
+    .perks-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.75rem 0;
+    }
+    .perk-tag {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.8rem;
+    }
+    .btn-referral {
+      background: linear-gradient(135deg, var(--accent-cyan), #0284c7);
+      color: #04121e;
+      border: none;
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s;
+    }
+    .btn-referral:hover {
+      transform: scale(1.03);
+    }
+
+    /* Referral Pitch Box */
+    .pitch-box {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .pitch-text {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      margin: 0.75rem 0;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout { grid-template-columns: 1fr; }
+      .scoreboard { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>💼</span>
+      <span>PHOENIX HORIZON // INTERNSHIP PIPELINE</span>
+      <span class="nav-badge">Feature 52</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="alumni-connector.html">Alumni Network</a>
+      <a href="research-matcher.html">Research Labs</a>
+      <a href="study-abroad.html">Study Abroad</a>
+      <a href="exam-planner.html">Sprint Planner</a>
+      <a href="internship-tracker.html" class="active">Internship Pipeline</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Industry Internship Pipeline & Stipend Tracker</h1>
+      <p>
+        Tracks competitive off-campus & on-campus summer internship cycles across Big Tech, Quant/HFT, Unicorns, and Research Fellowships. Provides verified stipend indices, PPO conversion statistics, and AI cold referral generators.
+      </p>
+    </section>
+
+    <!-- Scoreboard / Stipend Index HUD -->
+    <div class="scoreboard">
+      <div class="stat-card hero-stat">
+        <span class="stat-label">Average Monthly Stipend</span>
+        <div class="stat-value" id="displayAvgStipend" style="color: var(--accent-emerald);">₹---</div>
+        <span class="stat-sub">Across All Tracked Sectors</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Peak Quant / HFT Stipend</span>
+        <div class="stat-value" id="displayPeakStipend" style="color: var(--accent-gold);">₹---</div>
+        <span class="stat-sub">Monthly Base Compensation</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Avg PPO Conversion Rate</span>
+        <div class="stat-value" id="displayPpoAvg" style="color: var(--accent-cyan);">--%</div>
+        <span class="stat-sub">Full-Time Offer Probability</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Tracked Programs</span>
+        <div class="stat-value" id="displayTotalPrograms" style="color: var(--accent-purple);">--</div>
+        <span class="stat-sub">Verified Industry Openings</span>
+      </div>
+    </div>
+
+    <div class="grid-layout">
+      <!-- Left Column: Controls & Presets -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>⚡ Fast Presets</h2>
+          <span style="font-size: 0.72rem; color: var(--accent-emerald); font-family: 'JetBrains Mono';">1-CLICK LOAD</span>
+        </div>
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="panel-header" style="margin-top: 1rem;">
+          <h2>🔍 Target Filter & Profile</h2>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">Candidate Name</label>
+          <input type="text" id="candidateName" style="width: 100%; padding: 0.75rem 1rem; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;" value="Tanya Sengupta">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">GitHub Portfolio URL</label>
+          <input type="text" id="candidateGithub" style="width: 100%; padding: 0.75rem 1rem; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;" value="https://github.com/tanya-sengupta">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">Key Technical Skills</label>
+          <input type="text" id="candidateSkills" style="width: 100%; padding: 0.75rem 1rem; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;" value="Distributed Systems, Go / C++, LeetCode 450+ Solved">
+        </div>
+
+        <!-- Referral Output Box -->
+        <div class="pitch-box" id="referralPitchSection">
+          <div style="display: flex; justify-content: space-between; align-items: center; color: var(--accent-emerald); font-weight: 700; font-size: 0.95rem;">
+            <span>📨 Referral Outreach Generator</span>
+            <button type="button" onclick="copyReferralNote()" style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 0.72rem; cursor: pointer;">Copy Note</button>
+          </div>
+          <div class="pitch-text" id="displayPitchText">
+            Select an internship and click "Generate Referral Pitch" to create an outreach note.
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Column: Filter Pills & Cards Grid -->
+      <section class="results-column">
+        <div class="panel-header">
+          <h2>🏢 Curated Summer 2027 Opportunities</h2>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">SORTED BY STIPEND</span>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="filter-pills" id="categoryPills">
+          <button type="button" class="pill active" onclick="filterCategory('all')">All Sectors</button>
+          <button type="button" class="pill" onclick="filterCategory('Big Tech')">Big Tech</button>
+          <button type="button" class="pill" onclick="filterCategory('Quant/HFT')">Quant / HFT</button>
+          <button type="button" class="pill" onclick="filterCategory('High-Growth Unicorn')">Unicorns</button>
+          <button type="button" class="pill" onclick="filterCategory('Research')">Research Fellowship</button>
+          <button type="button" class="pill" onclick="filterCategory('Fintech')">Fintech</button>
+        </div>
+
+        <!-- Cards Grid -->
+        <div class="cards-grid" id="internshipsGrid">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let allInternships = [];
+    let presetsData = [];
+    let currentCategory = 'all';
+
+    async function init() {
+      try {
+        const [indexRes, presetsRes, boardRes] = await Promise.all([
+          fetch('/api/v1/horizon/internships/stipend-index'),
+          fetch('/api/v1/horizon/internships/presets'),
+          fetch('/api/v1/horizon/internships/board')
+        ]);
+
+        const indexJson = await indexRes.json();
+        const presetsJson = await presetsRes.json();
+        const boardJson = await boardRes.json();
+
+        if (indexJson.success) renderIndexStats(indexJson.index);
+        if (presetsJson.success) {
+          presetsData = presetsJson.presets;
+          renderPresets();
+        }
+        if (boardJson.success) {
+          allInternships = boardJson.internships;
+          renderCards(allInternships);
+        }
+
+        if (allInternships.length > 0) {
+          generateReferralNoteFor(allInternships[0].company, allInternships[0].role);
+        }
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    function renderIndexStats(idx) {
+      document.getElementById('displayAvgStipend').innerText = '₹' + idx.averageMonthlyStipendInr.toLocaleString('en-IN') + '/mo';
+      document.getElementById('displayPeakStipend').innerText = '₹' + idx.maxMonthlyStipendInr.toLocaleString('en-IN') + '/mo';
+      document.getElementById('displayPpoAvg').innerText = idx.averagePpoConversionPct + '%';
+      document.getElementById('displayTotalPrograms').innerText = idx.totalTrackedPrograms;
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+          <span class="preset-sub">${p.studentName} • Target: ${p.targetCategory}</span>
+        </button>
+      `).join('');
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.label));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('candidateName').value = p.studentName;
+      document.getElementById('candidateGithub').value = p.github;
+      document.getElementById('candidateSkills').value = p.keySkills.join(', ');
+
+      filterCategory(p.targetCategory);
+    }
+
+    function filterCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.pill').forEach(btn => btn.classList.remove('active'));
+      const activePill = Array.from(document.querySelectorAll('.pill')).find(btn => btn.innerText.toLowerCase().includes(cat.toLowerCase()));
+      if (activePill) activePill.classList.add('active');
+
+      let filtered = allInternships;
+      if (cat !== 'all') {
+        filtered = allInternships.filter(i => i.category.toLowerCase().includes(cat.toLowerCase()));
+      }
+      renderCards(filtered);
+    }
+
+    function renderCards(list) {
+      const container = document.getElementById('internshipsGrid');
+      if (list.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-muted); padding: 2rem;">No internships matching criteria.</div>';
+        return;
+      }
+
+      container.innerHTML = list.map(item => `
+        <div class="intern-card">
+          <div class="card-top">
+            <div>
+              <div class="company-title">
+                <span>${item.logo}</span>
+                <span>${item.company}</span>
+              </div>
+              <div class="role-title">${item.role}</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="stipend-badge">₹${item.stipendMonthlyInr.toLocaleString('en-IN')}<span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">/mo</span></div>
+              <span class="category-badge">${item.category}</span>
+            </div>
+          </div>
+
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+            📍 ${item.location} • ⏳ ${item.durationWeeks} Weeks • 🎯 Min CGPA: ${item.eligibility.minCgpa} • 🎓 Grads: ${item.eligibility.gradYears.join(', ')}
+          </div>
+
+          <div class="perks-list">
+            ${item.perks.map(p => `<span class="perk-tag">✨ ${p}</span>`).join('')}
+          </div>
+
+          <div class="card-footer">
+            <div>
+              <span style="color: var(--accent-emerald); font-weight: 700;">${item.ppoConversionRatePct}% PPO Conversion</span>
+              <span style="color: var(--text-muted); margin-left: 0.5rem;">• Deadline: ${item.applicationDeadline}</span>
+            </div>
+            <button type="button" class="btn-referral" onclick="generateReferralNoteFor('${item.company}', '${item.role}')">
+              <span>✍️</span>
+              <span>Draft Referral Note</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function generateReferralNoteFor(company, role) {
+      const candidateName = document.getElementById('candidateName').value;
+      const githubProfile = document.getElementById('candidateGithub').value;
+      const keySkills = document.getElementById('candidateSkills').value.split(',').map(s => s.trim());
+
+      try {
+        const res = await fetch('/api/v1/horizon/internships/referral-pitch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            candidateName,
+            company,
+            role,
+            keySkills,
+            githubProfile
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('displayPitchText').innerText = 
+            `Subject: ${data.pitch.subjectLine}\n\n${data.pitch.messageBody}`;
+        }
+      } catch (err) {
+        console.error('Error drafting referral pitch:', err);
+      }
+    }
+
+    function copyReferralNote() {
+      const text = document.getElementById('displayPitchText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Referral note copied to clipboard!');
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

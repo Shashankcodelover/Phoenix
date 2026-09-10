@@ -269,6 +269,7 @@ router.post('/research/generate-statement', (req, res) => {
 // Feature 50: Study Abroad & Global MS/PhD Admissions Engine (Public/Optional Auth)
 const { studyAbroadEngine } = require('./studyAbroadEngine');
 const competitiveExamEngine = require('./competitiveExamPlannerEngine');
+const internshipEngine = require('./industryInternshipTrackerEngine');
 
 router.get('/study-abroad/universities', (req, res) => {
   res.json(studyAbroadEngine.getUniversities());
@@ -309,6 +310,42 @@ router.post('/exam-planner/evaluate-mock', (req, res) => {
   try {
     const diagnostic = competitiveExamEngine.evaluateMockPerformance(req.body);
     res.json({ success: true, diagnostic });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 52: Industry Internship Pipeline & Stipend Tracker
+router.get('/internships/board', (req, res) => {
+  const filter = {
+    category: req.query.category,
+    minStipend: req.query.minStipend,
+    search: req.query.search
+  };
+  res.json({ success: true, internships: internshipEngine.getInternships(filter) });
+});
+
+router.get('/internships/stipend-index', (req, res) => {
+  res.json({ success: true, index: internshipEngine.getStipendIndex() });
+});
+
+router.get('/internships/presets', (req, res) => {
+  res.json({ success: true, presets: internshipEngine.getPresets() });
+});
+
+router.post('/internships/referral-pitch', (req, res) => {
+  try {
+    const pitch = internshipEngine.generateReferralPitch(req.body);
+    res.json({ success: true, pitch });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/internships/pipeline-summary', (req, res) => {
+  try {
+    const summary = internshipEngine.summarizePipeline(req.body.applications);
+    res.json({ success: true, summary });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
