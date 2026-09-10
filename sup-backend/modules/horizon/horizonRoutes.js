@@ -444,4 +444,34 @@ router.post('/visa/score-answer', (req, res) => {
   }
 });
 
+// Feature 57: Placement Officer Institutional Analytics Dashboard (TPO Cockpit)
+const { tpoAnalyticsDashboardEngine } = require('./tpoAnalyticsDashboardEngine');
+
+router.get('/tpo/summary', (req, res) => {
+  res.json({ success: true, summary: tpoAnalyticsDashboardEngine.getInstitutionalSummary() });
+});
+
+router.get('/tpo/presets', (req, res) => {
+  res.json({ success: true, presets: tpoAnalyticsDashboardEngine.getPresets() });
+});
+
+router.get('/tpo/department/:deptCode', (req, res) => {
+  try {
+    const result = tpoAnalyticsDashboardEngine.filterDepartment(req.params.deptCode);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/tpo/triage', (req, res) => {
+  try {
+    const triage = tpoAnalyticsDashboardEngine.triageUnplacedStudent(req.body);
+    res.json({ success: true, triage });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;
+

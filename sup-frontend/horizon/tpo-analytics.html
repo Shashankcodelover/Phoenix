@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Placement Officer Institutional Analytics Dashboard // Phoenix Horizon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg-dark) 60%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    .top-nav {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      color: #fff;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #38bdf8, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 900px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+    .stat-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--panel-border);
+    }
+    .panel-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Preset Chips */
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: var(--accent-cyan);
+    }
+    .preset-chip.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+    }
+    .preset-sub {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Department Cards */
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .dept-card {
+      background: rgba(30, 41, 59, 0.45);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.15rem;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+      cursor: pointer;
+    }
+    .dept-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-cyan);
+    }
+    .dept-card.selected {
+      border-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+    }
+    .dept-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      font-size: 1.1rem;
+    }
+    .dept-name {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .dept-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+    }
+
+    /* Unplaced Student Triage Table */
+    .table-container {
+      overflow-x: auto;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      text-align: left;
+    }
+    th {
+      background: rgba(30, 41, 59, 0.8);
+      padding: 0.85rem 1rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--panel-border);
+    }
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge-triage {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .triage-critical { background: rgba(244, 63, 94, 0.2); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.4); }
+    .triage-moderate { background: rgba(245, 158, 11, 0.2); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+    .btn-triage {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--accent-cyan);
+      color: #38bdf8;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-triage:hover {
+      background: var(--accent-cyan);
+      color: #04121e;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout { grid-template-columns: 1fr; }
+      .scoreboard { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>📊</span>
+      <span>PHOENIX HORIZON // TPO ANALYTICS</span>
+      <span class="nav-badge">Feature 57</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="alumni-connector.html">Alumni Network</a>
+      <a href="research-matcher.html">Research Labs</a>
+      <a href="study-abroad.html">Study Abroad</a>
+      <a href="exam-planner.html">Sprint Planner</a>
+      <a href="internship-tracker.html">Internship Pipeline</a>
+      <a href="skill-gap-auditor.html">Skill Gap Auditor</a>
+      <a href="sop-synthesizer.html">SOP Synthesizer</a>
+      <a href="lor-drafter.html">LOR Drafter</a>
+      <a href="visa-readiness.html">Visa Readiness</a>
+      <a href="tpo-analytics.html" class="active">TPO Analytics</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Placement Officer Institutional Analytics Dashboard</h1>
+      <p id="instSubtitle">
+        National Institute of Technology Karnataka (NITK) Surathkal • Class of 2026 Batch Velocity & Unplaced Triage Cockpit
+      </p>
+    </section>
+
+    <!-- Scoreboard HUD -->
+    <div class="scoreboard">
+      <div class="stat-card">
+        <span class="stat-label">Batch Placement Rate</span>
+        <div class="stat-value" id="displayPlacementRate" style="color: var(--accent-emerald);">87.04%</div>
+        <span class="stat-sub" id="displayPlacedCount">1,088 / 1,250 Placed</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Average Batch CTC</span>
+        <div class="stat-value" id="displayAvgCtc" style="color: var(--accent-cyan);">₹18.4 LPA</div>
+        <span class="stat-sub" id="displayMedianCtc">Median: ₹15.2 LPA</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Highest Package</span>
+        <div class="stat-value" id="displayHighestCtc" style="color: var(--accent-purple);">₹64.0 LPA</div>
+        <span class="stat-sub">International Super-Dream Offer</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Unplaced Triage Pool</span>
+        <div class="stat-value" id="displayUnplacedCount" style="color: var(--accent-rose);">162</div>
+        <span class="stat-sub">Active Priority Interventions</span>
+      </div>
+    </div>
+
+    <div class="grid-layout">
+      <!-- Left Column: Fast Presets & Filters -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>⚡ Institutional Presets</h2>
+          <span style="font-size: 0.72rem; color: var(--accent-cyan); font-family: 'JetBrains Mono';">1-CLICK BENCHMARK</span>
+        </div>
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="panel-header" style="margin-top: 1.5rem;">
+          <h2>🎯 Department Focus Filter</h2>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;" id="deptFilterButtons">
+          <button class="preset-chip active" onclick="filterDepartment('ALL')">All Departments (Campus-Wide)</button>
+        </div>
+      </aside>
+
+      <!-- Right Column: Department Metrics & Unplaced Student Triage -->
+      <section>
+        <div class="panel" style="margin-bottom: 1.5rem;">
+          <div class="panel-header">
+            <h2>🏢 Department-Wise Placement Breakdown</h2>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">SELECT CARD TO FILTER ROSTER</span>
+          </div>
+          <div class="dept-grid" id="deptGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Unplaced Student Triage Roster -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2>🚨 Unplaced Student Early-Warning & Triage Roster</h2>
+            <span style="font-size: 0.75rem; color: var(--accent-rose); font-weight: 700;">ALGORITHMIC BOTTLENECK DETECTION</span>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Student ID & Name</th>
+                  <th>Dept</th>
+                  <th>CGPA / Backlogs</th>
+                  <th>Interviews Attended</th>
+                  <th>Identified Bottleneck</th>
+                  <th>Triage Action</th>
+                </tr>
+              </thead>
+              <tbody id="unplacedRosterBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Triage Intervention Detail Box -->
+          <div id="triageResultBox" style="margin-top: 1.5rem; display: none; background: rgba(30, 41, 59, 0.7); border: 1px solid var(--accent-cyan); border-radius: 10px; padding: 1.25rem;">
+            <div style="color: var(--accent-cyan); font-weight: 800; font-size: 1rem; margin-bottom: 0.35rem;" id="triageStudentTitle"></div>
+            <p style="color: #cbd5e1; font-size: 0.88rem;" id="triageStudentStrategy"></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let summaryData = null;
+    let presetsData = [];
+
+    async function init() {
+      try {
+        const [sumRes, preRes] = await Promise.all([
+          fetch('/api/v1/horizon/tpo/summary'),
+          fetch('/api/v1/horizon/tpo/presets')
+        ]);
+
+        const sumJson = await sumRes.json();
+        const preJson = await preRes.json();
+
+        if (sumJson.success) {
+          summaryData = sumJson.summary;
+          renderSummary();
+        }
+
+        if (preJson.success) {
+          presetsData = preJson.presets;
+          renderPresets();
+        }
+      } catch (err) {
+        console.error('TPO Dashboard Init Error:', err);
+      }
+    }
+
+    function renderSummary() {
+      if (!summaryData) return;
+
+      document.getElementById('instSubtitle').innerText =
+        `${summaryData.institutionName} • Class of ${summaryData.batchYear} Batch Velocity & Unplaced Triage Cockpit`;
+      document.getElementById('displayPlacementRate').innerText = `${summaryData.overallPlacementRatePct}%`;
+      document.getElementById('displayPlacedCount').innerText = `${summaryData.placedStudents.toLocaleString()} / ${summaryData.totalRegisteredStudents.toLocaleString()} Placed`;
+      document.getElementById('displayAvgCtc').innerText = `₹${summaryData.averageCtcLpa} LPA`;
+      document.getElementById('displayMedianCtc').innerText = `Median: ₹${summaryData.medianCtcLpa} LPA`;
+      document.getElementById('displayHighestCtc').innerText = `₹${summaryData.highestCtcLpa} LPA`;
+      document.getElementById('displayUnplacedCount').innerText = summaryData.unplacedStudents;
+
+      // Render Department Cards
+      const grid = document.getElementById('deptGrid');
+      grid.innerHTML = summaryData.departments.map(d => {
+        const rate = ((d.placed / d.total) * 100).toFixed(1);
+        return `
+          <div class="dept-card" onclick="filterDepartment('${d.code}')" id="card-${d.code}">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span class="dept-code">${d.code}</span>
+              <span style="font-weight: 800; color: ${rate >= 85 ? 'var(--accent-emerald)' : 'var(--accent-amber)'};">${rate}%</span>
+            </div>
+            <div class="dept-name">${d.name}</div>
+            <div class="dept-stats">
+              <span>Avg: ₹${d.avgCtc} LPA</span>
+              <span>Super-Dream: ${d.superDreamOffers}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      renderRoster(summaryData.unplacedStudentRoster);
+    }
+
+    function renderRoster(roster) {
+      const tbody = document.getElementById('unplacedRosterBody');
+      tbody.innerHTML = roster.map(s => `
+        <tr>
+          <td>
+            <strong>${s.name}</strong><br>
+            <span style="font-size: 0.72rem; color: var(--text-muted); font-family: 'JetBrains Mono';">${s.id}</span>
+          </td>
+          <td><span class="dept-code" style="font-size: 0.85rem;">${s.department}</span></td>
+          <td>
+            ${s.cgpa} CGPA<br>
+            <span style="font-size: 0.72rem; color: ${s.activeBacklogs > 0 ? 'var(--accent-rose)' : 'var(--accent-emerald)'};">
+              ${s.activeBacklogs > 0 ? `${s.activeBacklogs} Backlogs` : 'Clear'}
+            </span>
+          </td>
+          <td>${s.interviewsAttended} attended (${s.interviewsRejected} rejected)</td>
+          <td style="max-width: 260px; font-size: 0.8rem; color: #cbd5e1;">${s.identifiedBlocker}</td>
+          <td>
+            <button class="btn-triage" onclick="triggerTriage('${s.id}')">Deploy Intervention</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+          <span class="preset-sub">${p.totalRegistered} Students • Avg: ₹${p.avgCtcLpa} LPA</span>
+        </button>
+      `).join('');
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.institutionName));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('instSubtitle').innerText = `${p.institutionName} • Class of 2026 Batch Velocity & Unplaced Triage Cockpit`;
+      document.getElementById('displayPlacementRate').innerText = `${((p.placed / p.totalRegistered) * 100).toFixed(1)}%`;
+      document.getElementById('displayPlacedCount').innerText = `${p.placed} / ${p.totalRegistered} Placed`;
+      document.getElementById('displayAvgCtc').innerText = `₹${p.avgCtcLpa} LPA`;
+      document.getElementById('displayUnplacedCount').innerText = p.totalRegistered - p.placed;
+    }
+
+    async function filterDepartment(deptCode) {
+      document.querySelectorAll('.dept-card').forEach(c => c.classList.remove('selected'));
+      if (deptCode === 'ALL') {
+        renderRoster(summaryData.unplacedStudentRoster);
+        return;
+      }
+
+      const card = document.getElementById(`card-${deptCode}`);
+      if (card) card.classList.add('selected');
+
+      const filtered = summaryData.unplacedStudentRoster.filter(s => s.department.toUpperCase() === deptCode.toUpperCase());
+      renderRoster(filtered);
+    }
+
+    async function triggerTriage(studentId) {
+      const student = summaryData.unplacedStudentRoster.find(s => s.id === studentId);
+      if (!student) return;
+
+      try {
+        const res = await fetch('/api/v1/horizon/tpo/triage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(student)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          const t = data.triage;
+          const box = document.getElementById('triageResultBox');
+          box.style.display = 'block';
+          document.getElementById('triageStudentTitle').innerText =
+            `🚨 Intervention Strategy: ${t.name} [${t.triageLevel}] (Urgency Index: ${t.urgencyScore}/100)`;
+          document.getElementById('triageStudentStrategy').innerText = t.recommendedStrategy;
+          box.scrollIntoView({ behavior: 'smooth' });
+        }
+      } catch (err) {
+        console.error('Triage error:', err);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
