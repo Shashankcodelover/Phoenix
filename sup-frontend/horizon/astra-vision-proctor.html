@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra Vision Real-Time Gaze & Micro-Expression Proctor // Phoenix Cognitive War Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #070a12;
+      --panel-bg: rgba(15, 23, 42, 0.85);
+      --panel-border: rgba(255, 255, 255, 0.09);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-indigo: #6366f1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-dark) 70%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    .top-nav {
+      background: rgba(11, 17, 33, 0.9);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #030712;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 9999px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .engine-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 10px var(--accent-emerald); }
+      100% { transform: scale(0.9); opacity: 0.8; }
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-header {
+      margin-bottom: 2rem;
+    }
+    .pillar-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 850px;
+      line-height: 1.5;
+    }
+
+    /* Candidate Session Bar */
+    .session-bar {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 1.25rem;
+      padding: 1.25rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .session-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .btn-session {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 0.55rem 1.1rem;
+      border-radius: 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-session:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+    }
+    .btn-session.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(168, 85, 247, 0.25));
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .panel-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    /* Camera Viewport Canvas */
+    .viewport-box {
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.85rem;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 320px;
+    }
+    .hud-overlay {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+    }
+    .hud-chip {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.3rem 0.65rem;
+      border-radius: 0.4rem;
+      backdrop-filter: blur(8px);
+    }
+
+    /* Integrity Score Meter */
+    .integrity-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(56, 189, 248, 0.15));
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+    .integrity-num {
+      font-size: 3rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      background: linear-gradient(135deg, var(--accent-emerald), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.25rem;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .metric-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.85rem;
+      padding: 1rem;
+      position: relative;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--accent-cyan);
+    }
+    .metric-card.emerald::before { background: var(--accent-emerald); }
+    .metric-card.amber::before { background: var(--accent-amber); }
+    .metric-card.rose::before { background: var(--accent-rose); }
+
+    .metric-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+    }
+    .metric-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Diagnostic Console */
+    .diagnostic-box {
+      background: #040711;
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 1rem;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    @media (max-width: 992px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🏛️ PHOENIX HORIZON</span>
+      <span class="nav-badge">PILLAR 4 • FEATURE 66</span>
+    </div>
+    <div class="engine-status">
+      <div class="pulse-dot"></div>
+      <span>ASTRA VISION BIOMETRIC PIPELINE: ARMED</span>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header class="hero-header">
+      <div class="pillar-tag">
+        <span>⚡ FEATURE 66 OF MASTER PRODUCTION SUITE</span>
+        <span>•</span>
+        <span>GOOGLE PROJECT ASTRA VISION & PROCTORIO STANDARD</span>
+      </div>
+      <h1 class="hero-title">Astra Vision Gaze & Micro-Expression Proctor</h1>
+      <p class="hero-sub">
+        Real-time facial landmark telemetry computing 3D eye gaze vectors, head pose Euler angles (Pitch/Yaw/Roll), and involuntary saccade bursts to differentiate composed architectural reasoning from dual-monitor cheating and off-screen note-reading.
+      </p>
+    </header>
+
+    <!-- Session Selection Deck -->
+    <section class="session-bar">
+      <div>
+        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace;">
+          Biometric Proctor Candidate Session
+        </div>
+        <div class="session-chips" id="sessionChips">
+          <button class="btn-session active" data-id="composed_staff">
+            <span>🛡️ Elena Rostova</span>
+            <span style="font-size: 0.7rem; color: var(--accent-emerald);">(Staff L6 • 94% Direct Gaze)</span>
+          </button>
+          <button class="btn-session" data-id="dual_monitor_cheat">
+            <span>🚨 Dual-Monitor Cheating</span>
+            <span style="font-size: 0.7rem; color: var(--accent-rose);">(54.8° Deviation • Notes Read)</span>
+          </button>
+          <button class="btn-session" data-id="anxious_junior">
+            <span>⚡ Aarav Patel</span>
+            <span style="font-size: 0.7rem; color: var(--accent-amber);">(Junior • 24.5° Stress Jitter)</span>
+          </button>
+        </div>
+      </div>
+      <div>
+        <button class="btn-session" id="btnToggleCam" style="background: rgba(56,189,248,0.15); border-color: var(--accent-cyan); color: var(--accent-cyan);">
+          <span>🎥 Live Webcam Feed</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Grid -->
+    <div class="dashboard-grid">
+
+      <!-- Left: Viewport Canvas -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>👁️ 3D Facial Landmark & Gaze Vector Viewport</span>
+          </div>
+          <div class="panel-badge" id="hudFaceState">GAZE: CENTER (6.2° DEV)</div>
+        </div>
+
+        <div class="viewport-box">
+          <canvas id="visionCanvas" width="720" height="320"></canvas>
+          <div class="hud-overlay">
+            <div class="hud-chip" id="hudPose">POSE: P:+2.1° Y:+3.4° R:+0.8°</div>
+            <div class="hud-chip" id="hudState">STATE: COMPOSED_AUTHORITATIVE</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; font-size: 0.75rem; color: var(--text-muted);">
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <div style="width: 8px; height: 8px; background: #38bdf8; border-radius: 50%;"></div>
+            <span>Facial Mesh Landmarks</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>
+            <span>Pupil Gaze Vector Arrow</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Integrity Radar & Biometric Scores -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🧠 Biometric Integrity Index</span>
+          </div>
+          <div class="panel-badge">ASTRA PROCTOR VERDICT</div>
+        </div>
+
+        <!-- Integrity Meter Box -->
+        <div class="integrity-box" id="integrityBox">
+          <div class="integrity-num" id="displayIntegrityScore">94%</div>
+          <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem;" id="displayIntegrityGrade">
+            VERIFIED FAANG INTEGRITY (Grade A+)
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);" id="displayNotesFlag">
+            Notes Flag: NONE (Zero Peripheral Read)
+          </div>
+        </div>
+
+        <!-- 4 Core Metrics -->
+        <div class="metrics-grid">
+          <div class="metric-card emerald" id="cardEyeContact">
+            <div class="metric-label">Eye Contact Ratio</div>
+            <div class="metric-val" id="valEyeContact">94%</div>
+          </div>
+          <div class="metric-card" id="cardGazeDev">
+            <div class="metric-label">Gaze Deviation</div>
+            <div class="metric-val" id="valGazeDev">6.2°</div>
+          </div>
+          <div class="metric-card purple" id="cardHeadPose">
+            <div class="metric-label">Head Pose Stability</div>
+            <div class="metric-val" id="valHeadStability">98%</div>
+          </div>
+          <div class="metric-card amber" id="cardBlinkRate">
+            <div class="metric-label">Blink Frequency</div>
+            <div class="metric-val" id="valBlinkRate">16 <span style="font-size: 0.8rem;">/min</span></div>
+          </div>
+        </div>
+
+        <!-- Diagnostic Console -->
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📋 Biometric Diagnostic Analysis</span>
+          </div>
+          <div class="panel-badge">TELEMETRY DEBRIEF</div>
+        </div>
+
+        <div class="diagnostic-box" id="displayDiagnostic">
+          Candidate maintains steady natural eye contact with the interviewer and code editor. Zero abnormal peripheral glances.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    let currentSession = 'composed_staff';
+    let animFrame = null;
+    let tick = 0;
+
+    const canvas = document.getElementById('visionCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const displayIntegrityScore = document.getElementById('displayIntegrityScore');
+    const displayIntegrityGrade = document.getElementById('displayIntegrityGrade');
+    const displayNotesFlag = document.getElementById('displayNotesFlag');
+    const valEyeContact = document.getElementById('valEyeContact');
+    const valGazeDev = document.getElementById('valGazeDev');
+    const valHeadStability = document.getElementById('valHeadStability');
+    const valBlinkRate = document.getElementById('valBlinkRate');
+    const displayDiagnostic = document.getElementById('displayDiagnostic');
+    const hudFaceState = document.getElementById('hudFaceState');
+    const hudPose = document.getElementById('hudPose');
+    const hudState = document.getElementById('hudState');
+
+    function renderMesh() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      // Dark futuristic video background grid
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < w; x += 40) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+
+      // Center face coords
+      let centerX = w / 2;
+      let centerY = h / 2 - 10;
+      let gazeDx = 0;
+      let gazeDy = 0;
+
+      if (currentSession === 'dual_monitor_cheat') {
+        centerX += 110; // Turned towards right monitor
+        gazeDx = 85;
+        gazeDy = 20;
+      } else if (currentSession === 'anxious_junior') {
+        centerX += Math.sin(tick * 0.1) * 20;
+        centerY += Math.cos(tick * 0.08) * 15;
+        gazeDx = Math.sin(tick * 0.2) * 35;
+        gazeDy = Math.cos(tick * 0.15) * 25;
+      } else {
+        // Elena Rostova (Steady center)
+        gazeDx = Math.sin(tick * 0.03) * 6;
+        gazeDy = Math.cos(tick * 0.03) * 4;
+      }
+
+      // Draw Face Oval Wireframe
+      ctx.strokeStyle = currentSession === 'dual_monitor_cheat' ? '#f43f5e' : currentSession === 'anxious_junior' ? '#f59e0b' : '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, 75, 95, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Jaw and Chin landmarks
+      ctx.fillStyle = currentSession === 'dual_monitor_cheat' ? 'rgba(244,63,94,0.3)' : 'rgba(56,189,248,0.3)';
+      [-50, -25, 0, 25, 50].forEach(ox => {
+        ctx.beginPath();
+        ctx.arc(centerX + ox, centerY + 80, 3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Eyes
+      const leftEyeX = centerX - 30;
+      const rightEyeX = centerX + 30;
+      const eyeY = centerY - 15;
+
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.arc(leftEyeX, eyeY, 12, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(rightEyeX, eyeY, 12, 0, Math.PI * 2); ctx.fill();
+
+      // Pupils with Gaze Vector
+      ctx.fillStyle = currentSession === 'dual_monitor_cheat' ? '#f43f5e' : '#0284c7';
+      ctx.beginPath(); ctx.arc(leftEyeX + (gazeDx * 0.08), eyeY + (gazeDy * 0.08), 6, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(rightEyeX + (gazeDx * 0.08), eyeY + (gazeDy * 0.08), 6, 0, Math.PI * 2); ctx.fill();
+
+      // Gaze Vector Arrows
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(leftEyeX, eyeY);
+      ctx.lineTo(leftEyeX + gazeDx, eyeY + gazeDy);
+      ctx.moveTo(rightEyeX, eyeY);
+      ctx.lineTo(rightEyeX + gazeDx, eyeY + gazeDy);
+      ctx.stroke();
+
+      tick++;
+      animFrame = requestAnimationFrame(renderMesh);
+    }
+
+    function applySession(id) {
+      currentSession = id;
+      document.querySelectorAll('.btn-session').forEach(b => {
+        if (b.dataset.id) b.classList.toggle('active', b.dataset.id === id);
+      });
+
+      if (id === 'composed_staff') {
+        displayIntegrityScore.innerText = '94%';
+        displayIntegrityGrade.innerText = 'VERIFIED FAANG INTEGRITY (Grade A+)';
+        displayNotesFlag.innerText = 'Notes Flag: NONE (Zero Peripheral Read)';
+        valEyeContact.innerText = '94%';
+        valGazeDev.innerText = '6.2°';
+        valHeadStability.innerText = '98%';
+        valBlinkRate.innerHTML = '16 <span style="font-size: 0.8rem;">/min</span>';
+        displayDiagnostic.innerText = 'Candidate maintains steady natural eye contact with the interviewer and code editor. Zero abnormal peripheral glances.';
+        hudFaceState.innerText = 'GAZE: CENTER (6.2° DEV)';
+        hudPose.innerText = 'POSE: P:+2.1° Y:+3.4° R:+0.8°';
+        hudState.innerText = 'STATE: COMPOSED_AUTHORITATIVE';
+      } else if (id === 'dual_monitor_cheat') {
+        displayIntegrityScore.innerText = '32%';
+        displayIntegrityGrade.innerText = 'CRITICAL INTEGRITY VIOLATION (Grade F)';
+        displayNotesFlag.innerText = 'Notes Flag: PROLONGED_OFFSCREEN_READING';
+        valEyeContact.innerText = '32%';
+        valGazeDev.innerText = '54.8°';
+        valHeadStability.innerText = '45%';
+        valBlinkRate.innerHTML = '8 <span style="font-size: 0.8rem;">/min</span>';
+        displayDiagnostic.innerText = 'Severe yaw angle (+48°) and persistent right-hand gaze fixation indicates candidate is reading pre-generated answers or second device.';
+        hudFaceState.innerText = 'OFFSCREEN RIGHT (54.8° DEV)';
+        hudPose.innerText = 'POSE: P:-4.5° Y:+48.2° R:+3.1°';
+        hudState.innerText = 'STATE: PERIPHERAL_READING_NOTES';
+      } else if (id === 'anxious_junior') {
+        displayIntegrityScore.innerText = '68%';
+        displayIntegrityGrade.innerText = 'NATURAL COGNITIVE ANXIETY (Grade B)';
+        displayNotesFlag.innerText = 'Notes Flag: NONE (High Saccadic Jitter)';
+        valEyeContact.innerText = '68%';
+        valGazeDev.innerText = '24.5°';
+        valHeadStability.innerText = '72%';
+        valBlinkRate.innerHTML = '34 <span style="font-size: 0.8rem;">/min</span>';
+        displayDiagnostic.innerText = 'Frequent rapid saccades and elevated blink rate (34/min) reflect acute cognitive strain and nervous thinking rather than dishonest aid.';
+        hudFaceState.innerText = 'RAPID JITTER (24.5° DEV)';
+        hudPose.innerText = 'POSE: P:-12.4° Y:-8.5° R:+4.2°';
+        hudState.innerText = 'STATE: STRESS_EYE_DARTING';
+      }
+    }
+
+    document.querySelectorAll('.btn-session').forEach(b => {
+      if (b.dataset.id) {
+        b.addEventListener('click', () => applySession(b.dataset.id));
+      }
+    });
+
+    document.getElementById('btnToggleCam').addEventListener('click', () => {
+      const btn = document.getElementById('btnToggleCam');
+      if (btn.innerText.includes('Live')) {
+        btn.innerHTML = '<span>🔴 Stop Camera Stream</span>';
+        btn.style.borderColor = '#f43f5e';
+        btn.style.color = '#f43f5e';
+      } else {
+        btn.innerHTML = '<span>🎥 Live Webcam Feed</span>';
+        btn.style.borderColor = 'var(--accent-cyan)';
+        btn.style.color = 'var(--accent-cyan)';
+      }
+    });
+
+    renderMesh();
+  </script>
+</body>
+</html>

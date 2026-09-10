@@ -22,6 +22,10 @@ const {
   computeArbitrage, 
   getArbitrageData 
 } = require('./careerArbitrageEngine');
+const { 
+  analyzeVisionTelemetry, 
+  getVisionBenchmarks 
+} = require('./visionProctorEngine');
 
 router.use(protectOptional);
 
@@ -230,6 +234,45 @@ router.post('/simulate-equity-arbitrage', (req, res) => {
   try {
     const { offer, cityKey, equityMultiplier } = req.body || {};
     const report = computeArbitrage(offer, cityKey, Number(equityMultiplier) || 1.0);
+    res.json({
+      success: true,
+      report
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/vision-benchmarks
+ * Returns standard proctor camera benchmark scenarios
+ */
+router.get('/vision-benchmarks', (req, res) => {
+  try {
+    const benchmarks = getVisionBenchmarks();
+    res.json({
+      success: true,
+      standard: 'Astra Vision Real-Time Gaze Direction & Micro-Expression Proctor',
+      benchmarks
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/vision-telemetry-analyze
+ * Analyzes video telemetry frame vectors for offscreen cheating detection
+ */
+router.post('/vision-telemetry-analyze', (req, res) => {
+  try {
+    const { gazeDeviationDeg, yawDeg, pitchDeg, blinkRate } = req.body || {};
+    const report = analyzeVisionTelemetry({
+      gazeDeviationDeg,
+      yawDeg,
+      pitchDeg,
+      blinkRate
+    });
     res.json({
       success: true,
       report
