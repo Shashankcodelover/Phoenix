@@ -271,6 +271,7 @@ const { studyAbroadEngine } = require('./studyAbroadEngine');
 const competitiveExamEngine = require('./competitiveExamPlannerEngine');
 const internshipEngine = require('./industryInternshipTrackerEngine');
 const skillGapEngine = require('./dynamicSkillGapAuditorEngine');
+const sopEngine = require('./highStakesSopSynthesizerEngine');
 
 router.get('/study-abroad/universities', (req, res) => {
   res.json(studyAbroadEngine.getUniversities());
@@ -369,6 +370,24 @@ router.post('/skill-gap/audit', (req, res) => {
   try {
     const result = skillGapEngine.auditSkillGap(req.body);
     res.json({ success: true, audit: result });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 54: High-Stakes SOP & Personal Statement Synthesizer
+router.get('/sop/templates', (req, res) => {
+  res.json({ success: true, templates: sopEngine.getTemplates() });
+});
+
+router.get('/sop/presets', (req, res) => {
+  res.json({ success: true, presets: sopEngine.getPresets() });
+});
+
+router.post('/sop/synthesize', (req, res) => {
+  try {
+    const sop = sopEngine.synthesizeSOP(req.body);
+    res.json({ success: true, sop });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>High-Stakes SOP & Personal Statement Synthesizer // Phoenix Horizon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-dark) 60%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-amber), var(--accent-purple));
+      color: #04121e;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 2.2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(to right, #ffffff, var(--accent-amber), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 950px;
+      line-height: 1.6;
+      font-size: 1.05rem;
+    }
+
+    /* Scoreboard */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-card.hero-stat {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel-header h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Presets */
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: var(--accent-amber);
+    }
+    .preset-chip.active {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--accent-amber);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+    }
+    .preset-sub {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--accent-amber);
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent-amber), #d97706);
+      border: none;
+      border-radius: 8px;
+      color: #04121e;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+    }
+
+    /* Paragraph Cards in SOP */
+    .sop-paragraph-card {
+      background: rgba(30, 41, 59, 0.45);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.4rem;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.2s;
+    }
+    .sop-paragraph-card:hover {
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+    .section-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.6rem;
+      text-transform: uppercase;
+    }
+    .badge-hook { background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.4); }
+    .badge-foundations { background: rgba(168, 85, 247, 0.2); color: var(--accent-purple); border: 1px solid rgba(168, 85, 247, 0.4); }
+    .badge-crucible { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-alignment { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-vision { background: rgba(244, 63, 94, 0.2); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.4); }
+
+    .paragraph-text {
+      font-size: 0.95rem;
+      color: #e2e8f0;
+      line-height: 1.65;
+    }
+
+    .btn-copy {
+      background: rgba(56, 189, 248, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: var(--accent-cyan);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s;
+    }
+    .btn-copy:hover {
+      background: var(--accent-cyan);
+      color: #04121e;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout { grid-template-columns: 1fr; }
+      .scoreboard { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>📜</span>
+      <span>PHOENIX HORIZON // SOP SYNTHESIZER</span>
+      <span class="nav-badge">Feature 54</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="alumni-connector.html">Alumni Network</a>
+      <a href="research-matcher.html">Research Labs</a>
+      <a href="study-abroad.html">Study Abroad</a>
+      <a href="exam-planner.html">Sprint Planner</a>
+      <a href="internship-tracker.html">Internship Pipeline</a>
+      <a href="skill-gap-auditor.html">Skill Gap Auditor</a>
+      <a href="sop-synthesizer.html" class="active">SOP Synthesizer</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>High-Stakes SOP & Personal Statement Synthesizer</h1>
+      <p>
+        Architects Ivy-Plus and global Tier-1 graduate admissions statements (Stanford, CMU, ETH Zurich). Adheres to the 5-part intellectual hook framework, quantifies engineering crucible impact, laser-targets lab faculty, and performs real-time rhetorical cliché auditing.
+      </p>
+    </section>
+
+    <!-- Scoreboard HUD -->
+    <div class="scoreboard">
+      <div class="stat-card hero-stat">
+        <span class="stat-label">Rhetorical Rigor Index</span>
+        <div class="stat-value" id="displayRigorScore" style="color: var(--accent-amber);">-- / 100</div>
+        <span class="stat-sub">Admissions Thesis Strength</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Word Count Compliance</span>
+        <div class="stat-value" id="displayWordCount" style="color: var(--accent-cyan);">---</div>
+        <span class="stat-sub" id="displayWordLimit">out of 1,000 max words</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Cliché-Free Audit</span>
+        <div class="stat-value" id="displayClicheGrade" style="font-size: 1.15rem; color: var(--accent-emerald); padding-top: 0.4rem;">--</div>
+        <span class="stat-sub">Zero Childhood Stereotypes</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Target Program</span>
+        <div class="stat-value" id="displayTargetUniversity" style="font-size: 1.2rem; color: #fff; padding-top: 0.4rem;">--</div>
+        <span class="stat-sub" id="displayTargetProgram">Academic Tier</span>
+      </div>
+    </div>
+
+    <div class="grid-layout">
+      <!-- Left Column: Controls & Presets -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>⚡ Fast Presets</h2>
+          <span style="font-size: 0.72rem; color: var(--accent-amber); font-family: 'JetBrains Mono';">1-CLICK LOAD</span>
+        </div>
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="sopForm">
+          <div class="panel-header" style="margin-top: 1rem;">
+            <h2>🎯 Essay Configuration</h2>
+          </div>
+
+          <div class="form-group">
+            <label for="candidateName">Candidate Name</label>
+            <input type="text" id="candidateName" class="form-control" value="Akash Narayanan" required>
+          </div>
+
+          <div class="form-group">
+            <label for="targetProgramSelect">Target University & Program</label>
+            <select id="targetProgramSelect" class="form-control" onchange="runSynthesis()">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="undergradBg">Undergraduate Background & Academic Rigor</label>
+            <textarea id="undergradBg" class="form-control" rows="2">B.Tech in Computer Science from Tier-1 NIT (CGPA: 9.35/10), top 2% of graduating cohort.</textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="keyProjects">Engineering Crucible & Quantitative Milestones</label>
+            <textarea id="keyProjects" class="form-control" rows="3">Engineered speculative decoding runtime reducing 70B LLM inference latency by 42%; published workshop paper at EMNLP 2025.</textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="targetFaculty">Target Faculty Mentors & Research Labs</label>
+            <input type="text" id="targetFaculty" class="form-control" value="Prof. Christopher Manning (NLP Group) and Prof. Percy Liang (HELM / CRFM)">
+          </div>
+
+          <div class="form-group">
+            <label for="postGradGoals">Post-Graduation Research / Career Vision</label>
+            <textarea id="postGradGoals" class="form-control" rows="2">Lead fundamental research on efficient sparse architectures at an apex industrial research lab (DeepMind / FAIR) followed by a Ph.D.</textarea>
+          </div>
+
+          <button type="submit" class="btn-action" id="btnSynthesizeSop">
+            <span>📜</span>
+            <span>Synthesize High-Stakes SOP</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Right Column: Statement of Purpose Viewer -->
+      <section class="results-column">
+        <div class="panel-header">
+          <h2>🖋️ Synthesized Statement of Purpose</h2>
+          <button type="button" class="btn-copy" onclick="copyFullSop()">
+            <span>📋</span>
+            <span>Copy Full Statement</span>
+          </button>
+        </div>
+
+        <!-- Paragraph 1: The Intellectual Hook -->
+        <div class="sop-paragraph-card">
+          <span class="section-badge badge-hook">Section I: The Intellectual Catalyst & Problem Statement</span>
+          <p class="paragraph-text" id="para1Hook">--</p>
+        </div>
+
+        <!-- Paragraph 2: Academic Foundations -->
+        <div class="sop-paragraph-card">
+          <span class="section-badge badge-foundations">Section II: Theoretical Grounding & Academic Rigor</span>
+          <p class="paragraph-text" id="para2Foundations">--</p>
+        </div>
+
+        <!-- Paragraph 3: Research Crucible -->
+        <div class="sop-paragraph-card">
+          <span class="section-badge badge-crucible">Section III: The Engineering Crucible & Quantitative Impact</span>
+          <p class="paragraph-text" id="para3Crucible">--</p>
+        </div>
+
+        <!-- Paragraph 4: Faculty Alignment -->
+        <div class="sop-paragraph-card">
+          <span class="section-badge badge-alignment">Section IV: Faculty Mentorship & Lab Synergies</span>
+          <p class="paragraph-text" id="para4Alignment">--</p>
+        </div>
+
+        <!-- Paragraph 5: Future Vision -->
+        <div class="sop-paragraph-card">
+          <span class="section-badge badge-vision">Section V: Post-Graduation Vision & Societal Impact</span>
+          <p class="paragraph-text" id="para5Vision">--</p>
+        </div>
+
+        <!-- Admissions Advisor Checklist -->
+        <div style="background: rgba(30, 41, 59, 0.5); border: 1px solid var(--panel-border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 1.5rem;">
+          <div style="color: var(--accent-amber); font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem;">
+            <span>🛡️ Rhetorical Evaluation & Quality Checklist</span>
+          </div>
+          <div id="advisorTipsList">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let templatesData = [];
+    let presetsData = [];
+    let fullSopRaw = '';
+
+    async function init() {
+      try {
+        const [tplRes, preRes] = await Promise.all([
+          fetch('/api/v1/horizon/sop/templates'),
+          fetch('/api/v1/horizon/sop/presets')
+        ]);
+
+        const tplJson = await tplRes.json();
+        const preJson = await preRes.json();
+
+        if (tplJson.success) {
+          templatesData = tplJson.templates;
+          populateTemplateSelect();
+        }
+
+        if (preJson.success) {
+          presetsData = preJson.presets;
+          renderPresets();
+        }
+
+        runSynthesis();
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    function populateTemplateSelect() {
+      const select = document.getElementById('targetProgramSelect');
+      select.innerHTML = templatesData.map(t => `
+        <option value="${t.id}">${t.university} - ${t.program}</option>
+      `).join('');
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+          <span class="preset-sub">${p.candidateName} • ${p.targetProgramId}</span>
+        </button>
+      `).join('');
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.label));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('candidateName').value = p.candidateName;
+      document.getElementById('targetProgramSelect').value = p.targetProgramId;
+      document.getElementById('undergradBg').value = p.undergraduateBg;
+      document.getElementById('keyProjects').value = p.keyProjects;
+      document.getElementById('targetFaculty').value = p.targetFaculty;
+      document.getElementById('postGradGoals').value = p.postGradGoals;
+
+      runSynthesis();
+    }
+
+    async function runSynthesis() {
+      const candidateName = document.getElementById('candidateName').value;
+      const targetProgramId = document.getElementById('targetProgramSelect').value;
+      const undergraduateBg = document.getElementById('undergradBg').value;
+      const keyProjects = document.getElementById('keyProjects').value;
+      const targetFaculty = document.getElementById('targetFaculty').value;
+      const postGradGoals = document.getElementById('postGradGoals').value;
+
+      try {
+        const res = await fetch('/api/v1/horizon/sop/synthesize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            candidateName,
+            targetProgramId,
+            undergraduateBg,
+            keyProjects,
+            targetFaculty,
+            postGradGoals
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          renderSopResults(data.sop);
+        }
+      } catch (err) {
+        console.error('Error running SOP synthesis:', err);
+      }
+    }
+
+    function renderSopResults(sop) {
+      fullSopRaw = sop.fullSopText;
+
+      // Scoreboard
+      document.getElementById('displayRigorScore').innerText = sop.rhetoricalRigorScore + ' / 100';
+      document.getElementById('displayWordCount').innerText = sop.wordCount + ' words';
+      document.getElementById('displayWordLimit').innerText = 'out of ' + sop.wordLimit + ' max words';
+      document.getElementById('displayClicheGrade').innerText = sop.clicheAudit.status;
+      document.getElementById('displayTargetUniversity').innerText = sop.targetUniversity;
+      document.getElementById('displayTargetProgram').innerText = sop.targetProgram;
+
+      // Paragraphs
+      document.getElementById('para1Hook').innerText = sop.paragraphs.intellectualHook;
+      document.getElementById('para2Foundations').innerText = sop.paragraphs.academicFoundations;
+      document.getElementById('para3Crucible').innerText = sop.paragraphs.researchCrucible;
+      document.getElementById('para4Alignment').innerText = sop.paragraphs.facultyAlignment;
+      document.getElementById('para5Vision').innerText = sop.paragraphs.futureVision;
+
+      // Advisor Tips
+      const tipsCont = document.getElementById('advisorTipsList');
+      tipsCont.innerHTML = sop.admissionsAdvisorTips.map(tip => `
+        <div style="display: flex; gap: 0.5rem; font-size: 0.86rem; color: #cbd5e1; margin-bottom: 0.4rem;">
+          <span>✔️</span>
+          <span>${tip}</span>
+        </div>
+      `).join('');
+    }
+
+    function copyFullSop() {
+      navigator.clipboard.writeText(fullSopRaw).then(() => {
+        alert('Statement of Purpose copied to clipboard!');
+      });
+    }
+
+    document.getElementById('sopForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      runSynthesis();
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
