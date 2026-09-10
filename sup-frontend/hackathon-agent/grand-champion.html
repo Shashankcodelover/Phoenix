@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grand Champion Command Center & Trophy Vault | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #151d38 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(192, 132, 252, 0.2));
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-gold);
+    }
+
+    .container {
+      max-width: 1480px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero Profile Showcase */
+    .profile-hero {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      border-radius: 20px;
+      padding: 2.25rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(251, 191, 36, 0.1);
+    }
+    .profile-hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -15%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .profile-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .avatar-block {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .avatar-icon {
+      font-size: 3.8rem;
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid var(--accent-gold);
+      width: 90px;
+      height: 90px;
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 25px rgba(251, 191, 36, 0.25);
+    }
+    .builder-name {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 0.3rem;
+    }
+    .builder-title {
+      font-size: 1.05rem;
+      color: var(--accent-gold);
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .builder-rank {
+      font-size: 0.85rem;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+
+    /* Scoreboard */
+    .stat-row {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .stat-chip {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 0.85rem 1.4rem;
+      text-align: center;
+      min-width: 120px;
+    }
+    .stat-num {
+      font-size: 1.6rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+    .stat-lbl {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Grid Sections */
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Trophy Vault */
+    .trophy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .trophy-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.85));
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s;
+    }
+    .trophy-card:hover {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 25px rgba(251, 191, 36, 0.15);
+      transform: translateY(-3px);
+    }
+    .trophy-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+    .trophy-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .trophy-prize {
+      font-size: 0.9rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      padding: 0.25rem 0.6rem;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .trophy-event {
+      font-size: 0.82rem;
+      color: var(--accent-cyan);
+      margin-bottom: 0.5rem;
+    }
+    .trophy-highlight {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+    }
+    .trophy-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.85rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .btn-verify {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent-cyan);
+      font-size: 0.75rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    .btn-verify:hover {
+      background: var(--accent-cyan);
+      color: #000;
+    }
+
+    /* Badges */
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    .badge-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .badge-card:hover {
+      border-color: var(--accent-purple);
+      transform: translateY(-2px);
+    }
+    .badge-icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.4rem;
+    }
+    .badge-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+    .badge-rarity {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .badge-rarity.LEGENDARY {
+      background: rgba(251, 191, 36, 0.2);
+      color: var(--accent-gold);
+    }
+    .badge-rarity.EPIC {
+      background: rgba(192, 132, 252, 0.2);
+      color: var(--accent-purple);
+    }
+    .badge-rarity.MYTHIC {
+      background: rgba(244, 63, 94, 0.2);
+      color: var(--accent-rose);
+    }
+    .badge-rarity.RARE {
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--accent-cyan);
+    }
+    .badge-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* Verification Modal / Drawer */
+    #verifyModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-box {
+      background: #0f172a;
+      border: 1px solid var(--accent-gold);
+      border-radius: 16px;
+      max-width: 600px;
+      width: 100%;
+      padding: 2rem;
+      box-shadow: 0 0 50px rgba(251, 191, 36, 0.25);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .btn-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Embed Box */
+    .embed-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 1.5rem;
+    }
+    .embed-flex {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>👑</span>
+      <span>PHOENIX OS // GRAND CHAMPION TROPHY VAULT</span>
+      <span class="nav-badge">Feature 40 (Pillar 2 Capstone)</span>
+    </div>
+    <div class="nav-links">
+      <a href="/hackathon-agent/devpost-packager.html">Packager</a>
+      <a href="/hackathon-agent/podium-predictor.html">Predictor</a>
+      <a href="/hackathon-agent/repo-decompiler.html">Decompiler</a>
+      <a href="/hackathon-agent/bounty-maximizer.html">Bounties</a>
+      <a href="/hackathon-agent/investor-pack.html">Investor Pack</a>
+      <a href="#" class="active" style="color: var(--accent-gold); font-weight: 700;">Trophy Vault</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Profile -->
+    <section class="profile-hero">
+      <div class="profile-header-flex">
+        <div class="avatar-block">
+          <div class="avatar-icon" id="builderAvatar">🦅</div>
+          <div>
+            <h1 class="builder-name" id="builderName">Preetham & Phoenix Team</h1>
+            <div class="builder-title" id="builderTitle">Level 10 Grandmaster Systems Architect</div>
+            <div class="builder-rank" id="builderRank">#1 Global Collegiate Builder (Top 0.01%)</div>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-chip">
+            <div class="stat-num" id="statTrophies" style="color: var(--accent-gold);">6</div>
+            <div class="stat-lbl">Trophies Won</div>
+          </div>
+          <div class="stat-chip">
+            <div class="stat-num" id="statPrizes" style="color: var(--accent-emerald);">$124,500</div>
+            <div class="stat-lbl">Bounty Cash</div>
+          </div>
+          <div class="stat-chip">
+            <div class="stat-num" id="statWinRate" style="color: var(--accent-purple);">100%</div>
+            <div class="stat-lbl">Podium Rate</div>
+          </div>
+          <div class="stat-chip">
+            <div class="stat-num" id="statLoc" style="color: var(--accent-cyan);">84.2k</div>
+            <div class="stat-lbl">LOC Shipped</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cryptographic Trophy Vault -->
+    <div class="section-title">
+      <span>🏆 Cryptographically Verified Trophy Cabinet</span>
+      <span style="font-size: 0.85rem; color: var(--accent-gold); font-family: 'JetBrains Mono';">SHA-256 SIGNED</span>
+    </div>
+    <div class="trophy-grid" id="trophyGrid">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Achievement Badges -->
+    <div class="section-title">
+      <span>🎖️ Master Achievement Badges</span>
+      <span style="font-size: 0.85rem; color: var(--accent-purple); font-family: 'JetBrains Mono';">6/6 UNLOCKED</span>
+    </div>
+    <div class="badge-grid" id="badgeGrid">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Embeddable Builder Card -->
+    <div class="section-title">
+      <span>🌐 Universal Sovereign Builder Credential</span>
+    </div>
+    <div class="embed-card">
+      <div class="embed-flex">
+        <div id="badgePreviewContainer">
+          <!-- Populated by JS -->
+        </div>
+        <div style="flex: 1; min-width: 320px;">
+          <h3 style="font-size: 1.05rem; color: #fff; margin-bottom: 0.5rem;">Embed Your Grandmaster Credential</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Display your tamper-proof hackathon win record on GitHub READMEs, personal portfolios, or Substack.
+          </p>
+          <div style="background: #090e17; padding: 0.75rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #38bdf8; margin-bottom: 0.75rem; overflow-x: auto;" id="badgeSnippet">
+            <!-- Populated by JS -->
+          </div>
+          <button class="btn-verify" style="padding: 0.5rem 1rem;" id="btnCopyBadge">Copy HTML Embed Code</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verification Modal -->
+  <div id="verifyModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">🔐 Cryptographic Proof Verification</div>
+        <button class="btn-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div id="modalBody" style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.6;">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let profileData = null;
+
+    async function loadProfile() {
+      try {
+        const res = await fetch('/api/v1/agent/trophy/profile');
+        const data = await res.json();
+        if (data.success && data.profile) {
+          profileData = data.profile;
+          renderProfile(data.profile);
+        }
+        loadEmbed();
+      } catch (err) {
+        console.error('Profile fetch failed:', err);
+      }
+    }
+
+    function renderProfile(profile) {
+      document.getElementById('builderName').innerText = profile.builderName;
+      document.getElementById('builderTitle').innerText = profile.title;
+      document.getElementById('builderRank').innerText = profile.rank;
+      document.getElementById('statTrophies').innerText = profile.stats.trophiesWon;
+      document.getElementById('statPrizes').innerText = `$${profile.stats.cumulativePrizesUsd.toLocaleString()}`;
+      document.getElementById('statWinRate').innerText = profile.stats.winRate;
+      document.getElementById('statLoc').innerText = `${(profile.stats.totalLinesShipped / 1000).toFixed(1)}k`;
+
+      // Render Trophies
+      const trophyGrid = document.getElementById('trophyGrid');
+      trophyGrid.innerHTML = profile.trophies.map(t => `
+        <div class="trophy-card">
+          <div>
+            <div class="trophy-header">
+              <span class="trophy-title">${t.title}</span>
+              <span class="trophy-prize">$${t.prizeUsd.toLocaleString()}</span>
+            </div>
+            <div class="trophy-event">${t.event} • ${t.tier}</div>
+            <div class="trophy-highlight">${t.highlight}</div>
+          </div>
+          <div class="trophy-footer">
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono';">${t.date}</span>
+            <button class="btn-verify" onclick="verifyTrophy('${t.id}')">Verify Signature</button>
+          </div>
+        </div>
+      `).join('');
+
+      // Render Badges
+      const badgeGrid = document.getElementById('badgeGrid');
+      badgeGrid.innerHTML = profile.badges.map(b => `
+        <div class="badge-card">
+          <div class="badge-icon">${b.icon}</div>
+          <div class="badge-name">${b.name}</div>
+          <span class="badge-rarity ${b.rarity}">${b.rarity}</span>
+          <div class="badge-desc">${b.desc}</div>
+        </div>
+      `).join('');
+    }
+
+    async function loadEmbed() {
+      try {
+        const res = await fetch('/api/v1/agent/trophy/embed');
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('badgePreviewContainer').innerHTML = data.badgeHtml;
+          document.getElementById('badgeSnippet').innerText = data.badgeHtml;
+        }
+      } catch (e) {
+        console.error('Embed load error:', e);
+      }
+    }
+
+    async function verifyTrophy(trophyId) {
+      try {
+        const res = await fetch(`/api/v1/agent/trophy/verify/${trophyId}`);
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('modalBody').innerHTML = `
+            <div style="margin-bottom: 0.75rem;"><strong style="color: #fff;">Trophy:</strong> ${data.title}</div>
+            <div style="margin-bottom: 0.75rem;"><strong style="color: #fff;">Event:</strong> ${data.event} (${data.tier})</div>
+            <div style="margin-bottom: 0.75rem;"><strong style="color: var(--accent-gold);">Prize Awarded:</strong> $${data.prizeUsd.toLocaleString()}</div>
+            <div style="margin-bottom: 0.75rem;"><strong style="color: #fff;">Issuer Authority:</strong> ${data.issuer}</div>
+            <div style="margin-bottom: 0.75rem; word-break: break-all;">
+              <strong style="color: var(--accent-cyan);">Cryptographic Proof:</strong><br>
+              <span style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: #38bdf8;">${data.proofHash}</span>
+            </div>
+            <div style="margin-bottom: 1rem; word-break: break-all;">
+              <strong style="color: var(--accent-emerald);">Audit SHA-256 Checksum:</strong><br>
+              <span style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: #10b981;">${data.auditChecksum}</span>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-emerald); border-radius: 8px; padding: 0.75rem; text-align: center; color: var(--accent-emerald); font-weight: 700;">
+              ✓ Status: 100% CRYPTOGRAPHICALLY VERIFIED & VALIDATED
+            </div>
+          `;
+          document.getElementById('verifyModal').style.display = 'flex';
+        }
+      } catch (err) {
+        alert('Verification failed: ' + err.message);
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('verifyModal').style.display = 'none';
+    }
+
+    document.getElementById('btnCopyBadge').addEventListener('click', () => {
+      const code = document.getElementById('badgeSnippet').innerText;
+      navigator.clipboard.writeText(code);
+      alert('Badge embed HTML copied to clipboard!');
+    });
+
+    window.addEventListener('DOMContentLoaded', loadProfile);
+  </script>
+</body>
+</html>

@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post-Hackathon Investor Outreach & Seed Pitch Pack | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-blue: #3b82f6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1833 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: var(--accent-blue);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1480px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 900px;
+      line-height: 1.5;
+    }
+
+    /* Studio Grid */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 1.75rem;
+    }
+    @media (max-width: 1080px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+
+    /* Preset list */
+    .preset-card {
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 0.85rem;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-card:hover, .preset-card.selected {
+      border-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.08);
+      transform: translateX(4px);
+    }
+    .preset-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.35rem;
+    }
+    .preset-name {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .round-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 0.85rem;
+    }
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    .text-input, .text-area {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.85rem;
+    }
+    .text-input:focus, .text-area:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+    .text-area {
+      min-height: 60px;
+      resize: vertical;
+    }
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .btn-pack {
+      width: 100%;
+      background: linear-gradient(135deg, #0284c7, #6366f1);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      transition: all 0.2s;
+    }
+    .btn-pack:hover {
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.5);
+      transform: translateY(-1px);
+    }
+
+    /* Financing Hero Card */
+    .financing-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.85));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .raise-val {
+      font-size: 2.4rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+      line-height: 1;
+    }
+    .raise-lbl {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.3rem;
+    }
+    .terms-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .term-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      text-align: center;
+    }
+    .term-num {
+      font-size: 1.15rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-emerald);
+    }
+    .term-lbl {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    /* Tabs */
+    .tab-bar {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 1.25rem;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .tab-btn.active {
+      color: #fff;
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-cyan);
+    }
+
+    /* Content Panes */
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* One Pager & Markdown Viewer */
+    .md-viewer {
+      background: #090e17;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+
+    /* 10 Slide Cards */
+    .slides-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .slide-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .slide-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .slide-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .slide-body {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    /* Outbound Emails */
+    .email-card {
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .email-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .email-subject {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+    .email-body {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      background: #090e17;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+
+    .btn-copy-small {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #94a3b8;
+      font-size: 0.72rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-copy-small:hover {
+      background: var(--accent-cyan);
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🤝</span>
+      <span>PHOENIX OS // INVESTOR OUTREACH PACK</span>
+      <span class="nav-badge">Feature 39</span>
+    </div>
+    <div class="nav-links">
+      <a href="/hackathon-agent/devpost-packager.html">Packager</a>
+      <a href="/hackathon-agent/podium-predictor.html">Predictor</a>
+      <a href="/hackathon-agent/repo-decompiler.html">Decompiler</a>
+      <a href="/hackathon-agent/bounty-maximizer.html">Bounties</a>
+      <a href="#" class="active" style="color: var(--accent-cyan); font-weight: 700;">Investor Pack</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <header class="hero-banner">
+      <h1 class="hero-title">Post-Hackathon Investor Outreach & Seed Pitch Pack</h1>
+      <p class="hero-subtitle">
+        Convert your hackathon prototype into institutional angel checks. Generates a Sequoia/YC-ready executive one-pager, 10-slide seed deck outline, YC post-money SAFE terms, and hyper-personalized cold investor outbound sequences.
+      </p>
+    </header>
+
+    <div class="studio-grid">
+      <!-- Left Panel: Form & Presets -->
+      <aside class="glass-panel">
+        <div class="panel-title">
+          <span>⚡ Startup Presets</span>
+          <span style="font-size: 0.75rem; color: var(--accent-cyan); font-family: 'JetBrains Mono';">YC SEED</span>
+        </div>
+
+        <div id="presetsContainer">
+          <!-- Populated by JS -->
+          <div style="color: var(--text-muted); font-size: 0.85rem;">Loading presets...</div>
+        </div>
+
+        <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+          <div class="form-group">
+            <label class="form-label">Company Name</label>
+            <input type="text" id="inputCompany" class="text-input" value="Phoenix OS">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Elevator Tagline</label>
+            <input type="text" id="inputTagline" class="text-input" value="Autonomous Tri-Pillar Operating System for Engineers">
+          </div>
+
+          <div class="grid-2col">
+            <div class="form-group">
+              <label class="form-label">Target Raise ($)</label>
+              <input type="number" id="inputRaise" class="text-input" value="1200000">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Valuation Cap ($)</label>
+              <input type="number" id="inputCap" class="text-input" value="10000000">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Traction & Hackathon Win</label>
+            <textarea id="inputTraction" class="text-area">Won 1st Place Grand Champion across multiple tracks; 2,400 active developers in closed beta; 140+ automated verified test suites.</textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Core Moat / Defensibility</label>
+            <textarea id="inputMoat" class="text-area">Proprietary AST code generation heuristics, multi-modal failover recovery pipelines, and localized edge agent runtimes.</textarea>
+          </div>
+
+          <button id="btnGenerate" class="btn-pack">
+            <span>🚀</span> Generate Seed Pitch Pack
+          </button>
+        </div>
+      </aside>
+
+      <!-- Right Panel: Studio -->
+      <main class="glass-panel" id="packStudio">
+        <!-- Financing Overview Card -->
+        <div class="financing-card">
+          <div>
+            <div class="raise-lbl">Target Seed Capital</div>
+            <div class="raise-val" id="displayRaise">$1,200,000</div>
+          </div>
+          <div class="terms-row">
+            <div class="term-box">
+              <div class="term-num" id="displayCap">$10.0M</div>
+              <div class="term-lbl">Valuation Cap</div>
+            </div>
+            <div class="term-box">
+              <div class="term-num" id="displayOwnership">12.0%</div>
+              <div class="term-lbl">Dilution / Ownership</div>
+            </div>
+            <div class="term-box">
+              <div class="term-num" id="displayInstrument">YC SAFE</div>
+              <div class="term-lbl">Instrument Type</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('onePager')">Executive One-Pager</button>
+          <button class="tab-btn" onclick="switchTab('deck')">10-Slide Seed Deck</button>
+          <button class="tab-btn" onclick="switchTab('emails')">Investor Cold Outbound</button>
+          <button class="tab-btn" onclick="switchTab('safe')">SAFE Term Sheet</button>
+        </div>
+
+        <!-- Tab 1: One Pager -->
+        <div class="tab-pane active" id="pane-onePager">
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 0.5rem;">
+            <button class="btn-copy-small" onclick="copyText('onePagerCode')">Copy Markdown</button>
+          </div>
+          <div class="md-viewer" id="onePagerCode">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Tab 2: 10-Slide Deck -->
+        <div class="tab-pane" id="pane-deck">
+          <div class="slides-grid" id="slidesGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Tab 3: Outbound Emails -->
+        <div class="tab-pane" id="pane-emails">
+          <div class="email-card">
+            <div class="email-header">
+              <span class="email-subject" id="fomoSubject">FOMO Fresh Hackathon Winner</span>
+              <button class="btn-copy-small" onclick="copyText('fomoBody')">Copy Email</button>
+            </div>
+            <div class="email-body" id="fomoBody"></div>
+          </div>
+
+          <div class="email-card">
+            <div class="email-header">
+              <span class="email-subject" id="deepTechSubject">Deep Tech Moat Focus</span>
+              <button class="btn-copy-small" onclick="copyText('deepTechBody')">Copy Email</button>
+            </div>
+            <div class="email-body" id="deepTechBody"></div>
+          </div>
+
+          <div class="email-card">
+            <div class="email-header">
+              <span class="email-subject" id="blurbSubject">Forwardable Mentor / Judge Blurb</span>
+              <button class="btn-copy-small" onclick="copyText('blurbBody')">Copy Blurb</button>
+            </div>
+            <div class="email-body" id="blurbBody"></div>
+          </div>
+        </div>
+
+        <!-- Tab 4: SAFE Terms -->
+        <div class="tab-pane" id="pane-safe">
+          <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1.5rem;" id="safeTermsContent">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    let presets = [];
+    let currentPack = null;
+    let activePresetId = 'ai-developer-os';
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/agent/investor/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          presets = data.presets;
+          renderPresets();
+        }
+        generatePack();
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsContainer');
+      container.innerHTML = presets.map(p => `
+        <div class="preset-card ${p.id === activePresetId ? 'selected' : ''}" onclick="selectPreset('${p.id}')" data-id="${p.id}">
+          <div class="preset-header">
+            <span class="preset-name">${p.companyName}</span>
+            <span class="round-badge">$${(p.targetRaiseUsd / 1000).toLocaleString()}k</span>
+          </div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">${p.tagline}</div>
+        </div>
+      `).join('');
+    }
+
+    function selectPreset(id) {
+      activePresetId = id;
+      document.querySelectorAll('.preset-card').forEach(c => {
+        c.classList.toggle('selected', c.getAttribute('data-id') === id);
+      });
+      const p = presets.find(x => x.id === id);
+      if (p) {
+        document.getElementById('inputCompany').value = p.companyName;
+        document.getElementById('inputTagline').value = p.tagline;
+        document.getElementById('inputRaise').value = p.targetRaiseUsd;
+        document.getElementById('inputCap').value = p.valuationCapUsd;
+        document.getElementById('inputTraction').value = p.traction;
+      }
+      generatePack();
+    }
+
+    async function generatePack() {
+      const payload = {
+        companyName: document.getElementById('inputCompany').value,
+        tagline: document.getElementById('inputTagline').value,
+        targetRaiseUsd: document.getElementById('inputRaise').value,
+        valuationCapUsd: document.getElementById('inputCap').value,
+        traction: document.getElementById('inputTraction').value,
+        moat: document.getElementById('inputMoat').value
+      };
+
+      try {
+        const res = await fetch('/api/v1/agent/investor/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          currentPack = data;
+          renderPack(data);
+        }
+      } catch (err) {
+        console.error('Generate pack error:', err);
+      }
+    }
+
+    function renderPack(pack) {
+      const p = pack.companyProfile;
+      document.getElementById('displayRaise').innerText = `$${Number(p.targetRaiseUsd).toLocaleString()}`;
+      document.getElementById('displayCap').innerText = `$${(Number(p.valuationCapUsd) / 1000000).toFixed(1)}M`;
+      document.getElementById('displayOwnership').innerText = `${pack.safeTermSheet.effectiveOwnershipPercentage}%`;
+
+      // 1. One Pager
+      document.getElementById('onePagerCode').innerText = pack.onePagerMarkdown;
+
+      // 2. 10-Slide Deck
+      const slidesGrid = document.getElementById('slidesGrid');
+      slidesGrid.innerHTML = pack.tenSlideDeck.map(s => `
+        <div class="slide-card">
+          <div class="slide-header">
+            <span class="slide-num">SLIDE ${s.slide}</span>
+            <span class="slide-title">${s.title}</span>
+          </div>
+          <div class="slide-body">${s.content}</div>
+        </div>
+      `).join('');
+
+      // 3. Emails
+      document.getElementById('fomoSubject').innerText = pack.emailTemplates.fomoWinner.subject;
+      document.getElementById('fomoBody').innerText = pack.emailTemplates.fomoWinner.body;
+
+      document.getElementById('deepTechSubject').innerText = pack.emailTemplates.deepTechMoat.subject;
+      document.getElementById('deepTechBody').innerText = pack.emailTemplates.deepTechMoat.body;
+
+      document.getElementById('blurbSubject').innerText = pack.emailTemplates.forwardableBlurb.subject;
+      document.getElementById('blurbBody').innerText = pack.emailTemplates.forwardableBlurb.body;
+
+      // 4. SAFE
+      const safe = pack.safeTermSheet;
+      document.getElementById('safeTermsContent').innerHTML = `
+        <h3 style="font-size: 1.15rem; color: #fff; margin-bottom: 1rem;">Institutional SAFE Term Sheet Summary</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.85rem;">
+          <div><strong style="color: var(--accent-cyan);">Security:</strong> ${safe.instrument}</div>
+          <div><strong style="color: var(--accent-emerald);">Investment:</strong> $${safe.investmentAmountUsd.toLocaleString()}</div>
+          <div><strong style="color: var(--accent-amber);">Post-Money Cap:</strong> $${safe.valuationCapUsd.toLocaleString()}</div>
+          <div><strong style="color: #cbd5e1;">Discount Rate:</strong> ${safe.discountRatePercentage}%</div>
+          <div><strong style="color: #cbd5e1;">Effective Equity:</strong> ${safe.effectiveOwnershipPercentage}%</div>
+          <div><strong style="color: #cbd5e1;">Pro-Rata Rights:</strong> ${safe.proRataRights}</div>
+        </div>
+        <div style="margin-top: 1rem; font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.75rem;">
+          ${safe.governance}
+        </div>
+      `;
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById(`pane-${tabId}`).classList.add('active');
+    }
+
+    function copyText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text);
+      alert('Copied to clipboard!');
+    }
+
+    document.getElementById('btnGenerate').addEventListener('click', generatePack);
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

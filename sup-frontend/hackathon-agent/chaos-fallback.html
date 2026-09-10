@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Chaos & Network Failure Fallback Engine | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: var(--accent-amber);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-amber), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: #fef3c7;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-amber);
+      color: #070d18;
+      border-color: var(--accent-amber);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    }
+
+    /* Grid */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 480px 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 1024px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+
+    /* Chaos Trigger Options */
+    .chaos-option {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chaos-option:hover, .chaos-option.selected {
+      border-color: var(--accent-amber);
+      background: rgba(245, 158, 11, 0.08);
+    }
+    .chaos-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.35rem;
+    }
+    .chaos-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .chaos-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Sliders */
+    .slider-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+    .badge-mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-amber);
+      background: rgba(245, 158, 11, 0.15);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+    .range-input {
+      width: 100%;
+      -webkit-appearance: none;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      outline: none;
+    }
+    .range-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent-amber);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+      transition: transform 0.1s;
+    }
+
+    .btn-inject {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent-amber), #d97706);
+      color: #070d18;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .btn-inject:hover {
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+      transform: translateY(-1px);
+    }
+
+    /* Right Column: Circuit Breaker Visualizer */
+    .circuit-hero {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .state-dial {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #0c203b 40%, #0369a1);
+      border: 3px solid var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
+    }
+    .state-meta h3 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+    .state-meta p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .badge-circuit {
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .circuit-open { background: rgba(244, 63, 94, 0.2); border: 1px solid rgba(244, 63, 94, 0.4); color: var(--accent-rose); }
+    .circuit-closed { background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: var(--accent-emerald); }
+    .circuit-half { background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4); color: var(--accent-amber); }
+
+    /* Latency 4-Grid */
+    .latency-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+    .latency-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    .latency-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+    }
+    .latency-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* Event Stream */
+    .stream-box {
+      max-height: 220px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-bottom: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+    }
+    .event-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.35rem 0.2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .sev-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+    }
+    .sev-crit { background: rgba(244, 63, 94, 0.2); color: #f87171; }
+    .sev-warn { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .sev-info { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; }
+    .sev-succ { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+
+    /* Spoken Pivot Box */
+    .pivot-box {
+      background: rgba(16, 185, 129, 0.08);
+      border-left: 3px solid var(--accent-emerald);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem;
+      font-size: 0.85rem;
+      line-height: 1.55;
+      color: #e2e8f0;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🦅 PHOENIX OS</span>
+      <span class="nav-badge">Pillar 2 • Feature 36</span>
+    </div>
+    <div class="nav-links">
+      <a href="agent.html">War Room</a>
+      <a href="security-sweeper.html">Security Sweeper</a>
+      <a href="unit-economics.html">Economics</a>
+      <a href="podium-predictor.html">Podium</a>
+      <a href="../horizon/world-dashboard.html">Studio & Arena</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Real-Time Chaos & Network Failure Fallback Engine</h1>
+      <p class="hero-subtitle">
+        Injects real-time venue Wi-Fi blackouts, third-party API 429 quota exhaustion, and database pod crashes.
+        Monitors automated circuit breaker failover, verifies zero-downtime procedural fallbacks, and outputs spoken judge pivot scripts.
+      </p>
+
+      <!-- Presets -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-muted);">Chaos Scenarios:</span>
+        <button id="btn-preset-baseline" class="preset-btn" onclick="loadPreset('baseline')">Normal Baseline (Connected)</button>
+        <button id="btn-preset-wifi" class="preset-btn active" onclick="loadPreset('wifi_blackout')">Auditorium Wi-Fi Blackout</button>
+        <button id="btn-preset-api" class="preset-btn" onclick="loadPreset('api_429_limit')">LLM Provider 429 Limit</button>
+        <button id="btn-preset-db" class="preset-btn" onclick="loadPreset('db_crash')">Database Pod Crash</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="studio-grid">
+
+      <!-- Left Column: Chaos Injection Console -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>⚡ Chaos Injection Cockpit</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Failure Mode Selector</span>
+        </div>
+
+        <div id="opt-wifi" class="chaos-option selected" onclick="selectChaos('OFFLINE_VENUE_WIFI')">
+          <div class="chaos-header">
+            <span class="chaos-title">📡 100% Venue Wi-Fi Blackout</span>
+            <span class="sev-tag sev-crit">TOTAL OFFLINE</span>
+          </div>
+          <p class="chaos-desc">Simulates auditorium network collapse. Verifies local ServiceWorker and in-memory cache intercept all client API traffic.</p>
+        </div>
+
+        <div id="opt-api" class="chaos-option" onclick="selectChaos('API_429_RATE_LIMIT')">
+          <div class="chaos-header">
+            <span class="chaos-title">🛑 LLM Provider 429 Rate Limit</span>
+            <span class="sev-tag sev-warn">QUOTA SPIKE</span>
+          </div>
+          <p class="chaos-desc">Simulates Gemini/OpenAI returning 429 Too Many Requests. Tripping circuit activates deterministic procedural heuristic fallbacks.</p>
+        </div>
+
+        <div id="opt-db" class="chaos-option" onclick="selectChaos('DATABASE_CRASH')">
+          <div class="chaos-header">
+            <span class="chaos-title">💥 Cloud Database Pod Failure</span>
+            <span class="sev-tag sev-crit">TCP RESET</span>
+          </div>
+          <p class="chaos-desc">Simulates primary database socket termination. Activates in-memory shadow registry with zero unhandled promise crashes.</p>
+        </div>
+
+        <!-- Sliders -->
+        <div class="slider-box">
+          <div class="slider-header">
+            <span>Simulated Traffic Load</span>
+            <span id="val-traffic-rps" class="badge-mono">250 RPS</span>
+          </div>
+          <input type="range" id="slider-traffic-rps" class="range-input" min="50" max="2000" step="50" value="250" oninput="updateSliders()">
+        </div>
+
+        <div class="slider-box">
+          <div class="slider-header">
+            <span>Attack Duration</span>
+            <span id="val-duration" class="badge-mono">10 Seconds</span>
+          </div>
+          <input type="range" id="slider-duration" class="range-input" min="2" max="60" step="1" value="10" oninput="updateSliders()">
+        </div>
+
+        <button id="btn-inject-chaos" class="btn-inject" onclick="runChaosSimulation()">
+          <span>🔥 Inject Live Chaos Event</span>
+        </button>
+      </div>
+
+      <!-- Right Column: Circuit Breaker & Failover Telemetry -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>🛡️ Circuit Breaker Telemetry</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);" id="recovered-summary">2,500 / 2,500 Requests Rescued</span>
+        </div>
+
+        <!-- Circuit State Hero -->
+        <div class="circuit-hero">
+          <div style="display:flex; align-items:center; gap:1.25rem;">
+            <div id="circuit-state-dial" class="state-dial">OPEN</div>
+            <div class="state-meta">
+              <h3 id="active-fallback-heading">ServiceWorker + In-Memory Cache</h3>
+              <p id="sla-summary-text">100.0% Success Rate • Zero Dropped Transactions</p>
+            </div>
+          </div>
+          <div id="circuit-state-badge" class="badge-circuit circuit-open">STATE: OPEN</div>
+        </div>
+
+        <!-- Latency 4-Grid -->
+        <div class="latency-grid">
+          <div class="latency-card">
+            <div id="lat-p50" class="latency-val">2.4ms</div>
+            <div class="latency-label">P50 Latency</div>
+          </div>
+          <div class="latency-card">
+            <div id="lat-p95" class="latency-val">4.8ms</div>
+            <div class="latency-label">P95 Latency</div>
+          </div>
+          <div class="latency-card">
+            <div id="lat-p99" class="latency-val">8.1ms</div>
+            <div class="latency-label">P99 Latency</div>
+          </div>
+          <div class="latency-card">
+            <div id="lat-avg" class="latency-val" style="color:var(--accent-emerald);">3.2ms</div>
+            <div class="latency-label">Average Recovered</div>
+          </div>
+        </div>
+
+        <!-- Event Stream -->
+        <div style="font-weight:700; font-size:0.92rem; color:#fff; margin-bottom:0.5rem;">
+          📡 Real-Time Failover Event Stream
+        </div>
+        <div id="events-stream-container" class="stream-box">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Spoken Judge Pivot Script -->
+        <div style="font-weight:700; font-size:0.92rem; color:#fff; margin-bottom:0.5rem;">
+          🎙️ Spoken Judge Recovery Script (Zero-Panic Pitch Defense)
+        </div>
+        <div class="pivot-box">
+          "<span id="spoken-script-text">Loading spoken pitch recovery script...</span>"
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let currentChaosType = 'OFFLINE_VENUE_WIFI';
+    let globalPresets = {};
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/v1/agent/chaos/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          globalPresets = data.presets;
+        }
+      } catch (err) {
+        console.warn('Preset fetch fallback to local defaults:', err);
+      }
+      runChaosSimulation();
+    });
+
+    function selectChaos(type) {
+      currentChaosType = type;
+      document.querySelectorAll('.chaos-option').forEach(el => el.classList.remove('selected'));
+      if (type === 'OFFLINE_VENUE_WIFI') document.getElementById('opt-wifi').classList.add('selected');
+      else if (type === 'API_429_RATE_LIMIT') document.getElementById('opt-api').classList.add('selected');
+      else if (type === 'DATABASE_CRASH') document.getElementById('opt-db').classList.add('selected');
+
+      runChaosSimulation();
+    }
+
+    function loadPreset(key) {
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-preset-${key}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const p = globalPresets[key];
+      if (!p) return;
+
+      selectChaos(p.chaosType);
+    }
+
+    function updateSliders() {
+      document.getElementById('val-traffic-rps').textContent = `${document.getElementById('slider-traffic-rps').value} RPS`;
+      document.getElementById('val-duration').textContent = `${document.getElementById('slider-duration').value} Seconds`;
+    }
+
+    async function runChaosSimulation() {
+      const payload = {
+        chaosType: currentChaosType,
+        trafficRps: parseInt(document.getElementById('slider-traffic-rps').value, 10) || 250,
+        durationSec: parseInt(document.getElementById('slider-duration').value, 10) || 10
+      };
+
+      try {
+        const res = await fetch('/api/v1/agent/chaos/simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderSimulation(data);
+        }
+      } catch (err) {
+        console.error('Simulation failed:', err);
+      }
+    }
+
+    function renderSimulation(data) {
+      document.getElementById('recovered-summary').textContent = `${data.recoveredRequests.toLocaleString()} / ${data.totalRequests.toLocaleString()} Requests Rescued`;
+      document.getElementById('circuit-state-dial').textContent = data.circuitState;
+      document.getElementById('active-fallback-heading').textContent = data.activeFallbackEngine;
+
+      const badge = document.getElementById('circuit-state-badge');
+      badge.textContent = `STATE: ${data.circuitState}`;
+      badge.className = 'badge-circuit ' + (data.circuitState === 'OPEN' ? 'circuit-open' : data.circuitState === 'CLOSED' ? 'circuit-closed' : 'circuit-half');
+
+      // Latencies
+      const lat = data.latencyMetrics || {};
+      document.getElementById('lat-p50').textContent = lat.p50Ms;
+      document.getElementById('lat-p95').textContent = lat.p95Ms;
+      document.getElementById('lat-p99').textContent = lat.p99Ms;
+      document.getElementById('lat-avg').textContent = lat.averageLatencyMs;
+
+      // Event stream
+      const streamContainer = document.getElementById('events-stream-container');
+      streamContainer.innerHTML = (data.failoverEvents || []).map(e => {
+        const sevClass = e.severity === 'CRITICAL' ? 'sev-crit' : e.severity === 'WARN' ? 'sev-warn' : e.severity === 'SUCCESS' ? 'sev-succ' : 'sev-info';
+        return `
+          <div class="event-row">
+            <div>
+              <span class="sev-tag ${sevClass}">${e.severity}</span>
+              <span style="color:#e2e8f0; margin-left:0.4rem;">${e.event}</span>
+            </div>
+            <span style="color:#64748b; font-size:0.7rem;">${new Date(e.timestamp).toLocaleTimeString()}</span>
+          </div>
+        `;
+      }).join('');
+
+      // Spoken Script
+      document.getElementById('spoken-script-text').textContent = data.spokenPitchPivot;
+    }
+  </script>
+</body>
+</html>

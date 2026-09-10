@@ -257,6 +257,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/prep', aiRateLimiter, prepRoutes);
+app.use('/api/agent', aiRateLimiter, agentRoutes);
 app.use('/api/enterprise', enterpriseRoutes);
 app.use('/api/code-review', codeReviewRoutes);
 

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unit Economics & Monetization Model Sandbox | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: var(--accent-amber);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-amber), var(--accent-emerald));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: #fef3c7;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-amber);
+      color: #070d18;
+      border-color: var(--accent-amber);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    }
+
+    /* Grid */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 480px 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 1024px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+
+    /* Form & Sliders */
+    .section-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .section-heading {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    .slider-row {
+      margin-bottom: 0.85rem;
+    }
+    .slider-row:last-child {
+      margin-bottom: 0;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.35rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+    .slider-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-amber);
+      background: rgba(245, 158, 11, 0.12);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+    .range-input {
+      width: 100%;
+      -webkit-appearance: none;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      outline: none;
+    }
+    .range-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent-amber);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+      transition: transform 0.1s;
+    }
+    .range-input::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Right Column: Scorecard Hero */
+    .mrr-hero {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mrr-val-box h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+    .mrr-val-box p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .rating-pill {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent-emerald);
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Metrics 4-Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .metric-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      margin-bottom: 0.2rem;
+    }
+    .metric-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* 12-Month Table */
+    .table-container {
+      max-height: 280px;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+    th {
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.6rem 0.75rem;
+      color: var(--accent-cyan);
+      position: sticky;
+      top: 0;
+      font-weight: 700;
+    }
+    td {
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #cbd5e1;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🦅 PHOENIX OS</span>
+      <span class="nav-badge">Pillar 2 • Feature 34</span>
+    </div>
+    <div class="nav-links">
+      <a href="agent.html">War Room</a>
+      <a href="problem-validation.html">Customer Discovery</a>
+      <a href="podium-predictor.html">Podium Predictor</a>
+      <a href="devpost-packager.html">Devpost Packager</a>
+      <a href="../horizon/world-dashboard.html">Studio & Arena</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Unit Economics & Monetization Model Sandbox</h1>
+      <p class="hero-subtitle">
+        Simulates tiered SaaS pricing, variable AI/cloud inference COGS, customer acquisition economics (LTV/CAC ratio),
+        and 12-month breakeven financial projections calibrated for seed venture capital due diligence.
+      </p>
+
+      <!-- Presets -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-muted);">Institutional Presets:</span>
+        <button id="btn-preset-aegis" class="preset-btn active" onclick="loadPreset('aegis')">Aegis Swarm (Municipal B2G)</button>
+        <button id="btn-preset-oncomatch" class="preset-btn" onclick="loadPreset('oncomatch')">OncoMatch ZK (Enterprise Health)</button>
+        <button id="btn-preset-nexusaudio" class="preset-btn" onclick="loadPreset('nexusaudio')">NexusAudio AI (Prosumer/Campus)</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="studio-grid">
+
+      <!-- Left Column: Assumptions & Sliders -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>⚙️ Financial Model Calibration</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Dynamic Unit Economics</span>
+        </div>
+
+        <!-- 1. Pricing Tiers -->
+        <div class="section-box">
+          <div class="section-heading">1. Pricing Tiers</div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Pro Tier Monthly Subscription</span>
+              <span id="val-pro-price" class="slider-badge">$199 / mo</span>
+            </div>
+            <input type="range" id="slider-pro-price" class="range-input" min="9" max="500" value="199" oninput="updateValues()">
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Enterprise Annual Contract (ACV)</span>
+              <span id="val-enterprise-acv" class="slider-badge">$36,000 / yr</span>
+            </div>
+            <input type="range" id="slider-enterprise-acv" class="range-input" min="5000" max="100000" step="1000" value="36000" oninput="updateValues()">
+          </div>
+        </div>
+
+        <!-- 2. Volume & Funnel -->
+        <div class="section-box">
+          <div class="section-heading">2. Customer Funnel & Scale</div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Active Workspaces / Users (MAU)</span>
+              <span id="val-active-users" class="slider-badge">2,400</span>
+            </div>
+            <input type="range" id="slider-active-users" class="range-input" min="200" max="25000" step="100" value="2400" oninput="updateValues()">
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Pro Tier Conversion Rate</span>
+              <span id="val-conversion" class="slider-badge">6.0%</span>
+            </div>
+            <input type="range" id="slider-conversion" class="range-input" min="1.0" max="20.0" step="0.5" value="6.0" oninput="updateValues()">
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Enterprise B2B Closed Contracts</span>
+              <span id="val-enterprise-clients" class="slider-badge">12 Clients</span>
+            </div>
+            <input type="range" id="slider-enterprise-clients" class="range-input" min="0" max="50" value="12" oninput="updateValues()">
+          </div>
+        </div>
+
+        <!-- 3. Costs & Retention -->
+        <div class="section-box">
+          <div class="section-heading">3. COGS, Acquisition & Churn</div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Blended AI + Cloud Cost / User</span>
+              <span id="val-cogs" class="slider-badge">$6.30 / mo</span>
+            </div>
+            <input type="range" id="slider-cogs" class="range-input" min="0.20" max="20.00" step="0.10" value="6.30" oninput="updateValues()">
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Customer Acquisition Cost (CAC)</span>
+              <span id="val-cac" class="slider-badge">$420</span>
+            </div>
+            <input type="range" id="slider-cac" class="range-input" min="10" max="1500" step="10" value="420" oninput="updateValues()">
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Monthly Customer Churn Rate</span>
+              <span id="val-churn" class="slider-badge">1.5%</span>
+            </div>
+            <input type="range" id="slider-churn" class="range-input" min="0.5" max="10.0" step="0.1" value="1.5" oninput="updateValues()">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Dashboard & Projections -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>📈 Executive Financial Cockpit</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);" id="display-project-title">Aegis Swarm</span>
+        </div>
+
+        <!-- MRR Hero Banner -->
+        <div class="mrr-hero">
+          <div class="mrr-val-box">
+            <h2 id="metric-mrr">$64,656</h2>
+            <p>Monthly Recurring Revenue (MRR) • <span id="metric-arr" style="color:var(--accent-amber); font-weight:700;">$775,872 ARR</span></p>
+          </div>
+          <div id="venture-rating-badge" class="rating-pill">Tier-1 Venture Quality</div>
+        </div>
+
+        <!-- 4 Key Ratio Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div id="metric-margin" class="metric-val" style="color:var(--accent-emerald);">76.6%</div>
+            <div class="metric-sub">Software Gross Margin</div>
+          </div>
+          <div class="metric-card">
+            <div id="metric-cac-ratio" class="metric-val" style="color:var(--accent-cyan);">50.4x</div>
+            <div class="metric-sub">LTV / CAC Ratio</div>
+          </div>
+          <div class="metric-card">
+            <div id="metric-ltv" class="metric-val" style="color:var(--accent-amber);">$21,168</div>
+            <div class="metric-sub">Customer Lifetime Value</div>
+          </div>
+          <div class="metric-card">
+            <div id="metric-payback" class="metric-val" style="color:var(--accent-purple);">1.3 mo</div>
+            <div class="metric-sub">CAC Payback Period</div>
+          </div>
+        </div>
+
+        <!-- 12-Month Breakeven Runway Table -->
+        <div style="font-weight:700; font-size:0.95rem; color:#fff; margin-bottom:0.6rem;">
+          📅 12-Month Revenue & Breakeven Ramp
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Timeline</th>
+                <th>Users</th>
+                <th>Paid Seats</th>
+                <th>MRR</th>
+                <th>COGS</th>
+                <th>Gross Profit</th>
+                <th>Margin</th>
+              </tr>
+            </thead>
+            <tbody id="projections-table-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let globalPresets = {};
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/v1/agent/economics/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          globalPresets = data.presets;
+        }
+      } catch (err) {
+        console.warn('Preset fetch fallback to local defaults:', err);
+      }
+      runCalculation();
+    });
+
+    function updateValues() {
+      document.getElementById('val-pro-price').textContent = `$${document.getElementById('slider-pro-price').value} / mo`;
+      document.getElementById('val-enterprise-acv').textContent = `$${parseInt(document.getElementById('slider-enterprise-acv').value, 10).toLocaleString()} / yr`;
+      document.getElementById('val-active-users').textContent = parseInt(document.getElementById('slider-active-users').value, 10).toLocaleString();
+      document.getElementById('val-conversion').textContent = `${document.getElementById('slider-conversion').value}%`;
+      document.getElementById('val-enterprise-clients').textContent = `${document.getElementById('slider-enterprise-clients').value} Clients`;
+      document.getElementById('val-cogs').textContent = `$${parseFloat(document.getElementById('slider-cogs').value).toFixed(2)} / mo`;
+      document.getElementById('val-cac').textContent = `$${document.getElementById('slider-cac').value}`;
+      document.getElementById('val-churn').textContent = `${document.getElementById('slider-churn').value}%`;
+
+      runCalculation();
+    }
+
+    function loadPreset(key) {
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-preset-${key}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const p = globalPresets[key];
+      if (!p) return;
+
+      document.getElementById('display-project-title').textContent = p.projectTitle || '';
+
+      if (p.pricing) {
+        document.getElementById('slider-pro-price').value = p.pricing.proPrice || 199;
+        document.getElementById('slider-enterprise-acv').value = p.pricing.enterpriseAnnual || 36000;
+      }
+      if (p.volume) {
+        document.getElementById('slider-active-users').value = p.volume.activeUsers || 2400;
+        document.getElementById('slider-conversion').value = p.volume.proConversionPct || 6.0;
+        document.getElementById('slider-enterprise-clients').value = p.volume.enterpriseClients || 12;
+      }
+      if (p.costs) {
+        const totalCogs = (p.costs.aiCostPerUser || 4.5) + (p.costs.cloudInfraPerUser || 1.8);
+        document.getElementById('slider-cogs').value = totalCogs.toFixed(2);
+        document.getElementById('slider-cac').value = p.costs.cac || 420;
+        document.getElementById('slider-churn').value = p.costs.monthlyChurnPct || 1.5;
+      }
+
+      updateValues();
+    }
+
+    async function runCalculation() {
+      const cogsCombined = parseFloat(document.getElementById('slider-cogs').value);
+      const aiEst = cogsCombined * 0.7;
+      const cloudEst = cogsCombined * 0.3;
+
+      const payload = {
+        projectTitle: document.getElementById('display-project-title').textContent,
+        pricing: {
+          proPrice: parseFloat(document.getElementById('slider-pro-price').value),
+          enterpriseAnnual: parseFloat(document.getElementById('slider-enterprise-acv').value)
+        },
+        volume: {
+          activeUsers: parseInt(document.getElementById('slider-active-users').value, 10),
+          proConversionPct: parseFloat(document.getElementById('slider-conversion').value),
+          enterpriseClients: parseInt(document.getElementById('slider-enterprise-clients').value, 10)
+        },
+        costs: {
+          aiCostPerUser: aiEst,
+          cloudInfraPerUser: cloudEst,
+          cac: parseFloat(document.getElementById('slider-cac').value),
+          monthlyChurnPct: parseFloat(document.getElementById('slider-churn').value)
+        }
+      };
+
+      try {
+        const res = await fetch('/api/v1/agent/economics/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderDashboard(data);
+        }
+      } catch (err) {
+        console.error('Calculation failed:', err);
+      }
+    }
+
+    function renderDashboard(data) {
+      const s = data.summary;
+      document.getElementById('metric-mrr').textContent = s.totalMrr;
+      document.getElementById('metric-arr').textContent = `${s.projectedArr} ARR`;
+      document.getElementById('venture-rating-badge').textContent = s.ventureRating;
+
+      document.getElementById('metric-margin').textContent = s.grossMargin;
+      document.getElementById('metric-cac-ratio').textContent = s.ltvCacRatio;
+      document.getElementById('metric-ltv').textContent = s.ltv;
+      document.getElementById('metric-payback').textContent = s.paybackMonths;
+
+      // Render 12-Month Table
+      const tbody = document.getElementById('projections-table-body');
+      tbody.innerHTML = (data.projections12Month || []).map(r => `
+        <tr>
+          <td><strong style="color:#fff;">${r.month}</strong></td>
+          <td>${r.users.toLocaleString()}</td>
+          <td>${r.payingAccounts.toLocaleString()}</td>
+          <td style="color:var(--accent-amber);">${r.mrr}</td>
+          <td style="color:var(--accent-rose);">${r.cogs}</td>
+          <td style="color:var(--accent-emerald);">${r.grossProfit}</td>
+          <td>${r.margin}</td>
+        </tr>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

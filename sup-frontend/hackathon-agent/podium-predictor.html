@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Judge Rubric Scorer & Podium Predictor | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-coral: #fb7185;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(192, 132, 252, 0.15);
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      color: var(--accent-purple);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-purple), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(192, 132, 252, 0.1);
+      border: 1px solid rgba(192, 132, 252, 0.25);
+      color: #f3e8ff;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-purple);
+      color: #070d18;
+      border-color: var(--accent-purple);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(192, 132, 252, 0.4);
+    }
+
+    /* Grid */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 500px 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 1024px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+
+    /* Form & Sliders */
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+    .form-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 0.4rem;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .slider-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .slider-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .slider-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .slider-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.12);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+    .range-input {
+      width: 100%;
+      -webkit-appearance: none;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      outline: none;
+    }
+    .range-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+      transition: transform 0.1s;
+    }
+    .range-input::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Right Column: Scorecard & Podium Odds */
+    .podium-hero-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 30px -10px rgba(192, 132, 252, 0.2);
+    }
+    .score-dial-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .score-dial {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #1e1b4b 40%, #4c1d95);
+      border: 3px solid var(--accent-purple);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(192, 132, 252, 0.4);
+    }
+    .score-dial-meta h3 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+    .score-dial-meta p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .badge-status {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent-emerald);
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Podium Probability Bars */
+    .podium-section {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .podium-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .prob-row {
+      margin-bottom: 0.85rem;
+    }
+    .prob-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    .bar-bg {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    /* Jury Comments */
+    .jury-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .judge-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      position: relative;
+    }
+    .judge-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+    }
+    .judge-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: #070d18;
+    }
+    .judge-info h5 {
+      font-size: 0.85rem;
+      color: #fff;
+      font-weight: 700;
+    }
+    .judge-info span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: block;
+    }
+    .judge-quote {
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    /* Remediation */
+    .remedy-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.85rem;
+    }
+    .remedy-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🦅 PHOENIX OS</span>
+      <span class="nav-badge">Pillar 2 • Feature 32</span>
+    </div>
+    <div class="nav-links">
+      <a href="agent.html">War Room</a>
+      <a href="devpost-packager.html">Devpost Packager</a>
+      <a href="demo-script.html">Teleprompter</a>
+      <a href="arch-visualizer.html">Architecture</a>
+      <a href="moat-auditor.html">Moat Auditor</a>
+      <a href="../horizon/world-dashboard.html">Studio & Arena</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Live Judge Rubric Scorer & Podium Predictor</h1>
+      <p class="hero-subtitle">
+        Simulates grand jury scoring points across the 5 canonical Hackathon Rubric Pillars and runs a 10,000-iteration
+        Markov Monte-Carlo model against competing teams to project exact 1st Place, 2nd Place, 3rd Place, and Track Prize podium probabilities.
+      </p>
+
+      <!-- Presets -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-muted);">Grand Jury Presets:</span>
+        <button id="btn-preset-aegis" class="preset-btn active" onclick="loadPreset('aegis')">Aegis Swarm (Smart Cities)</button>
+        <button id="btn-preset-oncomatch" class="preset-btn" onclick="loadPreset('oncomatch')">OncoMatch ZK (Healthcare)</button>
+        <button id="btn-preset-nexusaudio" class="preset-btn" onclick="loadPreset('nexusaudio')">NexusAudio AI (Dev Tools)</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="studio-grid">
+
+      <!-- Left Column: Rubric Sliders & Inputs -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>⚖️ Jury Rubric Calibration</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Standard 100-Point Model</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="project-title">Project Title</label>
+          <input type="text" id="project-title" class="form-input" value="Aegis Swarm">
+        </div>
+
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:0.75rem;">
+          <div class="form-group">
+            <label class="form-label" for="project-track">Track / Prize Category</label>
+            <input type="text" id="project-track" class="form-input" value="Smart Cities & Disaster Logistics">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cohort-size">Cohort Size</label>
+            <input type="number" id="cohort-size" class="form-input" value="120" min="10" max="500" onchange="runEvaluation()">
+          </div>
+        </div>
+
+        <!-- Slider 1: Innovation (25) -->
+        <div class="slider-box">
+          <div class="slider-row">
+            <span class="slider-name">1. Innovation & Novelty (25%)</span>
+            <span id="val-innovation" class="slider-badge">25 / 25</span>
+          </div>
+          <input type="range" id="slider-innovation" class="range-input" min="0" max="25" value="25" oninput="updateSliderValues()">
+        </div>
+
+        <!-- Slider 2: Technical Depth (25) -->
+        <div class="slider-box">
+          <div class="slider-row">
+            <span class="slider-name">2. Technical Depth & Execution (25%)</span>
+            <span id="val-technical" class="slider-badge">25 / 25</span>
+          </div>
+          <input type="range" id="slider-technical" class="range-input" min="0" max="25" value="25" oninput="updateSliderValues()">
+        </div>
+
+        <!-- Slider 3: Real-World Impact (20) -->
+        <div class="slider-box">
+          <div class="slider-row">
+            <span class="slider-name">3. Real-World Impact & TAM (20%)</span>
+            <span id="val-impact" class="slider-badge">20 / 20</span>
+          </div>
+          <input type="range" id="slider-impact" class="range-input" min="0" max="20" value="20" oninput="updateSliderValues()">
+        </div>
+
+        <!-- Slider 4: UI/UX & Polish (15) -->
+        <div class="slider-box">
+          <div class="slider-row">
+            <span class="slider-name">4. UI/UX Polish & Interactivity (15%)</span>
+            <span id="val-design" class="slider-badge">13 / 15</span>
+          </div>
+          <input type="range" id="slider-design" class="range-input" min="0" max="15" value="13" oninput="updateSliderValues()">
+        </div>
+
+        <!-- Slider 5: Pitch & Defense (15) -->
+        <div class="slider-box">
+          <div class="slider-row">
+            <span class="slider-name">5. Pitch Delivery & Defense (15%)</span>
+            <span id="val-pitch" class="slider-badge">14 / 15</span>
+          </div>
+          <input type="range" id="slider-pitch" class="range-input" min="0" max="15" value="14" oninput="updateSliderValues()">
+        </div>
+
+        <button id="btn-recalc" class="btn-primary" style="width:100%; margin-top:0.5rem; background:linear-gradient(135deg, var(--accent-purple), #7c3aed); color:#fff; border:none; padding:0.75rem; border-radius:8px; font-weight:800; cursor:pointer;" onclick="runEvaluation()">
+          <span>⚡ Recalculate Podium Projections</span>
+        </button>
+      </div>
+
+      <!-- Right Column: Predictive Analytics & Jury Room -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>🏆 Monte Carlo Podium Projections</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);" id="percentile-badge">Top 0.5% Percentile</span>
+        </div>
+
+        <!-- Podium Hero Card -->
+        <div class="podium-hero-card">
+          <div class="score-dial-wrap">
+            <div id="composite-score-circle" class="score-dial">97</div>
+            <div class="score-dial-meta">
+              <h3 id="project-title-display">Aegis Swarm</h3>
+              <p id="cohort-meta-display">Simulated against 120 competing teams</p>
+            </div>
+          </div>
+          <div id="status-rating-badge" class="badge-status">Grand Prize Front-Runner</div>
+        </div>
+
+        <!-- Monte Carlo Probability Bars -->
+        <div class="podium-section">
+          <div class="podium-title-row">
+            <span style="font-weight:700; font-size:0.95rem; color:#fff;">Podium Odds Distribution</span>
+            <span id="prob-overall-podium" style="font-family:'JetBrains Mono'; font-weight:800; color:var(--accent-emerald); font-size:0.9rem;">Overall Podium: 94.2%</span>
+          </div>
+
+          <div class="prob-row">
+            <div class="prob-label">
+              <span>🥇 1st Place (Grand Champion)</span>
+              <span id="prob-first-place" style="font-family:'JetBrains Mono'; color:var(--accent-amber);">42.8%</span>
+            </div>
+            <div class="bar-bg">
+              <div id="bar-first-place" class="bar-fill" style="width: 42.8%; background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div>
+            </div>
+          </div>
+
+          <div class="prob-row">
+            <div class="prob-label">
+              <span>🥈 2nd Place (1st Runner-Up)</span>
+              <span id="prob-second-place" style="font-family:'JetBrains Mono'; color:#cbd5e1;">36.2%</span>
+            </div>
+            <div class="bar-bg">
+              <div id="bar-second-place" class="bar-fill" style="width: 36.2%; background: linear-gradient(90deg, #94a3b8, #cbd5e1);"></div>
+            </div>
+          </div>
+
+          <div class="prob-row">
+            <div class="prob-label">
+              <span>🥉 3rd Place (2nd Runner-Up)</span>
+              <span id="prob-third-place" style="font-family:'JetBrains Mono'; color:#f97316;">15.2%</span>
+            </div>
+            <div class="bar-bg">
+              <div id="bar-third-place" class="bar-fill" style="width: 15.2%; background: linear-gradient(90deg, #ea580c, #fb923c);"></div>
+            </div>
+          </div>
+
+          <div class="prob-row">
+            <div class="prob-label">
+              <span>🎯 Track Sponsor Category Winner</span>
+              <span id="prob-track-prize" style="font-family:'JetBrains Mono'; color:var(--accent-cyan);">78.5%</span>
+            </div>
+            <div class="bar-bg">
+              <div id="bar-track-prize" class="bar-fill" style="width: 78.5%; background: linear-gradient(90deg, #0284c7, #38bdf8);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grand Jury Deliberation Panel -->
+        <div style="font-weight:700; font-size:0.95rem; color:#fff; margin-bottom:0.75rem;">
+          🏛️ Grand Jury Deliberations (Simulated Archetypes)
+        </div>
+        <div id="jury-deliberations-container" class="jury-grid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Rubric Gap Remediation Plan -->
+        <div style="font-weight:700; font-size:0.95rem; color:#fff; margin-bottom:0.5rem;">
+          🚀 Remediation Checklist to Secure 100/100
+        </div>
+        <div id="remediation-container">
+          <!-- Populated by JS -->
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let globalPresets = {};
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/v1/agent/podium/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          globalPresets = data.presets;
+        }
+      } catch (err) {
+        console.warn('Preset fetch fallback to local defaults:', err);
+      }
+      runEvaluation();
+    });
+
+    function updateSliderValues() {
+      document.getElementById('val-innovation').textContent = `${document.getElementById('slider-innovation').value} / 25`;
+      document.getElementById('val-technical').textContent = `${document.getElementById('slider-technical').value} / 25`;
+      document.getElementById('val-impact').textContent = `${document.getElementById('slider-impact').value} / 20`;
+      document.getElementById('val-design').textContent = `${document.getElementById('slider-design').value} / 15`;
+      document.getElementById('val-pitch').textContent = `${document.getElementById('slider-pitch').value} / 15`;
+      runEvaluation();
+    }
+
+    function loadPreset(key) {
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-preset-${key}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const p = globalPresets[key];
+      if (!p) return;
+
+      document.getElementById('project-title').value = p.projectTitle || '';
+      document.getElementById('project-track').value = p.track || '';
+      document.getElementById('cohort-size').value = p.cohortSize || 120;
+
+      if (p.scores) {
+        document.getElementById('slider-innovation').value = p.scores.innovation || 25;
+        document.getElementById('slider-technical').value = p.scores.technicalDepth || 25;
+        document.getElementById('slider-impact').value = p.scores.impact || 20;
+        document.getElementById('slider-design').value = p.scores.design || 14;
+        document.getElementById('slider-pitch').value = p.scores.pitch || 14;
+      }
+
+      updateSliderValues();
+    }
+
+    async function runEvaluation() {
+      const payload = {
+        projectTitle: document.getElementById('project-title').value,
+        track: document.getElementById('project-track').value,
+        cohortSize: parseInt(document.getElementById('cohort-size').value, 10) || 120,
+        scores: {
+          innovation: parseInt(document.getElementById('slider-innovation').value, 10),
+          technicalDepth: parseInt(document.getElementById('slider-technical').value, 10),
+          impact: parseInt(document.getElementById('slider-impact').value, 10),
+          design: parseInt(document.getElementById('slider-design').value, 10),
+          pitch: parseInt(document.getElementById('slider-pitch').value, 10)
+        }
+      };
+
+      try {
+        const res = await fetch('/api/v1/agent/podium/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderEvaluation(data);
+        }
+      } catch (err) {
+        console.error('Prediction failed:', err);
+      }
+    }
+
+    function renderEvaluation(data) {
+      document.getElementById('composite-score-circle').textContent = Math.round(data.numericScore);
+      document.getElementById('project-title-display').textContent = data.projectTitle;
+      document.getElementById('cohort-meta-display').textContent = `Simulated against ${data.cohortSize} competing teams in ${data.track}`;
+      document.getElementById('percentile-badge').textContent = data.percentileRank;
+      document.getElementById('status-rating-badge').textContent = data.statusRating;
+
+      // Podium bars
+      const p = data.podiumProjections;
+      document.getElementById('prob-overall-podium').textContent = `Overall Podium: ${p.overallPodiumProbability}`;
+
+      const fProb = parseFloat(p.firstPlaceGrandPrize);
+      document.getElementById('prob-first-place').textContent = p.firstPlaceGrandPrize;
+      document.getElementById('bar-first-place').style.width = `${fProb}%`;
+
+      const sProb = parseFloat(p.secondPlaceRunnerUp);
+      document.getElementById('prob-second-place').textContent = p.secondPlaceRunnerUp;
+      document.getElementById('bar-second-place').style.width = `${sProb}%`;
+
+      const tProb = parseFloat(p.thirdPlaceBronze);
+      document.getElementById('prob-third-place').textContent = p.thirdPlaceBronze;
+      document.getElementById('bar-third-place').style.width = `${tProb}%`;
+
+      const trProb = parseFloat(p.trackBountyWinner);
+      document.getElementById('prob-track-prize').textContent = p.trackBountyWinner;
+      document.getElementById('bar-track-prize').style.width = `${trProb}%`;
+
+      // Jury Deliberations
+      const juryContainer = document.getElementById('jury-deliberations-container');
+      juryContainer.innerHTML = (data.juryDeliberations || []).map(j => `
+        <div class="judge-card">
+          <div class="judge-header">
+            <div class="judge-avatar" style="background:${j.avatarColor}">${j.judge.charAt(0)}</div>
+            <div class="judge-info">
+              <h5>${j.judge}</h5>
+              <span>${j.role}</span>
+            </div>
+          </div>
+          <div style="font-size:0.75rem; font-weight:700; color:${j.avatarColor}; margin-bottom:0.35rem;">
+            Verdict: ${j.verdict}
+          </div>
+          <div class="judge-quote">"${j.comment}"</div>
+        </div>
+      `).join('');
+
+      // Remediation Plan
+      const remedyContainer = document.getElementById('remediation-container');
+      if (data.remediationActions && data.remediationActions.length > 0) {
+        remedyContainer.innerHTML = data.remediationActions.map(r => `
+          <div class="remedy-item">
+            <span class="remedy-badge">${r.gain} [${r.pillar}]</span>
+            <span style="color:#cbd5e1;">${r.action}</span>
+          </div>
+        `).join('');
+      } else {
+        remedyContainer.innerHTML = `
+          <div style="font-size:0.85rem; color:var(--accent-emerald); padding:0.5rem 0;">
+            ✨ Perfect 100/100 calibration! No gaps identified across grand jury criteria.
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>

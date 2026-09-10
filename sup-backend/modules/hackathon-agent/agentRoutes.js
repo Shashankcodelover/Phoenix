@@ -221,6 +221,203 @@ router.post('/demo-script/timing', (req, res) => {
   }
 });
 
+// Feature 31: Devpost Submission Markdown & Asset Packager (Public)
+const { devpostSubmissionEngine } = require('./devpostSubmissionEngine');
+
+router.get('/devpost/presets', (req, res) => {
+  res.json({ success: true, presets: devpostSubmissionEngine.getPresets() });
+});
+
+router.post('/devpost/generate', (req, res) => {
+  try {
+    const result = devpostSubmissionEngine.generateDevpostSubmission(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/devpost/audit', (req, res) => {
+  try {
+    const result = devpostSubmissionEngine.auditCompliance(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 32: Live Judge Rubric Scorer & Podium Predictor (Public)
+const { judgeRubricPodiumEngine } = require('./judgeRubricPodiumEngine');
+
+router.get('/podium/presets', (req, res) => {
+  res.json({ success: true, presets: judgeRubricPodiumEngine.getPresets() });
+});
+
+router.post('/podium/predict', (req, res) => {
+  try {
+    const result = judgeRubricPodiumEngine.evaluateRubricAndPredictPodium(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 33: Problem Validation & User Interview Generator (Public)
+const { problemValidationEngine } = require('./problemValidationEngine');
+
+router.get('/validation/presets', (req, res) => {
+  res.json({ success: true, presets: problemValidationEngine.getPresets() });
+});
+
+router.post('/validation/generate', (req, res) => {
+  try {
+    const result = problemValidationEngine.generateValidationReport(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 34: Unit Economics & Monetization Model Sandbox (Public)
+const { unitEconomicsEngine } = require('./unitEconomicsEngine');
+
+router.get('/economics/presets', (req, res) => {
+  res.json({ success: true, presets: unitEconomicsEngine.getPresets() });
+});
+
+router.post('/economics/calculate', (req, res) => {
+  try {
+    const result = unitEconomicsEngine.calculateEconomics(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 35: Codebase Security & Pre-Demo Vulnerability Sweeper (Public)
+const { securitySweeperEngine } = require('./securitySweeperEngine');
+
+router.get('/sweeper/presets', (req, res) => {
+  res.json({ success: true, presets: securitySweeperEngine.getPresets() });
+});
+
+router.post('/sweeper/audit', (req, res) => {
+  try {
+    const result = securitySweeperEngine.sweepCodebase(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 36: Real-Time Chaos & Network Failure Fallback Engine (Public)
+const { demoDisasterRecoveryHub } = require('./demoDisasterRecoveryHub');
+
+router.get('/chaos/presets', (req, res) => {
+  res.json({ success: true, presets: demoDisasterRecoveryHub.getPresets() });
+});
+
+router.post('/chaos/simulate', (req, res) => {
+  try {
+    const result = demoDisasterRecoveryHub.simulateChaos(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 37: Hackathon Hall of Fame & Winning Repo Decompiler (Public)
+const { winningRepoDecompilerEngine } = require('./winningRepoDecompilerEngine');
+
+router.get('/repo-decompile/presets', (req, res) => {
+  res.json({ success: true, presets: winningRepoDecompilerEngine.getPresets() });
+});
+
+router.get('/repo-decompile/repo/:id', (req, res) => {
+  try {
+    const repo = winningRepoDecompilerEngine.getRepoDetails(req.params.id);
+    res.json({ success: true, repo });
+  } catch (error) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/repo-decompile/decompile', (req, res) => {
+  try {
+    const { repoIdOrUrl, options } = req.body;
+    const result = winningRepoDecompilerEngine.decompileRepo(repoIdOrUrl, options);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post('/repo-decompile/compare', (req, res) => {
+  try {
+    const { repoId1, repoId2 } = req.body;
+    const result = winningRepoDecompilerEngine.compareRepos(repoId1, repoId2);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 38: Sponsor Bounty Value Maximizer & Multi-Track Solver (Public)
+const { sponsorBountyMaximizerEngine } = require('./sponsorBountyMaximizerEngine');
+
+router.get('/bounty/catalog', (req, res) => {
+  res.json({ success: true, catalog: sponsorBountyMaximizerEngine.getCatalog() });
+});
+
+router.get('/bounty/presets', (req, res) => {
+  res.json({ success: true, presets: sponsorBountyMaximizerEngine.getPresets() });
+});
+
+router.post('/bounty/solve', (req, res) => {
+  try {
+    const result = sponsorBountyMaximizerEngine.solveMaxBounties(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 39: Post-Hackathon Investor Outreach & Seed Pitch Pack (Public)
+const { investorOutreachEngine } = require('./investorOutreachEngine');
+
+router.get('/investor/presets', (req, res) => {
+  res.json({ success: true, presets: investorOutreachEngine.getPresets() });
+});
+
+router.post('/investor/generate', (req, res) => {
+  try {
+    const result = investorOutreachEngine.generatePitchPack(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Feature 40: Grand Champion Command Center & Trophy Vault (Public)
+const { grandChampionTrophyEngine } = require('./grandChampionTrophyEngine');
+
+router.get('/trophy/profile', (req, res) => {
+  res.json({ success: true, profile: grandChampionTrophyEngine.getProfile(req.query.id) });
+});
+
+router.get('/trophy/verify/:id', (req, res) => {
+  try {
+    const result = grandChampionTrophyEngine.verifyTrophyProof(req.params.id);
+    res.json(result);
+  } catch (error) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+});
+
+router.get('/trophy/embed', (req, res) => {
+  res.json(grandChampionTrophyEngine.generateEmbedBadge(req.query.id));
+});
+
 // Apply protect middleware to ALL agent routes
 router.use(protect);
 

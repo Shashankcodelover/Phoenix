@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Codebase Security & Pre-Demo Vulnerability Sweeper | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      color: var(--accent-rose);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-rose), var(--accent-amber));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      color: #ffe4e6;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-rose);
+      color: #070d18;
+      border-color: var(--accent-rose);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
+    }
+
+    /* Grid */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 1024px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+
+    /* Code Editor */
+    .code-editor-box {
+      background: #050b14;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 1rem;
+    }
+    .code-textarea {
+      width: 100%;
+      height: 380px;
+      background: transparent;
+      border: none;
+      color: #e0f2fe;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.84rem;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      white-space: pre;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-rose), #e11d48);
+      color: #fff;
+      border: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+    }
+    .btn-patch {
+      background: linear-gradient(135deg, var(--accent-emerald), #059669);
+      color: #070d18;
+      border: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-patch:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0.65rem 1.1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    /* Right Column: Scorecard & Clearance */
+    .score-hero {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .score-dial {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #2a0812 40%, #881337);
+      border: 3px solid var(--accent-rose);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+      transition: all 0.3s;
+    }
+    .score-meta h3 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+    .score-meta p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .badge-clearance {
+      background: rgba(244, 63, 94, 0.18);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: var(--accent-rose);
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Certificate Box */
+    .cert-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    .cert-title {
+      color: var(--accent-cyan);
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 0.4rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Findings List */
+    .findings-container {
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    .finding-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      border-left: 3px solid var(--accent-rose);
+      border-radius: 8px;
+      padding: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+    .finding-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.35rem;
+    }
+    .line-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      color: #fff;
+    }
+    .sev-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: rgba(244, 63, 94, 0.2);
+      color: var(--accent-rose);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+    }
+    .finding-desc {
+      font-size: 0.84rem;
+      color: #e2e8f0;
+      margin-bottom: 0.35rem;
+    }
+    .finding-fix {
+      font-size: 0.78rem;
+      color: #38bdf8;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🦅 PHOENIX OS</span>
+      <span class="nav-badge">Pillar 2 • Feature 35</span>
+    </div>
+    <div class="nav-links">
+      <a href="agent.html">War Room</a>
+      <a href="unit-economics.html">Unit Economics</a>
+      <a href="problem-validation.html">Discovery</a>
+      <a href="podium-predictor.html">Podium Predictor</a>
+      <a href="../horizon/world-dashboard.html">Studio & Arena</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Codebase Security & Pre-Demo Vulnerability Sweeper</h1>
+      <p class="hero-subtitle">
+        Performs static AST heuristic threat sweeping across live hackathon repositories. Detects exposed API secrets,
+        OS command injection, SQL concatenation, and dangerous eval vectors with 1-click automated remediation and SHA-256 clearance certification.
+      </p>
+
+      <!-- Presets -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-muted);">Audit Benchmarks:</span>
+        <button id="btn-preset-vulnerable" class="preset-btn active" onclick="loadPreset('vulnerable')">Vulnerable Live Demo (High Risk)</button>
+        <button id="btn-preset-partial" class="preset-btn" onclick="loadPreset('partial')">Partially Hardened (Medium Risk)</button>
+        <button id="btn-preset-hardened" class="preset-btn" onclick="loadPreset('hardened')">Hardened Production Standard (100%)</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="studio-grid">
+
+      <!-- Left Column: Code Editor & Audit Action -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>💻 Source Code Under Audit</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);" id="filename-badge">server.js</span>
+        </div>
+
+        <div class="code-editor-box">
+          <textarea id="code-input" class="code-textarea" spellcheck="false"></textarea>
+        </div>
+
+        <div class="action-row">
+          <button id="btn-scan" class="btn-primary" onclick="runAudit()">
+            <span>⚡ Run AST Threat Sweep</span>
+          </button>
+          <button id="btn-autopatch" class="btn-patch" onclick="autoPatchCode()">
+            <span>🛡️ 1-Click Auto-Patch</span>
+          </button>
+          <button id="btn-copy-code" class="btn-secondary" onclick="copyCode()">
+            <span>📋 Copy Code</span>
+          </button>
+        </div>
+
+        <div style="font-size:0.8rem; color:var(--text-muted); line-height:1.6; border-top:1px solid rgba(255,255,255,0.06); padding-top:0.75rem;">
+          <strong style="color:#cbd5e1;">Active Threat Guards:</strong>
+          CWE-798 Hardcoded Secrets • OWASP Top 3 Command Injection • OWASP Top 1 SQL Injection • CWE-942 Permissive CORS • CWE-95 Remote Code Execution
+        </div>
+      </div>
+
+      <!-- Right Column: Findings & Clearance Certificate -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>🛡️ Pre-Demo Security Clearance</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);" id="vuln-count-badge">0 Hazards Found</span>
+        </div>
+
+        <!-- Score Hero -->
+        <div class="score-hero">
+          <div style="display:flex; align-items:center; gap:1.25rem;">
+            <div id="security-score-circle" class="score-dial">100</div>
+            <div class="score-meta">
+              <h3 id="security-rating-text">Institutional Grade</h3>
+              <p id="security-summary-text">Zero critical vulnerabilities detected in codebase</p>
+            </div>
+          </div>
+          <div id="clearance-status-badge" class="badge-clearance">PASSED CLEAN</div>
+        </div>
+
+        <!-- Clearance Certificate Box -->
+        <div class="cert-box">
+          <div class="cert-title">
+            <span>PRE-DEMO INTEGRITY CERTIFICATE</span>
+            <span id="cert-id-text" style="color:var(--accent-emerald);">PHX-SEC-0000000000</span>
+          </div>
+          <div>Checksum: <span id="cert-checksum-text" style="color:#cbd5e1;">--</span></div>
+          <div>Audited Lines: <span id="cert-lines-text" style="color:#cbd5e1;">--</span> • Timestamp: <span id="cert-time-text" style="color:#cbd5e1;">--</span></div>
+          <div style="margin-top:0.3rem;">Auditor: <strong style="color:var(--accent-cyan);">Phoenix Sentinel AST Engine v26.0</strong></div>
+        </div>
+
+        <!-- Findings List -->
+        <div style="font-weight:700; font-size:0.95rem; color:#fff; margin-bottom:0.75rem;">
+          ⚠️ Line-by-Line Vulnerability Findings
+        </div>
+        <div id="findings-container" class="findings-container">
+          <!-- Populated by JS -->
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let globalPresets = {};
+    let lastAuditResult = null;
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/v1/agent/sweeper/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          globalPresets = data.presets;
+        }
+      } catch (err) {
+        console.warn('Preset fetch fallback to local defaults:', err);
+      }
+      loadPreset('vulnerable');
+    });
+
+    function loadPreset(key) {
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-preset-${key}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const p = globalPresets[key];
+      if (!p) return;
+
+      document.getElementById('code-input').value = p.code || '';
+      runAudit();
+    }
+
+    async function runAudit() {
+      const code = document.getElementById('code-input').value;
+      try {
+        const res = await fetch('/api/v1/agent/sweeper/audit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code })
+        });
+        const data = await res.json();
+        if (data.success) {
+          lastAuditResult = data;
+          renderAudit(data);
+        }
+      } catch (err) {
+        console.error('Audit failed:', err);
+      }
+    }
+
+    function renderAudit(data) {
+      const score = data.securityScore;
+      const dial = document.getElementById('security-score-circle');
+      dial.textContent = score;
+
+      if (score >= 90) {
+        dial.style.borderColor = 'var(--accent-emerald)';
+        dial.style.background = 'radial-gradient(circle, #022c22 40%, #064e3b)';
+        dial.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.4)';
+      } else if (score >= 60) {
+        dial.style.borderColor = 'var(--accent-amber)';
+        dial.style.background = 'radial-gradient(circle, #2d1f05 40%, #78350f)';
+        dial.style.boxShadow = '0 0 20px rgba(245, 158, 11, 0.4)';
+      } else {
+        dial.style.borderColor = 'var(--accent-rose)';
+        dial.style.background = 'radial-gradient(circle, #2a0812 40%, #881337)';
+        dial.style.boxShadow = '0 0 20px rgba(244, 63, 94, 0.4)';
+      }
+
+      const cert = data.clearanceCertificate || {};
+      document.getElementById('security-rating-text').textContent = cert.rating || 'Security Status';
+      document.getElementById('security-summary-text').textContent = data.isCleared 
+        ? 'Zero critical vulnerabilities detected in codebase' 
+        : `${data.vulnerabilities.length} critical vulnerability hazards detected`;
+
+      const badge = document.getElementById('clearance-status-badge');
+      if (data.isCleared) {
+        badge.textContent = 'PASSED CLEAN';
+        badge.style.color = 'var(--accent-emerald)';
+        badge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        badge.style.background = 'rgba(16, 185, 129, 0.18)';
+      } else {
+        badge.textContent = 'ACTION REQUIRED';
+        badge.style.color = 'var(--accent-rose)';
+        badge.style.borderColor = 'rgba(244, 63, 94, 0.4)';
+        badge.style.background = 'rgba(244, 63, 94, 0.18)';
+      }
+
+      document.getElementById('cert-id-text').textContent = cert.certId || 'PHX-SEC-CLEAR';
+      document.getElementById('cert-checksum-text').textContent = (cert.sha256Checksum || '').slice(0, 32) + '...';
+      document.getElementById('cert-lines-text').textContent = `${cert.totalLinesAudited || 0} lines`;
+      document.getElementById('cert-time-text').textContent = new Date(cert.auditedAt || Date.now()).toLocaleTimeString();
+      document.getElementById('vuln-count-badge').textContent = `${data.vulnerabilities.length} Threat(s) Found`;
+
+      // Findings List
+      const container = document.getElementById('findings-container');
+      if (data.vulnerabilities.length === 0) {
+        container.innerHTML = `
+          <div style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.3); border-radius:8px; padding:1rem; text-align:center; color:#6ee7b7; font-size:0.85rem;">
+            ✨ Codebase achieves 100% Pre-Demo Security Clearance! All inputs sanitized, secrets isolated, and shell execution eliminated.
+          </div>
+        `;
+      } else {
+        container.innerHTML = data.vulnerabilities.map(v => `
+          <div class="finding-card">
+            <div class="finding-header">
+              <div>
+                <span class="line-tag">Line ${v.line}</span>
+                <span style="font-weight:700; color:#fff; font-size:0.85rem; margin-left:0.4rem;">${v.type}</span>
+              </div>
+              <span class="sev-badge">${v.severity} • ${v.cwe}</span>
+            </div>
+            <div class="finding-desc">${v.issue}</div>
+            <div class="finding-fix">Fix: ${v.recommendation}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function autoPatchCode() {
+      if (!lastAuditResult || !lastAuditResult.patchedCode) return;
+      document.getElementById('code-input').value = lastAuditResult.patchedCode;
+      runAudit();
+    }
+
+    function copyCode() {
+      const code = document.getElementById('code-input').value;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.getElementById('btn-copy-code');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span>✅ Copied!</span>';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

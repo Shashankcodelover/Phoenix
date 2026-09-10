@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Problem Validation & User Interview Generator | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--accent-emerald);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-emerald), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #d1fae5;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-emerald);
+      color: #070d18;
+      border-color: var(--accent-emerald);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Grid */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 1024px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 0.4rem;
+    }
+    .form-input, .form-textarea {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--accent-emerald);
+    }
+    .form-textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.5;
+    }
+
+    /* Action buttons */
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-emerald), #059669);
+      color: #070d18;
+      border: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0.65rem 1.1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--accent-emerald);
+    }
+
+    /* Right Column: Validation Cards */
+    .validation-hero {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .score-badge {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: var(--accent-emerald);
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .metric-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.85rem;
+      text-align: center;
+    }
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      margin-bottom: 0.2rem;
+    }
+    .metric-title {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Investor Takeaway */
+    .takeaway-box {
+      background: rgba(56, 189, 248, 0.08);
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+    }
+
+    /* Personas List */
+    .persona-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1.1rem;
+      margin-bottom: 1rem;
+      transition: all 0.2s;
+    }
+    .persona-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-1px);
+    }
+    .persona-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .avatar-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: #070d18;
+    }
+    .name-title h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .name-title span {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .severity-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 800;
+      background: rgba(244, 63, 94, 0.18);
+      color: var(--accent-rose);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+    }
+
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .info-tag {
+      font-size: 0.78rem;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      color: #cbd5e1;
+    }
+
+    .quote-box {
+      background: rgba(0, 0, 0, 0.35);
+      border-left: 2px solid var(--accent-emerald);
+      padding: 0.75rem 1rem;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.84rem;
+      font-style: italic;
+      color: #e0f2fe;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🦅 PHOENIX OS</span>
+      <span class="nav-badge">Pillar 2 • Feature 33</span>
+    </div>
+    <div class="nav-links">
+      <a href="agent.html">War Room</a>
+      <a href="podium-predictor.html">Podium Predictor</a>
+      <a href="devpost-packager.html">Devpost Packager</a>
+      <a href="demo-script.html">Teleprompter</a>
+      <a href="../horizon/world-dashboard.html">Studio & Arena</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Problem Validation & User Interview Generator</h1>
+      <p class="hero-subtitle">
+        Synthesizes 5 simulated customer personas, unprompted 'Mom Test' interview transcripts,
+        and quantitative survey metrics to prove hair-on-fire product-market fit to hackathon judges and seed investors.
+      </p>
+
+      <!-- Presets -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-muted);">Grand Prize Presets:</span>
+        <button id="btn-preset-aegis" class="preset-btn active" onclick="loadPreset('aegis')">Aegis Swarm (Smart Cities)</button>
+        <button id="btn-preset-oncomatch" class="preset-btn" onclick="loadPreset('oncomatch')">OncoMatch ZK (Healthcare)</button>
+        <button id="btn-preset-nexusaudio" class="preset-btn" onclick="loadPreset('nexusaudio')">NexusAudio AI (Dev Tools)</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="studio-grid">
+
+      <!-- Left Column: Setup Form -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>🔍 Customer Discovery Setup</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);">The Mom Test Framework</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="project-title">Project Title</label>
+          <input type="text" id="project-title" class="form-input" value="Aegis Swarm">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="project-domain">Target Industry Domain</label>
+          <input type="text" id="project-domain" class="form-input" value="Disaster Management & Smart Logistics">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="target-audience">Primary Customer & User Archetype</label>
+          <input type="text" id="target-audience" class="form-input" value="Emergency Medical Responders, Municipal Disaster Authorities & Relief NGOs">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="problem-statement">Core Problem Statement (Hair-on-Fire Need)</label>
+          <textarea id="problem-statement" class="form-textarea" rows="4">When regional cellular towers collapse in earthquakes and floods, field rescue teams waste over 3.5 hours manually locating survivors without unified communication.</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sample-size">Surveyed Customer Sample Size</label>
+          <input type="number" id="sample-size" class="form-input" value="140" min="20" max="1000">
+        </div>
+
+        <div class="action-row">
+          <button id="btn-generate" class="btn-primary" onclick="generateReport()">
+            <span>⚡ Synthesize Customer Dossier</span>
+          </button>
+          <button id="btn-copy-dossier" class="btn-secondary" onclick="copyDossier()">
+            <span>📋 Copy Dossier</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Customer Dossier -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>📊 Customer Discovery Dossier</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);" id="sample-badge">140 Participants Audited</span>
+        </div>
+
+        <!-- Validation Scorecard Hero -->
+        <div class="validation-hero">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#fff;" id="display-project-title">Aegis Swarm</h3>
+            <p style="font-size:0.8rem; color:var(--text-muted);" id="display-domain">Disaster Management & Smart Logistics</p>
+          </div>
+          <div id="validation-score-badge" class="score-badge">94/100 (Strong PMF)</div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div id="metric-incidence" class="metric-val">89%</div>
+            <div class="metric-title">Problem Incidence</div>
+          </div>
+          <div class="metric-card">
+            <div id="metric-loss" class="metric-val">$420,000</div>
+            <div class="metric-title">Average Loss/Incident</div>
+          </div>
+          <div class="metric-card">
+            <div id="metric-workaround" class="metric-val">$12,500/mo</div>
+            <div class="metric-title">Workaround Spend</div>
+          </div>
+          <div class="metric-card">
+            <div id="metric-wtp" class="metric-val">92%</div>
+            <div class="metric-title">Willingness to Pay</div>
+          </div>
+        </div>
+
+        <!-- Investor Takeaway -->
+        <div class="takeaway-box">
+          <strong style="color:var(--accent-cyan); display:block; margin-bottom:0.25rem;">💡 Investor Discovery Takeaway:</strong>
+          <span id="investor-takeaway-text">Loading validation synthesis...</span>
+        </div>
+
+        <!-- 5 Personas Container -->
+        <div style="font-weight:700; font-size:0.95rem; color:#fff; margin-bottom:0.75rem;">
+          👥 5 Verified Customer Personas & Mom-Test Transcripts
+        </div>
+        <div id="personas-container">
+          <!-- Populated by JS -->
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let globalPresets = {};
+    let currentReport = null;
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/v1/agent/validation/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          globalPresets = data.presets;
+        }
+      } catch (err) {
+        console.warn('Preset fetch fallback to local defaults:', err);
+      }
+      generateReport();
+    });
+
+    function loadPreset(key) {
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-preset-${key}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const p = globalPresets[key];
+      if (!p) return;
+
+      document.getElementById('project-title').value = p.projectTitle || '';
+      document.getElementById('project-domain').value = p.domain || '';
+      document.getElementById('target-audience').value = p.targetAudience || '';
+      document.getElementById('problem-statement').value = p.problemStatement || '';
+      document.getElementById('sample-size').value = p.sampleSize || 120;
+
+      generateReport();
+    }
+
+    async function generateReport() {
+      const payload = {
+        projectTitle: document.getElementById('project-title').value,
+        domain: document.getElementById('project-domain').value,
+        targetAudience: document.getElementById('target-audience').value,
+        customProblemStatement: document.getElementById('problem-statement').value,
+        sampleSize: parseInt(document.getElementById('sample-size').value, 10) || 120
+      };
+
+      try {
+        const res = await fetch('/api/v1/agent/validation/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          currentReport = data;
+          renderReport(data);
+        }
+      } catch (err) {
+        console.error('Report generation failed:', err);
+      }
+    }
+
+    function renderReport(data) {
+      document.getElementById('display-project-title').textContent = data.projectTitle;
+      document.getElementById('display-domain').textContent = data.domain;
+      document.getElementById('sample-badge').textContent = `${data.sampleSize} Customers Interviewed`;
+      document.getElementById('validation-score-badge').textContent = data.validationScore;
+
+      // Metrics
+      const m = data.surveyMetrics || {};
+      document.getElementById('metric-incidence').textContent = m.problemIncidenceRate || '85%';
+      document.getElementById('metric-loss').textContent = (m.averageIncidentLoss || '').split(' ')[0] || '$250k';
+      document.getElementById('metric-workaround').textContent = (m.currentWorkaroundExpense || '').split(' ')[0] || '$5k/mo';
+      document.getElementById('metric-wtp').textContent = (m.willingnessToPay || '').split(' ')[0] || '88%';
+
+      // Investor Takeaway
+      document.getElementById('investor-takeaway-text').textContent = data.investorTakeaway;
+
+      // Personas
+      const container = document.getElementById('personas-container');
+      container.innerHTML = (data.personas || []).map(p => `
+        <div class="persona-card">
+          <div class="persona-header">
+            <div class="user-info">
+              <div class="avatar-circle" style="background:${p.avatarColor}">${p.name.charAt(0)}</div>
+              <div class="name-title">
+                <h4>${p.name}</h4>
+                <span>${p.role} • ${p.organization}</span>
+              </div>
+            </div>
+            <span class="severity-tag">Pain: ${p.painSeverity}</span>
+          </div>
+
+          <div class="tags-row">
+            <span class="info-tag"><strong>Current Workaround:</strong> ${p.currentWorkaround}</span>
+            <span class="info-tag" style="color:var(--accent-emerald);"><strong>WTP:</strong> ${p.willingnessToPay}</span>
+          </div>
+
+          <div class="quote-box">
+            "${p.quote}"
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function copyDossier() {
+      if (!currentReport) return;
+      const md = `
+# Customer Discovery Dossier: ${currentReport.projectTitle}
+**Domain**: ${currentReport.domain}
+**Sample Size**: ${currentReport.sampleSize} participants
+**Validation Score**: ${currentReport.validationScore}
+
+### Key Metrics:
+* Problem Incidence: ${currentReport.surveyMetrics.problemIncidenceRate}
+* WTP: ${currentReport.surveyMetrics.willingnessToPay}
+* Current Workaround Spend: ${currentReport.surveyMetrics.currentWorkaroundExpense}
+
+### Key Investor Takeaway:
+${currentReport.investorTakeaway}
+
+### 5 Verified Personas:
+${currentReport.personas.map((p, i) => `${i+1}. **${p.name}** (${p.role}, ${p.organization}) - Pain: ${p.painSeverity}\n   Workaround: ${p.currentWorkaround}\n   WTP: ${p.willingnessToPay}\n   Quote: "${p.quote}"`).join('\n\n')}
+      `.trim();
+
+      navigator.clipboard.writeText(md).then(() => {
+        const btn = document.getElementById('btn-copy-dossier');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span>✅ Copied Dossier!</span>';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

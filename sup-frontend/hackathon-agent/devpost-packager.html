@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devpost Submission Markdown & Asset Packager | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-coral: #fb7185;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent-cyan);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, var(--accent-cyan), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 950px;
+      line-height: 1.6;
+    }
+
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .preset-btn {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: #e0f2fe;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-cyan);
+      color: #070d18;
+      border-color: var(--accent-cyan);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    }
+
+    /* Main Grid */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 1024px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+    .form-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 0.35rem;
+    }
+    .counter-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+    }
+    .form-input, .form-textarea {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+    }
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.5;
+    }
+
+    /* Assets Checklist */
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+    .check-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: #cbd5e1;
+    }
+    .check-label input {
+      accent-color: var(--accent-cyan);
+      cursor: pointer;
+    }
+
+    /* Buttons */
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-cyan), #0284c7);
+      color: #070d18;
+      border: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0.65rem 1.1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: var(--accent-cyan);
+    }
+
+    /* Right Column: Compliance Card & Markdown Preview */
+    .compliance-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .gauge-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .score-circle {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #0e1e38 50%, #0369a1);
+      border: 3px solid var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.35);
+    }
+    .score-meta h4 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .score-meta p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .rating-badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent-emerald);
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* Checks List */
+    .checks-box {
+      max-height: 180px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .check-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem 0.2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.82rem;
+    }
+    .check-item:last-child {
+      border-bottom: none;
+    }
+    .check-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tag-pass { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .tag-warn { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .tag-crit { background: rgba(244, 63, 94, 0.2); color: #f87171; }
+
+    /* Markdown Tabs */
+    .tab-header {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      padding: 0.4rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    /* Markdown Display Box */
+    .markdown-box {
+      background: #050b14;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 1.5rem;
+      height: 480px;
+      overflow-y: auto;
+      font-family: 'Outfit', sans-serif;
+      line-height: 1.6;
+      color: #e2e8f0;
+    }
+    .markdown-box h1 {
+      font-size: 1.6rem;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+    .markdown-box blockquote {
+      border-left: 3px solid var(--accent-cyan);
+      padding-left: 0.75rem;
+      margin: 0.75rem 0;
+      color: #94a3b8;
+      font-style: italic;
+    }
+    .markdown-box h3 {
+      font-size: 1.15rem;
+      margin: 1.25rem 0 0.5rem 0;
+      color: #38bdf8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.25rem;
+    }
+    .markdown-box ul, .markdown-box ol {
+      padding-left: 1.25rem;
+      margin: 0.5rem 0;
+    }
+    .markdown-box li {
+      margin-bottom: 0.35rem;
+      font-size: 0.9rem;
+    }
+    .markdown-raw {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      color: #7dd3fc;
+      display: none;
+    }
+
+    .asset-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+      margin: 0.25rem 0.25rem 0 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🦅 PHOENIX OS</span>
+      <span class="nav-badge">Pillar 2 • Feature 31</span>
+    </div>
+    <div class="nav-links">
+      <a href="agent.html">War Room</a>
+      <a href="demo-script.html">Teleprompter</a>
+      <a href="arch-visualizer.html">Architecture</a>
+      <a href="moat-auditor.html">Moat Auditor</a>
+      <a href="../horizon/world-dashboard.html">Studio & Arena</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1 class="hero-title">Devpost Submission Markdown & Asset Packager</h1>
+      <p class="hero-subtitle">
+        Automatically formats an institutional-standard Devpost submission package complete with Shield.io tech stack badges,
+        140-char tagline hook compliance, multi-track alignment, engineering hurdles, and downloadable production assets.
+      </p>
+
+      <!-- Presets -->
+      <div class="presets-bar">
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-muted);">Grand Prize Presets:</span>
+        <button id="btn-preset-aegis" class="preset-btn active" onclick="loadPreset('aegis')">Aegis Swarm (Smart Cities)</button>
+        <button id="btn-preset-oncomatch" class="preset-btn" onclick="loadPreset('oncomatch')">OncoMatch ZK (Healthcare)</button>
+        <button id="btn-preset-nexusaudio" class="preset-btn" onclick="loadPreset('nexusaudio')">NexusAudio AI (Dev Tools)</button>
+      </div>
+    </div>
+
+    <!-- Studio Dual Column Grid -->
+    <div class="studio-grid">
+      
+      <!-- Left Column: Submission Editor Form -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>📝 Project Story & Media Manifest</span>
+          <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);" id="word-count-badge">~280 Words</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="project-title">Project Title</label>
+          <input type="text" id="project-title" class="form-input" value="Aegis Swarm">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="project-tagline">
+            <span>Tagline (Devpost 140-Char Limit)</span>
+            <span id="tagline-counter" class="counter-badge">104 / 140</span>
+          </label>
+          <input type="text" id="project-tagline" class="form-input" maxlength="140" oninput="updateTaglineCounter()" value="Autonomous Byzantine Fault-Tolerant Drone Mesh Network for Disaster Logistics & Triage Delivery">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="project-tracks">Target Categories & Sponsor Tracks</label>
+          <input type="text" id="project-tracks" class="form-input" value="Smart Cities & Disaster Management, Grand Prize, Best Hardware-Software Integration">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="tech-stack">Built-With Tech Stack (Comma-delimited for Badges)</label>
+          <input type="text" id="tech-stack" class="form-input" value="Rust, ROS2, WebAssembly, PX4 Autopilot, MQTT Broker, WebRTC Datachannels, CockroachDB">
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+          <div class="form-group">
+            <label class="form-label" for="video-url">120s Demo Video URL</label>
+            <input type="text" id="video-url" class="form-input" value="https://youtu.be/aegis-swarm-demo-120s">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="github-url">GitHub Repository URL</label>
+            <input type="text" id="github-url" class="form-input" value="https://github.com/phoenix-os/aegis-swarm-core">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="live-url">Live Deployment URL</label>
+          <input type="text" id="live-url" class="form-input" value="https://aegis-swarm-mesh.phoenix.io">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="problem-statement">💡 Inspiration & Problem Statement</label>
+          <textarea id="problem-statement" class="form-textarea" rows="3">During catastrophic floods and earthquakes in mountainous terrain, centralized cellular networks collapse within 15 minutes, leaving emergency responders blind to surviving victims and unable to route life-saving medical supplies.</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="solution-overview">⚡ What It Does (Core Capabilities)</label>
+          <textarea id="solution-overview" class="form-textarea" rows="3">Aegis Swarm deploys a decentralized, self-healing drone fleet governed by a lightweight Byzantine Fault-Tolerant (BFT) Raft consensus. Drones coordinate dynamic mesh relays without internet or GPS dependency, providing sub-second victim location telemetry and automated defibrillator drop routing.</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="challenges-input">🚧 Challenges We Ran Into (1 per line)</label>
+          <textarea id="challenges-input" class="form-textarea" rows="3">Byzantine consensus under high packet-drop aerial telemetry (up to 40% radio attenuation in rainfall).
+Minimizing battery drain during multi-hop peer routing; solved using dynamic sleep-cycle scheduling.
+Real-time collision-free trajectory computation across 16 drones using local Voronoi tessellation.</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">📦 Submission Media & Asset Packager</label>
+          <div class="checklist-grid">
+            <label class="check-label"><input type="checkbox" id="asset-banner" checked> 1200x630 Banner</label>
+            <label class="check-label"><input type="checkbox" id="asset-video" checked> 120s Demo Video</label>
+            <label class="check-label"><input type="checkbox" id="asset-diagram" checked> Architecture SVG</label>
+            <label class="check-label"><input type="checkbox" id="asset-screenshots" checked> 4x Screen Captures</label>
+            <label class="check-label"><input type="checkbox" id="asset-deck" checked> 5-Slide Pitch Deck</label>
+          </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="action-row">
+          <button id="btn-generate" class="btn-primary" onclick="generatePackage()">
+            <span>⚡ Compile Devpost Package</span>
+          </button>
+          <button id="btn-copy-markdown" class="btn-secondary" onclick="copyMarkdown()">
+            <span>📋 Copy Markdown</span>
+          </button>
+          <button id="btn-download-md" class="btn-secondary" onclick="downloadMarkdown()">
+            <span>💾 Save README.md</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Compliance & Live Preview -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>🏆 Devpost Compliance & Story Preview</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);" id="reading-time-badge">3 min read</span>
+        </div>
+
+        <!-- Compliance Scorecard -->
+        <div class="compliance-card">
+          <div class="gauge-container">
+            <div id="compliance-score-gauge" class="score-circle">95%</div>
+            <div class="score-meta">
+              <h4>Devpost Submission Grade</h4>
+              <p id="compliance-checks-summary">7 of 7 Requirements Satisfied</p>
+            </div>
+          </div>
+          <div id="compliance-rating-badge" class="rating-badge">Grand Prize Ready</div>
+        </div>
+
+        <!-- Compliance Checks Breakdown -->
+        <div id="compliance-checks-list" class="checks-box">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Preview Tabs -->
+        <div class="tab-header">
+          <button id="tab-preview-btn" class="tab-btn active" onclick="switchTab('preview')">Live Formatted Preview</button>
+          <button id="tab-raw-btn" class="tab-btn" onclick="switchTab('raw')">Raw Markdown Source</button>
+        </div>
+
+        <!-- Markdown Display Container -->
+        <div id="markdown-display" class="markdown-box">
+          <div id="markdown-rendered-view"></div>
+          <div id="markdown-raw-view" class="markdown-raw"></div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let globalPresets = {};
+    let currentMarkdown = '';
+
+    // Initialize Page
+    window.addEventListener('DOMContentLoaded', async () => {
+      updateTaglineCounter();
+      try {
+        const res = await fetch('/api/v1/agent/devpost/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          globalPresets = data.presets;
+        }
+      } catch (err) {
+        console.warn('Preset fetch fallback to local defaults:', err);
+      }
+      generatePackage();
+    });
+
+    function updateTaglineCounter() {
+      const input = document.getElementById('project-tagline');
+      const counter = document.getElementById('tagline-counter');
+      const len = input.value.length;
+      counter.textContent = `${len} / 140`;
+      if (len > 140) {
+        counter.style.color = 'var(--accent-rose)';
+      } else if (len >= 120) {
+        counter.style.color = 'var(--accent-amber)';
+      } else {
+        counter.style.color = 'var(--accent-cyan)';
+      }
+    }
+
+    function loadPreset(key) {
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-preset-${key}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const p = globalPresets[key];
+      if (!p) return;
+
+      document.getElementById('project-title').value = p.projectTitle || '';
+      document.getElementById('project-tagline').value = p.tagline || '';
+      document.getElementById('project-tracks').value = (p.tracks || []).join(', ');
+      document.getElementById('tech-stack').value = (p.techStack || []).join(', ');
+      document.getElementById('video-url').value = p.demoVideoUrl || '';
+      document.getElementById('github-url').value = p.githubUrl || '';
+      document.getElementById('live-url').value = p.liveAppUrl || '';
+      document.getElementById('problem-statement').value = p.problemStatement || '';
+      document.getElementById('solution-overview').value = p.solutionOverview || '';
+      document.getElementById('challenges-input').value = (p.challenges || []).join('\n');
+
+      updateTaglineCounter();
+      generatePackage();
+    }
+
+    async function generatePackage() {
+      const payload = {
+        projectTitle: document.getElementById('project-title').value,
+        tagline: document.getElementById('project-tagline').value,
+        tracks: document.getElementById('project-tracks').value.split(',').map(s => s.trim()).filter(Boolean),
+        techStack: document.getElementById('tech-stack').value.split(',').map(s => s.trim()).filter(Boolean),
+        demoVideoUrl: document.getElementById('video-url').value,
+        githubUrl: document.getElementById('github-url').value,
+        liveAppUrl: document.getElementById('live-url').value,
+        problemStatement: document.getElementById('problem-statement').value,
+        solutionOverview: document.getElementById('solution-overview').value,
+        challenges: document.getElementById('challenges-input').value.split('\n').map(s => s.trim()).filter(Boolean),
+        assetChecklist: {
+          headerBanner: document.getElementById('asset-banner').checked,
+          demoVideo120s: document.getElementById('asset-video').checked,
+          flowArchitectureDiagram: document.getElementById('asset-diagram').checked,
+          hiResScreenshots: document.getElementById('asset-screenshots').checked,
+          pitchDeckPdf: document.getElementById('asset-deck').checked
+        }
+      };
+
+      try {
+        const res = await fetch('/api/v1/agent/devpost/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderResults(data);
+        }
+      } catch (err) {
+        console.error('Generation failed:', err);
+      }
+    }
+
+    function renderResults(data) {
+      currentMarkdown = data.fullDevpostMarkdown;
+      document.getElementById('word-count-badge').textContent = `~${data.submissionWordCount} Words`;
+      document.getElementById('reading-time-badge').textContent = data.estimatedReadingTime;
+
+      // Update Compliance
+      if (data.compliance) {
+        const c = data.compliance;
+        document.getElementById('compliance-score-gauge').textContent = `${c.totalScore}%`;
+        document.getElementById('compliance-rating-badge').textContent = c.rating;
+        
+        const passedCount = c.checks.filter(chk => chk.status === 'PASS').length;
+        document.getElementById('compliance-checks-summary').textContent = `${passedCount} of ${c.checks.length} Criteria Validated`;
+
+        const checksList = document.getElementById('compliance-checks-list');
+        checksList.innerHTML = c.checks.map(chk => {
+          const tagClass = chk.status === 'PASS' ? 'tag-pass' : chk.status === 'WARN' ? 'tag-warn' : 'tag-crit';
+          return `
+            <div class="check-item">
+              <div>
+                <strong>${chk.item}</strong>
+                <div style="font-size:0.75rem; color:#94a3b8;">${chk.detail}</div>
+              </div>
+              <span class="check-tag ${tagClass}">${chk.status} (+${chk.points})</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render Markdown Preview
+      renderMarkdownHtml(currentMarkdown);
+      document.getElementById('markdown-raw-view').textContent = currentMarkdown;
+    }
+
+    function renderMarkdownHtml(md) {
+      const view = document.getElementById('markdown-rendered-view');
+      // Light client markdown converter for preview
+      let html = md
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+        .replace(/`([^`]+)`/gim, '<code style="background:rgba(255,255,255,0.1); padding:0.15rem 0.35rem; border-radius:4px; font-family:\'JetBrains Mono\'">$1</code>')
+        .replace(/^\* (.*$)/gim, '<li>$1</li>')
+        .replace(/^[0-9]+\. (.*$)/gim, '<li>$1</li>')
+        .replace(/\n\n/gim, '<br><br>');
+
+      view.innerHTML = html;
+    }
+
+    function switchTab(tab) {
+      const previewView = document.getElementById('markdown-rendered-view');
+      const rawView = document.getElementById('markdown-raw-view');
+      const previewBtn = document.getElementById('tab-preview-btn');
+      const rawBtn = document.getElementById('tab-raw-btn');
+
+      if (tab === 'preview') {
+        previewView.style.display = 'block';
+        rawView.style.display = 'none';
+        previewBtn.classList.add('active');
+        rawBtn.classList.remove('active');
+      } else {
+        previewView.style.display = 'none';
+        rawView.style.display = 'block';
+        previewBtn.classList.remove('active');
+        rawBtn.classList.add('active');
+      }
+    }
+
+    function copyMarkdown() {
+      if (!currentMarkdown) return;
+      navigator.clipboard.writeText(currentMarkdown).then(() => {
+        const btn = document.getElementById('btn-copy-markdown');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span>✅ Copied to Clipboard!</span>';
+        btn.style.borderColor = 'var(--accent-emerald)';
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          btn.style.borderColor = '';
+        }, 2000);
+      });
+    }
+
+    function downloadMarkdown() {
+      if (!currentMarkdown) return;
+      const title = (document.getElementById('project-title').value || 'DEVPOST_SUBMISSION').replace(/\s+/g, '_');
+      const blob = new Blob([currentMarkdown], { type: 'text/markdown;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${title}_DEVPOST_README.md`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hackathon Hall of Fame & Winning Repo Decompiler | Phoenix OS</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-indigo: #6366f1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1830 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(192, 132, 252, 0.15);
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      color: var(--accent-purple);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1480px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(192, 132, 252, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, #c084fc, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 900px;
+      line-height: 1.5;
+    }
+
+    /* Studio Grid */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 1.75rem;
+    }
+    @media (max-width: 1080px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Glass Panel */
+    .glass-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+
+    /* Presets list */
+    .preset-card {
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .preset-card:hover, .preset-card.selected {
+      border-color: var(--accent-purple);
+      background: rgba(192, 132, 252, 0.1);
+      transform: translateX(4px);
+    }
+    .preset-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.4rem;
+    }
+    .preset-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .prize-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .preset-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 0.5rem;
+    }
+    .preset-meta {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Custom Decompiler Box */
+    .custom-box {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .input-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+    .text-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      margin-bottom: 0.75rem;
+    }
+    .text-input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+
+    .btn-action {
+      width: 100%;
+      background: linear-gradient(135deg, #9333ea, #6366f1);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .btn-action:hover {
+      box-shadow: 0 0 16px rgba(147, 51, 234, 0.5);
+      transform: translateY(-1px);
+    }
+
+    /* Decompiler Content Area */
+    .repo-hero-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .repo-main-info h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+    .repo-headline {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+    }
+    .badge-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .badge-chip {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+    }
+    .badge-chip.archetype {
+      background: rgba(192, 132, 252, 0.15);
+      color: var(--accent-purple);
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .score-dial {
+      text-align: center;
+      padding: 1rem 1.5rem;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      border-radius: 12px;
+    }
+    .score-value {
+      font-size: 2.4rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-purple);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .score-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* 5-Axis Rubric Grid */
+    .rubric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+    .rubric-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      text-align: center;
+    }
+    .rubric-metric {
+      font-size: 1.25rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+    }
+    .rubric-name {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Anatomy / Hook Section */
+    .hook-card {
+      background: rgba(245, 158, 11, 0.06);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .hook-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent-amber);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hook-desc {
+      font-size: 0.9rem;
+      color: #e2e8f0;
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Stack list */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+    .stack-item {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 0.85rem;
+    }
+    .stack-layer {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .stack-tech {
+      font-size: 0.85rem;
+      color: #f1f5f9;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Code Snippet Blocks */
+    .pattern-card {
+      background: #090e17;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      margin-bottom: 1.25rem;
+      overflow: hidden;
+    }
+    .pattern-header {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.65rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pattern-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+    .btn-copy {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #94a3b8;
+      font-size: 0.72rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-copy:hover {
+      background: var(--accent-cyan);
+      color: #000;
+    }
+    .pattern-code {
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: #38bdf8;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Steal blueprint */
+    .blueprint-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .blueprint-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.88rem;
+      color: #e2e8f0;
+    }
+    .blueprint-icon {
+      color: var(--accent-emerald);
+      font-weight: 900;
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🚀</span>
+      <span>PHOENIX OS // HALL OF FAME DECOMPILER</span>
+      <span class="nav-badge">Feature 37</span>
+    </div>
+    <div class="nav-links">
+      <a href="/hackathon-agent/devpost-packager.html">Packager</a>
+      <a href="/hackathon-agent/podium-predictor.html">Predictor</a>
+      <a href="/hackathon-agent/chaos-fallback.html">Chaos Hub</a>
+      <a href="#" class="active" style="color: var(--accent-purple); font-weight: 700;">Repo Decompiler</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <header class="hero-banner">
+      <h1 class="hero-title">Hackathon Hall of Fame & Winning Repo Decompiler</h1>
+      <p class="hero-subtitle">
+        Architectural dissection of the top 50 global grand-prize winning repositories across HackMIT, ETHDenver, CalHacks, TreeHacks, and SIH Grand Finale. Extract their 3-second stage hooks, zero-latency code patterns, and judge-proof moats.
+      </p>
+    </header>
+
+    <div class="studio-grid">
+      <!-- Left Panel: Presets & Custom Analysis -->
+      <aside class="glass-panel">
+        <div class="panel-title">
+          <span>🏆 Hall of Fame Catalog</span>
+          <span style="font-size: 0.75rem; color: var(--accent-purple); font-family: 'JetBrains Mono';">TOP 50 REPOS</span>
+        </div>
+
+        <div id="presetListContainer">
+          <!-- Populated by JS -->
+          <div style="color: var(--text-muted); font-size: 0.85rem;">Loading repositories...</div>
+        </div>
+
+        <div class="custom-box">
+          <span class="input-label">Decompile Custom Repo URL</span>
+          <input type="text" id="customRepoUrl" class="text-input" placeholder="https://github.com/org/hackathon-mvp" value="https://github.com/phoenix-team/agentic-operating-system">
+          
+          <span class="input-label">Target Hackathon</span>
+          <input type="text" id="customHackathon" class="text-input" placeholder="e.g. Google AI Hackathon 2026" value="Google AI Hackathon 2026">
+
+          <button id="btnDecompileCustom" class="btn-action">
+            <span>⚡</span> Decompile Repository
+          </button>
+        </div>
+      </aside>
+
+      <!-- Right Panel: Decompiled Anatomy Studio -->
+      <main class="glass-panel" id="decompileStudio">
+        <div id="studioLoading" style="display: none; text-align: center; padding: 4rem;">
+          <div style="font-size: 1.5rem; color: var(--accent-purple); font-weight: 700; margin-bottom: 0.5rem;">Decompiling Codebase Anatomy...</div>
+          <div style="color: var(--text-muted); font-size: 0.9rem;">Extracting AST patterns, WebSocket streaming hubs, and 3-second wow factor hooks.</div>
+        </div>
+
+        <div id="studioContent">
+          <!-- Hero Card -->
+          <div class="repo-hero-card">
+            <div class="repo-main-info">
+              <h2 id="repoTitle">NeuroVoice AI (HackMIT Grand Champion)</h2>
+              <div class="repo-headline" id="repoHeadline">Real-Time Voice Biometric & Sub-20ms Latency Conversational Agent</div>
+              <div class="badge-row">
+                <span class="badge-chip" id="repoHackathon" style="color: var(--accent-cyan);">HackMIT Grand Finale</span>
+                <span class="badge-chip" id="repoPrize" style="color: var(--accent-emerald); font-weight: 700;">$25,000 1st Place</span>
+                <span class="badge-chip archetype" id="repoArchetype">REALTIME_STREAMING_AGENT</span>
+              </div>
+            </div>
+            <div class="score-dial">
+              <div class="score-value" id="compositeScore">97.8</div>
+              <div class="score-label">Grand Jury Score</div>
+            </div>
+          </div>
+
+          <!-- 5-Axis Rubric Breakdown -->
+          <div class="rubric-grid">
+            <div class="rubric-box">
+              <div class="rubric-metric" id="scoreNovelty">99%</div>
+              <div class="rubric-name">Novelty & Depth</div>
+            </div>
+            <div class="rubric-box">
+              <div class="rubric-metric" id="scoreDemoHook">98%</div>
+              <div class="rubric-name">3-Sec Stage Hook</div>
+            </div>
+            <div class="rubric-box">
+              <div class="rubric-metric" id="scoreBounty">95%</div>
+              <div class="rubric-name">Bounty Synergy</div>
+            </div>
+            <div class="rubric-box">
+              <div class="rubric-metric" id="scoreCompleteness">99%</div>
+              <div class="rubric-name">Zero Fake UI</div>
+            </div>
+            <div class="rubric-box">
+              <div class="rubric-metric" id="scorePitch">98%</div>
+              <div class="rubric-name">Pitch Alignment</div>
+            </div>
+          </div>
+
+          <!-- The 3-Second Hook Secret Sauce -->
+          <div class="hook-card">
+            <div class="hook-title">
+              <span>🎯</span>
+              <span id="hookTitle">The 3-Second "Wow Factor" Stage Demonstration</span>
+            </div>
+            <div class="hook-desc" id="threeSecondHook">
+              Speaker begins speaking; screen animates a glowing multi-frequency 60 FPS waveform with zero perceptible delay (< 18ms latency counter on HUD).
+            </div>
+            <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 0.5rem;">
+              <strong>60s Climax:</strong> <span id="sixtySecondClimax">System detects voice stress tremors, translates medical terminology on the fly, and generates an animated diagnostic chart in under 1.4 seconds.</span>
+            </div>
+            <div style="font-size: 0.82rem; color: var(--accent-emerald); margin-top: 0.5rem;">
+              <strong>Judge Defense Moat:</strong> <span id="judgeMoat">Rust WebAssembly audio chunker compresses raw PCM audio in client memory, reducing bandwidth by 84%.</span>
+            </div>
+          </div>
+
+          <!-- Component Architecture Breakdown -->
+          <div class="panel-title" style="font-size: 1rem; margin-bottom: 0.75rem;">
+            <span>📐 Verified Component Architecture</span>
+          </div>
+          <div class="stack-grid" id="stackGrid">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Winning Code Patterns -->
+          <div class="panel-title" style="font-size: 1rem; margin-bottom: 0.75rem;">
+            <span>💻 Reusable Winning Code Patterns</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">READY TO COPY</span>
+          </div>
+          <div id="patternsContainer">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Steal This Blueprint -->
+          <div class="panel-title" style="font-size: 1rem; margin-bottom: 0.75rem; color: var(--accent-emerald);">
+            <span>⚡ "Steal This Architecture" Action Plan</span>
+          </div>
+          <ul class="blueprint-list" id="blueprintList">
+            <!-- Populated by JS -->
+          </ul>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    let currentPresets = [];
+    let activeRepoId = 'neurovoice-ai';
+
+    async function loadPresets() {
+      try {
+        const res = await fetch('/api/v1/agent/repo-decompile/presets');
+        const data = await res.json();
+        if (data.success && data.presets) {
+          currentPresets = data.presets;
+          renderPresets();
+          selectRepo('neurovoice-ai');
+        }
+      } catch (err) {
+        console.warn('API error, using fallback presets:', err);
+        renderFallbackPresets();
+      }
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetListContainer');
+      container.innerHTML = currentPresets.map(repo => `
+        <div class="preset-card ${repo.id === activeRepoId ? 'selected' : ''}" onclick="selectRepo('${repo.id}')" data-id="${repo.id}">
+          <div class="preset-header">
+            <div class="preset-name">${repo.name.split(' (')[0]}</div>
+            <div class="prize-badge">${repo.prize.split(' ')[0]}</div>
+          </div>
+          <div class="preset-desc">${repo.headline}</div>
+          <div class="preset-meta">
+            <span>⭐ ${repo.stars}</span>
+            <span>🔱 ${repo.forks}</span>
+            <span>⚡ ${repo.loc.toLocaleString()} LOC</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function selectRepo(repoId) {
+      activeRepoId = repoId;
+      document.querySelectorAll('.preset-card').forEach(c => {
+        c.classList.toggle('selected', c.getAttribute('data-id') === repoId);
+      });
+
+      try {
+        const res = await fetch(`/api/v1/agent/repo-decompile/repo/${repoId}`);
+        const data = await res.json();
+        if (data.success && data.repo) {
+          renderRepoDetails(data.repo);
+        }
+      } catch (e) {
+        console.error('Fetch repo failed:', e);
+      }
+    }
+
+    function renderRepoDetails(repo) {
+      document.getElementById('repoTitle').innerText = repo.name;
+      document.getElementById('repoHeadline').innerText = repo.headline;
+      document.getElementById('repoHackathon').innerText = repo.hackathon;
+      document.getElementById('repoPrize').innerText = repo.prize;
+      document.getElementById('repoArchetype').innerText = repo.archetype;
+      document.getElementById('compositeScore').innerText = repo.archetypeScores.compositeScore.toFixed(1);
+
+      document.getElementById('scoreNovelty').innerText = repo.archetypeScores.novelty + '%';
+      document.getElementById('scoreDemoHook').innerText = repo.archetypeScores.demoHook + '%';
+      document.getElementById('scoreBounty').innerText = repo.archetypeScores.bountyMatch + '%';
+      document.getElementById('scoreCompleteness').innerText = repo.archetypeScores.completeness + '%';
+      document.getElementById('scorePitch').innerText = repo.archetypeScores.pitchAlignment + '%';
+
+      document.getElementById('hookTitle').innerText = repo.demoHook.hookTitle;
+      document.getElementById('threeSecondHook').innerText = repo.demoHook.threeSecondHook;
+      document.getElementById('sixtySecondClimax').innerText = repo.demoHook.sixtySecondClimax;
+      document.getElementById('judgeMoat').innerText = repo.demoHook.judgeDefenseMoat;
+
+      // Stack grid
+      const stackGrid = document.getElementById('stackGrid');
+      stackGrid.innerHTML = Object.entries(repo.stack).map(([layer, tech]) => `
+        <div class="stack-item">
+          <div class="stack-layer">${layer}</div>
+          <div class="stack-tech">${tech}</div>
+        </div>
+      `).join('');
+
+      // Code patterns
+      const patternsContainer = document.getElementById('patternsContainer');
+      patternsContainer.innerHTML = repo.winningPatterns.map((pat, idx) => `
+        <div class="pattern-card">
+          <div class="pattern-header">
+            <span class="pattern-title">${pat.title}</span>
+            <button class="btn-copy" onclick="copyPattern(${idx})">Copy Snippet</button>
+          </div>
+          <div class="pattern-code" id="patternCode${idx}">${escapeHtml(pat.code)}</div>
+        </div>
+      `).join('');
+
+      // Blueprint list
+      const blueprintList = document.getElementById('blueprintList');
+      blueprintList.innerHTML = repo.stealThisBlueprint.map(step => `
+        <li class="blueprint-item">
+          <span class="blueprint-icon">✓</span>
+          <span>${step}</span>
+        </li>
+      `).join('');
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function copyPattern(idx) {
+      const code = document.getElementById(`patternCode${idx}`).innerText;
+      navigator.clipboard.writeText(code);
+      alert('Code snippet copied to clipboard!');
+    }
+
+    document.getElementById('btnDecompileCustom').addEventListener('click', async () => {
+      const url = document.getElementById('customRepoUrl').value.trim();
+      const hackathon = document.getElementById('customHackathon').value.trim();
+
+      document.getElementById('studioLoading').style.display = 'block';
+      document.getElementById('studioContent').style.display = 'none';
+
+      try {
+        const res = await fetch('/api/v1/agent/repo-decompile/decompile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ repoIdOrUrl: url, options: { targetHackathon: hackathon } })
+        });
+        const data = await res.json();
+        if (data.success && data.repository) {
+          renderRepoDetails(data.repository);
+        }
+      } catch (e) {
+        alert('Decompilation failed: ' + e.message);
+      } finally {
+        document.getElementById('studioLoading').style.display = 'none';
+        document.getElementById('studioContent').style.display = 'block';
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', loadPresets);
+  </script>
+</body>
+</html>
