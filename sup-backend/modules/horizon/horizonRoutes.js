@@ -493,6 +493,27 @@ router.post('/salary-ppp/compare', (req, res) => {
   }
 });
 
+// Feature 59: Post-Graduation Career Trajectory Forecaster
+const { postGradTrajectoryEngine } = require('./postGradTrajectoryEngine');
+
+router.get('/trajectory/tracks', (req, res) => {
+  res.json({ success: true, tracks: postGradTrajectoryEngine.getCareerTracks() });
+});
+
+router.get('/trajectory/presets', (req, res) => {
+  res.json({ success: true, presets: postGradTrajectoryEngine.getPresets() });
+});
+
+router.post('/trajectory/forecast', (req, res) => {
+  try {
+    const forecast = postGradTrajectoryEngine.forecastTrajectory(req.body);
+    res.json({ success: true, forecast });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;
+
 
 

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post-Graduation Career Trajectory Forecaster // Phoenix Horizon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../phoenix.css">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg-dark) 60%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 5rem;
+    }
+
+    .top-nav {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .nav-badge {
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-rose));
+      color: #fff;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent-purple);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #a855f7, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .hero-banner p {
+      color: var(--text-muted);
+      max-width: 900px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+    .stat-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 2rem;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--panel-border);
+    }
+    .panel-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Preset Chips */
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover {
+      background: rgba(168, 85, 247, 0.12);
+      border-color: var(--accent-purple);
+    }
+    .preset-chip.active {
+      background: rgba(168, 85, 247, 0.2);
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-control:focus {
+      border-color: var(--accent-purple);
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent-purple), #9333ea);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    }
+
+    /* Timeline Stepper */
+    .timeline-container {
+      position: relative;
+      padding-left: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 1rem;
+      top: 0.5rem;
+      bottom: 0.5rem;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+    .timeline-step {
+      position: relative;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      transition: border-color 0.2s;
+    }
+    .timeline-step:hover {
+      border-color: var(--accent-purple);
+    }
+    .step-marker {
+      position: absolute;
+      left: -2.5rem;
+      top: 1.25rem;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--bg-dark);
+      border: 3px solid var(--accent-purple);
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+    }
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .step-title {
+      font-weight: 800;
+      color: #fff;
+      font-size: 1.1rem;
+    }
+    .step-ctc {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--accent-emerald);
+    }
+    .step-details {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    .step-desc {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-layout { grid-template-columns: 1fr; }
+      .scoreboard { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span>🚀</span>
+      <span>PHOENIX HORIZON // CAREER TRAJECTORY</span>
+      <span class="nav-badge">Feature 59</span>
+    </div>
+    <nav class="nav-links">
+      <a href="admissions-predictor.html">Admissions</a>
+      <a href="tier-matrix.html">Tier Matrix</a>
+      <a href="scholarship-matcher.html">Scholarships</a>
+      <a href="branch-transition.html">Branch Pivot</a>
+      <a href="credit-evaluator.html">Transcript Evaluator</a>
+      <a href="placement-intel.html">Placement Intel</a>
+      <a href="alumni-connector.html">Alumni Network</a>
+      <a href="research-matcher.html">Research Labs</a>
+      <a href="study-abroad.html">Study Abroad</a>
+      <a href="exam-planner.html">Sprint Planner</a>
+      <a href="internship-tracker.html">Internship Pipeline</a>
+      <a href="skill-gap-auditor.html">Skill Gap Auditor</a>
+      <a href="sop-synthesizer.html">SOP Synthesizer</a>
+      <a href="lor-drafter.html">LOR Drafter</a>
+      <a href="visa-readiness.html">Visa Readiness</a>
+      <a href="tpo-analytics.html">TPO Analytics</a>
+      <a href="cost-of-living.html">PPP Cost of Living</a>
+      <a href="career-trajectory.html" class="active">Trajectory Forecaster</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <h1>Post-Graduation Career Trajectory Forecaster</h1>
+      <p>
+        Calibrated Markov chain career projection simulating 1-year, 3-year, 5-year, and 10-year compensation ladders, stock options (ESOPs), and seniority milestones across Individual Contributor vs Engineering Management tracks.
+      </p>
+    </section>
+
+    <!-- Scoreboard HUD -->
+    <div class="scoreboard">
+      <div class="stat-card">
+        <span class="stat-label">10-Year CAGR Growth</span>
+        <div class="stat-value" id="displayCagr" style="color: var(--accent-emerald);">23.8%</div>
+        <span class="stat-sub">Compounded Annual Return</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Year 5 Target Total CTC</span>
+        <div class="stat-value" id="displayYr5Ctc" style="color: var(--accent-cyan);">₹78.2 LPA</div>
+        <span class="stat-sub">Senior Software Engineer (L5)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Year 10 Target Total CTC</span>
+        <div class="stat-value" id="displayYr10Ctc" style="color: var(--accent-purple);">₹143.8 LPA</div>
+        <span class="stat-sub">Principal Engineer / Director</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Active Career Ladder</span>
+        <div class="stat-value" id="displayTrackTitle" style="font-size: 1.05rem; color: #fff; padding-top: 0.4rem;">IC Technical Track</div>
+        <span class="stat-sub">Seniority & Depth Track</span>
+      </div>
+    </div>
+
+    <div class="grid-layout">
+      <!-- Left Column: Fast Presets & Config -->
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>⚡ Career Track Presets</h2>
+          <span style="font-size: 0.72rem; color: var(--accent-purple); font-family: 'JetBrains Mono';">1-CLICK LOAD</span>
+        </div>
+        <div class="presets-container" id="presetsList">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="trajectoryForm">
+          <div class="panel-header" style="margin-top: 1rem;">
+            <h2>🎯 Career Projection Settings</h2>
+          </div>
+
+          <div class="form-group">
+            <label for="trackSelect">Seniority Ladder Track</label>
+            <select id="trackSelect" class="form-control" onchange="runForecast()">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="startingCtcInput">Graduation Base CTC (₹ LPA)</label>
+            <input type="number" id="startingCtcInput" class="form-control" value="22" step="0.5" required>
+          </div>
+
+          <div class="form-group">
+            <label for="cadenceSelect">Upskilling & Publication Cadence</label>
+            <select id="cadenceSelect" class="form-control" onchange="runForecast()">
+              <option value="VERY HIGH (Quarterly Certs / High Impact)">Very High (Quarterly Certs & Open-Source)</option>
+              <option value="HIGH (Annual Promotions)" selected>High (Consistent Annual Upskilling)</option>
+              <option value="MODERATE (Standard Tenure)">Moderate (Standard Tenure-Based Progression)</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-action" id="btnRunForecast">
+            <span>📈</span>
+            <span>Recalculate Trajectory Ladder</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Right Column: Timeline & Milestone Cards -->
+      <section>
+        <div class="panel">
+          <div class="panel-header">
+            <h2>🪜 10-Year Seniority Progression & Compensation Stepper</h2>
+            <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: 700;">INCLUDES CASH + ESOP EQUITY</span>
+          </div>
+
+          <div class="timeline-container" id="timelineContainer">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Strategic Career Insights -->
+        <div class="panel" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <h2>💡 Senior Engineering Strategic Insights</h2>
+          </div>
+          <ul id="insightsList" style="list-style: none; display: flex; flex-direction: column; gap: 0.65rem;">
+            <!-- Populated by JS -->
+          </ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let tracksData = [];
+    let presetsData = [];
+
+    async function init() {
+      try {
+        const [trRes, preRes] = await Promise.all([
+          fetch('/api/v1/horizon/trajectory/tracks'),
+          fetch('/api/v1/horizon/trajectory/presets')
+        ]);
+
+        const trJson = await trRes.json();
+        const preJson = await preRes.json();
+
+        if (trJson.success) {
+          tracksData = trJson.tracks;
+          populateTracks();
+        }
+
+        if (preJson.success) {
+          presetsData = preJson.presets;
+          renderPresets();
+        }
+
+        runForecast();
+      } catch (err) {
+        console.error('Trajectory Init Error:', err);
+      }
+    }
+
+    function populateTracks() {
+      const select = document.getElementById('trackSelect');
+      select.innerHTML = tracksData.map(t => `
+        <option value="${t.key}">${t.name}</option>
+      `).join('');
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presetsList');
+      container.innerHTML = presetsData.map((p, idx) => `
+        <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" onclick="applyPreset('${p.id}')">
+          <strong>${p.label}</strong>
+          <span style="display:block; font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem;">Start: ₹${p.startingCtcLpa} LPA • ${p.startingDomain}</span>
+        </button>
+      `).join('');
+    }
+
+    function applyPreset(presetId) {
+      const p = presetsData.find(item => item.id === presetId);
+      if (!p) return;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.preset-chip')).find(btn => btn.innerText.includes(p.label));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('trackSelect').value = p.trackKey;
+      document.getElementById('startingCtcInput').value = p.startingCtcLpa;
+
+      runForecast();
+    }
+
+    async function runForecast() {
+      const trackKey = document.getElementById('trackSelect').value;
+      const startingCtcLpa = parseFloat(document.getElementById('startingCtcInput').value);
+      const upskillCadence = document.getElementById('cadenceSelect').value;
+
+      try {
+        const res = await fetch('/api/v1/horizon/trajectory/forecast', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            trackKey,
+            startingCtcLpa,
+            upskillCadence
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          renderForecast(data.forecast);
+        }
+      } catch (err) {
+        console.error('Forecast error:', err);
+      }
+    }
+
+    function renderForecast(f) {
+      document.getElementById('displayCagr').innerText = `${f.cagr10YrPct}%`;
+      document.getElementById('displayYr5Ctc').innerText = `₹${f.fiveYearTargetCtcLpa} LPA`;
+      document.getElementById('displayYr10Ctc').innerText = `₹${f.tenYearTargetCtcLpa} LPA`;
+      document.getElementById('displayTrackTitle').innerText = f.trackName.split('(')[0].trim();
+
+      const container = document.getElementById('timelineContainer');
+      container.innerHTML = f.timeline.map(m => `
+        <div class="timeline-step">
+          <div class="step-marker"></div>
+          <div class="step-header">
+            <span class="step-title">${m.label} • ${m.title}</span>
+            <span class="step-ctc">₹${m.totalCtcLpa} LPA</span>
+          </div>
+          <div class="step-details">
+            <span>💵 Fixed Cash: ₹${m.cashComponentLpa} LPA</span>
+            <span>📈 Equity/ESOP: ₹${m.equityComponentLpa} LPA (${m.equityPct}%)</span>
+          </div>
+          <div class="step-desc">${m.responsibilities}</div>
+        </div>
+      `).join('');
+
+      const insightsUl = document.getElementById('insightsList');
+      insightsUl.innerHTML = f.strategicInsights.map(i => `
+        <li style="padding: 0.6rem 0.85rem; background: rgba(30, 41, 59, 0.4); border-left: 3px solid var(--accent-purple); border-radius: 4px; font-size: 0.85rem; color: #cbd5e1;">
+          ${i}
+        </li>
+      `).join('');
+    }
+
+    document.getElementById('trajectoryForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      runForecast();
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
