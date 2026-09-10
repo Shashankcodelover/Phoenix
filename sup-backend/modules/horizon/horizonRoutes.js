@@ -51,4 +51,24 @@ router.post('/colleges/chances', protectOptional, horizonController.predictColle
 router.post('/scholarships/evaluate', protectOptional, horizonController.evaluateScholarship);
 router.post('/karnataka/371j', protectOptional, horizonController.evaluateArticle371J);
 
+// Feature 41: Multi-Stream Admissions & Cutoff Predictor (Public/Optional Auth)
+const { multiStreamAdmissionsEngine } = require('./multiStreamAdmissionsEngine');
+
+router.get('/admissions/streams', (req, res) => {
+  res.json(multiStreamAdmissionsEngine.getStreamsAndQuotas());
+});
+
+router.get('/admissions/colleges', (req, res) => {
+  res.json(multiStreamAdmissionsEngine.getColleges(req.query.stream));
+});
+
+router.post('/admissions/predict', (req, res) => {
+  try {
+    const result = multiStreamAdmissionsEngine.predictAdmissions(req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;

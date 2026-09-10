@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Stream Admissions & Cutoff Predictor | Phoenix Horizon</title>
+  <link rel="stylesheet" href="../phoenix.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --panel-bg: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #c084fc;
+      --accent-blue: #3b82f6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #0c1833 0%, #050b14 100%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .nav-badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent-emerald);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 1.25rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .container {
+      max-width: 1480px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Hero */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f8fafc, #38bdf8, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 900px;
+      line-height: 1.5;
+    }
+
+    /* Studio Grid */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 1.75rem;
+    }
+    @media (max-width: 1080px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    .select-input, .text-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.88rem;
+    }
+    .select-input option {
+      background: #0f172a;
+      color: #fff;
+    }
+    .select-input:focus, .text-input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+
+    .btn-predict {
+      width: 100%;
+      background: linear-gradient(135deg, #0284c7, #10b981);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.8rem;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      transition: all 0.2s;
+    }
+    .btn-predict:hover {
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+      transform: translateY(-1px);
+    }
+
+    /* Scoreboard */
+    .bracket-scoreboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .bracket-stat-card {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .bracket-stat-card.safe {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.08);
+    }
+    .bracket-stat-card.target {
+      border-color: rgba(245, 158, 11, 0.4);
+      background: rgba(245, 158, 11, 0.08);
+    }
+    .bracket-stat-card.reach {
+      border-color: rgba(244, 63, 94, 0.4);
+      background: rgba(244, 63, 94, 0.08);
+    }
+    .stat-count {
+      font-size: 2rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .stat-name {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    /* Tab Buttons for Brackets */
+    .bracket-nav {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .bracket-tab {
+      background: transparent;
+      border: none;
+      padding: 0.6rem 1.25rem;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
+    }
+    .bracket-tab.active {
+      color: #fff;
+    }
+    .bracket-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-cyan);
+    }
+
+    /* College Cards Grid */
+    .colleges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .college-option-card {
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+    .college-option-card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+    .college-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+    .college-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .nirf-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent-amber);
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .branch-name {
+      font-size: 0.85rem;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .cutoff-compare {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+      color: #cbd5e1;
+    }
+    .prob-indicator {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    /* Choice Filling Priority Table */
+    .choice-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .choice-table th {
+      text-align: left;
+      padding: 0.75rem;
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+    .choice-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <span>🎓</span>
+      <span>PHOENIX HORIZON // ADMISSIONS PREDICTOR</span>
+      <span class="nav-badge">Feature 41</span>
+    </div>
+    <div class="nav-links">
+      <a href="/horizon/world-dashboard.html">World Dashboard</a>
+      <a href="/hackathon-agent/grand-champion.html">Builder OS</a>
+      <a href="#" class="active" style="color: var(--accent-emerald); font-weight: 700;">Admissions Predictor</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <header class="hero-banner">
+      <h1 class="hero-title">Multi-Stream Admissions & Cutoff Predictor</h1>
+      <p class="hero-subtitle">
+        Institutional cutoff forecaster across KCET, COMEDK, JEE Main, and GATE. Applies granular reservation quota multipliers (GM, 2A, 2B, 3A, 3B, SC, ST, SNQ, HK/371J) and outputs Safe, Target, and Reach brackets with optimized counseling option order.
+      </p>
+    </header>
+
+    <div class="studio-grid">
+      <!-- Left Panel: Student Profile & Controls -->
+      <aside class="glass-panel">
+        <div class="panel-title">
+          <span>🎯 Student Profile & Exam</span>
+          <span style="font-size: 0.75rem; color: var(--accent-emerald); font-family: 'JetBrains Mono';">MULTI-STREAM</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Entrance Exam Stream</label>
+          <select id="selectStream" class="select-input">
+            <option value="KCET" selected>KCET (Karnataka State Quota)</option>
+            <option value="COMEDK">COMEDK UGET (All-India Quota)</option>
+            <option value="JEE_MAIN">JEE Main (NIT/IIIT/CFTI)</option>
+            <option value="GATE">GATE (Postgraduate M.Tech)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span>Candidate Rank</span>
+            <span id="rankLabel" style="float: right; color: var(--accent-cyan); font-family: 'JetBrains Mono'; font-weight: 700;">3,500</span>
+          </label>
+          <input type="number" id="inputRank" class="text-input" value="3500">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Category / Quota Reservation</label>
+          <select id="selectQuota" class="select-input">
+            <option value="GM" selected>GM (General Merit)</option>
+            <option value="2A">Category 2A (OBC)</option>
+            <option value="2B">Category 2B (Minority)</option>
+            <option value="3A">Category 3A</option>
+            <option value="3B">Category 3B</option>
+            <option value="SC">SC (Scheduled Caste)</option>
+            <option value="ST">ST (Scheduled Tribe)</option>
+            <option value="SNQ">SNQ (Supernumerary Quota - 5% Fee Waiver)</option>
+            <option value="371J_HK">HK Region (Article 371J Reservation)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Preferred Engineering Branch</label>
+          <select id="selectBranch" class="select-input">
+            <option value="ALL" selected>All Tech Branches</option>
+            <option value="CSE">Computer Science & Engineering (CSE)</option>
+            <option value="ISE">Information Science & Engineering (ISE)</option>
+            <option value="AIML">Artificial Intelligence & ML (AIML)</option>
+            <option value="ECE">Electronics & Communication (ECE)</option>
+          </select>
+        </div>
+
+        <button id="btnPredict" class="btn-predict">
+          <span>⚡</span> Predict Admission Chances
+        </button>
+      </aside>
+
+      <!-- Right Panel: Admissions Studio -->
+      <main class="glass-panel" id="admissionsStudio">
+        <!-- Scoreboard -->
+        <div class="bracket-scoreboard">
+          <div class="bracket-stat-card safe">
+            <div class="stat-count" id="safeCount" style="color: var(--accent-emerald);">0</div>
+            <div class="stat-name" style="color: var(--accent-emerald);">Safe (>90%)</div>
+          </div>
+          <div class="bracket-stat-card target">
+            <div class="stat-count" id="targetCount" style="color: var(--accent-amber);">0</div>
+            <div class="stat-name" style="color: var(--accent-amber);">Target (60-89%)</div>
+          </div>
+          <div class="bracket-stat-card reach">
+            <div class="stat-count" id="reachCount" style="color: var(--accent-rose);">0</div>
+            <div class="stat-name" style="color: var(--accent-rose);">Reach (&lt;60%)</div>
+          </div>
+        </div>
+
+        <!-- Tab Bar -->
+        <div class="bracket-nav">
+          <button class="bracket-tab active" onclick="switchBracket('target')">Target Bracket</button>
+          <button class="bracket-tab" onclick="switchBracket('safe')">Safe Bracket</button>
+          <button class="bracket-tab" onclick="switchBracket('reach')">Reach Bracket</button>
+          <button class="bracket-tab" onclick="switchBracket('choices')">Optimal Option Order</button>
+        </div>
+
+        <!-- College Cards Display -->
+        <div id="collegesContainer" class="colleges-grid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Choice Filling Table Display (Initially hidden) -->
+        <div id="choicesContainer" style="display: none;">
+          <table class="choice-table">
+            <thead>
+              <tr>
+                <th>Priority #</th>
+                <th>Institution</th>
+                <th>Branch</th>
+                <th>Projected Cutoff</th>
+                <th>Probability</th>
+              </tr>
+            </thead>
+            <tbody id="choicesTableBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    let currentPrediction = null;
+    let activeBracket = 'target';
+
+    async function runPrediction() {
+      const stream = document.getElementById('selectStream').value;
+      const rank = document.getElementById('inputRank').value;
+      const quota = document.getElementById('selectQuota').value;
+      const branchVal = document.getElementById('selectBranch').value;
+      const branches = branchVal === 'ALL' ? [] : [branchVal];
+
+      try {
+        const res = await fetch('/api/v1/horizon/admissions/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            stream,
+            candidateRank: rank,
+            categoryQuota: quota,
+            branches
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          currentPrediction = data;
+          renderPrediction(data);
+        }
+      } catch (err) {
+        console.error('Prediction failed:', err);
+      }
+    }
+
+    function renderPrediction(data) {
+      document.getElementById('safeCount').innerText = data.summary.safeCount;
+      document.getElementById('targetCount').innerText = data.summary.targetCount;
+      document.getElementById('reachCount').innerText = data.summary.reachCount;
+
+      renderCurrentBracket();
+      renderChoicesTable(data.optimalChoiceFillingOrder);
+    }
+
+    function renderCurrentBracket() {
+      if (!currentPrediction) return;
+
+      const container = document.getElementById('collegesContainer');
+      const list = currentPrediction.brackets[activeBracket] || [];
+
+      if (list.length === 0) {
+        container.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9rem; padding: 2rem; grid-column: 1 / -1; text-align: center;">No institutions found in this bracket for rank ${document.getElementById('inputRank').value}.</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(item => `
+        <div class="college-option-card">
+          <div>
+            <div class="college-card-header">
+              <span class="college-name">${item.collegeName}</span>
+              <span class="nirf-badge">NIRF #${item.nirfRank}</span>
+            </div>
+            <div class="branch-name">${item.branchCode} - ${item.branchName}</div>
+            <div class="cutoff-compare">
+              <span>Base Cutoff: <strong>${item.baseCutoff}</strong></span>
+              <span>Quota Cutoff: <strong>${item.adjustedCutoff}</strong></span>
+            </div>
+          </div>
+          <div class="prob-indicator">
+            <span style="font-size: 0.78rem; color: var(--text-muted);">${item.statusText}</span>
+            <span style="color: ${item.probabilityPercent >= 90 ? 'var(--accent-emerald)' : item.probabilityPercent >= 60 ? 'var(--accent-amber)' : 'var(--accent-rose)'}; font-family: 'JetBrains Mono'; font-size: 1rem;">${item.probabilityPercent}%</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderChoicesTable(choices) {
+      const tbody = document.getElementById('choicesTableBody');
+      tbody.innerHTML = choices.map(c => `
+        <tr>
+          <td style="font-family: 'JetBrains Mono'; font-weight: 700; color: var(--accent-cyan);">#${c.priorityNumber}</td>
+          <td style="font-weight: 600; color: #fff;">${c.college}</td>
+          <td>${c.branch}</td>
+          <td style="font-family: 'JetBrains Mono';">${c.projectedCutoff}</td>
+          <td><span style="font-weight: 700; color: ${c.likelihood.includes('Safe') ? 'var(--accent-emerald)' : c.likelihood.includes('Target') ? 'var(--accent-amber)' : 'var(--accent-rose)'};">${c.likelihood}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function switchBracket(bracket) {
+      activeBracket = bracket;
+      document.querySelectorAll('.bracket-tab').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (bracket === 'choices') {
+        document.getElementById('collegesContainer').style.display = 'none';
+        document.getElementById('choicesContainer').style.display = 'block';
+      } else {
+        document.getElementById('collegesContainer').style.display = 'grid';
+        document.getElementById('choicesContainer').style.display = 'none';
+        renderCurrentBracket();
+      }
+    }
+
+    document.getElementById('inputRank').addEventListener('input', (e) => {
+      document.getElementById('rankLabel').innerText = Number(e.target.value).toLocaleString();
+    });
+
+    document.getElementById('btnPredict').addEventListener('click', runPrediction);
+    window.addEventListener('DOMContentLoaded', runPrediction);
+  </script>
+</body>
+</html>
