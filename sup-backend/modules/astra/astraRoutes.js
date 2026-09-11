@@ -39,6 +39,7 @@ const crdtSyncEngine = require('./crdtSyncEngine');
 const smartContractFuzzerEngine = require('./smartContractFuzzerEngine');
 const aiJudgePanelEngine = require('./aiJudgePanelEngine');
 const webrtcMeshEngine = require('./webrtcMeshEngine');
+const grandCapstoneEngine = require('./grandCapstoneEngine');
 
 router.use(protectOptional);
 
@@ -822,6 +823,44 @@ router.post('/webrtc-jitter-inject', (req, res) => {
     res.json({
       success: true,
       status
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/grand-capstone-dossier
+ * Returns aggregate 5-pillar capstone metrics, cryptographic passport, and Hall of Fame roster
+ */
+router.get('/grand-capstone-dossier', (req, res) => {
+  try {
+    const candidate = {
+      name: req.query.name || 'Preetham J.',
+      handle: req.query.handle || '@preetham_sovereign'
+    };
+    const dossier = grandCapstoneEngine.getGrandCapstoneDossier(candidate);
+    res.json({
+      success: true,
+      standard: 'Astra Sovereign Grand Phoenix Capstone V5.0',
+      dossier
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/grand-capstone-certify
+ * Issues verified SBT attestation and inducts candidate into Global Hall of Fame
+ */
+router.post('/grand-capstone-certify', (req, res) => {
+  try {
+    const candidateData = req.body || {};
+    const result = grandCapstoneEngine.certifyCandidate(candidateData);
+    res.json({
+      success: true,
+      ...result
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

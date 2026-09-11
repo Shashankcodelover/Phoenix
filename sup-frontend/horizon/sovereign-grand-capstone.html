@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sovereign Grand Phoenix Capstone & Global Hall of Fame | Feature 80</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700;800&family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #04060c;
+      --bg-surface: #0a0e1a;
+      --bg-card: rgba(16, 24, 40, 0.85);
+      --border-color: rgba(212, 175, 55, 0.25);
+      --border-glow: rgba(255, 215, 0, 0.45);
+      --gold-primary: #f59e0b;
+      --gold-bright: #fbbf24;
+      --gold-foil: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      --cyan-accent: #06b6d4;
+      --purple-accent: #8b5cf6;
+      --emerald-accent: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 50% 10%, rgba(245, 158, 11, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 10% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 90% 85%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+      overflow-x: hidden;
+      padding-bottom: 80px;
+    }
+
+    /* Top Banner Navigation */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      background: rgba(4, 6, 12, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      background: var(--gold-foil);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      padding: 8px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: var(--gold-primary);
+      color: #fff;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 50px 20px 30px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .crown-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--border-glow);
+      border-radius: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--gold-bright);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 16px;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    }
+
+    .hero h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      background: var(--gold-foil);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto 30px;
+      line-height: 1.6;
+    }
+
+    /* Grand Metric Strip */
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto 50px;
+      padding: 0 20px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 22px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gold-foil);
+    }
+
+    .metric-val {
+      font-family: 'Cinzel', serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .metric-val.highlight {
+      background: var(--gold-foil);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 16px;
+      padding: 28px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: var(--gold-bright);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* 5-Pillar Progress List */
+    .pillar-row {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .pillar-row:hover {
+      background: rgba(245, 158, 11, 0.05);
+      border-color: var(--border-color);
+      transform: translateX(4px);
+    }
+
+    .pillar-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .pillar-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #fff;
+    }
+
+    .pillar-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--emerald-accent);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .progress-bar-bg {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--gold-primary), var(--emerald-accent));
+      border-radius: 3px;
+    }
+
+    .pillar-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Sovereign Talent Passport Hologram */
+    .passport-box {
+      background: radial-gradient(circle at 50% 30%, rgba(245, 158, 11, 0.15) 0%, rgba(10, 14, 26, 0.95) 75%);
+      border: 2px solid var(--border-glow);
+      border-radius: 16px;
+      padding: 30px;
+      position: relative;
+      box-shadow: 0 0 40px rgba(245, 158, 11, 0.25);
+    }
+
+    .passport-seal-canvas {
+      display: block;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.4);
+    }
+
+    .passport-prop {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.88rem;
+    }
+
+    .passport-prop-k {
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .passport-prop-v {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--gold-bright);
+      font-weight: 600;
+      max-width: 320px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Certify Action Button */
+    .certify-btn {
+      width: 100%;
+      margin-top: 24px;
+      padding: 16px;
+      background: var(--gold-foil);
+      color: #04060c;
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .certify-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(245, 158, 11, 0.6);
+    }
+
+    /* Hall of Fame Table */
+    .hof-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .hof-table th {
+      text-align: left;
+      padding: 12px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .hof-table td {
+      padding: 16px 12px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .hof-table tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .hof-inductee-name {
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hof-rank-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      background: rgba(245, 158, 11, 0.18);
+      color: var(--gold-bright);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .sbt-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--cyan-accent);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 16px 24px;
+      background: #065f46;
+      border: 1px solid #10b981;
+      color: #fff;
+      font-weight: 600;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav-bar">
+    <div class="brand">
+      <span>✦</span> PHOENIX SOVEREIGN CAPSTONE
+    </div>
+    <div class="nav-links">
+      <a href="career-command-center.html" class="nav-btn">← Command Center</a>
+      <a href="webrtc-proctor-mesh.html" class="nav-btn">Feature 79 (WebRTC Mesh)</a>
+      <a href="#" class="nav-btn" style="border-color: var(--gold-primary); color: var(--gold-bright);">Feature 80 (Grand Capstone)</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="crown-badge">★ PILLAR 5 GRAND UNIFIED FINALE · FEATURE 80 ★</div>
+    <h1>SOVEREIGN GRAND PHOENIX CAPSTONE</h1>
+    <p>The apex credential of the Phoenix System. Aggregating all 80 architectural competencies across Distributed Systems, Neural AI Swarms, WebAssembly Sandboxes, Quant Order Books, and Multi-Peer Mesh Telemetry into a tamper-proof cryptographic talent passport.</p>
+  </section>
+
+  <!-- Metrics Strip -->
+  <div class="metrics-strip">
+    <div class="metric-card">
+      <div class="metric-val highlight">80 / 80</div>
+      <div class="metric-label">Features Completed</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val highlight">100.0%</div>
+      <div class="metric-label">5-Pillar Mastery Rate</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val highlight" id="metric-quotient">99.94%</div>
+      <div class="metric-label">Phoenix Sovereign Quotient</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val highlight">Top 0.01%</div>
+      <div class="metric-label">Global Engineering Percentile</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Pillar Breakdown Left -->
+    <div class="card">
+      <div class="card-title">
+        <span>Unified 5-Pillar Architectural Matrix</span>
+        <span style="font-size: 0.85rem; color: var(--emerald-accent);">VERIFIED IMMUTABLE</span>
+      </div>
+      <div id="pillars-container">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- Sovereign Talent Passport Right -->
+    <div class="card">
+      <div class="card-title">
+        <span>Soulbound Cryptographic Talent Passport</span>
+        <span style="font-size: 0.85rem; color: var(--gold-bright);">EAS / ERC-5192</span>
+      </div>
+
+      <div class="passport-box">
+        <canvas id="sealCanvas" width="120" height="120" class="passport-seal-canvas"></canvas>
+
+        <div class="passport-prop">
+          <span class="passport-prop-k">INDUCTEE:</span>
+          <span class="passport-prop-v" id="passport-name">Preetham J.</span>
+        </div>
+        <div class="passport-prop">
+          <span class="passport-prop-k">HANDLE:</span>
+          <span class="passport-prop-v" id="passport-handle">@preetham_sovereign</span>
+        </div>
+        <div class="passport-prop">
+          <span class="passport-prop-k">MERKLE ROOT:</span>
+          <span class="passport-prop-v" id="passport-merkle">0x7c9e1a3b5d7f902468acebdf13579bdf02468...</span>
+        </div>
+        <div class="passport-prop">
+          <span class="passport-prop-k">IPFS CID:</span>
+          <span class="passport-prop-v" id="passport-ipfs">QmPhoenix80GrandVerifiedSovereign...</span>
+        </div>
+        <div class="passport-prop">
+          <span class="passport-prop-k">SOULBOUND TOKEN:</span>
+          <span class="passport-prop-v" id="passport-sbt">SBT-PHOENIX-0080</span>
+        </div>
+        <div class="passport-prop">
+          <span class="passport-prop-k">ATTESTATION REGISTRY:</span>
+          <span class="passport-prop-v">0x8080PhoenixRegistryV5 (Mainnet)</span>
+        </div>
+
+        <button id="certifyBtn" class="certify-btn" onclick="executeCertification()">RE-CERTIFY & BROADCAST TO GLOBAL ROLL</button>
+      </div>
+    </div>
+
+    <!-- Hall of Fame Bottom Full Width -->
+    <div class="card full-width">
+      <div class="card-title">
+        <span>Global Elite Engineering Hall of Fame</span>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">TOP 0.01% GLOBAL INDUCTEES</span>
+      </div>
+
+      <table class="hof-table">
+        <thead>
+          <tr>
+            <th>Inductee</th>
+            <th>Executive / Research Tier</th>
+            <th>Nation</th>
+            <th>Phoenix Quotient</th>
+            <th>SBT Token ID</th>
+            <th>Mastery Badge</th>
+          </tr>
+        </thead>
+        <tbody id="hof-body">
+          <!-- Injected via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">✦ Soulbound Attestation successfully minted to Ethereum Mainnet registry!</div>
+
+  <script>
+    // Draw animated golden seal
+    function drawSeal() {
+      const canvas = document.getElementById('sealCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      let angle = 0;
+
+      function render() {
+        ctx.clearRect(0, 0, w, h);
+
+        // Radial gold background
+        const grad = ctx.createRadialGradient(cx, cy, 10, cx, cy, 55);
+        grad.addColorStop(0, '#fef08a');
+        grad.addColorStop(0.5, '#f59e0b');
+        grad.addColorStop(1, '#78350f');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 54, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Outer border
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 52, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Rotating rays
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angle);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < 16; i++) {
+          ctx.beginPath();
+          ctx.moveTo(0, 30);
+          ctx.lineTo(0, 48);
+          ctx.stroke();
+          ctx.rotate(Math.PI / 8);
+        }
+        ctx.restore();
+
+        // Inner star emblem
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 28px Outfit, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('80', cx, cy - 2);
+
+        ctx.font = 'bold 9px JetBrains Mono, monospace';
+        ctx.fillText('SOVEREIGN', cx, cy + 18);
+
+        angle += 0.01;
+        requestAnimationFrame(render);
+      }
+      render();
+    }
+
+    async function loadGrandCapstoneData() {
+      try {
+        const res = await fetch('/api/v1/astra/grand-capstone-dossier');
+        const data = await res.json();
+        if (data.success && data.dossier) {
+          renderDossier(data.dossier);
+        }
+      } catch (err) {
+        console.error('Failed to load dossier:', err);
+      }
+    }
+
+    function renderDossier(dossier) {
+      // Render Pillars
+      const pContainer = document.getElementById('pillars-container');
+      pContainer.innerHTML = '';
+      dossier.pillars.forEach(p => {
+        const row = document.createElement('div');
+        row.className = 'pillar-row';
+        row.innerHTML = `
+          <div class="pillar-head">
+            <span class="pillar-name">Pillar ${p.pillarId}: ${p.name}</span>
+            <span class="pillar-badge">100% VERIFIED</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill"></div>
+          </div>
+          <div class="pillar-desc">${p.featuresRange} · ${p.keyMilestone}</div>
+        `;
+        pContainer.appendChild(row);
+      });
+
+      // Render Passport
+      const pass = dossier.cryptographicPassport;
+      document.getElementById('passport-merkle').textContent = pass.merkleRoot;
+      document.getElementById('passport-merkle').title = pass.merkleRoot;
+      document.getElementById('passport-ipfs').textContent = pass.ipfsCid;
+      document.getElementById('passport-sbt').textContent = pass.sbtTokenId;
+
+      // Render Hall of Fame
+      const hofBody = document.getElementById('hof-body');
+      hofBody.innerHTML = '';
+      dossier.hallOfFame.forEach(ind => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="hof-inductee-name">
+              <span class="hof-rank-pill">${ind.id}</span>
+              <div>
+                <div>${ind.name}</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">${ind.handle}</div>
+              </div>
+            </div>
+          </td>
+          <td style="color:#f8fafc; font-weight:600;">${ind.tier}</td>
+          <td style="color:var(--text-muted);">${ind.country}</td>
+          <td><span style="color:var(--gold-bright); font-weight:700; font-family:'JetBrains Mono';">${ind.phoenixQuotient}%</span></td>
+          <td><span class="sbt-badge">${ind.sbtTokenId}</span></td>
+          <td><span style="font-size:0.8rem; padding:3px 8px; border-radius:4px; background:rgba(139,92,246,0.2); color:#c4b5fd;">${ind.masteryBadge}</span></td>
+        `;
+        hofBody.appendChild(tr);
+      });
+    }
+
+    async function executeCertification() {
+      const btn = document.getElementById('certifyBtn');
+      btn.disabled = true;
+      btn.textContent = 'MINTING SOULBOUND ATTESTATION ON-CHAIN...';
+
+      try {
+        const res = await fetch('/api/v1/astra/grand-capstone-certify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: 'Preetham J.',
+            handle: '@preetham_sovereign',
+            tier: 'Grand Phoenix Grandmaster & Enterprise Principal Architect',
+            country: 'Global'
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          const toast = document.getElementById('toast');
+          toast.style.display = 'block';
+          setTimeout(() => { toast.style.display = 'none'; }, 4000);
+          loadGrandCapstoneData();
+        }
+      } catch (err) {
+        console.error('Certification failed:', err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'RE-CERTIFY & BROADCAST TO GLOBAL ROLL';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      drawSeal();
+      loadGrandCapstoneData();
+    });
+  </script>
+</body>
+</html>
