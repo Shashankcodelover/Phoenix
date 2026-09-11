@@ -35,6 +35,7 @@ const hftOrderBookEngine = require('./hftOrderBookEngine');
 const quantRiskEngine = require('./quantRiskEngine');
 const wasmHeapTracerEngine = require('./wasmHeapTracerEngine');
 const teamMatcherEngine = require('./teamMatcherEngine');
+const crdtSyncEngine = require('./crdtSyncEngine');
 
 router.use(protectOptional);
 
@@ -684,6 +685,39 @@ router.post('/team-solve-matching', (req, res) => {
     res.json({
       success: true,
       result
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/crdt-scenarios
+ * Returns concurrent conflict scenarios for CRDT resolution
+ */
+router.get('/crdt-scenarios', (req, res) => {
+  try {
+    res.json({
+      success: true,
+      standard: 'Astra Real-Time CRDT Operational Transform & Conflict-Free Sync Engine',
+      scenarios: crdtSyncEngine.PRESET_COLLISION_SCENARIOS
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/crdt-simulate
+ * Simulates concurrent multi-peer CRDT merge and verifies replica consistency
+ */
+router.post('/crdt-simulate', (req, res) => {
+  try {
+    const { scenarioKey } = req.body || {};
+    const report = crdtSyncEngine.simulateCRDTSync(scenarioKey);
+    res.json({
+      success: true,
+      report
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

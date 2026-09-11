@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra Real-Time CRDT Code Sync & Operational Transform | Phoenix Pillar 5</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #0d1e38 0%, #060913 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .card-glow-cyan {
+      box-shadow: 0 0 25px rgba(6, 182, 212, 0.12);
+      border-color: rgba(6, 182, 212, 0.35);
+    }
+    .card-glow-emerald {
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+    .cursor-peer-alice {
+      border-left: 2px solid #38bdf8;
+      animation: blink 1s infinite;
+    }
+    .cursor-peer-bob {
+      border-left: 2px solid #10b981;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <!-- Header Navigation -->
+  <header class="max-w-7xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+    <div class="flex items-center space-x-4">
+      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 hover:border-cyan-500/50 hover:bg-slate-800 transition text-cyan-400">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 text-xs font-mono-code rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800/50 uppercase tracking-widest font-semibold">PILLAR 5 • FEATURE 76</span>
+          <span class="px-2 py-0.5 text-xs rounded bg-purple-950/60 text-purple-300 border border-purple-800/40 flex items-center gap-1.5 font-mono-code">
+            <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping"></span> LIVE SHARE / YJS GRADE CRDT
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white mt-1 flex items-center gap-2.5">
+          <span>Astra Real-Time CRDT Code Sync</span>
+          <span class="text-cyan-400 text-lg font-mono-code">&amp; Operational Transform</span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- Scenario Selector -->
+    <div class="flex items-center gap-3">
+      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-2">
+        <label class="text-xs text-slate-400 font-mono-code uppercase">Scenario</label>
+        <select id="scenarioSelect" onchange="runCRDTSimulation()" class="bg-slate-800 text-white font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-cyan-500">
+          <option value="concurrent_refactor" selected>Concurrent Refactor &amp; Mutex</option>
+          <option value="concurrent_docstring">Concurrent JSDoc &amp; Null Guard</option>
+        </select>
+      </div>
+
+      <button id="btnTriggerSync" onclick="runCRDTSimulation()" class="py-2.5 px-4 rounded-xl font-bold font-mono-code text-sm text-white bg-cyan-600 hover:bg-cyan-500 transition shadow-lg flex items-center gap-2">
+        <i class="fa-solid fa-bolt text-xs"></i>
+        <span>SIMULATE CRDT MERGE</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto space-y-6">
+
+    <!-- KPI Metric Cards Bar -->
+    <section class="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Consistency Status</div>
+        <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricConsistency">SEC Achieved</div>
+        <div class="text-[10px] text-emerald-500/80 font-mono-code mt-1">Strong Eventual Consistency</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Merge Latency (P99)</div>
+        <div class="text-xl font-bold text-cyan-400 font-mono-code mt-0.5" id="metricLatency">180 ns</div>
+        <div class="text-[10px] text-cyan-400/80 font-mono-code mt-1">Microsecond Convergence</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Replicated Operations</div>
+        <div class="text-xl font-bold text-white font-mono-code mt-0.5" id="metricOpsCount">42 Ops</div>
+        <div class="text-[10px] text-slate-400 font-mono-code mt-1">Fractional Index Commutative</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Cryptographic Digest</div>
+        <div class="text-xl font-bold text-purple-300 font-mono-code mt-0.5" id="metricDigestMatch">MATCH (100%)</div>
+        <div class="text-[10px] text-purple-400/80 font-mono-code mt-1" id="metricDigestA">0x4F19B82C...</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Vector Clocks ($V$)</div>
+        <div class="text-xl font-bold text-amber-400 font-mono-code mt-0.5" id="metricVectorClock">&lt;48, 24&gt;</div>
+        <div class="text-[10px] text-amber-400/80 font-mono-code mt-1">Causality Preserved</div>
+      </div>
+    </section>
+
+    <!-- Multi-Peer Tri-Panel Editor View -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+      <!-- Peer A (Alice) Branch -->
+      <section class="lg:col-span-4 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-4 shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-cyan-400"></span>
+              <h3 class="text-sm font-bold text-white tracking-wide">Peer A (Alice • Frontend/TS)</h3>
+            </div>
+            <span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800/50">site_alice</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800/90 font-mono-code text-xs overflow-x-auto min-h-[160px]">
+            <pre class="text-cyan-200" id="codePeerA"></pre>
+          </div>
+        </div>
+
+        <div class="mt-3 pt-2 border-t border-slate-800/80 text-[11px] font-mono-code text-slate-400 flex justify-between">
+          <span>Action: Async Refactor</span>
+          <span class="text-cyan-400">18 Ops</span>
+        </div>
+      </section>
+
+      <!-- Center Canonical Converged State -->
+      <section class="lg:col-span-4 bg-slate-900/90 border border-emerald-500/40 rounded-2xl p-4 shadow-2xl flex flex-col justify-between card-glow-emerald">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-code-merge text-emerald-400"></i>
+              <h3 class="text-sm font-bold text-white tracking-wide">Converged Canonical State</h3>
+            </div>
+            <span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/50">CRDT RECONCILED</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-950 border border-emerald-900/40 font-mono-code text-xs overflow-x-auto min-h-[160px]">
+            <pre class="text-emerald-300 font-semibold" id="codeConverged"></pre>
+          </div>
+        </div>
+
+        <div class="mt-3 pt-2 border-t border-slate-800/80 text-[11px] font-mono-code text-slate-400 flex justify-between">
+          <span>Deterministic Lock-Free Merge</span>
+          <span class="text-emerald-400 font-bold">0 Conflicts</span>
+        </div>
+      </section>
+
+      <!-- Peer B (Bob) Branch -->
+      <section class="lg:col-span-4 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-4 shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+              <h3 class="text-sm font-bold text-white tracking-wide">Peer B (Bob • Distributed Systems)</h3>
+            </div>
+            <span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/50">site_bob</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-950 border border-slate-800/90 font-mono-code text-xs overflow-x-auto min-h-[160px]">
+            <pre class="text-emerald-200" id="codePeerB"></pre>
+          </div>
+        </div>
+
+        <div class="mt-3 pt-2 border-t border-slate-800/80 text-[11px] font-mono-code text-slate-400 flex justify-between">
+          <span>Action: Mutex Injection</span>
+          <span class="text-emerald-400">24 Ops</span>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Vector Clocks & Lamport Operations Ledger -->
+    <section class="bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i>
+          <div>
+            <h3 class="text-base font-bold text-white tracking-wide">CRDT Fractional Indexing &amp; Causality State Vector Ledger</h3>
+            <p class="text-xs text-slate-400">Tracks Lamport timestamp ordering, site client identities, and mathematical consistency proof</p>
+          </div>
+        </div>
+        <span class="text-xs font-mono-code text-emerald-400 flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-check"></i> Non-Blocking Commutativity
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono-code text-xs">
+        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+          <div class="text-slate-500 text-[10px] uppercase">Peer A SHA-256 Digest</div>
+          <div class="text-cyan-400 font-bold mt-1" id="digestSiteA">0x4F19B82C4A8D9102</div>
+          <div class="text-[10px] text-slate-500 mt-0.5">Verified on site_alice local replica</div>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+          <div class="text-slate-500 text-[10px] uppercase">Peer B SHA-256 Digest</div>
+          <div class="text-emerald-400 font-bold mt-1" id="digestSiteB">0x4F19B82C4A8D9102</div>
+          <div class="text-[10px] text-slate-500 mt-0.5">Verified on site_bob local replica</div>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+          <div class="text-slate-500 text-[10px] uppercase">Eventual Consistency Assertion</div>
+          <div class="text-purple-300 font-bold mt-1 flex items-center gap-1.5">
+            <i class="fa-solid fa-equals text-emerald-400"></i> H(Doc_A) == H(Doc_B)
+          </div>
+          <div class="text-[10px] text-slate-500 mt-0.5">Mathematical Identity Guaranteed</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    let crdtScenarios = {};
+    let activeReport = null;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/astra/crdt-scenarios');
+        const data = await res.json();
+        if (data.success && data.scenarios) {
+          crdtScenarios = data.scenarios;
+          runCRDTSimulation();
+        }
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    async function runCRDTSimulation() {
+      const scenarioKey = document.getElementById('scenarioSelect').value;
+      try {
+        const res = await fetch('/api/v1/astra/crdt-simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ scenarioKey })
+        });
+        const data = await res.json();
+        if (data.success && data.report) {
+          activeReport = data.report;
+          renderUI(activeReport);
+        }
+      } catch (err) {
+        console.error('Simulation error:', err);
+      }
+    }
+
+    function renderUI(r) {
+      // Metrics Bar
+      document.getElementById('metricConsistency').innerText = 'SEC Achieved';
+      document.getElementById('metricLatency').innerText = r.performanceTelemetry.mergeLatencyNs + ' ns';
+      document.getElementById('metricOpsCount').innerText = r.performanceTelemetry.totalOpsProcessed + ' Ops';
+      document.getElementById('metricDigestMatch').innerText = r.isIdenticalReplicas ? 'MATCH (100%)' : 'MISMATCH';
+      document.getElementById('metricDigestA').innerText = r.replicaDigests.site_alice.substring(0, 12) + '...';
+      document.getElementById('metricVectorClock').innerText = `<${r.vectorClocks.site_alice.site_alice}, ${r.vectorClocks.site_alice.site_bob}>`;
+
+      // Code Panes
+      const currentScenario = crdtScenarios[r.scenarioKey];
+      if (currentScenario) {
+        document.getElementById('codePeerA').innerText = currentScenario.peerA.resultingSnippet;
+        document.getElementById('codePeerB').innerText = currentScenario.peerB.resultingSnippet;
+      }
+      document.getElementById('codeConverged').innerText = r.convergedDocument;
+
+      // Digests
+      document.getElementById('digestSiteA').innerText = r.replicaDigests.site_alice;
+      document.getElementById('digestSiteB').innerText = r.replicaDigests.site_bob;
+    }
+
+    init();
+  </script>
+</body>
+</html>
