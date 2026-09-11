@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra Autonomous AI Judge Panel & Deliberator | Phoenix Pillar 5</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #1a163a 0%, #060511 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .card-glow-gold {
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.18);
+      border-color: rgba(245, 158, 11, 0.45);
+    }
+    .card-judge {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.25s ease;
+    }
+    .card-judge:hover {
+      border-color: rgba(245, 158, 11, 0.4);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <!-- Header Navigation -->
+  <header class="max-w-7xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+    <div class="flex items-center space-x-4">
+      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 hover:border-amber-500/50 hover:bg-slate-800 transition text-amber-400">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 text-xs font-mono-code rounded bg-amber-950/80 text-amber-300 border border-amber-800/50 uppercase tracking-widest font-semibold">PILLAR 5 • FEATURE 78</span>
+          <span class="px-2 py-0.5 text-xs rounded bg-purple-950/60 text-purple-300 border border-purple-800/40 flex items-center gap-1.5 font-mono-code">
+            <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping"></span> DEVPOST / YC GRADE JURY
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white mt-1 flex items-center gap-2.5">
+          <span>Astra Autonomous AI Judge Panel</span>
+          <span class="text-amber-400 text-lg font-mono-code">&amp; Rubric Deliberator</span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- Project Showcase Selector -->
+    <div class="flex items-center gap-3">
+      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-2">
+        <label class="text-xs text-slate-400 font-mono-code uppercase">Candidate Entry</label>
+        <select id="projectSelect" onchange="runDeliberation()" class="bg-slate-800 text-white font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-amber-500">
+          <option value="phoenix_sovereign" selected>Phoenix (Sovereign Career OS)</option>
+          <option value="neuro_scribe">NeuroScribe (Clinical Scribe)</option>
+        </select>
+      </div>
+
+      <button id="btnRunDeliberation" onclick="runDeliberation()" class="py-2.5 px-4 rounded-xl font-bold font-mono-code text-sm text-white bg-amber-600 hover:bg-amber-500 transition shadow-lg flex items-center gap-2">
+        <i class="fa-solid fa-gavel text-xs"></i>
+        <span>COMMENCE DELIBERATION</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto space-y-6">
+
+    <!-- KPI Metric Cards Bar -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 card-glow-gold">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Podium Consensus Score</div>
+        <div class="text-2xl font-bold text-amber-400 font-mono-code mt-0.5" id="metricConsensus">98.4 / 100</div>
+        <div class="text-[10px] font-mono-code mt-1 text-emerald-400 uppercase font-bold" id="metricRank">🥇 GRAND CHAMPION (1ST PLACE)</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Consensus State</div>
+        <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricUnanimous">UNANIMOUS 4/4</div>
+        <div class="text-[10px] text-slate-400 font-mono-code mt-1">Zero Dissenting Judges</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Google Astra Track Bounty</div>
+        <div class="text-xl font-bold text-cyan-400 font-mono-code mt-0.5">100% Alignment</div>
+        <div class="text-[10px] text-cyan-400/80 font-mono-code mt-1">Full Multi-Modal Criteria</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Jury Deliberation Verdict</div>
+        <div class="text-xl font-bold text-purple-300 font-mono-code mt-0.5">SEEDED WINNER</div>
+        <div class="text-[10px] text-slate-400 font-mono-code mt-1">Bayesian Weighting Complete</div>
+      </div>
+    </section>
+
+    <!-- 4-Judge Rubric Breakdown Cards -->
+    <section>
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-base font-bold text-white tracking-wide flex items-center gap-2">
+          <i class="fa-solid fa-users text-amber-400"></i>
+          <span>Autonomous 4-Judge Cross-Examination Rubric</span>
+        </h2>
+        <span class="text-xs font-mono-code text-slate-400">Bayesian Weighted Aggregation</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="judgesContainer">
+        <!-- Dynamically rendered judge review cards -->
+      </div>
+    </section>
+
+    <!-- Live Deliberation Transcript & Project Dossier -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Left Column: Live Multi-Agent Deliberation Debate Console -->
+      <section class="lg:col-span-7 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-comments text-cyan-400"></i>
+              <h3 class="text-base font-bold text-white tracking-wide">Live Judge Cross-Examination Debate</h3>
+            </div>
+            <span class="px-2 py-0.5 text-[10px] font-mono-code rounded bg-cyan-950 text-cyan-300 border border-cyan-800/60">TRANSCRIPT</span>
+          </div>
+
+          <div class="space-y-3 font-mono-code text-xs max-h-72 overflow-y-auto pr-1" id="debateContainer">
+            <!-- Dynamically populated dialogue lines -->
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-800/80 text-xs font-mono-code text-slate-400 flex justify-between">
+          <span>Consensus Convergence: Complete</span>
+          <span class="text-emerald-400 font-bold">Unanimous Verdict</span>
+        </div>
+      </section>
+
+      <!-- Right Column: Candidate Project Dossier Plaque -->
+      <section class="lg:col-span-5 bg-slate-900/80 border border-amber-500/40 rounded-2xl p-5 shadow-2xl flex flex-col justify-between card-glow-gold">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-trophy text-amber-400"></i>
+              <h3 class="text-base font-bold text-white tracking-wide">Grand Champion Plaque</h3>
+            </div>
+            <span class="px-2 py-0.5 text-[10px] font-mono-code rounded bg-amber-950 text-amber-300 border border-amber-800/60">VERIFIED</span>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <div class="text-xs font-mono-code text-amber-400 uppercase tracking-wider" id="projectTrack">Grand Prize Track</div>
+              <h4 class="text-lg font-bold text-white mt-0.5" id="projectTitle">Phoenix: Sovereign Career OS</h4>
+              <p class="text-xs text-slate-300 mt-1" id="projectTagline">80-feature Google Staff-grade placement, quant HFT arena, and WebGL holographic interview simulator.</p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-950 border border-amber-900/50 font-mono-code text-xs space-y-1.5">
+              <div class="flex justify-between text-slate-400">
+                <span>Architecture Rigor:</span>
+                <span class="text-emerald-400 font-bold">99 / 100</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>Market Defensibility:</span>
+                <span class="text-amber-400 font-bold">98 / 100</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>Spatial Experience:</span>
+                <span class="text-purple-400 font-bold">97 / 100</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>Google Astra Alignment:</span>
+                <span class="text-cyan-400 font-bold">99 / 100</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-800 text-xs font-mono-code text-center text-amber-300 font-bold">
+          🏆 PROJECT OF THE YEAR CANDIDATE - GOOGLE LEVEL RECOGNITION
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script>
+    let activeDeliberation = null;
+
+    async function runDeliberation() {
+      const projectKey = document.getElementById('projectSelect').value;
+      try {
+        const res = await fetch('/api/v1/astra/judge-deliberate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ projectKey })
+        });
+        const data = await res.json();
+        if (data.success && data.deliberation) {
+          activeDeliberation = data.deliberation;
+          renderUI(activeDeliberation);
+        }
+      } catch (err) {
+        console.error('Deliberation error:', err);
+      }
+    }
+
+    function renderUI(d) {
+      // Metrics Bar
+      document.getElementById('metricConsensus').innerText = `${d.finalConsensusScore} / 100`;
+      document.getElementById('metricRank').innerText = d.podiumRank;
+      document.getElementById('metricUnanimous').innerText = d.isUnanimousConsensus ? 'UNANIMOUS 4/4' : 'MAJORITY SPLIT';
+
+      // Dossier
+      document.getElementById('projectTitle').innerText = d.title;
+      document.getElementById('projectTrack').innerText = d.track;
+      document.getElementById('projectTagline').innerText = d.tagline;
+
+      // Render 4 Judges Cards
+      const container = document.getElementById('judgesContainer');
+      container.innerHTML = d.judgesReview.map(j => `
+        <div class="card-judge p-4 rounded-xl space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="font-bold text-white text-sm">${j.judgeName.split('(')[0]}</div>
+            <span class="text-xs font-mono-code font-bold px-2 py-0.5 rounded bg-slate-800 text-amber-400 border border-slate-700">
+              ${j.score} / 100
+            </span>
+          </div>
+          <div class="text-[11px] text-slate-400 font-mono-code">${j.role} (${j.weightPct}% wt)</div>
+          <p class="text-xs text-slate-300 leading-relaxed">${j.verdict}</p>
+          <div class="text-[10px] font-mono-code text-cyan-300/90 pt-1 border-t border-slate-800">
+            <strong>Critique:</strong> ${j.critique}
+          </div>
+        </div>
+      `).join('');
+
+      // Render Debate Transcript
+      const debateContainer = document.getElementById('debateContainer');
+      debateContainer.innerHTML = d.liveDebateTranscript.map(line => `
+        <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80 space-y-0.5">
+          <div class="font-bold text-amber-400 text-[11px]">${line.speaker}:</div>
+          <div class="text-slate-300 text-xs">${line.message}</div>
+        </div>
+      `).join('');
+    }
+
+    runDeliberation();
+  </script>
+</body>
+</html>

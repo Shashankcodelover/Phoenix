@@ -37,6 +37,7 @@ const wasmHeapTracerEngine = require('./wasmHeapTracerEngine');
 const teamMatcherEngine = require('./teamMatcherEngine');
 const crdtSyncEngine = require('./crdtSyncEngine');
 const smartContractFuzzerEngine = require('./smartContractFuzzerEngine');
+const aiJudgePanelEngine = require('./aiJudgePanelEngine');
 
 router.use(protectOptional);
 
@@ -752,6 +753,40 @@ router.post('/contract-audit', (req, res) => {
     res.json({
       success: true,
       report
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/judge-profiles
+ * Returns judge panel personas and evaluation rubrics
+ */
+router.get('/judge-profiles', (req, res) => {
+  try {
+    res.json({
+      success: true,
+      standard: 'Astra Autonomous AI Judge Panel & Hackathon Deliberator',
+      judges: aiJudgePanelEngine.JUDGE_PERSONAS,
+      projects: aiJudgePanelEngine.PROJECT_SHOWCASE
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/judge-deliberate
+ * Executes multi-agent cross-examination debate and computes final consensus score
+ */
+router.post('/judge-deliberate', (req, res) => {
+  try {
+    const { projectKey } = req.body || {};
+    const deliberation = aiJudgePanelEngine.deliberateProject(projectKey);
+    res.json({
+      success: true,
+      deliberation
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
