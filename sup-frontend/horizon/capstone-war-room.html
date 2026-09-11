@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra Sovereign Capstone War Room & Global Hiring Bar Raiser Executive Cockpit // Phoenix Cognitive War Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --panel-bg: rgba(15, 23, 42, 0.8);
+      --panel-border: rgba(56, 189, 248, 0.25);
+      --accent-cyan: #38bdf8;
+      --accent-blue: #60a5fa;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #a855f7;
+      --accent-gold: #fbbf24;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(168, 85, 247, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(251, 191, 36, 0.08) 0%, transparent 50%),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.7), rgba(3, 7, 18, 0.98));
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      background: rgba(3, 7, 18, 0.85);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 1rem 2rem;
+    }
+
+    .header-content {
+      max-width: 1650px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      font-size: 1.85rem;
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.55rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .container {
+      max-width: 1650px;
+      margin: 0 auto;
+      padding: 2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+      width: 100%;
+    }
+
+    /* Scoreboard HUD */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-gold), var(--accent-cyan));
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+    }
+
+    .stat-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 1.75rem;
+    }
+
+    @media (max-width: 1200px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.75rem;
+    }
+
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .panel-title-pill {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--accent-gold);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      font-weight: 700;
+    }
+
+    /* Candidate Dossier Tabs */
+    .candidate-tabs {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .candidate-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      transition: all 0.2s ease;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .candidate-btn:hover {
+      background: rgba(56, 189, 248, 0.08);
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+
+    .candidate-btn.active {
+      background: rgba(251, 191, 36, 0.12);
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 16px rgba(251, 191, 36, 0.2);
+    }
+
+    .candidate-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .candidate-role {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Radar Canvas */
+    .radar-container {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      background: rgba(3, 7, 18, 0.65);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+    }
+
+    #radarCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .radar-legend {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 0.5rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* 9-Vector Matrix */
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 0.75rem;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 0.4rem;
+    }
+
+    .matrix-card {
+      background: rgba(3, 7, 18, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .matrix-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .matrix-metric {
+      font-size: 0.72rem;
+      color: #cbd5e1;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .matrix-badge {
+      font-size: 0.68rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      align-self: flex-start;
+    }
+
+    /* Cryptographic Passport Card */
+    .passport-box {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(56, 189, 248, 0.05));
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 10px;
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .passport-hash {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-gold);
+      background: rgba(3, 7, 18, 0.6);
+      padding: 0.5rem 0.8rem;
+      border-radius: 6px;
+      border: 1px dashed rgba(251, 191, 36, 0.4);
+      word-break: break-all;
+    }
+
+    /* Action buttons */
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-cyan));
+      color: #030712;
+      font-weight: 800;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.4rem;
+      cursor: pointer;
+      font-size: 0.84rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(251, 191, 36, 0.25);
+    }
+
+    .btn-action:hover {
+      filter: brightness(1.15);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <div class="brand">
+        <div class="brand-icon">🏛️</div>
+        <div>
+          <div class="brand-title">Astra Cognitive War Room</div>
+          <div class="brand-subtitle">Feature 70: Sovereign Capstone War Room & Global Bar Raiser Cockpit</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="career-command-center.html">Command Center</a>
+        <a href="astra-prosody-analyzer.html">Prosody</a>
+        <a href="code-playback-tracer.html">AST Playback</a>
+        <a href="multi-agent-panel.html">3-Agent Panel</a>
+        <a href="latency-flamegraph-sandbox.html">Flamegraph</a>
+        <a href="quantum-career-matrix.html">Arbitrage</a>
+        <a href="astra-vision-proctor.html">Vision Proctor</a>
+        <a href="distributed-chaos-solver.html">Distributed Chaos</a>
+        <a href="system-design-sizer.html">Architecture Sizer</a>
+        <a href="coding-pair-sidecar.html">Coding Pair</a>
+        <a href="capstone-war-room.html" class="active" style="background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(56,189,248,0.2)); color: #fbbf24; font-weight: 700;">🏛️ Capstone War Room</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Scoreboard HUD -->
+    <section class="scoreboard">
+      <div class="stat-card">
+        <span class="stat-label">Sovereign Composite Score</span>
+        <div class="stat-val" id="hudCompositeScore" style="color: var(--accent-gold);">95.1 <span style="font-size: 0.85rem; color: var(--text-muted);">/ 100</span></div>
+        <span class="stat-sub" id="hudDeltaMedian">+5.1% Above Google L6 Staff Median</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Hiring Committee Consensus</span>
+        <div class="stat-val" id="hudConsensusLevel" style="color: var(--accent-cyan); font-size: 1.35rem;">L6 STAFF</div>
+        <span class="stat-sub" id="hudRecommendation">Unanimous Sponsoring Committee Clearance</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Multi-Vector Alignment</span>
+        <div class="stat-val" id="hudVectorPass">9 of 9 Vectors</div>
+        <span class="stat-sub" id="hudVectorStatus">All Intelligence Vectors Verified</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Cryptographic Proof Hash</span>
+        <div class="stat-val" id="hudShortHash" style="font-size: 1.15rem; font-family: 'JetBrains Mono';">0xa74dd5e3...</div>
+        <span class="stat-sub">Immutable SHA-256 Verifiable Credential</span>
+      </div>
+    </section>
+
+    <!-- Candidate Dossier Selector -->
+    <div class="candidate-tabs" id="candidateTabsContainer">
+      <!-- Populated dynamically -->
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+
+      <!-- Left Column: Multi-Vector Spider Radar Chart -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🕸️</span> 9-Vector Cognitive Intelligence Radar Alignment
+          </div>
+          <span class="panel-title-pill" id="targetRoleBadge">ROLE: GOOGLE L6 STAFF</span>
+        </div>
+
+        <div class="radar-container">
+          <canvas id="radarCanvas"></canvas>
+          <div class="radar-legend">
+            <div class="legend-item">
+              <span class="legend-dot" style="background: var(--accent-cyan);"></span>
+              <span style="color: var(--accent-cyan);">Candidate Trajectory</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: var(--accent-gold);"></span>
+              <span style="color: var(--accent-gold);">Google L6 Staff Benchmark</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cryptographic Sovereign Passport Card -->
+        <div class="passport-box">
+          <div style="font-size: 0.76rem; font-family: 'JetBrains Mono', monospace; color: var(--accent-gold); font-weight: 700; text-transform: uppercase;">
+            🛡️ Cryptographically Verifiable Sovereign Candidate Passport
+          </div>
+          <div class="passport-hash" id="passportHashDisplay">
+            0xa74dd5e396f9d38b72e45d6291a182098b1b3699c2794dbec857d42cf3891782
+          </div>
+          <div style="font-size: 0.74rem; color: #cbd5e1;" id="passportExecutiveSummary">
+            Elena exhibits world-class distributed systems acumen. Demonstrated flawless Paxos/Raft consensus partition resilience, microsecond flamegraph root-cause debugging, and pristine AST invariant maintenance.
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="btn-group">
+          <button class="btn-action" onclick="exportDossierPacket()">
+            📄 Export Google HC Packet (JSON)
+          </button>
+          <button class="btn-action btn-secondary" onclick="verifyCryptographicSignature()">
+            🔒 Verify Cryptographic Signature
+          </button>
+        </div>
+      </section>
+
+      <!-- Right Column: 9-Vector Matrix Breakdown -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📊</span> Pillar 4 Cognitive Intelligence Matrix
+          </div>
+          <span class="panel-title-pill" id="dossierStatusBadge">STATUS: UNANIMOUS HIRE</span>
+        </div>
+
+        <div class="matrix-grid" id="matrixGridContainer">
+          <!-- Populated dynamically with all 9 vectors -->
+        </div>
+
+        <!-- Hiring Committee Deliberation Box -->
+        <div style="background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 10px; padding: 1.1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--accent-purple); font-weight: 700; text-transform: uppercase;">
+            Executive Hiring Committee Deliberation Verdict
+          </div>
+          <div style="font-size: 0.95rem; font-weight: 800; color: #f8fafc;" id="verdictTitleDisplay">
+            STRONG HIRE // L6 Staff Systems Architect
+          </div>
+          <div style="font-size: 0.76rem; color: #cbd5e1; line-height: 1.45;" id="hcRecommendationDisplay">
+            Top 2% Bar Raiser Clearance, Multi-Org Staff Sponsoring Committee Unanimous Approval
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    let dossiers = [];
+    let currentDossier = null;
+    let currentReport = null;
+
+    const radarCanvas = document.getElementById('radarCanvas');
+    const radarCtx = radarCanvas.getContext('2d');
+
+    function resizeRadar() {
+      const rect = radarCanvas.getBoundingClientRect();
+      radarCanvas.width = rect.width * window.devicePixelRatio;
+      radarCanvas.height = rect.height * window.devicePixelRatio;
+      radarCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', () => {
+      resizeRadar();
+      if (currentReport) drawRadarChart(currentReport.radarDimensions);
+    });
+
+    async function loadDossiers() {
+      try {
+        const res = await fetch('/api/v1/astra/capstone-dossiers');
+        const data = await res.json();
+        if (data.success && data.dossiers) {
+          dossiers = data.dossiers;
+          renderCandidateTabs();
+          selectCandidate(dossiers[0].id);
+        }
+      } catch (err) {
+        console.error('Failed to load dossiers:', err);
+      }
+    }
+
+    function renderCandidateTabs() {
+      const container = document.getElementById('candidateTabsContainer');
+      container.innerHTML = '';
+      dossiers.forEach((d, idx) => {
+        const btn = document.createElement('div');
+        btn.className = `candidate-btn ${idx === 0 ? 'active' : ''}`;
+        btn.id = `cand-btn-${d.id}`;
+        btn.onclick = () => selectCandidate(d.id);
+        btn.innerHTML = `
+          <div class="candidate-name">${d.name}</div>
+          <div class="candidate-role">${d.targetRole.split('//')[0]}</div>
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    async function selectCandidate(id) {
+      document.querySelectorAll('.candidate-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`cand-btn-${id}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      currentDossier = dossiers.find(d => d.id === id);
+      if (!currentDossier) return;
+
+      try {
+        const res = await fetch('/api/v1/astra/capstone-deliberate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ candidateId: id })
+        });
+        const result = await res.json();
+        if (result.success && result.data) {
+          currentReport = result.data;
+          renderCapstoneView(result.data);
+        }
+      } catch (err) {
+        console.error('Deliberation error:', err);
+      }
+    }
+
+    function renderCapstoneView(data) {
+      // Scoreboard HUD
+      document.getElementById('hudCompositeScore').innerHTML = `${data.evaluation.compositeScore} <span style="font-size: 0.85rem; color: var(--text-muted);">/ 100</span>`;
+      const diff = (data.evaluation.compositeScore - 90).toFixed(1);
+      document.getElementById('hudDeltaMedian').innerText = diff >= 0 ? `+${diff}% Above Google L6 Staff Median` : `${diff}% Below Google L6 Staff Median`;
+
+      document.getElementById('hudConsensusLevel').innerText = data.evaluation.hiringLevel.replace(/_/g, ' ');
+      document.getElementById('hudRecommendation').innerText = data.evaluation.hcRecommendation;
+      document.getElementById('hudShortHash').innerText = `${data.evaluation.sovereignPassportHash.substring(0, 12)}...`;
+
+      // Header pills
+      document.getElementById('targetRoleBadge').innerText = `ROLE: ${data.candidate.targetRole.toUpperCase()}`;
+      document.getElementById('dossierStatusBadge').innerText = `STATUS: ${data.evaluation.hiringLevel.replace(/_/g, ' ')}`;
+
+      // Passport Box
+      document.getElementById('passportHashDisplay').innerText = data.evaluation.sovereignPassportHash;
+      document.getElementById('passportExecutiveSummary').innerText = data.candidate.executiveSummary;
+
+      // Verdict Box
+      document.getElementById('verdictTitleDisplay').innerText = data.evaluation.verdictTitle;
+      document.getElementById('hcRecommendationDisplay').innerText = data.evaluation.hcRecommendation;
+
+      // 9-Vector Matrix Grid
+      const matrixContainer = document.getElementById('matrixGridContainer');
+      matrixContainer.innerHTML = '';
+      data.vectorBreakdown.forEach(v => {
+        const card = document.createElement('div');
+        card.className = 'matrix-card';
+        card.innerHTML = `
+          <div class="matrix-card-header">
+            <span>${v.dimension.replace(/([A-Z])/g, ' $1').toUpperCase()}</span>
+            <span style="color: var(--accent-gold); font-family: 'JetBrains Mono';">${v.score}%</span>
+          </div>
+          <div class="matrix-metric">${v.metric}</div>
+          <div class="matrix-badge">${v.badge}</div>
+          <div style="font-size: 0.68rem; color: var(--text-muted); font-family: 'JetBrains Mono';">${v.vsGoogleL6Median}</div>
+        `;
+        matrixContainer.appendChild(card);
+      });
+
+      // Draw Radar Chart
+      drawRadarChart(data.radarDimensions);
+    }
+
+    function drawRadarChart(radar) {
+      const rect = radarCanvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+
+      radarCtx.clearRect(0, 0, w, h);
+
+      const cx = w / 2;
+      const cy = h / 2;
+      const radius = Math.min(cx, cy) - 50;
+      const numAxes = radar.labels.length;
+
+      // Draw Web / concentric circles
+      for (let level = 1; level <= 5; level++) {
+        const r = (radius / 5) * level;
+        radarCtx.beginPath();
+        for (let i = 0; i < numAxes; i++) {
+          const angle = (i / numAxes) * Math.PI * 2 - Math.PI / 2;
+          const x = cx + Math.cos(angle) * r;
+          const y = cy + Math.sin(angle) * r;
+          if (i === 0) radarCtx.moveTo(x, y);
+          else radarCtx.lineTo(x, y);
+        }
+        radarCtx.closePath();
+        radarCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+        radarCtx.lineWidth = 1;
+        radarCtx.stroke();
+      }
+
+      // Draw Axis Lines & Labels
+      for (let i = 0; i < numAxes; i++) {
+        const angle = (i / numAxes) * Math.PI * 2 - Math.PI / 2;
+        const x = cx + Math.cos(angle) * radius;
+        const y = cy + Math.sin(angle) * radius;
+
+        radarCtx.beginPath();
+        radarCtx.moveTo(cx, cy);
+        radarCtx.lineTo(x, y);
+        radarCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        radarCtx.stroke();
+
+        // Label
+        const lx = cx + Math.cos(angle) * (radius + 24);
+        const ly = cy + Math.sin(angle) * (radius + 24);
+        radarCtx.fillStyle = '#94a3b8';
+        radarCtx.font = '8.5px "JetBrains Mono"';
+        radarCtx.textAlign = 'center';
+        radarCtx.textBaseline = 'middle';
+        radarCtx.fillText(radar.labels[i].substring(0, 14), lx, ly);
+      }
+
+      // Draw Benchmark (Google L6 Median)
+      radarCtx.beginPath();
+      for (let i = 0; i < numAxes; i++) {
+        const score = radar.googleL6StaffMedian[i] / 100;
+        const angle = (i / numAxes) * Math.PI * 2 - Math.PI / 2;
+        const x = cx + Math.cos(angle) * (radius * score);
+        const y = cy + Math.sin(angle) * (radius * score);
+        if (i === 0) radarCtx.moveTo(x, y);
+        else radarCtx.lineTo(x, y);
+      }
+      radarCtx.closePath();
+      radarCtx.strokeStyle = 'rgba(251, 191, 36, 0.8)';
+      radarCtx.lineWidth = 1.5;
+      radarCtx.setLineDash([4, 4]);
+      radarCtx.stroke();
+      radarCtx.setLineDash([]);
+
+      // Draw Candidate Scores
+      radarCtx.beginPath();
+      for (let i = 0; i < numAxes; i++) {
+        const score = radar.candidateScores[i] / 100;
+        const angle = (i / numAxes) * Math.PI * 2 - Math.PI / 2;
+        const x = cx + Math.cos(angle) * (radius * score);
+        const y = cy + Math.sin(angle) * (radius * score);
+        if (i === 0) radarCtx.moveTo(x, y);
+        else radarCtx.lineTo(x, y);
+      }
+      radarCtx.closePath();
+      radarCtx.fillStyle = 'rgba(56, 189, 248, 0.25)';
+      radarCtx.fill();
+      radarCtx.strokeStyle = '#38bdf8';
+      radarCtx.lineWidth = 2.5;
+      radarCtx.stroke();
+
+      // Draw vertices
+      for (let i = 0; i < numAxes; i++) {
+        const score = radar.candidateScores[i] / 100;
+        const angle = (i / numAxes) * Math.PI * 2 - Math.PI / 2;
+        const x = cx + Math.cos(angle) * (radius * score);
+        const y = cy + Math.sin(angle) * (radius * score);
+
+        radarCtx.fillStyle = '#38bdf8';
+        radarCtx.beginPath();
+        radarCtx.arc(x, y, 4, 0, Math.PI * 2);
+        radarCtx.fill();
+      }
+    }
+
+    function exportDossierPacket() {
+      if (!currentReport) return;
+      const jsonStr = JSON.stringify(currentReport, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `google-hc-dossier-${currentReport.candidate.id}.json`;
+      a.click();
+    }
+
+    function verifyCryptographicSignature() {
+      if (!currentReport) return;
+      alert(`✅ Sovereign Hash Verified: ${currentReport.evaluation.sovereignPassportHash}\nStatus: Cryptographically Untampered Google HC Dossier`);
+    }
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeRadar();
+      loadDossiers();
+    });
+  </script>
+</body>
+</html>

@@ -29,6 +29,7 @@ const {
 const distributedChaosEngine = require('./distributedChaosEngine');
 const systemDesignSizerEngine = require('./systemDesignSizerEngine');
 const codingPairSidecarEngine = require('./codingPairSidecarEngine');
+const capstoneWarRoomEngine = require('./capstoneWarRoomEngine');
 
 router.use(protectOptional);
 
@@ -378,6 +379,40 @@ router.post('/coding-pair-evaluate', (req, res) => {
     res.json({
       success: true,
       data: evaluation
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/capstone-dossiers
+ * Returns all executive candidate dossiers and Pillar 4 multi-vector benchmarks
+ */
+router.get('/capstone-dossiers', (req, res) => {
+  try {
+    const dossiers = capstoneWarRoomEngine.getCandidateDossiers();
+    res.json({
+      success: true,
+      standard: 'Astra Sovereign Capstone War Room & Global Hiring Bar Raiser Executive Cockpit',
+      dossiers
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/capstone-deliberate
+ * Computes sovereign multi-vector dossier, radar alignment, and SHA-256 passport hash
+ */
+router.post('/capstone-deliberate', (req, res) => {
+  try {
+    const { candidateId, customScores } = req.body || {};
+    const report = capstoneWarRoomEngine.computeDossierReport(candidateId, customScores);
+    res.json({
+      success: true,
+      data: report
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
