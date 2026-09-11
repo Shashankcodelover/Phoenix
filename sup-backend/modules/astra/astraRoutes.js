@@ -34,6 +34,7 @@ const spatialAvatarEngine = require('./spatialAvatarEngine');
 const hftOrderBookEngine = require('./hftOrderBookEngine');
 const quantRiskEngine = require('./quantRiskEngine');
 const wasmHeapTracerEngine = require('./wasmHeapTracerEngine');
+const teamMatcherEngine = require('./teamMatcherEngine');
 
 router.use(protectOptional);
 
@@ -635,6 +636,54 @@ router.get('/wasm-hex-inspect', (req, res) => {
     res.json({
       success: true,
       dump
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/team-builder-pool
+ * Returns active candidate builder pool with 5-D skill vectors
+ */
+router.get('/team-builder-pool', (req, res) => {
+  try {
+    res.json({
+      success: true,
+      standard: 'Astra Autonomous Hackathon Team Formation & Gale-Shapley Stable Matcher',
+      builders: teamMatcherEngine.BUILDER_POOL
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/hackathon-themes
+ * Returns competition track themes with skill weight profiles
+ */
+router.get('/hackathon-themes', (req, res) => {
+  try {
+    res.json({
+      success: true,
+      themes: teamMatcherEngine.HACKATHON_THEMES
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/team-solve-matching
+ * Solves stable matching for the selected theme and team size
+ */
+router.post('/team-solve-matching', (req, res) => {
+  try {
+    const { themeKey, teamSize } = req.body || {};
+    const result = teamMatcherEngine.solveStableTeams(themeKey || 'ai_agentic', Number(teamSize) || 4);
+    res.json({
+      success: true,
+      result
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
