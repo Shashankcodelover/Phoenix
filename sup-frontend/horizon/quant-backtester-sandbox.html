@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra Quant Strategy Backtester & Monte Carlo Risk Engine | Phoenix Pillar 5</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #0d172e 0%, #050811 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .card-glow-blue {
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.12);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+    .card-glow-emerald {
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <!-- Header & Navigation -->
+  <header class="max-w-7xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+    <div class="flex items-center space-x-4">
+      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 hover:border-blue-500/50 hover:bg-slate-800 transition text-blue-400">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 text-xs font-mono-code rounded bg-blue-950/80 text-blue-300 border border-blue-800/50 uppercase tracking-widest font-semibold">PILLAR 5 • FEATURE 73</span>
+          <span class="px-2 py-0.5 text-xs rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 flex items-center gap-1.5 font-mono-code">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> QUANTCONNECT / BLACK-LITTERMAN GRADE
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white mt-1 flex items-center gap-2.5">
+          <span>Astra Quant Strategy Backtester</span>
+          <span class="text-blue-400 text-lg font-mono-code">&amp; Monte Carlo Risk Engine</span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- Strategy Preset Selector -->
+    <div class="flex items-center gap-3">
+      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-3">
+        <label class="text-xs text-slate-400 font-mono-code uppercase">Strategy</label>
+        <select id="strategySelect" onchange="loadStrategy()" class="bg-slate-800 text-white font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-blue-500">
+          <option value="alpha_sentinel" selected>Alpha Sentinel (Tech L/S)</option>
+          <option value="macro_titan">Macro Titan (Risk Parity)</option>
+          <option value="tech_titan_pure">Mag-4 Alpha Compounder</option>
+        </select>
+      </div>
+
+      <button id="btnRunBacktest" onclick="runBacktest()" class="py-2.5 px-4 rounded-xl font-bold font-mono-code text-sm text-white bg-blue-600 hover:bg-blue-500 transition shadow-lg flex items-center gap-2">
+        <i class="fa-solid fa-play text-xs"></i>
+        <span>EXECUTE BACKTEST</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto space-y-6">
+
+    <!-- KPI Metric Cards Bar (Quant Metrics) -->
+    <section class="grid grid-cols-2 md:grid-cols-6 gap-3">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Annualized Return</div>
+        <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricAnnReturn">+28.4%</div>
+        <div class="text-[10px] font-mono-code mt-1 text-cyan-400" id="metricAlpha">+16.4% Alpha vs SPY</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Sharpe Ratio (Rf=4.2%)</div>
+        <div class="text-xl font-bold text-white font-mono-code mt-0.5" id="metricSharpe">1.84</div>
+        <div class="text-[10px] text-emerald-400 font-mono-code mt-1">Excellent Risk-Adjusted</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Sortino Ratio</div>
+        <div class="text-xl font-bold text-cyan-400 font-mono-code mt-0.5" id="metricSortino">2.91</div>
+        <div class="text-[10px] text-slate-400 font-mono-code mt-1">Downside Shield</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Max Drawdown (MDD)</div>
+        <div class="text-xl font-bold text-rose-400 font-mono-code mt-0.5" id="metricMDD">-12.8%</div>
+        <div class="text-[10px] font-mono-code mt-1 text-slate-400" id="metricCalmar">Calmar: 2.22</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Daily VaR 95% / 99%</div>
+        <div class="text-xl font-bold text-amber-400 font-mono-code mt-0.5" id="metricVaR">-1.42% / -2.18%</div>
+        <div class="text-[10px] text-amber-300/80 font-mono-code mt-1" id="metricCVaR">CVaR (ES): -2.54%</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Win Rate / Profit Factor</div>
+        <div class="text-xl font-bold text-purple-300 font-mono-code mt-0.5" id="metricWinRate">58.4%</div>
+        <div class="text-[10px] text-purple-400/80 font-mono-code mt-1" id="metricProfitFactor">Profit Factor: 2.14</div>
+      </div>
+    </section>
+
+    <!-- Visual Charts Row: Equity Curve (Left) + Drawdown Underwater (Right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Equity Growth Curve Canvas -->
+      <section class="lg:col-span-8 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-blue-400"></i>
+            <h2 class="text-base font-bold text-white tracking-wide">Cumulative Portfolio Wealth Trajectory vs Benchmark SPY</h2>
+          </div>
+          <div class="flex items-center gap-4 text-xs font-mono-code">
+            <span class="flex items-center gap-1.5 text-blue-400"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Strategy</span>
+            <span class="flex items-center gap-1.5 text-slate-400"><span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> Benchmark (SPY)</span>
+          </div>
+        </div>
+        <div class="h-64 w-full bg-slate-950/80 rounded-xl border border-slate-800/80 p-3 relative overflow-hidden">
+          <canvas id="equityCanvas" class="w-full h-full"></canvas>
+        </div>
+      </section>
+
+      <!-- Drawdown Underwater Chart -->
+      <section class="lg:col-span-4 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-water text-rose-400"></i>
+            <h2 class="text-base font-bold text-white tracking-wide">Underwater Drawdown (%)</h2>
+          </div>
+          <span class="text-xs font-mono-code text-slate-400">Peak Decline</span>
+        </div>
+        <div class="h-64 w-full bg-slate-950/80 rounded-xl border border-slate-800/80 p-3 relative overflow-hidden">
+          <canvas id="drawdownCanvas" class="w-full h-full"></canvas>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Monte Carlo Forward Stochastic Projection + Portfolio Asset Weights -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Monte Carlo 300-Path Fan Simulation -->
+      <section class="lg:col-span-8 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-dice text-purple-400"></i>
+            <div>
+              <h2 class="text-base font-bold text-white tracking-wide">Monte Carlo Geometric Brownian Motion (GBM)</h2>
+              <p class="text-xs text-slate-400">300 Stochastic Forward Paths (1-Year Horizon / 252 Days)</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 text-xs font-mono-code bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+            <span class="text-slate-400">P(Loss):</span>
+            <span id="metricProbLoss" class="text-rose-400 font-bold">4.2%</span>
+            <span class="text-slate-500">|</span>
+            <span class="text-slate-400">Median Exp:</span>
+            <span id="metricMedianExp" class="text-emerald-400 font-bold">$127,450</span>
+          </div>
+        </div>
+
+        <div class="h-64 w-full bg-slate-950/80 rounded-xl border border-slate-800/80 p-3 relative overflow-hidden">
+          <canvas id="monteCarloCanvas" class="w-full h-full"></canvas>
+        </div>
+
+        <!-- Percentile Breakdown Table -->
+        <div class="grid grid-cols-5 gap-2 mt-4 text-center font-mono-code text-xs">
+          <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="text-slate-500 text-[10px] uppercase">5th %ile (Bear)</div>
+            <div class="font-bold text-rose-400 mt-0.5" id="mcP5">$86,400</div>
+          </div>
+          <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="text-slate-500 text-[10px] uppercase">25th %ile</div>
+            <div class="font-bold text-amber-400 mt-0.5" id="mcP25">$109,200</div>
+          </div>
+          <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="text-slate-500 text-[10px] uppercase">50th %ile (Median)</div>
+            <div class="font-bold text-blue-400 mt-0.5" id="mcP50">$127,450</div>
+          </div>
+          <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="text-slate-500 text-[10px] uppercase">75th %ile</div>
+            <div class="font-bold text-emerald-400 mt-0.5" id="mcP75">$148,900</div>
+          </div>
+          <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="text-slate-500 text-[10px] uppercase">95th %ile (Bull)</div>
+            <div class="font-bold text-emerald-300 mt-0.5" id="mcP95">$184,200</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Asset Allocation Weights Configurator -->
+      <section class="lg:col-span-4 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-cyan-400"></i>
+              <h3 class="text-base font-bold text-white tracking-wide">Portfolio Asset Weights</h3>
+            </div>
+            <span class="text-xs font-mono-code text-cyan-400" id="totalWeightIndicator">100% Total</span>
+          </div>
+
+          <p class="text-xs text-slate-400 mb-4" id="strategyDescription">
+            Concentrated AI hyperscalers hedged with long-duration Treasuries and inverse beta.
+          </p>
+
+          <div class="space-y-3 font-mono-code text-xs" id="assetSlidersContainer">
+            <!-- Dynamically populated sliders -->
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-800 mt-4">
+          <button onclick="runBacktest()" class="w-full py-2.5 rounded-xl font-bold font-mono-code text-xs text-white bg-blue-600 hover:bg-blue-500 transition shadow flex items-center justify-center gap-2">
+            <i class="fa-solid fa-calculator"></i> RECOMPUTE ALL METRICS
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script>
+    let currentStrategies = {};
+    let assetUniverse = {};
+    let activeWeights = {};
+    let backtestResult = null;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/astra/quant-strategies');
+        const data = await res.json();
+        if (data.success) {
+          currentStrategies = data.strategies;
+          assetUniverse = data.assetUniverse;
+          loadStrategy();
+        }
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    function loadStrategy() {
+      const key = document.getElementById('strategySelect').value;
+      const strat = currentStrategies[key];
+      if (!strat) return;
+
+      activeWeights = { ...strat.weights };
+      document.getElementById('strategyDescription').innerText = strat.description;
+
+      renderWeightSliders();
+      runBacktest();
+    }
+
+    function renderWeightSliders() {
+      const container = document.getElementById('assetSlidersContainer');
+      const symbols = Object.keys(assetUniverse);
+
+      container.innerHTML = symbols.map(sym => {
+        const val = Math.round((activeWeights[sym] || 0) * 100);
+        return `
+          <div class="space-y-1">
+            <div class="flex justify-between text-slate-300">
+              <span class="font-bold">${sym} <span class="text-slate-500 font-normal text-[11px]">(${assetUniverse[sym].type})</span></span>
+              <span class="text-cyan-400 font-bold" id="val_${sym}">${val}%</span>
+            </div>
+            <input type="range" min="0" max="100" step="5" value="${val}"
+              oninput="updateWeight('${sym}', this.value)"
+              class="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-blue-500">
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateWeight(symbol, value) {
+      document.getElementById('val_' + symbol).innerText = value + '%';
+      activeWeights[symbol] = parseFloat(value) / 100;
+
+      let sum = 0;
+      Object.values(activeWeights).forEach(v => sum += v);
+      document.getElementById('totalWeightIndicator').innerText = Math.round(sum * 100) + '% Total';
+    }
+
+    async function runBacktest() {
+      const strategyKey = document.getElementById('strategySelect').value;
+      try {
+        const res = await fetch('/api/v1/astra/quant-backtest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            strategyKey,
+            weights: activeWeights,
+            initialCapital: 100000
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.report) {
+          backtestResult = data.report;
+          renderReport(backtestResult);
+        }
+      } catch (err) {
+        console.error('Backtest error:', err);
+      }
+    }
+
+    function renderReport(rep) {
+      const m = rep.metrics;
+      const b = rep.benchmarkMetrics;
+      const mc = rep.monteCarlo;
+
+      // Metrics Bar
+      document.getElementById('metricAnnReturn').innerText = (m.annualizedReturn >= 0 ? '+' : '') + m.annualizedReturn + '%';
+      document.getElementById('metricAlpha').innerText = (rep.alphaVsBenchmarkPct >= 0 ? '+' : '') + rep.alphaVsBenchmarkPct + '% Alpha vs SPY';
+      document.getElementById('metricSharpe').innerText = m.sharpeRatio.toFixed(2);
+      document.getElementById('metricSortino').innerText = m.sortinoRatio.toFixed(2);
+      document.getElementById('metricMDD').innerText = '-' + m.maxDrawdownPct + '%';
+      document.getElementById('metricCalmar').innerText = 'Calmar: ' + m.calmarRatio.toFixed(2);
+      document.getElementById('metricVaR').innerText = '-' + m.var95DailyPct + '% / -' + m.var99DailyPct + '%';
+      document.getElementById('metricCVaR').innerText = 'CVaR (ES): -' + m.cvar95DailyPct + '%';
+      document.getElementById('metricWinRate').innerText = m.winRatePct + '%';
+      document.getElementById('metricProfitFactor').innerText = 'Profit Factor: ' + m.profitFactor.toFixed(2);
+
+      // Monte Carlo info
+      document.getElementById('metricProbLoss').innerText = mc.probabilityOfCapitalLossPct + '%';
+      document.getElementById('metricMedianExp').innerText = '$' + mc.percentiles.p50.toLocaleString();
+      document.getElementById('mcP5').innerText = '$' + mc.percentiles.p5.toLocaleString();
+      document.getElementById('mcP25').innerText = '$' + mc.percentiles.p25.toLocaleString();
+      document.getElementById('mcP50').innerText = '$' + mc.percentiles.p50.toLocaleString();
+      document.getElementById('mcP75').innerText = '$' + mc.percentiles.p75.toLocaleString();
+      document.getElementById('mcP95').innerText = '$' + mc.percentiles.p95.toLocaleString();
+
+      // Render Canvases
+      drawEquityCurve(m.equityCurveSample, b.equityCurveSample);
+      drawDrawdown(m.drawdownSample);
+      drawMonteCarlo(mc.sampledTrajectories, mc.percentiles);
+    }
+
+    function drawEquityCurve(strat, bench) {
+      const canvas = document.getElementById('equityCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width = canvas.offsetWidth;
+      const h = canvas.height = canvas.offsetHeight;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const all = [...strat, ...bench];
+      const minVal = Math.min(...all) * 0.95;
+      const maxVal = Math.max(...all) * 1.05;
+
+      const toX = (idx, len) => 40 + (idx / (len - 1)) * (w - 60);
+      const toY = (val) => h - 30 - ((val - minVal) / (maxVal - minVal)) * (h - 50);
+
+      // Grid lines
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 4; i++) {
+        const y = 20 + i * ((h - 50) / 3);
+        ctx.beginPath();
+        ctx.moveTo(40, y);
+        ctx.lineTo(w - 20, y);
+        ctx.stroke();
+      }
+
+      // Draw Benchmark SPY (Slate Gray)
+      ctx.beginPath();
+      bench.forEach((v, i) => {
+        const x = toX(i, bench.length);
+        const y = toY(v);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw Strategy (Electric Blue)
+      ctx.beginPath();
+      strat.forEach((v, i) => {
+        const x = toX(i, strat.length);
+        const y = toY(v);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    }
+
+    function drawDrawdown(dd) {
+      const canvas = document.getElementById('drawdownCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width = canvas.offsetWidth;
+      const h = canvas.height = canvas.offsetHeight;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const minDD = Math.min(...dd, -20);
+      const toX = (idx, len) => 20 + (idx / (len - 1)) * (w - 40);
+      const toY = (val) => 20 + (Math.abs(val) / Math.abs(minDD)) * (h - 40);
+
+      ctx.beginPath();
+      ctx.moveTo(toX(0, dd.length), 20);
+      dd.forEach((v, i) => {
+        ctx.lineTo(toX(i, dd.length), toY(v));
+      });
+      ctx.lineTo(toX(dd.length - 1, dd.length), 20);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(244, 63, 94, 0.25)';
+      ctx.fill();
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    function drawMonteCarlo(paths, percentiles) {
+      const canvas = document.getElementById('monteCarloCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width = canvas.offsetWidth;
+      const h = canvas.height = canvas.offsetHeight;
+
+      ctx.clearRect(0, 0, w, h);
+      if (!paths || !paths.length) return;
+
+      const minVal = percentiles.p5 * 0.9;
+      const maxVal = percentiles.p95 * 1.1;
+
+      const toX = (idx, len) => 30 + (idx / (len - 1)) * (w - 50);
+      const toY = (val) => h - 25 - ((val - minVal) / (maxVal - minVal)) * (h - 45);
+
+      // Draw light individual paths
+      paths.forEach(p => {
+        ctx.beginPath();
+        p.forEach((v, i) => {
+          const x = toX(i, p.length);
+          const y = toY(v);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = 'rgba(147, 51, 234, 0.18)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+
+      // Highlight Median (P50) line
+      const initialCapital = 100000;
+      ctx.beginPath();
+      ctx.moveTo(30, toY(initialCapital));
+      ctx.lineTo(w - 20, toY(percentiles.p50));
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    }
+
+    init();
+  </script>
+</body>
+</html>

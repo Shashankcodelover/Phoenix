@@ -32,6 +32,7 @@ const codingPairSidecarEngine = require('./codingPairSidecarEngine');
 const capstoneWarRoomEngine = require('./capstoneWarRoomEngine');
 const spatialAvatarEngine = require('./spatialAvatarEngine');
 const hftOrderBookEngine = require('./hftOrderBookEngine');
+const quantRiskEngine = require('./quantRiskEngine');
 
 router.use(protectOptional);
 
@@ -525,6 +526,63 @@ router.get('/orderbook-market-impact', (req, res) => {
       symbol,
       qty,
       impact
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/quant-strategies
+ * Returns predefined quant strategies, asset universe, and baseline parameters
+ */
+router.get('/quant-strategies', (req, res) => {
+  try {
+    res.json({
+      success: true,
+      standard: 'Astra Quant Strategy Backtester & Monte Carlo Risk Engine',
+      assetUniverse: quantRiskEngine.ASSET_UNIVERSE,
+      strategies: quantRiskEngine.DEFAULT_STRATEGIES
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/quant-backtest
+ * Executes backtest evaluating Sharpe, Sortino, Calmar, VaR/CVaR, and Monte Carlo paths
+ */
+router.post('/quant-backtest', (req, res) => {
+  try {
+    const { strategyKey, weights, initialCapital } = req.body || {};
+    const report = quantRiskEngine.executeBacktest(strategyKey, weights, Number(initialCapital) || 100000);
+    res.json({
+      success: true,
+      report
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/quant-monte-carlo
+ * Runs customized standalone Monte Carlo GBM stochastic simulation
+ */
+router.post('/quant-monte-carlo', (req, res) => {
+  try {
+    const { initialCapital, muAnn, sigmaAnn, days, numPaths } = req.body || {};
+    const simulation = quantRiskEngine.runMonteCarloSimulation(
+      Number(initialCapital) || 100000,
+      Number(muAnn) || 0.20,
+      Number(sigmaAnn) || 0.22,
+      Number(days) || 252,
+      Number(numPaths) || 300
+    );
+    res.json({
+      success: true,
+      simulation
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
