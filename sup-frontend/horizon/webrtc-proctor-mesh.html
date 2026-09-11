@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra WebRTC Multi-Peer Mesh & Proctoring Telemetry | Phoenix Pillar 5</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #0d1e38 0%, #060913 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .video-frame {
+      background: #030712;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .feed-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <!-- Header Navigation -->
+  <header class="max-w-7xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+    <div class="flex items-center space-x-4">
+      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 hover:border-cyan-500/50 hover:bg-slate-800 transition text-cyan-400">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 text-xs font-mono-code rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800/50 uppercase tracking-widest font-semibold">PILLAR 5 • FEATURE 79</span>
+          <span class="px-2 py-0.5 text-xs rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 flex items-center gap-1.5 font-mono-code">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> WEBRTC FULL MESH 3-WAY
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white mt-1 flex items-center gap-2.5">
+          <span>Astra WebRTC Multi-Peer Mesh</span>
+          <span class="text-cyan-400 text-lg font-mono-code">&amp; Remote Proctoring Telemetry</span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- Live Telemetry Status Pill -->
+    <div class="flex items-center gap-3">
+      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-4 flex items-center gap-3 font-mono-code text-xs">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 feed-pulse"></span>
+          <span class="text-slate-300">ICE: <strong class="text-emerald-400">COMPLETED</strong></span>
+        </div>
+        <span class="text-slate-600">|</span>
+        <span class="text-slate-400">Bitrate: <strong class="text-cyan-400" id="headerBitrate">4,216 kbps</strong></span>
+      </div>
+
+      <button id="btnRefreshMesh" onclick="fetchMeshStatus()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono-code transition">
+        <i class="fa-solid fa-rotate"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto space-y-6">
+
+    <!-- KPI Metric Cards Bar (RTCP Telemetry) -->
+    <section class="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Round Trip Time (RTT)</div>
+        <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricRTT">14.8 ms</div>
+        <div class="text-[10px] text-emerald-500/80 font-mono-code mt-1">Ultra-Low Latency</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Packet Loss Rate</div>
+        <div class="text-xl font-bold text-cyan-400 font-mono-code mt-0.5" id="metricLoss">0.02%</div>
+        <div class="text-[10px] text-slate-400 font-mono-code mt-1">28 / 142k lost</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Jitter Buffer Delay</div>
+        <div class="text-xl font-bold text-white font-mono-code mt-0.5" id="metricJitter">3.8 ms</div>
+        <div class="text-[10px] text-slate-400 font-mono-code mt-1">Sub-frame stability</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Proctor Integrity Score</div>
+        <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricIntegrity">99 / 100</div>
+        <div class="text-[10px] text-emerald-500/80 font-mono-code mt-1">Zero Tamper Alerts</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Display Monitors</div>
+        <div class="text-xl font-bold text-purple-300 font-mono-code mt-0.5" id="metricDisplays">1 Primary</div>
+        <div class="text-[10px] text-slate-400 font-mono-code mt-1">0 Virtual Displays</div>
+      </div>
+    </section>
+
+    <!-- Video Streams Row: Screen Share 1080p (Left) + Dual Webcams & Anti-Tamper (Right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Left Column: Screen Share Stream 1080p @ 60 FPS -->
+      <section class="lg:col-span-8 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-desktop text-cyan-400"></i>
+              <h2 class="text-base font-bold text-white tracking-wide">Candidate Primary Screen Share</h2>
+            </div>
+            <div class="flex items-center gap-2 text-xs font-mono-code">
+              <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/60">1080p @ 60 FPS</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-400">AV1 (2,450 kbps)</span>
+            </div>
+          </div>
+
+          <!-- Video Simulation Frame -->
+          <div class="video-frame rounded-xl h-72 p-4 flex flex-col justify-between font-mono-code text-xs">
+            <div class="flex justify-between items-center text-slate-400 text-[11px]">
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span> REC SCREEN LIVE</span>
+              <span>Track: trk_scr_01</span>
+            </div>
+
+            <!-- Simulated Code Editor Canvas inside stream -->
+            <div class="p-3 bg-slate-950/90 rounded-lg border border-slate-800/90 text-slate-300 space-y-1.5 text-xs">
+              <div class="text-slate-500">// Monaco Editor: LeetCode #42 Hard - Trapping Rain Water</div>
+              <div class="text-cyan-300">function trapRainWater(height: number[]): number {</div>
+              <div class="text-slate-400 pl-4">let left = 0, right = height.length - 1;</div>
+              <div class="text-slate-400 pl-4">let maxL = 0, maxR = 0, water = 0;</div>
+              <div class="text-emerald-400 pl-4">// Staff O(N) Two-Pointer Invariant Verification</div>
+              <div class="text-slate-300 pl-4">while (left &lt; right) { ... }</div>
+              <div class="text-cyan-300">}</div>
+            </div>
+
+            <div class="flex justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-800/80">
+              <span>Resolution: 1920x1080 True Color</span>
+              <span>ContentHint: detail</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-800/80 text-xs font-mono-code text-slate-400 flex justify-between">
+          <span>SRTP Encryption: DTLS-ECDSA AES-128-GCM</span>
+          <span class="text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-lock"></i> Protected Channel</span>
+        </div>
+      </section>
+
+      <!-- Right Column: Dual Feeds & Anti-Tamper Diagnostics -->
+      <section class="lg:col-span-4 space-y-5">
+
+        <!-- Proctor Webcam Feed (Face & Gaze) -->
+        <div class="bg-slate-900/80 border border-slate-800/90 rounded-2xl p-4 shadow-xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-video text-emerald-400"></i>
+              <h3 class="text-sm font-bold text-white tracking-wide">AI Proctor Telemetry Feed</h3>
+            </div>
+            <span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/60">720p VP9</span>
+          </div>
+
+          <div class="video-frame rounded-xl h-36 p-3 flex flex-col justify-between font-mono-code text-xs">
+            <div class="flex justify-between text-[10px] text-slate-400">
+              <span class="text-emerald-400 font-bold">● GAZE CENTERED</span>
+              <span>850 kbps</span>
+            </div>
+            <div class="text-center text-slate-500 text-xs py-2">
+              <i class="fa-solid fa-user-check text-2xl text-emerald-400/80 mb-1"></i>
+              <div>Candidate Gaze Vector: [0.02, -0.01, 0.99]</div>
+            </div>
+            <div class="text-[9px] text-slate-500 flex justify-between">
+              <span>Euler Pitch: +2.1°</span>
+              <span>Yaw: -0.8°</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Network Jitter Injection Simulator -->
+        <div class="bg-slate-900/80 border border-slate-800/90 rounded-2xl p-4 shadow-xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-amber-400"></i>
+              <h3 class="text-sm font-bold text-white tracking-wide">Network Jitter &amp; Chaos Injection</h3>
+            </div>
+            <span class="text-[10px] font-mono-code text-slate-400">RTCP Testing</span>
+          </div>
+
+          <div class="space-y-3 font-mono-code text-xs">
+            <div>
+              <div class="flex justify-between text-slate-400 mb-1">
+                <span>Packet Loss:</span>
+                <span id="lossVal" class="text-amber-400 font-bold">0.05%</span>
+              </div>
+              <input id="inputLoss" type="range" min="0" max="5" step="0.5" value="0.5" oninput="updateLossDisplay(this.value)" class="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-500">
+            </div>
+
+            <button id="btnInjectJitter" onclick="injectJitter()" class="w-full py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-wave-square"></i> INJECT PACKET JITTER
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <script>
+    let meshData = null;
+
+    async function fetchMeshStatus() {
+      try {
+        const res = await fetch('/api/v1/astra/webrtc-mesh-status');
+        const data = await res.json();
+        if (data.success && data.status) {
+          meshData = data.status;
+          renderUI(meshData);
+        }
+      } catch (err) {
+        console.error('WebRTC fetch error:', err);
+      }
+    }
+
+    function renderUI(s) {
+      const c = s.candidateStatus;
+      const rtcp = c.rtcp;
+      const proctor = c.proctorIntegrity;
+
+      document.getElementById('metricRTT').innerText = `${rtcp.rttMs} ms`;
+      document.getElementById('metricLoss').innerText = `${rtcp.packetLossPct}%`;
+      document.getElementById('metricJitter').innerText = `${rtcp.jitterMs} ms`;
+      document.getElementById('metricIntegrity').innerText = `${proctor.integrityScore} / 100`;
+      document.getElementById('metricDisplays').innerText = `${proctor.displayCount} Primary`;
+      document.getElementById('headerBitrate').innerText = `${s.aggregateBandwidthKbps.toLocaleString()} kbps`;
+    }
+
+    function updateLossDisplay(val) {
+      document.getElementById('lossVal').innerText = (parseFloat(val) / 10).toFixed(2) + '%';
+    }
+
+    async function injectJitter() {
+      const loss = parseFloat(document.getElementById('inputLoss').value) / 10;
+      try {
+        const res = await fetch('/api/v1/astra/webrtc-jitter-inject', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ packetLoss: loss, addedLatency: 25 })
+        });
+        const data = await res.json();
+        if (data.success && data.status) {
+          renderUI(data.status);
+        }
+      } catch (err) {
+        console.error('Jitter inject error:', err);
+      }
+    }
+
+    fetchMeshStatus();
+  </script>
+</body>
+</html>

@@ -38,6 +38,7 @@ const teamMatcherEngine = require('./teamMatcherEngine');
 const crdtSyncEngine = require('./crdtSyncEngine');
 const smartContractFuzzerEngine = require('./smartContractFuzzerEngine');
 const aiJudgePanelEngine = require('./aiJudgePanelEngine');
+const webrtcMeshEngine = require('./webrtcMeshEngine');
 
 router.use(protectOptional);
 
@@ -787,6 +788,40 @@ router.post('/judge-deliberate', (req, res) => {
     res.json({
       success: true,
       deliberation
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/webrtc-mesh-status
+ * Returns active WebRTC 3-way mesh topology, stream bitrates, and RTCP metrics
+ */
+router.get('/webrtc-mesh-status', (req, res) => {
+  try {
+    const status = webrtcMeshEngine.getMeshStatus();
+    res.json({
+      success: true,
+      standard: 'Astra WebRTC Multi-Peer Mesh & Remote Proctoring Telemetry',
+      status
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/webrtc-jitter-inject
+ * Injects network packet loss and RTT delay into simulated RTCP pipeline
+ */
+router.post('/webrtc-jitter-inject', (req, res) => {
+  try {
+    const { packetLoss, addedLatency } = req.body || {};
+    const status = webrtcMeshEngine.simulateNetworkPerturbation(packetLoss, addedLatency);
+    res.json({
+      success: true,
+      status
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
