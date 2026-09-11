@@ -30,6 +30,7 @@ const distributedChaosEngine = require('./distributedChaosEngine');
 const systemDesignSizerEngine = require('./systemDesignSizerEngine');
 const codingPairSidecarEngine = require('./codingPairSidecarEngine');
 const capstoneWarRoomEngine = require('./capstoneWarRoomEngine');
+const spatialAvatarEngine = require('./spatialAvatarEngine');
 
 router.use(protectOptional);
 
@@ -413,6 +414,39 @@ router.post('/capstone-deliberate', (req, res) => {
     res.json({
       success: true,
       data: report
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/avatar-archetypes
+ * Returns 3D spatial interviewer avatar archetypes
+ */
+router.get('/avatar-archetypes', (req, res) => {
+  try {
+    const archetypes = spatialAvatarEngine.getArchetypes();
+    res.json({
+      success: true,
+      standard: 'Astra WebGL 3D Spatial Holographic Interview Avatar & Viseme Simulator',
+      archetypes
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/avatar-viseme-stream
+ * Synthesizes time-series blendshapes and visemes for 3D holographic lip-sync
+ */
+router.post('/avatar-viseme-stream', (req, res) => {
+  try {
+    const stream = spatialAvatarEngine.synthesizeVisemeSequence(req.body || {});
+    res.json({
+      success: true,
+      data: stream
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

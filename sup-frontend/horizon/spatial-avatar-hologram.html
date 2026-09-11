@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra WebGL 3D Spatial Holographic Interview Avatar // Phoenix Cognitive War Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(56, 189, 248, 0.25);
+      --accent-cyan: #38bdf8;
+      --accent-blue: #60a5fa;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.12) 0%, transparent 40%),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.6), rgba(3, 7, 18, 0.95));
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      background: rgba(3, 7, 18, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 1rem 2rem;
+    }
+
+    .header-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      font-size: 1.75rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.55rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+      width: 100%;
+    }
+
+    /* Scoreboard HUD */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-val {
+      font-size: 1.55rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+    }
+
+    .stat-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.75rem;
+    }
+
+    @media (max-width: 1150px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.75rem;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .panel-title-pill {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    /* Hologram 3D Canvas */
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      height: 420px;
+      background: rgba(3, 7, 18, 0.75);
+      border-radius: 10px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      overflow: hidden;
+      box-shadow: inset 0 0 40px rgba(56, 189, 248, 0.1);
+    }
+
+    #avatarCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .canvas-hud {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.75);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Archetype Grid */
+    .archetype-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.65rem;
+    }
+
+    .archetype-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .archetype-btn:hover {
+      background: rgba(56, 189, 248, 0.08);
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+
+    .archetype-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+    }
+
+    .archetype-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .archetype-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Blendshape readout grid */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+    .telemetry-item {
+      background: rgba(3, 7, 18, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.74rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .telemetry-label {
+      color: var(--text-muted);
+    }
+
+    .telemetry-val {
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    /* Dialogue box */
+    .dialogue-box {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(168, 85, 247, 0.05));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 10px;
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .dialogue-text {
+      font-size: 0.88rem;
+      font-style: italic;
+      color: #f1f5f9;
+      line-height: 1.45;
+    }
+
+    /* Buttons */
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #030712;
+      font-weight: 800;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.4rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.25);
+    }
+
+    .btn-action:hover {
+      filter: brightness(1.15);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <div class="brand">
+        <div class="brand-icon">👤</div>
+        <div>
+          <div class="brand-title">Astra Cognitive War Room</div>
+          <div class="brand-subtitle">Feature 71: WebGL 3D Spatial Holographic Avatar & Viseme Lip-Sync</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="career-command-center.html">Command Center</a>
+        <a href="astra-prosody-analyzer.html">Prosody</a>
+        <a href="code-playback-tracer.html">AST Playback</a>
+        <a href="multi-agent-panel.html">3-Agent Panel</a>
+        <a href="latency-flamegraph-sandbox.html">Flamegraph</a>
+        <a href="quantum-career-matrix.html">Arbitrage</a>
+        <a href="astra-vision-proctor.html">Vision Proctor</a>
+        <a href="distributed-chaos-solver.html">Distributed Chaos</a>
+        <a href="system-design-sizer.html">Architecture Sizer</a>
+        <a href="coding-pair-sidecar.html">Coding Pair</a>
+        <a href="capstone-war-room.html">Capstone War Room</a>
+        <a href="spatial-avatar-hologram.html" class="active" style="background: linear-gradient(135deg, rgba(56,189,248,0.2), rgba(168,85,247,0.2)); color: #38bdf8; font-weight: 700;">👤 3D Avatar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Scoreboard HUD -->
+    <section class="scoreboard">
+      <div class="stat-card">
+        <span class="stat-label">Active Phoneme Viseme</span>
+        <div class="stat-val" id="hudActiveViseme" style="color: var(--accent-cyan);">VISEME_AA</div>
+        <span class="stat-sub" id="hudVisemeDetail">Open Vowel Jaw Trajectory (MPEG-4)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Facial Blendshape Dynamics</span>
+        <div class="stat-val" id="hudBlendshape">0.85 <span style="font-size: 0.85rem; color: var(--text-muted);">JawOpen</span></div>
+        <span class="stat-sub" id="hudBrowRaise">BrowRaise: 0.45 • Saccade Invariant</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Holographic Mesh Precision</span>
+        <div class="stat-val" id="hudPrecision" style="color: var(--accent-emerald);">99.4%</div>
+        <span class="stat-sub">Sub-Millimeter 3D Wireframe Stability</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Spatial Gaze Lock</span>
+        <div class="stat-val" id="hudGazeLock">0.96 <span style="font-size: 0.85rem; color: var(--text-muted);">Focus</span></div>
+        <span class="stat-sub" id="hudHeadPose">Head Pose: +2.1° Pitch, -0.8° Yaw</span>
+      </div>
+    </section>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+
+      <!-- Left Column: WebGL 3D Holographic Avatar Canvas -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🌐</span> 3D Spatial Holographic Mesh Visualizer
+          </div>
+          <span class="panel-title-pill" id="avatarStylePill">HOLOGRAPHIC NEON CYAN MESH</span>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="canvas-container">
+          <canvas id="avatarCanvas"></canvas>
+          <div class="canvas-hud">
+            <span id="canvasStreamStatus">⚡ REAL-TIME SPATIAL VISEME STREAM ACTIVE</span>
+            <span id="canvasFps">60 FPS • WebGL 3D Point-Cloud</span>
+          </div>
+        </div>
+
+        <!-- Spoken Dialogue Card -->
+        <div class="dialogue-box">
+          <div style="font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase;">
+            Live Spoken Interview Prompt
+          </div>
+          <div class="dialogue-text" id="dialogueTextDisplay">
+            "Welcome to the Distributed Consensus round. Can you walk me through how you would handle an isolated Raft leader in a 5-node cluster?"
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="btn-group">
+          <button class="btn-action" id="btnStreamPrompt" onclick="triggerVisemeStream()">
+            🗣️ Stream Spoken Question
+          </button>
+          <button class="btn-action btn-secondary" onclick="toggleWireframeMode()">
+            🔄 Toggle Matrix Wireframe
+          </button>
+        </div>
+      </section>
+
+      <!-- Right Column: Avatar Personas & Telemetry -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🎭</span> Staff Interviewer Holographic Personas
+          </div>
+          <span class="panel-title-pill" id="activePersonaBadge">SARAH LINDQVIST // L6</span>
+        </div>
+
+        <!-- Archetype Persona Buttons -->
+        <div class="archetype-grid" id="archetypeButtonsContainer">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Live Blendshape Telemetry -->
+        <div>
+          <label style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; margin-bottom: 0.5rem; display: block;">
+            Real-Time ARKit/MPEG-4 Facial Blendshape Vectors
+          </label>
+          <div class="telemetry-grid">
+            <div class="telemetry-item">
+              <span class="telemetry-label">Jaw Open</span>
+              <span class="telemetry-val" id="telJawOpen">0.75</span>
+            </div>
+            <div class="telemetry-item">
+              <span class="telemetry-label">Mouth Width</span>
+              <span class="telemetry-val" id="telMouthWide">0.40</span>
+            </div>
+            <div class="telemetry-item">
+              <span class="telemetry-label">Brow Raise</span>
+              <span class="telemetry-val" id="telBrowRaise">0.45</span>
+            </div>
+            <div class="telemetry-item">
+              <span class="telemetry-label">Eye Blink</span>
+              <span class="telemetry-val" id="telEyeBlink">0.00</span>
+            </div>
+            <div class="telemetry-item">
+              <span class="telemetry-label">Head Pitch (Nod)</span>
+              <span class="telemetry-val" id="telHeadPitch">+1.8°</span>
+            </div>
+            <div class="telemetry-item">
+              <span class="telemetry-label">Head Yaw (Sway)</span>
+              <span class="telemetry-val" id="telHeadYaw">-0.6°</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Viseme Distribution Summary -->
+        <div style="background: rgba(3, 7, 18, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; gap: 0.4rem;">
+          <div style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--accent-purple); font-weight: 700; text-transform: uppercase;">
+            Phonetic Viseme Distribution
+          </div>
+          <div style="font-size: 0.74rem; color: #cbd5e1;" id="visemeSummaryText">
+            Open Vowels (AA): 40 frames • Spread Lips (E): 12 frames • Rounded (OU): 8 frames • Silent (SIL): 15 frames
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    let archetypes = [];
+    let currentArchetype = null;
+    let currentStream = null;
+    let currentFrameIdx = 0;
+    let animFrame = null;
+    let wireframeMode = 'cyan';
+
+    const canvas = document.getElementById('avatarCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // 3D Avatar Wireframe Vertices (Head Mesh Model)
+    const headVertices = [];
+    function initHeadMesh() {
+      headVertices.length = 0;
+      // Head sphere/ellipsoid coordinates
+      for (let lat = -5; lat <= 5; lat++) {
+        const phi = (lat / 5) * (Math.PI / 2.2);
+        for (let lon = 0; lon < 14; lon++) {
+          const theta = (lon / 14) * Math.PI * 2;
+          const x = Math.cos(phi) * Math.cos(theta) * 110;
+          const y = Math.sin(phi) * 135;
+          const z = Math.cos(phi) * Math.sin(theta) * 110;
+          headVertices.push({ x, y, z, baseZ: z, isJaw: lat < -2 });
+        }
+      }
+    }
+
+    let rotY = 0;
+    let jawOffset = 0;
+
+    function render3DHologram() {
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const cx = w / 2;
+      const cy = h / 2 - 10;
+
+      rotY += 0.01;
+
+      // Draw subtle holographic scanlines
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.04)';
+      ctx.lineWidth = 1;
+      for (let y = 0; y < h; y += 8) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      // Projected vertices
+      const projected = [];
+      const cosR = Math.cos(rotY);
+      const sinR = Math.sin(rotY);
+
+      headVertices.forEach(v => {
+        // Apply jaw offset if mouth is open
+        const curY = v.y + (v.isJaw ? jawOffset : 0);
+
+        // Y-axis rotation
+        const rx = v.x * cosR - v.z * sinR;
+        const rz = v.x * sinR + v.z * cosR;
+
+        // Perspective projection
+        const scale = 380 / (380 + rz + 150);
+        const px = cx + rx * scale;
+        const py = cy + curY * scale;
+
+        projected.push({ px, py, rz, scale, isJaw: v.isJaw });
+      });
+
+      // Draw wireframe connections
+      ctx.strokeStyle = wireframeMode === 'cyan' ? 'rgba(56, 189, 248, 0.25)' : 'rgba(16, 185, 129, 0.25)';
+      ctx.lineWidth = 1.2;
+
+      for (let i = 0; i < projected.length; i++) {
+        const p1 = projected[i];
+        if (p1.rz < 20) { // front-facing vertices
+          // Connect to next longitude
+          const nextLon = (i + 1) % 14 === 0 ? i - 13 : i + 1;
+          const p2 = projected[nextLon];
+          if (p2) {
+            ctx.beginPath();
+            ctx.moveTo(p1.px, p1.py);
+            ctx.lineTo(p2.px, p2.py);
+            ctx.stroke();
+          }
+
+          // Connect to next latitude
+          const nextLat = i + 14;
+          if (nextLat < projected.length) {
+            const p3 = projected[nextLat];
+            ctx.beginPath();
+            ctx.moveTo(p1.px, p1.py);
+            ctx.lineTo(p3.px, p3.py);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw vertices
+      projected.forEach(p => {
+        if (p.rz < 20) {
+          ctx.fillStyle = wireframeMode === 'cyan' ? '#38bdf8' : '#10b981';
+          ctx.beginPath();
+          ctx.arc(p.px, p.py, p.scale * 2.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+
+      // Advance viseme stream if playing
+      if (currentStream && currentStream.frames && currentStream.frames.length > 0) {
+        currentFrameIdx = (currentFrameIdx + 1) % currentStream.frames.length;
+        const frame = currentStream.frames[currentFrameIdx];
+        if (frame) {
+          jawOffset = frame.blendshapes.jawOpen * 28;
+          document.getElementById('hudActiveViseme').innerText = frame.activeViseme;
+          document.getElementById('hudBlendshape').innerHTML = `${frame.blendshapes.jawOpen.toFixed(2)} <span style="font-size: 0.85rem; color: var(--text-muted);">JawOpen</span>`;
+          document.getElementById('telJawOpen').innerText = frame.blendshapes.jawOpen.toFixed(2);
+          document.getElementById('telMouthWide').innerText = frame.blendshapes.mouthWide.toFixed(2);
+          document.getElementById('telBrowRaise').innerText = frame.blendshapes.browRaise.toFixed(2);
+          document.getElementById('telEyeBlink').innerText = frame.blendshapes.eyeBlinkLeft.toFixed(2);
+          document.getElementById('telHeadPitch').innerText = `${frame.blendshapes.headPitchDeg > 0 ? '+' : ''}${frame.blendshapes.headPitchDeg}°`;
+          document.getElementById('telHeadYaw').innerText = `${frame.blendshapes.headYawDeg > 0 ? '+' : ''}${frame.blendshapes.headYawDeg}°`;
+        }
+      }
+
+      animFrame = requestAnimationFrame(render3DHologram);
+    }
+
+    async function loadArchetypes() {
+      try {
+        const res = await fetch('/api/v1/astra/avatar-archetypes');
+        const data = await res.json();
+        if (data.success && data.archetypes) {
+          archetypes = data.archetypes;
+          renderArchetypeButtons();
+          selectArchetype(archetypes[0].id);
+        }
+      } catch (err) {
+        console.error('Failed to load avatar archetypes:', err);
+      }
+    }
+
+    function renderArchetypeButtons() {
+      const container = document.getElementById('archetypeButtonsContainer');
+      container.innerHTML = '';
+      archetypes.forEach((arch, idx) => {
+        const btn = document.createElement('div');
+        btn.className = `archetype-btn ${idx === 0 ? 'active' : ''}`;
+        btn.id = `arch-btn-${arch.id}`;
+        btn.onclick = () => selectArchetype(arch.id);
+        btn.innerHTML = `
+          <div class="archetype-name">${arch.name}</div>
+          <div class="archetype-meta">${arch.role} • ${arch.avatarStyle}</div>
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    function selectArchetype(id) {
+      document.querySelectorAll('.archetype-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`arch-btn-${id}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      currentArchetype = archetypes.find(a => a.id === id);
+      if (!currentArchetype) return;
+
+      document.getElementById('activePersonaBadge').innerText = `${currentArchetype.name.toUpperCase()} // ${currentArchetype.role.split(' ')[1] || 'STAFF'}`;
+      document.getElementById('avatarStylePill').innerText = currentArchetype.avatarStyle.toUpperCase();
+      document.getElementById('dialogueTextDisplay').innerText = currentArchetype.defaultPrompt;
+      document.getElementById('hudGazeLock').innerHTML = `${currentArchetype.gazeFocusRatio} <span style="font-size: 0.85rem; color: var(--text-muted);">Focus</span>`;
+
+      triggerVisemeStream();
+    }
+
+    async function triggerVisemeStream() {
+      if (!currentArchetype) return;
+
+      const promptText = currentArchetype.defaultPrompt;
+      const payload = {
+        text: promptText,
+        archetypeId: currentArchetype.id,
+        durationSec: 4.5,
+        fps: 30
+      };
+
+      try {
+        const res = await fetch('/api/v1/astra/avatar-viseme-stream', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.success && result.data) {
+          currentStream = result.data;
+          currentFrameIdx = 0;
+          const s = result.data.visemeFrequencySummary;
+          document.getElementById('visemeSummaryText').innerText = 
+            `Open Vowels (AA): ${s.VISEME_AA} frames • Spread Lips (E): ${s.VISEME_E} frames • Rounded (OU): ${s.VISEME_OU} frames • Silent (SIL): ${s.VISEME_SIL} frames`;
+        }
+      } catch (err) {
+        console.error('Viseme stream error:', err);
+      }
+    }
+
+    function toggleWireframeMode() {
+      wireframeMode = wireframeMode === 'cyan' ? 'emerald' : 'cyan';
+    }
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeCanvas();
+      initHeadMesh();
+      render3DHologram();
+      loadArchetypes();
+    });
+  </script>
+</body>
+</html>
