@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra Wasm Memory Heap Tracer & Isolated Micro-Sandbox | Phoenix Pillar 5</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #101c38 0%, #060913 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .page-block-active {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(6, 182, 212, 0.15) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .page-block-leak {
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.3) 0%, rgba(239, 68, 68, 0.15) 100%);
+      border: 1px solid rgba(244, 63, 94, 0.6);
+      animation: pulse 2s infinite;
+    }
+    .page-block-free {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+    }
+    .hex-byte {
+      color: #93c5fd;
+    }
+    .hex-byte:hover {
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <!-- Top Header Navigation -->
+  <header class="max-w-7xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+    <div class="flex items-center space-x-4">
+      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 hover:border-emerald-500/50 hover:bg-slate-800 transition text-emerald-400">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 text-xs font-mono-code rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800/50 uppercase tracking-widest font-semibold">PILLAR 5 • FEATURE 74</span>
+          <span class="px-2 py-0.5 text-xs rounded bg-purple-950/60 text-purple-300 border border-purple-800/40 flex items-center gap-1.5 font-mono-code">
+            <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping"></span> GODBOLT / VALGRIND GRADE
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white mt-1 flex items-center gap-2.5">
+          <span>Astra Wasm Memory Heap Tracer</span>
+          <span class="text-emerald-400 text-lg font-mono-code">&amp; Micro-Sandbox</span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- Benchmark Target Selector -->
+    <div class="flex items-center gap-3">
+      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-3">
+        <label class="text-xs text-slate-400 font-mono-code uppercase">Target Binary</label>
+        <select id="snippetSelect" onchange="runProfile()" class="bg-slate-800 text-white font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-emerald-500">
+          <option value="rust_simd" selected>Rust: SIMD Vectorized f32x4</option>
+          <option value="cpp_dangling_leak">C++: Raw Pointer Heap Leak</option>
+          <option value="go_escape_stack">Go: Escape Analysis Stack-to-Heap</option>
+        </select>
+      </div>
+
+      <button id="btnTriggerProfile" onclick="runProfile()" class="py-2.5 px-4 rounded-xl font-bold font-mono-code text-sm text-white bg-emerald-600 hover:bg-emerald-500 transition shadow-lg flex items-center gap-2">
+        <i class="fa-solid fa-microchip text-xs"></i>
+        <span>TRACE HEAP</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Grid -->
+  <main class="max-w-7xl mx-auto space-y-6">
+
+    <!-- KPI Metric Cards Bar -->
+    <section class="grid grid-cols-2 md:grid-cols-6 gap-3">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Wasm Linear Pages</div>
+        <div class="text-xl font-bold text-white font-mono-code mt-0.5" id="metricPages">4 (256 KB)</div>
+        <div class="text-[10px] text-slate-400 font-mono-code mt-1" id="metricPageSize">64 KB per page</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Heap Utilization</div>
+        <div class="text-xl font-bold text-cyan-400 font-mono-code mt-0.5" id="metricUtilization">19.2%</div>
+        <div class="text-[10px] text-cyan-400/80 font-mono-code mt-1" id="metricAllocatedBytes">49,152 bytes</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Valgrind Leak Status</div>
+        <div class="text-xl font-bold font-mono-code mt-0.5" id="metricLeakStatus">0 Leaks</div>
+        <div class="text-[10px] font-mono-code mt-1" id="metricLeakBytes">Clean Heap</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">L1D Cache Hit Rate</div>
+        <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricL1Hit">98.4%</div>
+        <div class="text-[10px] text-emerald-500/80 font-mono-code mt-1" id="metricCacheMisalign">0 Misaligned</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">False Sharing Alerts</div>
+        <div class="text-xl font-bold font-mono-code mt-0.5" id="metricFalseSharing">0 Alerts</div>
+        <div class="text-[10px] text-slate-400 font-mono-code mt-1">64-byte boundary clean</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">IPC Efficiency</div>
+        <div class="text-xl font-bold text-purple-300 font-mono-code mt-0.5" id="metricIPC">0.92 IPC</div>
+        <div class="text-[10px] text-purple-400/80 font-mono-code mt-1" id="metricCycles">154.8k cycles</div>
+      </div>
+    </section>
+
+    <!-- Linear Memory Page Layout (Wasm 64KB Pages Visualizer) -->
+    <section class="bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-cubes text-emerald-400"></i>
+          <div>
+            <h2 class="text-base font-bold text-white tracking-wide">Wasm Linear Memory Page Topology &amp; Partition Map</h2>
+            <p class="text-xs text-slate-400">64,536-byte pages spanning Stack frame, Heap allocator, and Dynamic Break Pointer (BRK)</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 text-xs font-mono-code">
+          <span class="flex items-center gap-1 text-emerald-400"><span class="w-2.5 h-2.5 rounded bg-emerald-500"></span> Active Heap</span>
+          <span class="flex items-center gap-1 text-rose-400"><span class="w-2.5 h-2.5 rounded bg-rose-500"></span> Definite Leak</span>
+          <span class="flex items-center gap-1 text-slate-400"><span class="w-2.5 h-2.5 rounded bg-slate-700"></span> Free Page</span>
+        </div>
+      </div>
+
+      <!-- Linear Pages Strip -->
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mb-4" id="wasmPagesContainer">
+        <!-- Dynamically rendered pages -->
+      </div>
+
+      <!-- Pointer Bounds Bar -->
+      <div class="grid grid-cols-3 gap-3 p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono-code">
+        <div>
+          <span class="text-slate-500">Stack Top ($SP):</span>
+          <span class="text-cyan-400 font-bold ml-1.5" id="ptrSP">0x0000FFFF</span>
+        </div>
+        <div>
+          <span class="text-slate-500">Heap Base ($HB):</span>
+          <span class="text-emerald-400 font-bold ml-1.5" id="ptrHB">0x00010000</span>
+        </div>
+        <div>
+          <span class="text-slate-500">Linear Bounds ($BRK):</span>
+          <span class="text-purple-400 font-bold ml-1.5" id="ptrBRK">0x00040000</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Two-Column Layout: Heap Allocations & Leaks (Left) + Hex Dump Inspector & Opcodes (Right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Left Column: Active Allocations & Valgrind Diagnostics -->
+      <section class="lg:col-span-6 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl space-y-5">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-cyan-400"></i>
+              <h3 class="text-base font-bold text-white tracking-wide">Heap Pointer Allocation Ledger</h3>
+            </div>
+            <span class="text-xs font-mono-code text-slate-400">64-byte Cache Aligned</span>
+          </div>
+          <div class="space-y-2 font-mono-code text-xs" id="allocationsContainer">
+            <!-- Dynamically populated allocations -->
+          </div>
+        </div>
+
+        <!-- Valgrind Leak Warning Block -->
+        <div id="leakAlertBox" class="p-4 rounded-xl bg-rose-950/40 border border-rose-800/60 hidden">
+          <div class="flex items-center gap-2 text-rose-400 font-bold font-mono-code text-sm mb-1.5">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>VALGRIND MEMCHECK DIAGNOSTIC ALERT</span>
+          </div>
+          <p class="text-xs text-rose-200 mb-2" id="leakDetailText">
+            32,768 bytes in 1 block are definitely lost in loss record 1 of 1.
+          </p>
+          <div class="p-2.5 rounded bg-slate-950/80 border border-rose-900/50 text-[11px] font-mono-code text-rose-300">
+            at 0x00011000: malloc() invoked inside packet stream without free() destructor.
+          </div>
+        </div>
+
+        <!-- Wasm Opcode Distribution -->
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-purple-400"></i>
+              <h3 class="text-base font-bold text-white tracking-wide">Hot Wasm Opcode Profile</h3>
+            </div>
+            <span class="text-xs font-mono-code text-slate-400">Execution Frequency</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 font-mono-code text-xs" id="opcodeContainer">
+            <!-- Dynamically populated opcodes -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: 64-Byte Linear Memory Hex Inspector -->
+      <section class="lg:col-span-6 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-binary text-emerald-400"></i>
+              <div>
+                <h3 class="text-base font-bold text-white tracking-wide">64-Byte CPU Cache Line Hex Inspector</h3>
+                <p class="text-xs text-slate-400">Live linear memory disassembly &amp; ASCII representation</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 font-mono-code text-xs">
+              <span class="text-slate-500">Base:</span>
+              <select id="hexBaseSelect" onchange="fetchHexDump()" class="bg-slate-950 border border-slate-700 text-cyan-300 rounded px-2 py-1">
+                <option value="0x10000">0x00010000 (Heap Start)</option>
+                <option value="0x11000">0x00011000 (Alloc 1)</option>
+                <option value="0x18000">0x00018000 (Alloc 2)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Hex Dump Table -->
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800/90 font-mono-code text-xs overflow-x-auto">
+            <div class="grid grid-cols-12 text-[11px] text-slate-500 pb-2 border-b border-slate-800 mb-2 font-semibold">
+              <span class="col-span-3">Offset</span>
+              <span class="col-span-6">Hex Bytes (16-Byte Chunk)</span>
+              <span class="col-span-3 text-right">ASCII Preview</span>
+            </div>
+            <div id="hexDumpContainer" class="space-y-1.5">
+              <!-- Dynamically populated hex rows -->
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono-code text-slate-400">
+          <span>Alignment: 64-byte L1 Cache Line Strict</span>
+          <span class="text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-shield-halved"></i> Memory Protected</span>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script>
+    let currentReport = null;
+
+    async function runProfile() {
+      const snippetKey = document.getElementById('snippetSelect').value;
+      try {
+        const res = await fetch('/api/v1/astra/wasm-trace', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ snippetKey })
+        });
+        const data = await res.json();
+        if (data.success && data.report) {
+          currentReport = data.report;
+          renderProfile(currentReport);
+        }
+      } catch (err) {
+        console.error('Profile trace error:', err);
+      }
+    }
+
+    function renderProfile(r) {
+      const mem = r.linearMemory;
+      const leaks = r.leaks;
+      const cache = r.cacheAlignment;
+      const cycles = r.executionCycles;
+
+      // KPI Metrics
+      document.getElementById('metricPages').innerText = `${mem.allocatedPages} (${(mem.totalMemoryBytes / 1024).toFixed(0)} KB)`;
+      document.getElementById('metricUtilization').innerText = `${mem.utilizationPct}%`;
+      document.getElementById('metricAllocatedBytes').innerText = `${mem.allocatedBytes.toLocaleString()} bytes in use`;
+
+      const leakStatusEl = document.getElementById('metricLeakStatus');
+      const leakBytesEl = document.getElementById('metricLeakBytes');
+      if (leaks.hasLeaks) {
+        leakStatusEl.innerText = `${leaks.totalLeaksCount} Leak Detected`;
+        leakStatusEl.className = 'text-xl font-bold font-mono-code mt-0.5 text-rose-400';
+        leakBytesEl.innerText = `${leaks.totalBytesLost.toLocaleString()} bytes lost`;
+        leakBytesEl.className = 'text-[10px] font-mono-code mt-1 text-rose-400 font-semibold';
+      } else {
+        leakStatusEl.innerText = `0 Leaks`;
+        leakStatusEl.className = 'text-xl font-bold font-mono-code mt-0.5 text-emerald-400';
+        leakBytesEl.innerText = `Clean Heap`;
+        leakBytesEl.className = 'text-[10px] font-mono-code mt-1 text-emerald-500/80';
+      }
+
+      document.getElementById('metricL1Hit').innerText = `${cache.l1HitRatePct}%`;
+      document.getElementById('metricCacheMisalign').innerText = `${cache.cacheLineMisalignments} Misalignments`;
+
+      const falseShareEl = document.getElementById('metricFalseSharing');
+      falseShareEl.innerText = `${cache.falseSharingAlerts} Alerts`;
+      falseShareEl.className = 'text-xl font-bold font-mono-code mt-0.5 ' + (cache.falseSharingAlerts > 0 ? 'text-amber-400' : 'text-slate-200');
+
+      document.getElementById('metricIPC').innerText = `${cycles.ipc} IPC`;
+      document.getElementById('metricCycles').innerText = `${(cycles.cyclesEstimated / 1000).toFixed(1)}k cycles`;
+
+      // Pointer bounds
+      document.getElementById('ptrSP').innerText = mem.stackPointer;
+      document.getElementById('ptrHB').innerText = mem.heapBasePointer;
+      document.getElementById('ptrBRK').innerText = '0x' + (mem.totalMemoryBytes).toString(16).padStart(8, '0').toUpperCase();
+
+      // Render 64KB pages
+      const pagesContainer = document.getElementById('wasmPagesContainer');
+      const pageCount = mem.allocatedPages;
+      let pagesHtml = '';
+
+      for (let i = 0; i < pageCount; i++) {
+        let isStack = (i === 0);
+        let hasLeak = leaks.hasLeaks && (i === 1 || i === 2);
+        let isFree = (i >= pageCount - 1 && mem.utilizationPct < 40);
+
+        let cardClass = isStack ? 'bg-cyan-950/40 border border-cyan-800/60' :
+                        hasLeak ? 'page-block-leak' :
+                        isFree ? 'page-block-free' : 'page-block-active';
+
+        pagesHtml += `
+          <div class="p-3 rounded-xl ${cardClass} font-mono-code text-xs space-y-1">
+            <div class="flex justify-between items-center text-slate-300">
+              <span class="font-bold">Page #${i}</span>
+              <span class="text-[10px] text-slate-400">64 KB</span>
+            </div>
+            <div class="text-[11px] ${isStack ? 'text-cyan-300' : hasLeak ? 'text-rose-300 font-bold' : isFree ? 'text-slate-500' : 'text-emerald-300'}">
+              ${isStack ? 'Linear Stack ($SP)' : hasLeak ? 'Dangling Leak' : isFree ? 'Unmapped Free' : 'Active Allocations'}
+            </div>
+            <div class="text-[9px] text-slate-500">
+              0x${(i * 65536).toString(16).padStart(8, '0').toUpperCase()}
+            </div>
+          </div>
+        `;
+      }
+      pagesContainer.innerHTML = pagesHtml;
+
+      // Render Allocations
+      const allocContainer = document.getElementById('allocationsContainer');
+      allocContainer.innerHTML = r.allocations.map(a => `
+        <div class="p-2.5 rounded-lg bg-slate-950 border ${a.status === 'DEFINITELY_LOST' ? 'border-rose-800/80 bg-rose-950/20' : 'border-slate-800'} flex items-center justify-between">
+          <div class="space-y-0.5">
+            <div class="flex items-center gap-2">
+              <span class="font-bold ${a.status === 'DEFINITELY_LOST' ? 'text-rose-400' : 'text-slate-200'}">${a.type}</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded ${a.status === 'DEFINITELY_LOST' ? 'bg-rose-950 text-rose-300 border border-rose-800' : 'bg-slate-800 text-slate-400'}">${a.status}</span>
+            </div>
+            <div class="text-[10px] text-slate-500">${a.ptr} • ${a.size.toLocaleString()} bytes</div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] font-bold ${a.cacheAligned ? 'text-emerald-400' : 'text-amber-400'}">
+              ${a.cacheAligned ? '64B Aligned' : 'Misaligned'}
+            </span>
+          </div>
+        </div>
+      `).join('');
+
+      // Render Leak Alert Box
+      const leakAlertBox = document.getElementById('leakAlertBox');
+      if (leaks.hasLeaks) {
+        leakAlertBox.classList.remove('hidden');
+        document.getElementById('leakDetailText').innerText = `${leaks.totalBytesLost.toLocaleString()} bytes in ${leaks.totalLeaksCount} block are definitely lost.`;
+      } else {
+        leakAlertBox.classList.add('hidden');
+      }
+
+      // Render Opcodes
+      const opcodes = cycles.wasmOpcodes;
+      const opContainer = document.getElementById('opcodeContainer');
+      opContainer.innerHTML = Object.keys(opcodes).map(op => `
+        <div class="p-2 rounded bg-slate-950 border border-slate-800 flex items-center justify-between">
+          <span class="text-purple-300 font-semibold">${op}</span>
+          <span class="text-slate-400">${opcodes[op].toLocaleString()}x</span>
+        </div>
+      `).join('');
+
+      // Render Hex Dump
+      renderHexDump(r.hexInspector);
+    }
+
+    function renderHexDump(dump) {
+      const container = document.getElementById('hexDumpContainer');
+      container.innerHTML = dump.map(row => `
+        <div class="grid grid-cols-12 items-center text-[11px] hover:bg-slate-900/60 p-1 rounded transition">
+          <span class="col-span-3 text-cyan-400 font-bold">${row.address}</span>
+          <span class="col-span-6 font-mono-code tracking-wider text-slate-300">${row.bytes}</span>
+          <span class="col-span-3 text-right text-emerald-400/90 font-mono-code font-bold">${row.ascii}</span>
+        </div>
+      `).join('');
+    }
+
+    async function fetchHexDump() {
+      const addr = document.getElementById('hexBaseSelect').value;
+      try {
+        const res = await fetch(`/api/v1/astra/wasm-hex-inspect?address=${addr}&rows=8`);
+        const data = await res.json();
+        if (data.success && data.dump) {
+          renderHexDump(data.dump);
+        }
+      } catch (err) {
+        console.error('Hex dump error:', err);
+      }
+    }
+
+    runProfile();
+  </script>
+</body>
+</html>

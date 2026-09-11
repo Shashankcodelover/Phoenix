@@ -33,6 +33,7 @@ const capstoneWarRoomEngine = require('./capstoneWarRoomEngine');
 const spatialAvatarEngine = require('./spatialAvatarEngine');
 const hftOrderBookEngine = require('./hftOrderBookEngine');
 const quantRiskEngine = require('./quantRiskEngine');
+const wasmHeapTracerEngine = require('./wasmHeapTracerEngine');
 
 router.use(protectOptional);
 
@@ -583,6 +584,57 @@ router.post('/quant-monte-carlo', (req, res) => {
     res.json({
       success: true,
       simulation
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/wasm-benchmarks
+ * Returns predefined low-level language micro-benchmarks (Rust, C++, Go)
+ */
+router.get('/wasm-benchmarks', (req, res) => {
+  try {
+    res.json({
+      success: true,
+      standard: 'Astra Wasm Memory Heap Tracer & Isolated Micro-Sandbox Engine',
+      benchmarks: wasmHeapTracerEngine.PRESET_SNIPPETS
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/wasm-trace
+ * Analyzes WebAssembly linear memory pages, Valgrind leak detection, and cache alignment
+ */
+router.post('/wasm-trace', (req, res) => {
+  try {
+    const { snippetKey } = req.body || {};
+    const report = wasmHeapTracerEngine.analyzeMemory(snippetKey);
+    res.json({
+      success: true,
+      report
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/wasm-hex-inspect
+ * Returns real-time 64-byte hex dump of linear memory region
+ */
+router.get('/wasm-hex-inspect', (req, res) => {
+  try {
+    const address = parseInt(req.query.address || '0x10000', 16);
+    const rows = parseInt(req.query.rows || '8', 10);
+    const dump = wasmHeapTracerEngine.generateHexDump(address, rows);
+    res.json({
+      success: true,
+      dump
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
