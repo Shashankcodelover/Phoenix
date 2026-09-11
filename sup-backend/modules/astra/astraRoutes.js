@@ -36,6 +36,7 @@ const quantRiskEngine = require('./quantRiskEngine');
 const wasmHeapTracerEngine = require('./wasmHeapTracerEngine');
 const teamMatcherEngine = require('./teamMatcherEngine');
 const crdtSyncEngine = require('./crdtSyncEngine');
+const smartContractFuzzerEngine = require('./smartContractFuzzerEngine');
 
 router.use(protectOptional);
 
@@ -715,6 +716,39 @@ router.post('/crdt-simulate', (req, res) => {
   try {
     const { scenarioKey } = req.body || {};
     const report = crdtSyncEngine.simulateCRDTSync(scenarioKey);
+    res.json({
+      success: true,
+      report
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/contract-benchmarks
+ * Returns vulnerable and audited Solidity contract benchmarks
+ */
+router.get('/contract-benchmarks', (req, res) => {
+  try {
+    res.json({
+      success: true,
+      standard: 'Astra Smart Contract Security Fuzzer & Reentrancy Scanner',
+      contracts: smartContractFuzzerEngine.BENCHMARK_CONTRACTS
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/contract-audit
+ * Audits smart contract AST, generates exploit simulation, and computes gas savings
+ */
+router.post('/contract-audit', (req, res) => {
+  try {
+    const { contractKey } = req.body || {};
+    const report = smartContractFuzzerEngine.analyzeContract(contractKey);
     res.json({
       success: true,
       report

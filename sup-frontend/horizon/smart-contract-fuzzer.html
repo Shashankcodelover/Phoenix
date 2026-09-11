@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra Smart Contract Security Fuzzer & Reentrancy Scanner | Phoenix Pillar 5</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #15112e 0%, #060511 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .card-glow-rose {
+      box-shadow: 0 0 25px rgba(244, 63, 94, 0.15);
+      border-color: rgba(244, 63, 94, 0.4);
+    }
+    .card-glow-amber {
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+    .code-line-vuln {
+      background: rgba(244, 63, 94, 0.22);
+      border-left: 3px solid #f43f5e;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <!-- Header Navigation -->
+  <header class="max-w-7xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+    <div class="flex items-center space-x-4">
+      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 hover:border-rose-500/50 hover:bg-slate-800 transition text-rose-400">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 text-xs font-mono-code rounded bg-rose-950/80 text-rose-300 border border-rose-800/50 uppercase tracking-widest font-semibold">PILLAR 5 • FEATURE 77</span>
+          <span class="px-2 py-0.5 text-xs rounded bg-amber-950/60 text-amber-300 border border-amber-800/40 flex items-center gap-1.5 font-mono-code">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span> SLITHER / MYTHRIL GRADE FUZZER
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white mt-1 flex items-center gap-2.5">
+          <span>Astra Smart Contract Security Fuzzer</span>
+          <span class="text-rose-400 text-lg font-mono-code">&amp; Reentrancy Scanner</span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- Contract Target Selector -->
+    <div class="flex items-center gap-3">
+      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-2">
+        <label class="text-xs text-slate-400 font-mono-code uppercase">Contract</label>
+        <select id="contractSelect" onchange="runAudit()" class="bg-slate-800 text-white font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-rose-500">
+          <option value="eth_vault_reentrancy" selected>EtherVault (Reentrancy)</option>
+          <option value="flashloan_oracle_manip">DeFiLend (Flash Loan Oracle)</option>
+          <option value="storage_packing_waste">NFTStaker (Gas Storage Waste)</option>
+        </select>
+      </div>
+
+      <button id="btnRunAudit" onclick="runAudit()" class="py-2.5 px-4 rounded-xl font-bold font-mono-code text-sm text-white bg-rose-600 hover:bg-rose-500 transition shadow-lg flex items-center gap-2">
+        <i class="fa-solid fa-shield-virus text-xs"></i>
+        <span>RUN FUZZER &amp; EXPLOIT</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto space-y-6">
+
+    <!-- KPI Metric Cards Bar -->
+    <section class="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Security Score</div>
+        <div class="text-xl font-bold font-mono-code mt-0.5" id="metricScore">55 / 100</div>
+        <div class="text-[10px] font-mono-code mt-1 uppercase font-bold" id="metricVerdict">CRITICAL EXPLOITABLE</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Vulnerabilities Found</div>
+        <div class="text-xl font-bold text-rose-400 font-mono-code mt-0.5" id="metricVulnCount">1 Critical</div>
+        <div class="text-[10px] text-slate-400 font-mono-code mt-1" id="metricVulnBreakdown">1 Total Issues</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Total Funds at Risk</div>
+        <div class="text-xl font-bold text-rose-400 font-mono-code mt-0.5" id="metricFundsRisk">$1,650,000</div>
+        <div class="text-[10px] text-rose-400/80 font-mono-code mt-1" id="metricEthRisk">500 ETH Drained</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Gas Optimization</div>
+        <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricGasSavings">+2,100 Gas</div>
+        <div class="text-[10px] text-emerald-500/80 font-mono-code mt-1">Per Call Savings</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">AST Parser Engine</div>
+        <div class="text-xl font-bold text-cyan-400 font-mono-code mt-0.5">Solidity ^0.8.x</div>
+        <div class="text-[10px] text-slate-400 font-mono-code mt-1">SWC Registry Active</div>
+      </div>
+    </section>
+
+    <!-- Code Pane & Attack Simulation Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Left Column: Solidity Source Code Inspector with Highlighted Lines -->
+      <section class="lg:col-span-6 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-code text-cyan-400"></i>
+              <h2 class="text-base font-bold text-white tracking-wide" id="contractNameText">EtherVault.sol</h2>
+            </div>
+            <span class="text-xs font-mono-code text-slate-400" id="compilerVersion">pragma solidity ^0.8.0</span>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 font-mono-code text-xs overflow-x-auto min-h-[260px] text-slate-300">
+            <pre id="codeDisplay" class="leading-relaxed"></pre>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono-code text-slate-400">
+          <span>Checks-Effects-Interactions (CEI) Checker</span>
+          <span class="text-rose-400 flex items-center gap-1.5"><i class="fa-solid fa-bug"></i> Pattern Violated</span>
+        </div>
+      </section>
+
+      <!-- Right Column: Vulnerability Findings & Remediation -->
+      <section class="lg:col-span-6 space-y-5">
+
+        <!-- Vulnerability Finding Cards -->
+        <div class="bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation text-rose-400"></i>
+              <h3 class="text-base font-bold text-white tracking-wide">Static AST Vulnerability Findings</h3>
+            </div>
+            <span class="px-2 py-0.5 text-xs font-mono-code rounded bg-rose-950 text-rose-300 border border-rose-800/60" id="findingBadge">SWC-107</span>
+          </div>
+
+          <div class="space-y-3 font-mono-code text-xs" id="vulnerabilitiesList">
+            <!-- Dynamically populated vulnerabilities -->
+          </div>
+        </div>
+
+        <!-- Simulated EVM Exploit Execution Console -->
+        <div class="bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-skull-crossbones text-amber-400"></i>
+              <div>
+                <h3 class="text-base font-bold text-white tracking-wide">Simulated EVM Exploit Attack Log</h3>
+                <p class="text-xs text-slate-400" id="attackVectorTitle">Recursive Fallback Exploitation</p>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 text-[10px] font-mono-code rounded bg-amber-950 text-amber-300 border border-amber-800/60">MOCK EVM</span>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 font-mono-code text-xs max-h-40 overflow-y-auto space-y-1" id="exploitLogContainer">
+            <!-- Dynamically populated exploit steps -->
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <script>
+    let auditReport = null;
+
+    async function runAudit() {
+      const contractKey = document.getElementById('contractSelect').value;
+      try {
+        const res = await fetch('/api/v1/astra/contract-audit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contractKey })
+        });
+        const data = await res.json();
+        if (data.success && data.report) {
+          auditReport = data.report;
+          renderUI(auditReport);
+        }
+      } catch (err) {
+        console.error('Audit error:', err);
+      }
+    }
+
+    function renderUI(r) {
+      // Metrics Bar
+      const scoreEl = document.getElementById('metricScore');
+      const verdictEl = document.getElementById('metricVerdict');
+
+      scoreEl.innerText = `${r.securityScore} / 100`;
+      verdictEl.innerText = r.auditVerdict.replace(/_/g, ' ');
+
+      if (r.securityScore >= 80) {
+        scoreEl.className = 'text-xl font-bold font-mono-code mt-0.5 text-emerald-400';
+        verdictEl.className = 'text-[10px] font-mono-code mt-1 uppercase font-bold text-emerald-400';
+      } else if (r.securityScore >= 50) {
+        scoreEl.className = 'text-xl font-bold font-mono-code mt-0.5 text-amber-400';
+        verdictEl.className = 'text-[10px] font-mono-code mt-1 uppercase font-bold text-amber-400';
+      } else {
+        scoreEl.className = 'text-xl font-bold font-mono-code mt-0.5 text-rose-400';
+        verdictEl.className = 'text-[10px] font-mono-code mt-1 uppercase font-bold text-rose-400';
+      }
+
+      document.getElementById('metricVulnCount').innerText = `${r.vulnerabilitiesCount.critical} Critical, ${r.vulnerabilitiesCount.high} High`;
+      document.getElementById('metricVulnBreakdown').innerText = `${r.vulnerabilitiesCount.total} Total Issues`;
+
+      const exp = r.exploitProofOfConcept;
+      document.getElementById('metricFundsRisk').innerText = exp.usdValueStolen;
+      document.getElementById('metricEthRisk').innerText = `${exp.drainedAmountEth} ETH Drained`;
+
+      document.getElementById('metricGasSavings').innerText = `+${r.gasMetrics.potentialGasSavingsPerCall.toLocaleString()} Gas`;
+
+      // Code Display
+      document.getElementById('contractNameText').innerText = r.name;
+      document.getElementById('compilerVersion').innerText = `pragma solidity ${r.solidityVersion}`;
+      document.getElementById('codeDisplay').innerText = r.sourceCode;
+
+      // Render Vulnerabilities
+      const vulnContainer = document.getElementById('vulnerabilitiesList');
+      vulnContainer.innerHTML = r.vulnerabilities.map(v => `
+        <div class="p-3.5 rounded-xl bg-slate-950 border ${v.severity === 'CRITICAL' ? 'border-rose-800/80 bg-rose-950/20' : 'border-amber-800/80 bg-amber-950/20'} space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-white text-sm">${v.title}</span>
+            <span class="px-2 py-0.5 text-[10px] rounded ${v.severity === 'CRITICAL' ? 'bg-rose-950 text-rose-300 border border-rose-800' : 'bg-amber-950 text-amber-300 border border-amber-800'} font-bold">
+              ${v.severity} • ${v.swcId}
+            </span>
+          </div>
+          <p class="text-slate-300 text-xs">${v.description}</p>
+          <div class="p-2.5 rounded bg-slate-900 border border-slate-800 text-[11px] text-emerald-300">
+            <strong>Remediation:</strong> ${v.remediation}
+          </div>
+        </div>
+      `).join('');
+
+      // Render Exploit Log
+      document.getElementById('attackVectorTitle').innerText = exp.attackVector;
+      const logContainer = document.getElementById('exploitLogContainer');
+      logContainer.innerHTML = exp.attackLog.map(line => `
+        <div class="text-slate-300 hover:text-white transition">
+          <span class="text-amber-400 font-bold">&gt;</span> ${line}
+        </div>
+      `).join('');
+    }
+
+    runAudit();
+  </script>
+</body>
+</html>
