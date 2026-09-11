@@ -31,6 +31,7 @@ const systemDesignSizerEngine = require('./systemDesignSizerEngine');
 const codingPairSidecarEngine = require('./codingPairSidecarEngine');
 const capstoneWarRoomEngine = require('./capstoneWarRoomEngine');
 const spatialAvatarEngine = require('./spatialAvatarEngine');
+const hftOrderBookEngine = require('./hftOrderBookEngine');
 
 router.use(protectOptional);
 
@@ -447,6 +448,83 @@ router.post('/avatar-viseme-stream', (req, res) => {
     res.json({
       success: true,
       data: stream
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/orderbook-snapshots
+ * Returns L2/L3 order book snapshot, spread, microprice, and latency metrics
+ */
+router.get('/orderbook-snapshots', (req, res) => {
+  try {
+    const symbol = req.query.symbol || 'NVDA';
+    const book = hftOrderBookEngine.getBook(symbol);
+    res.json({
+      success: true,
+      standard: 'Astra Ultra-Low Latency HFT Order Book & Matching Engine Sandbox',
+      data: book.getSnapshot()
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/orderbook-match
+ * Submits limit/market/IOC/FOK order and matches with FIFO price-time priority
+ */
+router.post('/orderbook-match', (req, res) => {
+  try {
+    const { symbol, side, type, price, qty } = req.body || {};
+    const book = hftOrderBookEngine.getBook(symbol || 'NVDA');
+    const matchResult = book.submitOrder({ side, type, price, qty });
+    res.json({
+      success: true,
+      matchResult,
+      snapshot: book.getSnapshot()
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/orderbook-inject-burst
+ * Injects a simulated high-throughput algorithmic burst into the order book
+ */
+router.post('/orderbook-inject-burst', (req, res) => {
+  try {
+    const { symbol, count } = req.body || {};
+    const book = hftOrderBookEngine.getBook(symbol || 'NVDA');
+    const burstResults = book.injectRandomBurst(Number(count) || 10);
+    res.json({
+      success: true,
+      burstCount: burstResults.length,
+      snapshot: book.getSnapshot()
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/orderbook-market-impact
+ * Calculates estimated market impact and adverse selection slippage
+ */
+router.get('/orderbook-market-impact', (req, res) => {
+  try {
+    const symbol = req.query.symbol || 'NVDA';
+    const qty = parseInt(req.query.qty || '1000', 10);
+    const book = hftOrderBookEngine.getBook(symbol);
+    const impact = book.calculateMarketImpact(qty);
+    res.json({
+      success: true,
+      symbol,
+      qty,
+      impact
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astra HFT Order Book & Matching Engine Sandbox | Phoenix Pillar 5</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #0c1427 0%, #050811 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .neon-border-cyan {
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
+      border-color: rgba(6, 182, 212, 0.4);
+    }
+    .neon-border-green {
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+    .neon-border-rose {
+      box-shadow: 0 0 20px rgba(244, 63, 94, 0.15);
+      border-color: rgba(244, 63, 94, 0.4);
+    }
+    .depth-bar-bid {
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.02) 100%);
+    }
+    .depth-bar-ask {
+      background: linear-gradient(270deg, rgba(244, 63, 94, 0.18) 0%, rgba(244, 63, 94, 0.02) 100%);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <!-- Top Navigation & Breadcrumbs -->
+  <header class="max-w-7xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+    <div class="flex items-center space-x-4">
+      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 hover:border-cyan-500/50 hover:bg-slate-800 transition text-cyan-400">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="px-2.5 py-0.5 text-xs font-mono-code rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800/50 uppercase tracking-widest font-semibold">PILLAR 5 • FEATURE 72</span>
+          <span class="px-2 py-0.5 text-xs rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 flex items-center gap-1.5 font-mono-code">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> JANE STREET / CITADEL GRADE LOB
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white mt-1 flex items-center gap-2.5">
+          <span>Astra Ultra-Low Latency HFT Order Book</span>
+          <span class="text-cyan-400 text-lg font-mono-code">&amp; Matching Sandbox</span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- Symbol & Live Latency Indicator -->
+    <div class="flex items-center gap-3">
+      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-3">
+        <label class="text-xs text-slate-400 font-mono-code uppercase">Pair</label>
+        <select id="symbolSelect" onchange="switchSymbol()" class="bg-slate-800 text-white font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-cyan-500">
+          <option value="NVDA" selected>NVDA / USD</option>
+          <option value="GOOGL">GOOGL / USD</option>
+          <option value="BTC">BTC / USDT</option>
+        </select>
+      </div>
+
+      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-4 text-right">
+        <div class="text-[10px] uppercase tracking-wider text-slate-400 font-mono-code">Engine P99 Latency</div>
+        <div class="text-sm font-bold text-emerald-400 font-mono-code" id="headerP99">284 ns</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <main class="max-w-7xl mx-auto space-y-6">
+
+    <!-- KPI Metric Cards Bar -->
+    <section class="grid grid-cols-2 md:grid-cols-6 gap-3">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Mid Price</div>
+        <div class="text-xl font-bold text-white font-mono-code mt-0.5" id="metricMidPrice">$124.5000</div>
+        <div class="text-[10px] text-slate-400 font-mono-code mt-1 flex items-center gap-1">
+          <span>Micro:</span> <span id="metricMicroPrice" class="text-cyan-400 font-semibold">$124.4985</span>
+        </div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Spread (L1)</div>
+        <div class="text-xl font-bold text-amber-400 font-mono-code mt-0.5" id="metricSpread">$0.1000</div>
+        <div class="text-[10px] text-amber-400/80 font-mono-code mt-1" id="metricSpreadBps">8.03 bps</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Best Bid</div>
+        <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricBestBid">$124.45</div>
+        <div class="text-[10px] text-emerald-500/80 font-mono-code mt-1" id="metricBidDepth">12 levels active</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Best Ask</div>
+        <div class="text-xl font-bold text-rose-400 font-mono-code mt-0.5" id="metricBestAsk">$124.55</div>
+        <div class="text-[10px] text-rose-500/80 font-mono-code mt-1" id="metricAskDepth">12 levels active</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Order Imbalance</div>
+        <div class="text-xl font-bold font-mono-code mt-0.5" id="metricImbalance">+0.1239</div>
+        <div class="text-[10px] font-mono-code mt-1 uppercase" id="metricBias">Buy Pressure</div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+        <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Matching Latency</div>
+        <div class="text-xl font-bold text-cyan-400 font-mono-code mt-0.5" id="metricP50">142 ns</div>
+        <div class="text-[10px] text-cyan-400/80 font-mono-code mt-1">P50 Engine Tick</div>
+      </div>
+    </section>
+
+    <!-- Core Interactive Zone: DOM Order Book (Left) + Order Entry & Burst Simulator (Right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Left: Dual-Sided Depth of Market (L2 DOM Ladder) -->
+      <section class="lg:col-span-7 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2.5">
+              <i class="fa-solid fa-layer-group text-cyan-400"></i>
+              <h2 class="text-lg font-bold text-white tracking-wide">Level 2 Depth of Market (DOM)</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-400 font-mono-code">Price-Time FIFO Priority</span>
+              <button onclick="fetchSnapshot()" class="p-1.5 px-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 transition">
+                <i class="fa-solid fa-arrows-rotate"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- L2 Depth Canvas Visualizer -->
+          <div class="h-32 w-full bg-slate-950/80 rounded-xl border border-slate-800/90 p-2 mb-4 relative overflow-hidden">
+            <div class="absolute top-2 left-3 text-[10px] font-mono-code text-slate-500 uppercase tracking-wider z-10">Real-Time Depth Profile (Bid / Ask Cumulative)</div>
+            <canvas id="depthCanvas" class="w-full h-full"></canvas>
+          </div>
+
+          <!-- Asks Table (Sorted Descending to Best Ask at bottom) -->
+          <div class="space-y-1 mb-2">
+            <div class="grid grid-cols-4 text-[10px] font-mono-code text-slate-500 px-3 py-1 uppercase tracking-wider">
+              <span>Price ($)</span>
+              <span class="text-right">Qty (Lots)</span>
+              <span class="text-right">Cum. Volume</span>
+              <span class="text-right">Depth Share</span>
+            </div>
+            <div id="asksContainer" class="space-y-0.5">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Mid Spread Divider Bar -->
+          <div class="my-2 py-2 px-4 rounded-lg bg-slate-950 border border-slate-800/90 flex items-center justify-between text-xs font-mono-code">
+            <div class="flex items-center gap-3">
+              <span class="text-slate-400">Spread:</span>
+              <span id="ladderSpreadText" class="font-bold text-amber-400">$0.1000 (8.03 bps)</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-slate-400">Mid:</span>
+              <span id="ladderMidText" class="font-bold text-cyan-300">$124.5000</span>
+            </div>
+          </div>
+
+          <!-- Bids Table (Sorted Descending from Best Bid) -->
+          <div class="space-y-1 mt-2">
+            <div id="bidsContainer" class="space-y-0.5">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Trade Stream -->
+        <div class="mt-4 pt-3 border-t border-slate-800/80">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-300 tracking-wide flex items-center gap-1.5">
+              <i class="fa-solid fa-bolt text-amber-400 text-[11px]"></i> Match Engine Executions
+            </span>
+            <span class="text-[10px] text-slate-500 font-mono-code">Instantaneous Nanosecond Fill Ledger</span>
+          </div>
+          <div id="tradeStreamContainer" class="grid grid-cols-2 md:grid-cols-4 gap-2 max-h-24 overflow-y-auto custom-scrollbar">
+            <!-- Dynamically populated trades -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Order Ticket Entry + Market Impact Sizer + Burst Injector -->
+      <section class="lg:col-span-5 space-y-6">
+
+        <!-- Order Submission Ticket -->
+        <div class="bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-arrow-right-arrow-left text-cyan-400"></i>
+              <h2 class="text-lg font-bold text-white tracking-wide">Direct Market Order Ticket</h2>
+            </div>
+            <span class="px-2 py-0.5 text-[10px] font-mono-code rounded bg-cyan-950 text-cyan-400 border border-cyan-800/50">L3 DMA</span>
+          </div>
+
+          <!-- Buy / Sell Toggle Tabs -->
+          <div class="grid grid-cols-2 gap-2 mb-4 p-1 bg-slate-950 rounded-xl border border-slate-800">
+            <button id="tabBuy" onclick="setSide('BUY')" class="py-2 rounded-lg font-bold font-mono-code text-sm transition bg-emerald-600 text-white shadow-lg">
+              BUY / BID
+            </button>
+            <button id="tabSell" onclick="setSide('SELL')" class="py-2 rounded-lg font-bold font-mono-code text-sm transition text-slate-400 hover:text-white">
+              SELL / ASK
+            </button>
+          </div>
+
+          <!-- Order Form Inputs -->
+          <div class="space-y-3.5 text-sm">
+            <div>
+              <label class="block text-xs text-slate-400 font-mono-code mb-1 uppercase">Order Type</label>
+              <div class="grid grid-cols-4 gap-1.5 font-mono-code text-xs">
+                <button onclick="setOrderType('LIMIT')" id="typeLIMIT" class="p-2 rounded bg-cyan-950 text-cyan-300 border border-cyan-700/60 font-semibold">LIMIT</button>
+                <button onclick="setOrderType('MARKET')" id="typeMARKET" class="p-2 rounded bg-slate-800 text-slate-400 border border-slate-700 hover:text-white">MARKET</button>
+                <button onclick="setOrderType('IOC')" id="typeIOC" class="p-2 rounded bg-slate-800 text-slate-400 border border-slate-700 hover:text-white">IOC</button>
+                <button onclick="setOrderType('FOK')" id="typeFOK" class="p-2 rounded bg-slate-800 text-slate-400 border border-slate-700 hover:text-white">FOK</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-slate-400 font-mono-code mb-1 uppercase">Price ($)</label>
+                <input id="inputPrice" type="number" step="0.05" value="124.50" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono-code focus:outline-none focus:border-cyan-500 font-semibold">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 font-mono-code mb-1 uppercase">Quantity (Shares)</label>
+                <input id="inputQty" type="number" step="10" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono-code focus:outline-none focus:border-cyan-500 font-semibold">
+              </div>
+            </div>
+
+            <!-- Pre-Trade Market Impact Warning -->
+            <div id="impactEstimateBox" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono-code space-y-1">
+              <div class="flex justify-between text-slate-400">
+                <span>Est. Square-Root Impact:</span>
+                <span id="estImpactBps" class="text-amber-400 font-semibold">2.41 bps</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>Est. Dollar Slippage:</span>
+                <span id="estImpactDollar" class="text-slate-300 font-semibold">+$0.0300</span>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button id="btnSubmitOrder" onclick="submitOrder()" class="w-full py-3 rounded-xl font-bold font-mono-code text-white bg-emerald-600 hover:bg-emerald-500 transition shadow-lg flex items-center justify-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span id="btnSubmitText">ROUTE BUY ORDER (LIMIT)</span>
+            </button>
+          </div>
+
+          <!-- Execution Report Feedback -->
+          <div id="execFeedback" class="mt-4 p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono-code hidden">
+            <div class="flex items-center justify-between text-slate-300 mb-1">
+              <span class="font-bold flex items-center gap-1.5" id="execStatusBadge">
+                <i class="fa-solid fa-circle-check text-emerald-400"></i> FILLED
+              </span>
+              <span class="text-cyan-400" id="execLatencyText">138 ns</span>
+            </div>
+            <div class="text-slate-400" id="execDetailText">
+              Matched 100 shares @ $124.55 average.
+            </div>
+          </div>
+        </div>
+
+        <!-- Burst Traffic Simulator & Quantitative Stress Test -->
+        <div class="bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-gauge-high text-amber-400"></i>
+              <h3 class="text-base font-bold text-white tracking-wide">Algorithmic Burst &amp; Liquidity Shock</h3>
+            </div>
+            <span class="px-2 py-0.5 text-[10px] font-mono-code rounded bg-amber-950/80 text-amber-300 border border-amber-800/50">HFT STRESS</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-3">
+            Inject synthetic multi-client orders to simulate quote stuffing, sweep the book, and measure adverse selection slippage.
+          </p>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="injectBurst(15)" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono-code font-semibold flex items-center justify-center gap-1.5 transition">
+              <i class="fa-solid fa-water text-cyan-400"></i> Inject 15 Orders
+            </button>
+            <button onclick="injectBurst(50)" class="py-2.5 px-3 rounded-xl bg-amber-950/60 hover:bg-amber-900/60 text-amber-200 border border-amber-800/60 text-xs font-mono-code font-semibold flex items-center justify-center gap-1.5 transition">
+              <i class="fa-solid fa-tornado text-amber-400"></i> Inject 50 Burst
+            </button>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+  </main>
+
+  <script>
+    let currentSide = 'BUY';
+    let currentType = 'LIMIT';
+    let currentSymbol = 'NVDA';
+    let bookData = null;
+
+    function setSide(side) {
+      currentSide = side;
+      const tabBuy = document.getElementById('tabBuy');
+      const tabSell = document.getElementById('tabSell');
+      const btnSubmit = document.getElementById('btnSubmitOrder');
+      const btnText = document.getElementById('btnSubmitText');
+
+      if (side === 'BUY') {
+        tabBuy.className = 'py-2 rounded-lg font-bold font-mono-code text-sm transition bg-emerald-600 text-white shadow-lg';
+        tabSell.className = 'py-2 rounded-lg font-bold font-mono-code text-sm transition text-slate-400 hover:text-white';
+        btnSubmit.className = 'w-full py-3 rounded-xl font-bold font-mono-code text-white bg-emerald-600 hover:bg-emerald-500 transition shadow-lg flex items-center justify-center gap-2';
+        btnText.innerText = `ROUTE BUY ORDER (${currentType})`;
+      } else {
+        tabSell.className = 'py-2 rounded-lg font-bold font-mono-code text-sm transition bg-rose-600 text-white shadow-lg';
+        tabBuy.className = 'py-2 rounded-lg font-bold font-mono-code text-sm transition text-slate-400 hover:text-white';
+        btnSubmit.className = 'w-full py-3 rounded-xl font-bold font-mono-code text-white bg-rose-600 hover:bg-rose-500 transition shadow-lg flex items-center justify-center gap-2';
+        btnText.innerText = `ROUTE SELL ORDER (${currentType})`;
+      }
+    }
+
+    function setOrderType(type) {
+      currentType = type;
+      ['LIMIT', 'MARKET', 'IOC', 'FOK'].forEach(t => {
+        const el = document.getElementById('type' + t);
+        if (t === type) {
+          el.className = 'p-2 rounded bg-cyan-950 text-cyan-300 border border-cyan-700/60 font-semibold';
+        } else {
+          el.className = 'p-2 rounded bg-slate-800 text-slate-400 border border-slate-700 hover:text-white';
+        }
+      });
+      document.getElementById('btnSubmitText').innerText = `ROUTE ${currentSide} ORDER (${currentType})`;
+    }
+
+    function switchSymbol() {
+      currentSymbol = document.getElementById('symbolSelect').value;
+      fetchSnapshot();
+    }
+
+    async function fetchSnapshot() {
+      try {
+        const res = await fetch(`/api/v1/astra/orderbook-snapshots?symbol=${currentSymbol}`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          bookData = data.data;
+          renderUI(bookData);
+        }
+      } catch (err) {
+        console.error('Snapshot fetch error:', err);
+      }
+    }
+
+    function renderUI(data) {
+      // Metrics
+      document.getElementById('metricMidPrice').innerText = '$' + data.midPrice.toFixed(4);
+      document.getElementById('metricMicroPrice').innerText = '$' + data.microPrice.toFixed(4);
+      document.getElementById('metricSpread').innerText = '$' + data.spread.toFixed(4);
+      document.getElementById('metricSpreadBps').innerText = data.spreadBps.toFixed(2) + ' bps';
+      document.getElementById('metricBestBid').innerText = data.bestBid ? '$' + data.bestBid.toFixed(2) : '--';
+      document.getElementById('metricBestAsk').innerText = data.bestAsk ? '$' + data.bestAsk.toFixed(2) : '--';
+      document.getElementById('metricBidDepth').innerText = data.totalBidsCount + ' orders active';
+      document.getElementById('metricAskDepth').innerText = data.totalAsksCount + ' orders active';
+
+      const imbEl = document.getElementById('metricImbalance');
+      const imb = data.orderImbalance;
+      imbEl.innerText = (imb >= 0 ? '+' : '') + imb.toFixed(4);
+      imbEl.className = 'text-xl font-bold font-mono-code mt-0.5 ' + (imb > 0.1 ? 'text-emerald-400' : imb < -0.1 ? 'text-rose-400' : 'text-slate-200');
+
+      const biasEl = document.getElementById('metricBias');
+      biasEl.innerText = data.imbalanceBias.replace(/_/g, ' ');
+      biasEl.className = 'text-[10px] font-mono-code mt-1 uppercase ' + (imb > 0.1 ? 'text-emerald-400' : imb < -0.1 ? 'text-rose-400' : 'text-slate-400');
+
+      document.getElementById('metricP50').innerText = data.latencyNanoseconds.p50 + ' ns';
+      document.getElementById('headerP99').innerText = data.latencyNanoseconds.p99 + ' ns';
+
+      document.getElementById('ladderSpreadText').innerText = '$' + data.spread.toFixed(4) + ' (' + data.spreadBps.toFixed(2) + ' bps)';
+      document.getElementById('ladderMidText').innerText = '$' + data.midPrice.toFixed(4);
+
+      // Render Asks (Reverse slice so best ask is closest to center spread)
+      const asksContainer = document.getElementById('asksContainer');
+      const maxVol = data.l2Depth.maxLevelVolume || 1;
+      const reversedAsks = [...data.l2Depth.asks].reverse();
+
+      asksContainer.innerHTML = reversedAsks.map(a => {
+        const barPct = Math.min(100, Math.round((a.volume / maxVol) * 100));
+        return `
+          <div class="grid grid-cols-4 text-xs font-mono-code px-3 py-1 rounded relative overflow-hidden items-center">
+            <div class="absolute inset-0 depth-bar-ask" style="width: ${barPct}%; right: 0; left: auto;"></div>
+            <span class="text-rose-400 font-bold z-10">$${a.price.toFixed(2)}</span>
+            <span class="text-right text-slate-300 z-10">${a.volume.toLocaleString()}</span>
+            <span class="text-right text-slate-400 z-10">${a.totalCumulativeVolume.toLocaleString()}</span>
+            <span class="text-right text-rose-300/80 z-10">${barPct}%</span>
+          </div>
+        `;
+      }).join('');
+
+      // Render Bids
+      const bidsContainer = document.getElementById('bidsContainer');
+      bidsContainer.innerHTML = data.l2Depth.bids.map(b => {
+        const barPct = Math.min(100, Math.round((b.volume / maxVol) * 100));
+        return `
+          <div class="grid grid-cols-4 text-xs font-mono-code px-3 py-1 rounded relative overflow-hidden items-center">
+            <div class="absolute inset-0 depth-bar-bid" style="width: ${barPct}%;"></div>
+            <span class="text-emerald-400 font-bold z-10">$${b.price.toFixed(2)}</span>
+            <span class="text-right text-slate-300 z-10">${b.volume.toLocaleString()}</span>
+            <span class="text-right text-slate-400 z-10">${b.totalCumulativeVolume.toLocaleString()}</span>
+            <span class="text-right text-emerald-300/80 z-10">${barPct}%</span>
+          </div>
+        `;
+      }).join('');
+
+      // Render Trade Stream
+      const tradeStreamContainer = document.getElementById('tradeStreamContainer');
+      if (data.recentTrades && data.recentTrades.length > 0) {
+        tradeStreamContainer.innerHTML = data.recentTrades.map(t => `
+          <div class="p-1.5 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono-code flex items-center justify-between">
+            <span class="${t.side === 'BUY' ? 'text-emerald-400' : 'text-rose-400'} font-bold">${t.side}</span>
+            <span class="text-slate-200">$${t.price.toFixed(2)}</span>
+            <span class="text-slate-400">${t.qty} sh</span>
+          </div>
+        `).join('');
+      } else {
+        tradeStreamContainer.innerHTML = `<div class="col-span-4 text-center text-xs text-slate-500 py-2">No executions in current session</div>`;
+      }
+
+      // Draw Depth Canvas
+      drawDepthCanvas(data.l2Depth);
+    }
+
+    function drawDepthCanvas(l2) {
+      const canvas = document.getElementById('depthCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width = canvas.offsetWidth;
+      const h = canvas.height = canvas.offsetHeight;
+
+      ctx.clearRect(0, 0, w, h);
+
+      if (!l2.bids.length || !l2.asks.length) return;
+
+      const midX = w / 2;
+      const maxCum = Math.max(
+        l2.bids[l2.bids.length - 1]?.totalCumulativeVolume || 1,
+        l2.asks[l2.asks.length - 1]?.totalCumulativeVolume || 1
+      );
+
+      // Draw Bids (Left side green)
+      ctx.beginPath();
+      ctx.moveTo(midX, h);
+      for (let i = 0; i < l2.bids.length; i++) {
+        const x = midX - (i / (l2.bids.length - 1)) * (midX - 10);
+        const y = h - (l2.bids[i].totalCumulativeVolume / maxCum) * (h - 20);
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(10, h);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
+      ctx.fill();
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw Asks (Right side rose)
+      ctx.beginPath();
+      ctx.moveTo(midX, h);
+      for (let i = 0; i < l2.asks.length; i++) {
+        const x = midX + (i / (l2.asks.length - 1)) * (midX - 10);
+        const y = h - (l2.asks[i].totalCumulativeVolume / maxCum) * (h - 20);
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(w - 10, h);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(244, 63, 94, 0.25)';
+      ctx.fill();
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    async function submitOrder() {
+      const price = parseFloat(document.getElementById('inputPrice').value);
+      const qty = parseInt(document.getElementById('inputQty').value, 10);
+
+      const payload = {
+        symbol: currentSymbol,
+        side: currentSide,
+        type: currentType,
+        price,
+        qty
+      };
+
+      try {
+        const res = await fetch('/api/v1/astra/orderbook-match', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.success) {
+          showExecutionFeedback(result.matchResult);
+          renderUI(result.snapshot);
+        }
+      } catch (err) {
+        console.error('Order submit error:', err);
+      }
+    }
+
+    function showExecutionFeedback(res) {
+      const box = document.getElementById('execFeedback');
+      box.classList.remove('hidden');
+      const badge = document.getElementById('execStatusBadge');
+      const latency = document.getElementById('execLatencyText');
+      const detail = document.getElementById('execDetailText');
+
+      latency.innerText = res.latencyNs + ' ns';
+
+      if (res.status === 'FILLED') {
+        badge.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> FILLED`;
+        detail.innerText = `Matched ${res.totalExecutedQty} shares @ $${res.averageExecPrice.toFixed(2)} avg.`;
+      } else if (res.status === 'PARTIALLY_FILLED') {
+        badge.innerHTML = `<i class="fa-solid fa-circle-half-stroke text-amber-400"></i> PARTIAL FILL`;
+        detail.innerText = `Executed ${res.totalExecutedQty}/${res.requestedQty} shares. Remainder on book.`;
+      } else if (res.status === 'PLACED_ON_BOOK') {
+        badge.innerHTML = `<i class="fa-solid fa-bookmark text-cyan-400"></i> PLACED ON BOOK`;
+        detail.innerText = `Limit order #${res.orderId.substring(0, 8)} queued in FIFO queue.`;
+      } else {
+        badge.innerHTML = `<i class="fa-solid fa-ban text-rose-400"></i> ${res.status}`;
+        detail.innerText = res.message || 'Order unfilled or cancelled.';
+      }
+    }
+
+    async function injectBurst(count) {
+      try {
+        const res = await fetch('/api/v1/astra/orderbook-inject-burst', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ symbol: currentSymbol, count })
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderUI(data.snapshot);
+        }
+      } catch (err) {
+        console.error('Burst error:', err);
+      }
+    }
+
+    // Auto-poll every 2 seconds
+    fetchSnapshot();
+    setInterval(fetchSnapshot, 2000);
+  </script>
+</body>
+</html>
