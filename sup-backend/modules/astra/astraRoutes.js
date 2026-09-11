@@ -28,6 +28,7 @@ const {
 } = require('./visionProctorEngine');
 const distributedChaosEngine = require('./distributedChaosEngine');
 const systemDesignSizerEngine = require('./systemDesignSizerEngine');
+const codingPairSidecarEngine = require('./codingPairSidecarEngine');
 
 router.use(protectOptional);
 
@@ -344,6 +345,39 @@ router.post('/system-design-capacity-calc', (req, res) => {
     res.json({
       success: true,
       data: capacityReport
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * GET /api/v1/astra/coding-pair-problems
+ * Returns LeetCode/FAANG problem archetypes with lower bounds
+ */
+router.get('/coding-pair-problems', (req, res) => {
+  try {
+    const problems = codingPairSidecarEngine.getProblems();
+    res.json({
+      success: true,
+      standard: 'Astra Real-Time AI Autonomous Behavioral Coding Pair & Voice Critique Sidecar',
+      problems
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * POST /api/v1/astra/coding-pair-evaluate
+ * Evaluates candidate code AST, edge cases, acoustics, and voice interruption hint ladder
+ */
+router.post('/coding-pair-evaluate', (req, res) => {
+  try {
+    const evaluation = codingPairSidecarEngine.evaluateCandidateCode(req.body || {});
+    res.json({
+      success: true,
+      data: evaluation
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
