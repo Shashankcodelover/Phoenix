@@ -164,6 +164,7 @@ const botRoutes = require('./modules/bot/botRoutes');
 const horizonRoutes = require('./modules/horizon/horizonRoutes');
 const csPipelineRoutes = require('./modules/horizon/csPipelineRoutes');
 const astraRoutes = require('./modules/astra/astraRoutes');
+const systemDesignRoutes = require('./modules/interview-prep/systemDesignRoutes');
 const { inputSecurityMiddleware } = require('./middleware/inputSanitizer');
 const { createPromptShield } = require('./middleware/promptShield');
 const { createRateLimiter } = require('./middleware/rateLimiter');
@@ -253,6 +254,8 @@ app.use('/api/v1/horizon', horizonRoutes);
 app.use('/api/v1/horizon', csPipelineRoutes);
 app.use('/api/v1/astra', astraRoutes);
 app.use('/api/astra', astraRoutes);
+app.use('/api/v1/system-design', systemDesignRoutes);
+app.use('/api/system-design', systemDesignRoutes);
 
 // Fallback compatibility
 app.use('/api/hackathons', hackathonRoutes);
