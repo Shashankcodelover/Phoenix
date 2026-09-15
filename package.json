@@ -3,6 +3,7 @@
   "version": "23.0.0",
   "description": "Project Phoenix - Autonomous Career, Placement & Hackathon OS (Next.js 15 & React 19)",
   "scripts": {
+    "build": "node -e \"const fs=require('fs'); if(!fs.existsSync('dist')) fs.mkdirSync('dist'); fs.cpSync('sup-frontend', 'dist', {recursive: true});\"",
     "test": "npm --prefix sup-backend test",
     "start": "npm --prefix sup-backend start",
     "dev:backend": "npm --prefix sup-backend start",
