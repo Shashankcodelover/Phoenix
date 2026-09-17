@@ -157,6 +157,7 @@ const gamificationRoutes = require('./modules/gamification/gamificationRoutes');
 const githubRoutes = require('./modules/github/githubRoutes');
 const ideaGenRoutes = require('./modules/idea-gen/ideaGenRoutes');
 const enterpriseRoutes = require('./modules/enterprise/enterpriseRoutes');
+const topologyRoutes = require('./modules/enterprise/topologyRoutes');
 const webhookRoutes = require('./modules/webhooks/webhookRoutes');
 const simulatorRoutes = require('./modules/simulator/simulatorRoutes');
 const codeReviewRoutes = require('./modules/code-review/codeReviewRoutes');
@@ -256,6 +257,8 @@ app.use('/api/v1/astra', astraRoutes);
 app.use('/api/astra', astraRoutes);
 app.use('/api/v1/system-design', systemDesignRoutes);
 app.use('/api/system-design', systemDesignRoutes);
+app.use('/api/v1/topology', topologyRoutes);
+app.use('/api/topology', topologyRoutes);
 
 // Fallback compatibility
 app.use('/api/hackathons', hackathonRoutes);

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phoenix — Career & Hackathon Relational Topology Mesh</title>
+  <meta name="description" content="Project Phoenix Enterprise Arena Topology Mesh, Batch Ingestion Studio & Universal Governance">
+  <link rel="stylesheet" href="../phoenix.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* ── MESH SPECIALIZED STYLES ── */
+    .mesh-telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .telemetry-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-smooth);
+    }
+    .telemetry-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--cyan);
+    }
+    .t-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+    }
+    .t-blue { background: rgba(0, 112, 243, 0.1); color: var(--cyan); }
+    .t-green { background: rgba(16, 185, 129, 0.1); color: var(--green); }
+    .t-purple { background: rgba(99, 102, 241, 0.1); color: var(--indigo); }
+    .t-amber { background: rgba(245, 158, 11, 0.1); color: var(--orange); }
+    .t-pink { background: rgba(236, 72, 153, 0.1); color: var(--pink); }
+
+    .t-meta { display: flex; flex-direction: column; }
+    .t-label { font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.6px; color: var(--text-muted); }
+    .t-val { font-size: 1.15rem; font-weight: 800; color: var(--text-primary); font-family: 'Space Grotesk', sans-serif; }
+
+    /* Mesh Main Panel */
+    .mesh-main-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 24px;
+    }
+    .mesh-nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .mesh-tabs-group { display: flex; gap: 8px; }
+    .mesh-tab-btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mesh-tab-btn.active {
+      background: var(--cyan);
+      color: #ffffff;
+      border-color: var(--cyan);
+      box-shadow: var(--shadow-glow-cyan);
+    }
+
+    /* Corridors Table */
+    .mesh-table-wrapper { width: 100%; overflow-x: auto; }
+    .mesh-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    .mesh-table th {
+      background: var(--bg-secondary);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .mesh-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+    }
+    .mesh-table tr:hover td { background: rgba(0, 112, 243, 0.02); }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .status-badge.connected {
+      background: rgba(16, 185, 129, 0.12);
+      color: #059669;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-badge.severed {
+      background: rgba(239, 68, 68, 0.12);
+      color: #dc2626;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-sever {
+      background: rgba(245, 158, 11, 0.12);
+      color: #b45309;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 4px 10px;
+      font-size: 0.76rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-sever:hover { background: rgba(245, 158, 11, 0.2); }
+    .btn-restore {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 4px 10px;
+      font-size: 0.76rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-restore:hover { background: rgba(16, 185, 129, 0.2); }
+    .btn-drop {
+      background: rgba(239, 68, 68, 0.1);
+      color: #dc2626;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 4px 8px;
+      font-size: 0.76rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    .btn-drop:hover { background: rgba(239, 68, 68, 0.2); }
+
+    /* Nodes Grid */
+    .nodes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .node-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all var(--transition-smooth);
+    }
+    .node-card:hover {
+      border-color: var(--cyan);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-2px);
+    }
+    .node-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .node-title { font-weight: 700; color: var(--text-primary); font-size: 0.95rem; font-family: 'Space Grotesk', sans-serif; }
+    .node-id { font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+    .node-tier-badge { font-size: 0.68rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: rgba(0, 112, 243, 0.1); color: var(--cyan); }
+    .node-meta { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-secondary); }
+    .btn-cascade-del {
+      background: transparent;
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-cascade-del:hover { background: rgba(239, 68, 68, 0.15); }
+
+    /* Batch Ingestion Dual Pane */
+    .ingest-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .ingest-dual-pane {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      min-height: 270px;
+      margin-bottom: 18px;
+    }
+    .pane-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .pane-header {
+      padding: 9px 14px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pane-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+    .ingest-textarea {
+      flex: 1;
+      width: 100%;
+      border: none;
+      outline: none;
+      resize: none;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: var(--text-primary);
+      background: var(--bg-card);
+      min-height: 200px;
+    }
+    .terminal-pane {
+      background: #090d16;
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 14px;
+      flex: 1;
+      overflow-y: auto;
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+    .term-line.info { color: #38bdf8; }
+    .term-line.success { color: #34d399; }
+    .term-line.highlight { color: #fbbf24; }
+    .term-line.error { color: #f87171; }
+
+    /* Purge Zone */
+    .purge-zone {
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px dashed rgba(239, 68, 68, 0.4);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .purge-text { display: flex; align-items: center; gap: 12px; color: #991b1b; font-size: 0.84rem; }
+    .purge-text strong { display: block; font-size: 0.92rem; color: #7f1d1d; }
+    .purge-input {
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      font-family: monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #7f1d1d;
+      outline: none;
+      width: 250px;
+    }
+
+    /* Modal */
+    .mesh-modal {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .mesh-modal.active { display: flex; }
+    .mesh-modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      width: 100%;
+      max-width: 540px;
+      box-shadow: var(--shadow-lg);
+    }
+  </style>
+</head>
+<body class="theme-light-cyan">
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="mainNavbar">
+    <div class="navbar-brand" onclick="window.location.href='../'">⚡ PHOENIX</div>
+    <ul class="nav-links" id="mainNavLinks">
+      <li><a href="../horizon/world-dashboard.html">🌅 Horizon World</a></li>
+      <li><a href="../interview-prep/roadmap.html">💼 Placement World</a></li>
+      <li><a href="../hackathon-agent/command-center.html">🏆 Hackathon World</a></li>
+      <li><a href="./mesh.html" class="active" style="color: var(--cyan); font-weight: 700;">🌐 Topology Mesh</a></li>
+      <li><a href="../dashboard/dashboard.html">📊 Dashboard</a></li>
+      <li><a href="../dashboard/skill-tree.html">🌳 Skill Tree</a></li>
+      <li><button class="theme-toggle-btn" id="themeToggleBtn" onclick="Phoenix.Theme.cycle()">☀️ Light</button></li>
+    </ul>
+  </nav>
+
+  <canvas id="particles"></canvas>
+
+  <div class="full-width-container" style="padding-top: 80px; max-width: 1560px; margin: 0 auto;">
+
+    <!-- HERO -->
+    <div class="hero-gateway" style="margin-bottom: 24px;">
+      <div class="cyan-badge"><i class="fas fa-network-wired"></i> Enterprise Mesh • Autonomous Governance</div>
+      <h1 class="hero-title" style="font-size: 2.2rem; margin-top: 8px;">Career &amp; Hackathon Relational Topology</h1>
+      <p class="hero-subtitle">
+        Governing 8 specialized engineering arenas and cross-domain AI accelerators via high-throughput mTLS, PQC, and WebSocket corridors.
+      </p>
+    </div>
+
+    <!-- 5-KPI TELEMETRY STRIP -->
+    <div class="mesh-telemetry-grid" id="meshTelemetryGrid">
+      <div class="telemetry-card">
+        <div class="t-icon t-blue"><i class="fas fa-project-diagram"></i></div>
+        <div class="t-meta">
+          <span class="t-label">Active Corridors</span>
+          <span class="t-val" id="kpiActiveCorridors">6 / 6 Active</span>
+        </div>
+      </div>
+      <div class="telemetry-card">
+        <div class="t-icon t-green"><i class="fas fa-shield-halved"></i></div>
+        <div class="t-meta">
+          <span class="t-label">Pipeline Integrity</span>
+          <span class="t-val" id="kpiSecurityIntegrity">99.8% PQC</span>
+        </div>
+      </div>
+      <div class="telemetry-card">
+        <div class="t-icon t-purple"><i class="fas fa-cubes"></i></div>
+        <div class="t-meta">
+          <span class="t-label">Governed Arenas</span>
+          <span class="t-val" id="kpiGovernedNodes">8 Systems</span>
+        </div>
+      </div>
+      <div class="telemetry-card">
+        <div class="t-icon t-amber"><i class="fas fa-bolt"></i></div>
+        <div class="t-meta">
+          <span class="t-label">Latency SLA</span>
+          <span class="t-val" id="kpiLatencySla">8ms (Sub-20ms)</span>
+        </div>
+      </div>
+      <div class="telemetry-card">
+        <div class="t-icon t-pink"><i class="fas fa-user-graduate"></i></div>
+        <div class="t-meta">
+          <span class="t-label">Candidates Evaluated</span>
+          <span class="t-val" id="kpiEvaluations">12,400+ Candidates</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN RELATIONAL MESH PANEL -->
+    <div class="mesh-main-panel">
+      <div class="mesh-nav-bar">
+        <div class="mesh-tabs-group">
+          <button class="mesh-tab-btn active" id="tabCorridorsBtn" onclick="switchMeshView('corridors')">
+            <i class="fas fa-route"></i> Interoperability Corridors (<span id="corridorsBadgeCount">6</span>)
+          </button>
+          <button class="mesh-tab-btn" id="tabNodesBtn" onclick="switchMeshView('nodes')">
+            <i class="fas fa-server"></i> Governed Arena Nodes (<span id="nodesBadgeCount">8</span>)
+          </button>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" onclick="openProvisionModal()">
+            <i class="fas fa-plus"></i> Provision Corridor
+          </button>
+          <button class="btn btn-primary" onclick="syncTopologyData()">
+            <i class="fas fa-sync-alt"></i> Sync Telemetry
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 1: CORRIDORS TABLE -->
+      <div id="corridorsViewPanel">
+        <div class="mesh-table-wrapper">
+          <table class="mesh-table" id="corridorsTable">
+            <thead>
+              <tr>
+                <th>Corridor ID</th>
+                <th>Source Arena</th>
+                <th>Target Destination</th>
+                <th>Protocol &amp; Bandwidth</th>
+                <th>Latency</th>
+                <th>Integrity</th>
+                <th>Status</th>
+                <th style="text-align: right;">1-Click Controls</th>
+              </tr>
+            </thead>
+            <tbody id="corridorsTableBody">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIEW 2: ARENA NODES GRID -->
+      <div id="nodesViewPanel" style="display: none;">
+        <div class="nodes-grid" id="nodesGrid">
+          <!-- Dynamically rendered -->
+        </div>
+      </div>
+    </div>
+
+    <!-- BATCH INGESTION & GOVERNANCE STUDIO -->
+    <div class="mesh-main-panel" id="ingest">
+      <div class="d-flex justify-between align-center mb-2" style="flex-wrap: wrap; gap: 10px;">
+        <div>
+          <h3 class="font-space" style="font-size: 1.25rem; margin-bottom: 4px;">
+            <i class="fas fa-file-import text-cyan"></i> Batch Ingestion &amp; Governance Studio
+          </h3>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0;">
+            RFC 4180 CSV &amp; Strict JSON payload streaming engine with cascading schema enforcement.
+          </p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" onclick="loadSampleTemplate()">
+            <i class="fas fa-file-code"></i> Load Preset Template
+          </button>
+          <button class="btn btn-primary" onclick="executeBatchIngest()">
+            <i class="fas fa-upload"></i> Execute Batch Ingest
+          </button>
+        </div>
+      </div>
+
+      <div class="ingest-toolbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary);">Target Entity:</label>
+          <select id="ingestTargetEntity" style="padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-card); font-size: 0.82rem; font-weight: 600;">
+            <option value="corridors">Interoperability Corridors</option>
+            <option value="nodes">Governed Arena Nodes</option>
+          </select>
+          <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); margin-left: 12px;">Format:</label>
+          <select id="ingestFormat" onchange="handleFormatChange()" style="padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-card); font-size: 0.82rem; font-weight: 600;">
+            <option value="csv">RFC 4180 CSV</option>
+            <option value="json">Strict JSON</option>
+          </select>
+        </div>
+        <span class="cyan-badge" id="formatBadge" style="font-size: 0.72rem; padding: 3px 8px;">RFC 4180 Compliant</span>
+      </div>
+
+      <!-- DUAL PANE -->
+      <div class="ingest-dual-pane">
+        <!-- Buffer Editor -->
+        <div class="pane-box">
+          <div class="pane-header">
+            <span class="pane-title"><i class="fas fa-edit"></i> Batch Ingestion Buffer</span>
+            <span style="font-size: 0.7rem; color: var(--text-muted); font-family: monospace;">Payload Ready</span>
+          </div>
+          <textarea id="ingestBuffer" class="ingest-textarea" placeholder="Paste RFC 4180 CSV or Strict JSON payload here..."></textarea>
+        </div>
+
+        <!-- Terminal Execution Log -->
+        <div class="pane-box">
+          <div class="pane-header" style="background: #0f172a; border-color: #1e293b;">
+            <span class="pane-title" style="color: #94a3b8;"><i class="fas fa-terminal"></i> Ingestion Execution &amp; Audit Log</span>
+            <button onclick="clearTerminal()" style="background: transparent; border: 1px solid #334155; color: #94a3b8; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; cursor: pointer;">Clear</button>
+          </div>
+          <div class="terminal-pane" id="terminalLog">
+            <div class="term-line info">[SYSTEM] Phoenix Ingestion Studio mounted. Select Entity and Format.</div>
+            <div class="term-line success">[SCHEMA] Strict RFC 4180 CSV &amp; JSON parsers online.</div>
+            <div class="term-line highlight">[GOVERNANCE] Cascading deletion &amp; integrity monitoring active.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNIVERSAL CASCADE PURGE ZONE -->
+      <div class="purge-zone">
+        <div class="purge-text">
+          <i class="fas fa-exclamation-triangle" style="font-size: 1.6rem; color: #ef4444;"></i>
+          <div>
+            <strong>Universal Cascade Fleet Purge</strong>
+            <p style="margin: 0; font-size: 0.78rem;">Purges all arena nodes and instantly drops all interoperability corridors. Type <code>PURGE-ALL-PHOENIX-ENTITIES</code> to authorize.</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="purgeConfirmInput" class="purge-input" placeholder="Type: PURGE-ALL-PHOENIX-ENTITIES">
+          <button class="btn" style="background: #ef4444; color: #ffffff; border: 1px solid #dc2626;" onclick="triggerUniversalPurge()">
+            <i class="fas fa-fire"></i> Execute Cascade Purge
+          </button>
+          <button class="btn btn-secondary" onclick="restoreFactoryDefaults()">
+            <i class="fas fa-undo"></i> Reset to Default
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- PROVISION MODAL -->
+  <div class="mesh-modal" id="provisionModal">
+    <div class="mesh-modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px;">
+        <h4 class="font-space" style="margin: 0; font-size: 1.15rem;"><i class="fas fa-network-wired text-cyan"></i> Provision Interoperability Corridor</h4>
+        <button onclick="closeProvisionModal()" style="background: transparent; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+      <form onsubmit="handleProvisionSubmit(event)">
+        <div class="form-group mb-2">
+          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Corridor Identifier</label>
+          <input type="text" id="provId" required placeholder="e.g. CORR-PHX-07" value="CORR-PHX-07" style="width: 100%; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <div style="flex: 1;">
+            <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Source Arena</label>
+            <select id="provSource" required style="width: 100%; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--border-subtle);"></select>
+          </div>
+          <div style="flex: 1;">
+            <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Target Arena</label>
+            <select id="provTarget" required style="width: 100%; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--border-subtle);"></select>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <div style="flex: 1;">
+            <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Protocol</label>
+            <select id="provProtocol" style="width: 100%; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+              <option value="mTLS-gRPC">mTLS-gRPC</option>
+              <option value="PQC-Channel">PQC-Channel</option>
+              <option value="WebSocket-Mesh">WebSocket-Mesh</option>
+              <option value="REST-Webhook">REST-Webhook</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Bandwidth</label>
+            <input type="text" id="provBandwidth" value="20 Gbps" style="width: 100%; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+          </div>
+          <div style="flex: 1;">
+            <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Latency (ms)</label>
+            <input type="number" id="provLatency" value="8" min="1" max="100" style="width: 100%; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+          </div>
+        </div>
+        <div class="form-group mb-2">
+          <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">Description &amp; Channel Purpose</label>
+          <input type="text" id="provDesc" value="Autonomous high-throughput telemetry stream" style="width: 100%; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+          <button type="button" class="btn btn-secondary" onclick="closeProvisionModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Provision Corridor</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../phoenix-core.js"></script>
+  <script src="./mesh.js"></script>
+</body>
+</html>
