@@ -1,5 +1,7 @@
 # 🦅 Phoenix — Autonomous Career, Placement & Hackathon OS (v28.0 Enterprise)
 
+## 🔗 Live Demo: https://phoenix.shashankj.tech
+
 [![Automated Tests](https://img.shields.io/badge/Tests-349%2F349%20Passing-brightgreen?style=for-the-badge&logo=node.js)](sup-backend/test/)
 [![Enterprise Mesh](https://img.shields.io/badge/Topology%20Mesh-8%20Arenas%20%7C%206%20Corridors-blue?style=for-the-badge&logo=graphql)](sup-frontend/enterprise/mesh.html)
 [![Architecture](https://img.shields.io/badge/Architecture-Tri--Pillar%20Autonomous%20OS-orange?style=for-the-badge)](sup-backend/)
