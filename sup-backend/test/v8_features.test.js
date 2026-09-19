@@ -27,14 +27,14 @@ describe('AI Speech & Vocal Prosody Evaluation Engine Tests', () => {
 });
 
 describe('Peer Mock Interview Room & AI Safety-Net Engine Tests', () => {
-  test.skip('createOrMatchPeerRoom places user in waiting queue when alone', async () => {
+  test('createOrMatchPeerRoom places user in waiting queue when alone', async () => {
     const u1 = { userId: 'u_test_1', name: 'Alice', targetRole: 'Backend Engineer' };
     const res = await createOrMatchPeerRoom(u1);
     assert.equal(res.status, 'WAITING');
     assert.ok(res.queuePosition >= 1);
   });
 
-  test.skip('createOrMatchPeerRoom matches two queued users into an active room', async () => {
+  test('createOrMatchPeerRoom matches two queued users into an active room', async () => {
     const u2 = { userId: 'u_test_2', name: 'Bob', targetRole: 'Frontend Engineer' };
     const res = await createOrMatchPeerRoom(u2);
     assert.equal(res.status, 'MATCHED');
@@ -42,13 +42,13 @@ describe('Peer Mock Interview Room & AI Safety-Net Engine Tests', () => {
     assert.equal(res.peer.name, 'Alice');
   });
 
-  test.skip('sendRoomHeartbeat triggers AI Takeover when peer is silent', async () => {
+  test('sendRoomHeartbeat triggers AI Takeover when peer is silent', async () => {
     const u1 = { userId: 'u_p1', name: 'Carol' };
     const u2 = { userId: 'u_p2', name: 'Dave' };
 
     WAITING_QUEUE.length = 0; // reset
-    createOrMatchPeerRoom(u1);
-    const match = createOrMatchPeerRoom(u2);
+    await createOrMatchPeerRoom(u1);
+    const match = await createOrMatchPeerRoom(u2);
     const roomId = match.roomId;
 
     // Simulate 35s delay for peer
@@ -95,13 +95,13 @@ describe('Interactive System Design Architecture Evaluator Tests', () => {
 });
 
 describe('Hackathon Scraper & Urgency Match Scorer Engine Tests', () => {
-  test.skip('searchAndRankHackathons matches candidate skills and ranks feed', () => {
+  test('searchAndRankHackathons matches candidate skills and ranks feed', async () => {
     const query = {
       userSkills: ['AI', 'React', 'Node.js'],
       preferredMode: 'All',
       minPrize: 10000
     };
-    const result = searchAndRankHackathons(query);
+    const result = await searchAndRankHackathons(query);
     assert.ok(result.totalFound > 0);
     assert.ok(result.rankedHackathons[0].matchPercent > 0);
     assert.ok(result.rankedHackathons[0].urgencyLevel);

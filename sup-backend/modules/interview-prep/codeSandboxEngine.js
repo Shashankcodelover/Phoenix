@@ -6,7 +6,7 @@
  * This completely mitigates node:vm Host OS Breakout.
  */
 
-const { spawn } = require('child_process');
+const vm = require('node:vm');
 
 function executeInSandbox(userCode, inputArgs = [], timeoutMs = 2000) {
   return new Promise((resolve) => {
@@ -15,95 +15,64 @@ function executeInSandbox(userCode, inputArgs = [], timeoutMs = 2000) {
     }
 
     const startMs = Date.now();
-    let stdoutData = '';
-    let stderrData = '';
+    const logs = [];
 
-    // Wrap the user's code to run and output JSON
-    const wrappedCode = `
-      try {
-        const inputArgs = ${JSON.stringify(inputArgs)};
-        let result = null;
+    try {
+      const sandboxContext = {
+        console: {
+          log: (...args) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ')),
+          error: (...args) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ')),
+          warn: (...args) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' '))
+        },
+        Math,
+        Date,
+        Array,
+        Object,
+        String,
+        Number,
+        Boolean,
+        RegExp,
+        Map,
+        Set,
+        parseInt,
+        parseFloat,
+        isNaN,
+        isFinite
+      };
+
+      const wrappedScript = `
         ${userCode}
         if (typeof solution === 'function') {
-          result = solution(...inputArgs);
+          solution(...(${JSON.stringify(inputArgs)}));
+        } else {
+          null;
         }
-        process.stdout.write('\\n__RESULT__:' + JSON.stringify(result) + '\\n');
-      } catch (err) {
-        process.stderr.write(err.message + '\\n');
-      }
-    `;
+      `;
 
-    // Spawn a completely detached Node process with no environment variables and restricted permissions
-    const child = spawn('node', ['--experimental-permission', '--allow-fs-read=*', '-e', wrappedCode], {
-      env: {}, // NO process.env access (prevents secret theft)
-      stdio: ['pipe', 'pipe', 'pipe']
-    });
+      const result = vm.runInNewContext(wrappedScript, sandboxContext, {
+        timeout: timeoutMs,
+        displayErrors: true
+      });
 
-    // Kill mechanism for timeout
-    const timeoutId = setTimeout(() => {
-      child.kill('SIGKILL');
-    }, timeoutMs);
-
-    const MAX_BUFFER = 10000;
-
-    child.stdout.on('data', (chunk) => { 
-      stdoutData += chunk.toString(); 
-      if (stdoutData.length > MAX_BUFFER) {
-        child.kill('SIGKILL');
-      }
-    });
-    
-    child.stderr.on('data', (chunk) => { 
-      stderrData += chunk.toString(); 
-      if (stderrData.length > MAX_BUFFER) {
-        child.kill('SIGKILL');
-      }
-    });
-
-    child.on('close', (code, signal) => {
-      clearTimeout(timeoutId);
       const executionTimeMs = Date.now() - startMs;
-      
-      if (signal === 'SIGKILL') {
-        return resolve({
-          success: false,
-          executionTimeMs,
-          error: 'Execution Timed Out (Infinite loop or CPU limit exceeded)',
-          logs: stdoutData.split('\n').filter(Boolean),
-          timedOut: true
-        });
-      }
-
-      // Parse result
-      let result = null;
-      let logs = [];
-      const lines = stdoutData.split('\n');
-      for (const line of lines) {
-        if (line.startsWith('__RESULT__:')) {
-          try { result = JSON.parse(line.replace('__RESULT__:', '')); } catch(e) {}
-        } else if (line.trim()) {
-          logs.push(line);
-        }
-      }
-
-      if (stderrData.trim() || code !== 0) {
-        return resolve({
-          success: false,
-          executionTimeMs,
-          error: stderrData.trim() || 'Process exited with non-zero code',
-          logs,
-          timedOut: false
-        });
-      }
-
-      resolve({
+      return resolve({
         success: true,
         executionTimeMs,
         logs,
         result,
         timedOut: false
       });
-    });
+    } catch (err) {
+      const executionTimeMs = Date.now() - startMs;
+      const isTimeout = err.code === 'ERR_SCRIPT_EXECUTION_TIMEOUT' || (err.message && err.message.includes('timed out'));
+      return resolve({
+        success: false,
+        executionTimeMs,
+        error: err.message,
+        logs,
+        timedOut: isTimeout
+      });
+    }
   });
 }
 

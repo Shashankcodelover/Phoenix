@@ -103,7 +103,9 @@ Make the script engaging, professional, and tailored to the tech stack. Provide 
       }
     ],
     judgeQADefenseCheatSheet: [
-      { question: 'What is your tech stack?', answer: `We use ${stackString}` }
+      { question: 'What is your tech stack and architecture?', answer: `We built the platform leveraging ${stackString} for low latency, fault-tolerance, and horizontal scalability.` },
+      { question: 'How does your solution differentiate from existing tooling?', answer: `Our solution provides zero-latency offline heuristic resilience combined with agentic multi-model dispatch and domain-tailored workflows.` },
+      { question: 'How do you handle production failure and edge-case traffic?', answer: `We incorporate circuit breakers, bounded sliding-window rate limiters, and optimistic fallback states across all execution paths.` }
     ]
   });
 

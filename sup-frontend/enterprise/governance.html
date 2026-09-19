@@ -1,0 +1,347 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phoenix — Enterprise Career Data Governance & Storage Studio</title>
+  <meta name="description" content="Carrier-grade Data Governance, Sovereign Career Passport Export, Batch Ingestion and Cascading Purge">
+  <link rel="stylesheet" href="../phoenix.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .gov-telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .gov-telemetry-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-smooth);
+    }
+    .gov-telemetry-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--cyan);
+    }
+    .gt-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+    .gt-blue { background: rgba(0, 217, 255, 0.12); color: var(--cyan); }
+    .gt-green { background: rgba(16, 185, 129, 0.12); color: var(--green); }
+    .gt-purple { background: rgba(99, 102, 241, 0.12); color: var(--indigo); }
+    .gt-amber { background: rgba(245, 158, 11, 0.12); color: var(--orange); }
+    .gt-rose { background: rgba(244, 63, 94, 0.12); color: var(--coral); }
+    
+    .gt-meta { display: flex; flex-direction: column; }
+    .gt-label { font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.6px; color: var(--text-muted); }
+    .gt-val { font-size: 1.2rem; font-weight: 800; color: var(--text-primary); font-family: 'Space Grotesk', sans-serif; }
+
+    .gov-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 24px;
+    }
+    .gov-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    /* Dual Pane Ingestion */
+    .ingest-dual-pane {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      min-height: 280px;
+      margin-bottom: 18px;
+    }
+    .pane-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .pane-header {
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.15);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pane-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+    .ingest-textarea {
+      flex: 1;
+      width: 100%;
+      border: none;
+      outline: none;
+      resize: none;
+      padding: 14px;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      background: transparent;
+      color: var(--text-primary);
+    }
+    .audit-terminal {
+      flex: 1;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      overflow-y: auto;
+      background: #080c16;
+      color: #94a3b8;
+    }
+    .log-entry { margin-bottom: 6px; }
+    .log-success { color: #10b981; }
+    .log-error { color: #f43f5e; font-weight: 700; }
+    .log-info { color: #38bdf8; }
+    .log-warn { color: #f59e0b; }
+
+    /* Danger Zone */
+    .danger-card {
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      background: rgba(244, 63, 94, 0.03);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+    .danger-title { color: #f43f5e; font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; margin-bottom: 8px; font-weight: 700; }
+
+    @media (max-width: 1024px) {
+      .gov-telemetry-grid { grid-template-columns: repeat(2, 1fr); }
+      .ingest-dual-pane { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="theme-light-cyan">
+
+  <!-- EVALUATOR SCENARIO TOUR BAR -->
+  <script src="../components/scenario-tour-bar.js"></script>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="mainNavbar">
+    <div class="navbar-brand" onclick="window.location.href='../'">⚡ PHOENIX</div>
+    <ul class="nav-links" id="mainNavLinks">
+      <li><a href="../horizon/world-dashboard.html">🌅 Horizon World</a></li>
+      <li><a href="../interview-prep/roadmap.html">💼 Placement World</a></li>
+      <li><a href="../hackathon-agent/command-center.html">🏆 Hackathon World</a></li>
+      <li><a href="./mesh.html">🌐 Topology Mesh</a></li>
+      <li><a href="./governance.html" class="active">🛡️ Governance</a></li>
+      <li><a href="../dashboard/dashboard.html">📊 Dashboard</a></li>
+      <li><button class="theme-toggle-btn" id="themeToggleBtn" onclick="Phoenix.Theme.cycle()">☀️ Light</button></li>
+    </ul>
+  </nav>
+
+  <!-- HERO HEADER -->
+  <div class="hero-gateway" style="padding: 28px 20px 20px;">
+    <div class="cyan-badge">🛡️ Enterprise Data Governance & Storage Studio</div>
+    <h1 class="hero-title" style="font-size: clamp(1.8rem, 3.5vw, 2.6rem); margin: 8px 0 10px;">
+      Sovereign Career Passport & Telemetry Mesh
+    </h1>
+    <p class="hero-subtitle">
+      Zero-trust career record auditing, multi-schema batch ingestion, 1-click sovereign JSON/CSV snapshots, and cascading store protection.
+    </p>
+  </div>
+
+  <div class="full-width-container" style="max-width: 1400px; margin: 0 auto; padding: 0 20px 40px;">
+
+    <!-- 1. FIVE METRIC LIVE TELEMETRY STRIP -->
+    <div class="gov-telemetry-grid">
+      <div class="gov-telemetry-card">
+        <div class="gt-icon gt-blue"><i class="fas fa-id-card"></i></div>
+        <div class="gt-meta">
+          <span class="gt-label">Candidate Portfolios</span>
+          <span class="gt-val" id="telCandidates">3 Active</span>
+        </div>
+      </div>
+      <div class="gov-telemetry-card">
+        <div class="gt-icon gt-green"><i class="fas fa-question-circle"></i></div>
+        <div class="gt-meta">
+          <span class="gt-label">PYQ Knowledge Bank</span>
+          <span class="gt-val" id="telPyqs">240 Questions</span>
+        </div>
+      </div>
+      <div class="gov-telemetry-card">
+        <div class="gt-icon gt-purple"><i class="fas fa-microphone-alt"></i></div>
+        <div class="gt-meta">
+          <span class="gt-label">Mock Transcripts</span>
+          <span class="gt-val" id="telTranscripts">48 Sessions</span>
+        </div>
+      </div>
+      <div class="gov-telemetry-card">
+        <div class="gt-icon gt-amber"><i class="fas fa-lightbulb"></i></div>
+        <div class="gt-meta">
+          <span class="gt-label">Hackathon Blueprints</span>
+          <span class="gt-val" id="telBlueprints">16 Winning Specs</span>
+        </div>
+      </div>
+      <div class="gov-telemetry-card">
+        <div class="gt-icon gt-rose"><i class="fas fa-database"></i></div>
+        <div class="gt-meta">
+          <span class="gt-label">Storage Footprint</span>
+          <span class="gt-val" id="telStorageVolume">128 KB (0.8%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. BATCH INGESTION & VALIDATION STUDIO -->
+    <div class="gov-section">
+      <div class="gov-section-header">
+        <div>
+          <h2 class="font-space" style="font-size: 1.25rem; margin-bottom: 4px;">
+            📥 Universal Batch Ingestion & Schema Linter
+          </h2>
+          <p class="text-secondary" style="font-size: 0.82rem;">
+            Atomic ingestion supporting RFC 4180 CSV & Strict JSON with instant schema linting, deduplication, and syntax audit.
+          </p>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <select id="ingestEntityType" class="form-control" style="width: auto; padding: 6px 12px; font-size: 0.82rem;">
+            <option value="candidates">👤 Candidate Profiles</option>
+            <option value="pyqs">📚 Company PYQ Questions</option>
+            <option value="hackathons">🏆 Hackathon Blueprints</option>
+          </select>
+          <select id="ingestFormat" class="form-control" style="width: auto; padding: 6px 12px; font-size: 0.82rem;">
+            <option value="json">Strict JSON Array</option>
+            <option value="csv">RFC 4180 CSV</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Preset Ingestion Injectors -->
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <span style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+            Quick Presets:
+          </span>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="injectPreset('faang')">⚡ FAANG PYQs Pack</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="injectPreset('hackathon')">🚀 AI Hackathon Blueprints</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="injectPreset('karnataka')">🌅 KCET/DCET Academic Syllabus</button>
+        </div>
+        <div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="executeBatchIngest()">
+            <i class="fas fa-play"></i> Ingest & Validate Payload
+          </button>
+        </div>
+      </div>
+
+      <!-- Dual Pane -->
+      <div class="ingest-dual-pane">
+        <div class="pane-box">
+          <div class="pane-header">
+            <span class="pane-title"><i class="fas fa-code"></i> Ingestion Buffer</span>
+            <span id="bufferStats" style="font-size: 0.72rem; color: var(--text-muted);">0 lines</span>
+          </div>
+          <textarea id="ingestBuffer" class="ingest-textarea" placeholder="Paste JSON array or RFC 4180 CSV here..."></textarea>
+        </div>
+        <div class="pane-box">
+          <div class="pane-header">
+            <span class="pane-title"><i class="fas fa-terminal"></i> Telemetry & Syntax Audit Log</span>
+            <button class="btn btn-secondary btn-sm" style="padding: 2px 8px; font-size: 0.7rem;" onclick="clearAuditLog()">Clear</button>
+          </div>
+          <div id="auditLog" class="audit-terminal">
+            <div class="log-entry log-info">[Audit Ready] Select an entity schema or load a quick preset.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. SOVEREIGN SNAPSHOT EXPORT & BACKUP CONSOLE -->
+    <div class="gov-section">
+      <div class="gov-section-header">
+        <div>
+          <h2 class="font-space" style="font-size: 1.25rem; margin-bottom: 4px;">
+            💼 1-Click Sovereign Career Snapshot & Export Studio
+          </h2>
+          <p class="text-secondary" style="font-size: 0.82rem;">
+            Export or restore full candidate records, STAR stories, mock interview evaluations, and hackathon submissions.
+          </p>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+        <div class="panel-card" style="margin: 0; background: var(--bg-secondary);">
+          <h4 class="font-space" style="font-size: 0.96rem; margin-bottom: 6px;">📦 Full Sovereign JSON Snapshot</h4>
+          <p class="text-secondary" style="font-size: 0.78rem; line-height: 1.5; margin-bottom: 14px;">
+            Bundles candidate profile, ATS resume calibration, PYQ bookmarks, STAR stories, and system design canvases into an encrypted snapshot bundle.
+          </p>
+          <button type="button" class="btn btn-primary btn-sm" onclick="exportFullSnapshot()">
+            <i class="fas fa-download"></i> Download Full JSON Snapshot
+          </button>
+        </div>
+
+        <div class="panel-card" style="margin: 0; background: var(--bg-secondary);">
+          <h4 class="font-space" style="font-size: 0.96rem; margin-bottom: 6px;">📄 RFC 4180 Candidate Roster CSV</h4>
+          <p class="text-secondary" style="font-size: 0.78rem; line-height: 1.5; margin-bottom: 14px;">
+            Exports all registered profiles, skills, target roles, readiness percentages, and credentials in standard spreadsheet CSV format.
+          </p>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="exportCandidatesCSV()">
+            <i class="fas fa-file-csv"></i> Download Candidate Roster CSV
+          </button>
+        </div>
+
+        <div class="panel-card" style="margin: 0; background: var(--bg-secondary);">
+          <h4 class="font-space" style="font-size: 0.96rem; margin-bottom: 6px;">🔄 Factory Benchmark Restore</h4>
+          <p class="text-secondary" style="font-size: 0.78rem; line-height: 1.5; margin-bottom: 14px;">
+            Instantly restores benchmark profiles (Preetham J, Shashank J, Apex Innovator) and 240+ verified PYQs with zero configuration.
+          </p>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="restoreFactoryBenchmark()">
+            <i class="fas fa-sync-alt"></i> Restore Benchmark Profiles
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. CASCADING PURGE SAFETY ZONE -->
+    <div class="gov-section" style="border-color: rgba(244, 63, 94, 0.3);">
+      <div class="danger-card">
+        <h3 class="danger-title"><i class="fas fa-exclamation-triangle"></i> Universal Cascading Purge Danger Zone</h3>
+        <p class="text-secondary" style="font-size: 0.82rem; line-height: 1.6; margin-bottom: 14px;">
+          This action wipes all local student profiles, interview histories, cached PYQs, and pitch blueprints. To prevent accidental deletion, you must explicitly type the safety confirmation phrase: <strong>PURGE PHOENIX CAREER STORE</strong>.
+        </p>
+        <div style="display: flex; gap: 10px; max-width: 580px; flex-wrap: wrap;">
+          <input type="text" id="purgePhraseInput" class="form-control" placeholder="Type PURGE PHOENIX CAREER STORE" style="flex: 1; min-width: 260px;">
+          <button type="button" class="btn btn-secondary" style="background: rgba(244, 63, 94, 0.15); color: #f43f5e; border-color: rgba(244, 63, 94, 0.4);" onclick="triggerUniversalPurge()">
+            <i class="fas fa-fire"></i> Execute Universal Purge
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    Phoenix v28.0 — Enterprise Autonomous Placement & Career OS • 
+    <a href="./mesh.html">Relational Topology Mesh</a> • 
+    <a href="https://github.com/Shashankcodelover/Phoenix">GitHub</a>
+  </footer>
+
+  <script src="../phoenix-core.js"></script>
+  <script src="./governance.js"></script>
+</body>
+</html>

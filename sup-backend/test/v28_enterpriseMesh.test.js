@@ -1,6 +1,6 @@
 const { test, describe, beforeEach } = require('node:test');
 const assert = require('node:assert');
-const { PhoenixTopologyService } = require('../sup-backend/modules/phoenixTopologyService');
+const { PhoenixTopologyService } = require('../modules/phoenixTopologyService');
 
 describe('Project Phoenix Enterprise Arena Topology & Governance Mesh', () => {
   let service;

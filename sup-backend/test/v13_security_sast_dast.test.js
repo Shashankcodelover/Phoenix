@@ -132,12 +132,12 @@ test('Integrity Engine flags bulk paste and instant code injection', () => {
 // WEBRTC SIGNALING & ISOLATED SANDBOX TESTS
 // ═══════════════════════════════════════════════════════════
 
-test.skip('Peer Match Engine handles WebRTC SDP offer, answer, and ICE candidate signaling', () => {
+test('Peer Match Engine handles WebRTC SDP offer, answer, and ICE candidate signaling', async () => {
   const user1 = { userId: 'u1', name: 'Alice' };
   const user2 = { userId: 'u2', name: 'Bob' };
   
-  createOrMatchPeerRoom(user1);
-  const matchResult = createOrMatchPeerRoom(user2);
+  await createOrMatchPeerRoom(user1);
+  const matchResult = await createOrMatchPeerRoom(user2);
   assert.equal(matchResult.status, 'MATCHED');
 
   const roomId = matchResult.roomId;
@@ -152,7 +152,7 @@ test.skip('Peer Match Engine handles WebRTC SDP offer, answer, and ICE candidate
   assert.equal(iceRes.count, 1);
 });
 
-test.skip('Code Sandbox Engine executes JavaScript in isolated child_process context', async () => {
+test('Code Sandbox Engine executes JavaScript in isolated child_process context', async () => {
   const code = `
     function solution(a, b) {
       console.log('Computing sum...');

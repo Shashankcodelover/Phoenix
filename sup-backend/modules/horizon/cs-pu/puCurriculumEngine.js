@@ -18,7 +18,51 @@
 // SECTION 1: THE REAL PU CS SYLLABUS vs WHAT INDUSTRY NEEDS
 // ═══════════════════════════════════════════════════════════
 
+const mongoose = require('mongoose');
 const { PyqBank, Roadmap } = require('../../../models/Curriculum');
+
+const OFFLINE_PU_PYQS = [
+  {
+    id: 'pu_pyq_1',
+    chapter: 'Object Oriented Programming in C++',
+    year: 2024,
+    marks: 5,
+    question: 'Explain the principles of Object Oriented Programming: Encapsulation, Abstraction, Inheritance, and Polymorphism.',
+    modelAnswer: '1. Encapsulation: Wrapping data and methods into a single unit (class). 2. Abstraction: Hiding internal complexity and showing only essential features. 3. Inheritance: Mechanism where a child class acquires properties of a parent class. 4. Polymorphism: Ability of a function or operator to take multiple forms.'
+  },
+  {
+    id: 'pu_pyq_2',
+    chapter: 'Data Structures',
+    year: 2024,
+    marks: 5,
+    question: 'What is a Queue? Explain operations performed on Linear Queues with suitable diagrams.',
+    modelAnswer: 'A Queue is a linear data structure that follows the FIFO (First In First Out) principle. Elements are inserted at the Rear end (enqueue) and removed from the Front end (dequeue).'
+  },
+  {
+    id: 'pu_pyq_3',
+    chapter: 'Boolean Algebra',
+    year: 2023,
+    marks: 5,
+    question: 'State and prove De Morgan’s Theorems using truth tables.',
+    modelAnswer: 'Theorem 1: (A + B)\' = A\' . B\'. Theorem 2: (A . B)\' = A\' + B\'. Proof is established by evaluating output truth tables across all 4 binary state combinations (00, 01, 10, 11).'
+  },
+  {
+    id: 'pu_pyq_4',
+    chapter: 'Database Concepts',
+    year: 2023,
+    marks: 5,
+    question: 'What is Normalization? Explain 1NF, 2NF, and 3NF with examples.',
+    modelAnswer: 'Normalization is the process of organizing data in a database to reduce data redundancy and improve data integrity. 1NF removes repeating groups, 2NF removes partial dependency, and 3NF removes transitive dependency.'
+  },
+  {
+    id: 'pu_pyq_5',
+    chapter: 'Networking and Open Source Concepts',
+    year: 2023,
+    marks: 5,
+    question: 'Explain OSI 7-layer architecture and TCP/IP protocol suite.',
+    modelAnswer: 'The 7 layers of OSI model are: Physical, Data Link, Network, Transport, Session, Presentation, and Application layer. Each layer provides services to the layer above it.'
+  }
+];
 
 const PU_CS_SYLLABUS_REALITY = {
   whatCollegeTeaches: {
@@ -255,8 +299,15 @@ function getPuSyllabusGapAnalysis() {
 }
 
 async function getPuMonthByMonthRoadmap() {
-  const doc = await Roadmap.findOne({ stage: 'pu' });
-  const roadmapData = doc ? doc.roadmap : PU_CS_MONTH_BY_MONTH_ROADMAP;
+  let roadmapData = PU_CS_MONTH_BY_MONTH_ROADMAP;
+  try {
+    if (Roadmap && mongoose.connection.readyState === 1) {
+      const doc = await Roadmap.findOne({ stage: 'pu' });
+      if (doc && doc.roadmap) roadmapData = doc.roadmap;
+    }
+  } catch (err) {
+    // Graceful offline fallback
+  }
   return {
     success: true,
     engine: 'PU CS 2-Year Month-by-Month Roadmap',
@@ -274,7 +325,7 @@ function getPuEntranceExamPrep(examKey) {
   return { success: true, exams: PU_ENTRANCE_EXAMS };
 }
 
-async function getPuBoardPyqs({ chapter, year, limit, skip }) {
+async function getPuBoardPyqs({ chapter, year, limit, skip } = {}) {
   if (limit && isNaN(parseInt(limit))) {
     throw new Error('Limit must be a valid number');
   }
@@ -282,16 +333,31 @@ async function getPuBoardPyqs({ chapter, year, limit, skip }) {
     throw new Error('Skip must be a valid number');
   }
 
-  const query = { stage: 'pu' };
-  if (chapter) query.chapter = new RegExp(chapter, 'i');
-  if (year) query.year = parseInt(year);
+  let questions = [];
+  try {
+    if (PyqBank && mongoose.connection.readyState === 1) {
+      const query = { stage: 'pu' };
+      if (chapter) query.chapter = new RegExp(chapter, 'i');
+      if (year) query.year = parseInt(year);
 
-  let mQuery = PyqBank.find(query);
-  if (skip) mQuery = mQuery.skip(parseInt(skip));
-  if (limit) mQuery = mQuery.limit(parseInt(limit));
+      let mQuery = PyqBank.find(query);
+      if (skip) mQuery = mQuery.skip(parseInt(skip));
+      if (limit) mQuery = mQuery.limit(parseInt(limit));
+      questions = await mQuery;
+    }
+  } catch (err) {
+    // Graceful offline fallback
+  }
 
-  const pyqs = await mQuery;
-  return { success: true, count: pyqs.length, questions: pyqs };
+  if (!questions || questions.length === 0) {
+    questions = [...OFFLINE_PU_PYQS];
+    if (chapter) questions = questions.filter(q => q.chapter.toLowerCase().includes(chapter.toLowerCase()));
+    if (year) questions = questions.filter(q => q.year === parseInt(year));
+    if (skip) questions = questions.slice(parseInt(skip));
+    if (limit) questions = questions.slice(0, parseInt(limit));
+  }
+
+  return { success: true, count: questions.length, questions };
 }
 
 function getPuResources({ phase }) {
