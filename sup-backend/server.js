@@ -110,6 +110,11 @@ setInterval(() => {
 }, 30000).unref();
 
 app.use((req, res, next) => {
+  // Never rate-limit static asset requests (HTML, CSS, JS, images, fonts)
+  if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/socket.io')) {
+    return next();
+  }
+
   const ip = req.ip || req.connection?.remoteAddress || 'unknown';
   const now = Date.now();
 
@@ -184,7 +189,7 @@ app.use((req, res, next) => {
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' ws: wss:; font-src 'self' https://fonts.gstatic.com; object-src 'none';"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; media-src 'self' blob: data:; connect-src 'self' ws: wss:; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; object-src 'none';"
   );
   next();
 });
@@ -270,6 +275,9 @@ app.use('/api/prep', aiRateLimiter, prepRoutes);
 app.use('/api/agent', aiRateLimiter, agentRoutes);
 app.use('/api/enterprise', enterpriseRoutes);
 app.use('/api/code-review', codeReviewRoutes);
+app.use('/api/gamification', gamificationRoutes);
+app.use('/api/idea-gen', aiRateLimiter, ideaGenRoutes);
+app.use('/api/users', userRoutes);
 
 // Static assets & SPA fallback (Express 5 compatible)
 app.use(express.static(path.join(__dirname, '../sup-frontend')));

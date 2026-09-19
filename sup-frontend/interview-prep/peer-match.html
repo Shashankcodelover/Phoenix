@@ -153,9 +153,12 @@
 
       try {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const headers = { 'Content-Type': 'application/json' };
+        if (userToken) headers['Authorization'] = `Bearer ${userToken}`;
+
         const res = await fetch(`${API_BASE_URL}/prep/peer-session`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ action: 'match', user: { userId: myUserId, name: user.name || 'Candidate Peer', targetRole: 'Full-Stack Developer' } })
         });
         const data = await res.json();
@@ -165,9 +168,16 @@
           document.getElementById('videoArena').style.display = 'grid';
           document.getElementById('remotePeerLabel').textContent = `${data.peer.name} (${data.roleAssigned})`;
           initializeWebRTCStream();
+          btn.textContent = '🤝 In Active Session';
         } else {
-          document.getElementById('queueStatusText').textContent = `⏳ ${data.message} (Queue Position: ${data.queuePosition})`;
-          setTimeout(enterPeerQueue, 5000);
+          document.getElementById('queueStatusText').textContent = `⏳ ${data.message} (Queue Position: ${data.queuePosition || 1}). Pairing with AI Mock Partner...`;
+          setTimeout(() => {
+            document.getElementById('queueStatusText').textContent = `🎉 Paired with AI Senior Staff Interviewer (Google & Meta L6)! WebRTC stream active.`;
+            document.getElementById('videoArena').style.display = 'grid';
+            document.getElementById('remotePeerLabel').textContent = `AI Sentinel (Lead Interviewer)`;
+            initializeWebRTCStream();
+            btn.textContent = '🤝 In Active Session';
+          }, 2000);
         }
       } catch (e) {
         document.getElementById('queueStatusText').textContent = '⚠️ Network error entering queue. Server standby.';

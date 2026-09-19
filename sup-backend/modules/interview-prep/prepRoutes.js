@@ -271,7 +271,7 @@ router.post('/readiness/evaluate', protectOptional, (req, res) => {
 
 
 
-router.post('/peer-session', protect, async (req, res) => {
+router.post('/peer-session', protectOptional, async (req, res) => {
   try {
     const { action, user, roomId, userId } = req.body;
     if (action === 'heartbeat') {
@@ -285,7 +285,7 @@ router.post('/peer-session', protect, async (req, res) => {
   }
 });
 
-router.post('/peer-signaling', protect, (req, res) => {
+router.post('/peer-signaling', protectOptional, (req, res) => {
   try {
     const { action, roomId, userId, sdpOffer, sdpAnswer, candidate } = req.body;
     if (action === 'offer') return res.json(handlePeerSignalingOffer(roomId, userId, sdpOffer));

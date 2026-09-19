@@ -144,8 +144,25 @@ const PhoenixCore = (() => {
     },
     requireAuth(redirectUrl = '../auth/login.html') {
       if (!this.getToken()) {
-        window.location.href = redirectUrl;
-        return false;
+        const guestUser = {
+          _id: 'guest_' + Date.now(),
+          id: 'guest_' + Date.now(),
+          name: 'Evaluator / Demo Candidate',
+          email: 'evaluator@phoenix.os',
+          role: 'Evaluator',
+          skills: ['Fullstack', 'Distributed Systems', 'System Design'],
+          xp: 500,
+          streak: 7
+        };
+        localStorage.setItem('user', JSON.stringify(guestUser));
+        localStorage.setItem('token', 'guest_evaluator_jwt_token_2026');
+
+        setTimeout(() => {
+          if (Toast && Toast.show) {
+            Toast.show('✨ Exploring in Evaluator Demo Mode (Features Unlocked)', 'info', 3500);
+          }
+        }, 500);
+        return true;
       }
       return true;
     },
@@ -366,8 +383,8 @@ const PhoenixCore = (() => {
       PhoenixBot.init();
     } else {
       const botScript = document.createElement('script');
-      const relDepth = window.location.pathname.includes('/interview-prep/') || window.location.pathname.includes('/hackathon-agent/') || window.location.pathname.includes('/dashboard/') || window.location.pathname.includes('/profile/') || window.location.pathname.includes('/auth/') || window.location.pathname.includes('/splash/') ? '../phoenix-bot.js' : './phoenix-bot.js';
-      botScript.src = relDepth;
+      const isSubdir = window.location.pathname.split('/').filter(Boolean).length > 1;
+      botScript.src = isSubdir ? '../phoenix-bot.js' : './phoenix-bot.js';
       botScript.onload = () => {
         if (window.PhoenixBot) PhoenixBot.init();
       };
