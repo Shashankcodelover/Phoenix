@@ -151,3 +151,11 @@ npm start
 ```
 
 Access the live portal at **`http://localhost:5000/`** and the Enterprise Topology Mesh at **`http://localhost:5000/enterprise/mesh.html`**.
+
+
+## User Flow Verification
+
+![User Flow](docs/phoenix_chaos_failover_verified.png)
+![User Flow](docs/phoenix_home_verified.png)
+![User Flow](docs/phoenix_singularity_verified.png)
+
