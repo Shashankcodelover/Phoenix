@@ -7,8 +7,8 @@
     "test": "npm --prefix sup-backend test",
     "start": "npm --prefix sup-backend start",
     "dev:backend": "npm --prefix sup-backend start",
-    "dev:frontend": "npm --prefix phoenix-ui dev",
-    "build:frontend": "npm --prefix phoenix-ui build"
+    "dev:frontend": "npm --prefix phoenix-ui run dev",
+    "build:frontend": "npm --prefix phoenix-ui run build"
   },
   "private": true
 }
