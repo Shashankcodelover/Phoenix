@@ -1,161 +1,166 @@
-# 🦅 Phoenix — Autonomous Career, Placement & Hackathon OS (v28.0 Enterprise)
+# Phoenix — Career Accelerator & Hackathon Platform
 
-[![Automated Tests](https://img.shields.io/badge/Tests-349%2F349%20Passing-brightgreen?style=for-the-badge&logo=node.js)](sup-backend/test/)
-[![Enterprise Mesh](https://img.shields.io/badge/Topology%20Mesh-8%20Arenas%20%7C%206%20Corridors-blue?style=for-the-badge&logo=graphql)](sup-frontend/enterprise/mesh.html)
-[![Architecture](https://img.shields.io/badge/Architecture-Tri--Pillar%20Autonomous%20OS-orange?style=for-the-badge)](sup-backend/)
-[![Showcase](https://img.shields.io/badge/Screenshots-Desktop%204K%20Captured-purple?style=for-the-badge)](screenshots/desktop/)
-[![Status](https://img.shields.io/badge/Status-Fleet--Standard%20Enterprise-success?style=for-the-badge)]()
+[![Automated Tests](https://img.shields.io/badge/Tests-491%2F491%20Passing-brightgreen?style=for-the-badge&logo=node.js)](sup-backend/test/)
+[![Backend](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express%205-blue?style=for-the-badge&logo=express)](sup-backend/)
+[![Frontend](https://img.shields.io/badge/Frontend-Next.js%2015%20%7C%20React%2019-black?style=for-the-badge&logo=next.js)](phoenix-ui/)
+[![Database](https://img.shields.io/badge/Database-MongoDB%20%7C%20Mongoose-green?style=for-the-badge&logo=mongodb)](sup-backend/models/)
+[![Realtime](https://img.shields.io/badge/Realtime-Socket.io-orange?style=for-the-badge&logo=socket.io)](sup-backend/)
 
-> **The Sovereign Tri-Pillar Platform for Student Career Acceleration, Hackathon Dominance, and Placement Mastery**  
-> Unifying 3 comprehensive operational pillars: (1) Placement & Interview Preparation OS, (2) Hackathon Builder & Defense Engine, and (3) Phoenix Horizon Regional Career Foundation — governed by an Enterprise Relational Topology Mesh.
+> A full-stack web platform for technical interview preparation, hackathon project acceleration, and academic career planning. Features multi-provider AI model routing with offline procedural fallbacks, sandboxed code execution, and an interactive domain topology dashboard.
 
 ---
 
-## 🌐 Platform Hero Showcase
+## Platform Hero Showcase
 
 ![Platform Hero Showcase](platform_hero_showcase.png)
 
 ---
 
-## 🌟 The 3 Distinct Core Ecosystem Pillars
+## Core Modules & Capabilities
 
-Project Phoenix separates the educational and career acceleration lifecycle into **three distinct, non-overlapping pillars** so every student and professional receives a tailored, ultra-smooth experience:
+Project Phoenix organizes career preparation and hackathon tooling into specialized functional areas:
 
-```text
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                              🏰 PHOENIX COMMAND ECOSYSTEM                              │
-├──────────────────────────┬─────────────────────────────┬───────────────────────────────┤
-│ 🌅 PILLAR 1: HORIZON     │ ⚔️ PILLAR 2: INTERVIEW SPRINT│ 🚀 PILLAR 3: HACKATHON OS     │
-│ (Entrance & Career Maps) │ (Placement & Mock Practice) │ (Project Building & Pitching) │
-├──────────────────────────┼─────────────────────────────┼───────────────────────────────┤
-│ • 📘 PU CS & KCET Prep   │ • 📅 7/14/30-Day Roadmaps   │ • 🌐 Live Hackathon Scraper   │
-│ • ⚙️ Diploma DCET Bridge │ • 📚 200+ Company PYQ Bank  │ • ⚡ Two-Stage Vector RAG     │
-│ • 🚀 Lateral Entry Guide │ • 🎙️ <300ms Live Voice AI   │ • 🎯 Cross-Encoder Re-Ranker  │
-│ • 🛡️ Cybersecurity Track │ • 💻 Isolated VM Sandbox    │ • 🎤 5-Slide Pitch Generator  │
-│ • 🌐 Fullstack Web Track │ • 📊 FAANG Percentile Curve │ • ⚖️ AI Judge Defense Rounds  │
-│ • 🎯 Syllabus Gap Radar  │ • 💼 Salary Negotiation OS  │ • 💡 AI Idea Generator (RAG)  │
-└──────────────────────────┴─────────────────────────────┴───────────────────────────────┘
-```
+### 1. Technical Interview Preparation
+Located under `sup-frontend/interview-prep/` and `sup-backend/modules/interview-prep/`:
+- **Question Bank & Company Intelligence**: Provides previous year questions (PYQs) categorized by company, role, and algorithmic pattern.
+- **ATS Resume Diff & Optimizer**: Analyzes resumes against target job descriptions and generates keyword optimization suggestions.
+- **STAR Behavioral Story Refiner**: Synthesizes and scores behavioral interview responses using the Situation-Task-Action-Result framework with power metric evaluation.
+- **Sandboxed Code Execution**: Executes JavaScript code solutions inside isolated Node.js `vm` contexts with CPU timeouts and restricted global access.
+- **System Design Topology Evaluator**: Analyzes distributed architecture designs for single points of failure (SPOFs), missing load balancers, and lack of database replicas.
+- **Concurrency & Deadlock Visualizer**: Detects potential race conditions and thread lock ordering issues through heuristic analysis.
+- **SQL Query Optimizer**: Inspects SQL queries for missing index risks, unbounded `SELECT *` patterns, and unindexed JOIN conditions.
+- **Offer Comparator & Compensation Benchmark**: Compares compensation packages across locations using purchasing power adjustments.
+- **Peer Mock Interview Signaling**: Coordinates peer-to-peer mock interview rooms using Socket.io signaling with automated AI takeover on peer inactivity.
 
----
+### 2. Hackathon Builder & Defense Engine
+Located under `sup-frontend/hackathon-agent/` and `sup-backend/modules/hackathon-agent/`:
+- **AI Idea Generation**: Produces hackathon project ideas seeded from an archive of past winning blueprints.
+- **Two-Stage RAG Search**: Retrieves relevant winning solutions using Gemini embeddings, cosine similarity, BM25 keyword matching, and reciprocal rank fusion re-ranking.
+- **AI Judge Defense Simulator**: Runs 4-round interactive pitch defense sessions with distinct judge personas and rubric-based scoring.
+- **Pitch Deck Generator**: Generates 5-slide presentation outlines with exportable Marp markdown formatting.
+- **Devpost Submission Packager**: Formats project summaries, architecture overviews, and submission writeups for hackathon submissions.
+- **Team Synergy & Task Matrix**: Maps team members to hackathon roles (Builder, Designer, Strategist, AI Engineer) and tracks task completion.
+- **Hackathon Scraper & Deadline Tracker**: Ranks upcoming hackathons based on candidate skills and submission deadlines.
 
-## 🏛️ Enterprise Arena Relational Topology & Governance Mesh
+### 3. Phoenix Horizon Regional Career Foundation
+Located under `sup-frontend/horizon/` and `sup-backend/modules/horizon/`:
+- **Admissions & Rank Matrix**: Estimates Karnataka KCET and DCET engineering college cutoffs based on historical seat allotment data.
+- **Scholarship Finder**: Matches students with scholarship programs based on category, household income, and academic marks.
+- **Institutional Tier Matrix**: Compares colleges using NIRF rankings, NAAC accreditation, and placement track records.
+- **Credit Transfer & Transcript Evaluator**: Analyzes syllabus mapping and credit equivalence for engineering degree transitions.
+- **Statement of Purpose (SOP) & LOR Drafter**: Synthesizes academic statements of purpose and drafts recommendation letter templates.
+- **Campus Placement Analytics**: Visualizes department-level hiring trends, CTC distributions, and recruiter history.
+- **Visa Readiness Evaluator**: Evaluates international student visa interview preparation through targeted risk questionnaires.
 
-Governing 8 specialized engineering arenas and 6 cross-domain corridors via high-throughput mTLS, PQC, and WebSocket corridors:
+### 4. Domain Topology & Data Management Dashboard
+Located under `sup-frontend/enterprise/mesh.html` and `sup-backend/modules/phoenixTopologyService.js`:
+- **In-Memory Graph Topology**: Models 8 platform domains (Horizon, Placement, Chaos Lab, Hackathon, AI Judge, Whiteboard, Voice Coach, Recruiter) and 6 inter-domain routes.
+- **Lifecycle Controls**: Provides node and route CRUD operations, including cascading deletion of routes when a domain node is deleted.
+- **Sever & Restore State**: Supports 1-click toggling of corridor operational states.
+- **Batch Ingestion Studio**: Validates and ingests multiline quoted RFC 4180 CSV and strict JSON data.
+- **Confirmation-Guarded Purge**: Protects store wipes behind a confirmation phrase (`PURGE-ALL-PHOENIX-ENTITIES`) with factory restore capability.
 
-```mermaid
-flowchart TD
-    subgraph Foundation["Regional Career Foundation"]
-        NH["NODE-HORIZON\nHorizon Foundation & Entrance World"]
-    end
-
-    subgraph PlacementChamber["Placement & Interview Preparation OS"]
-        NP["NODE-PLACEMENT\nPlacement Roadmap & Adaptive Practice"]
-        NC["NODE-CHAOS\nAST Chaos & Isolated VM Sandbox"]
-        NW["NODE-WHITEBOARD\nSystem Design Canvas"]
-        NV["NODE-VOICECOACH\nLive Voice Coach (<300ms)"]
-    end
-
-    subgraph HackathonChamber["Hackathon Builder Defense Engine"]
-        NK["NODE-HACKATHON\nHackathon Command Center"]
-        NJ["NODE-JUDGE\nAdversarial Judge AI Chamber"]
-    end
-
-    subgraph EnterpriseGovernance["Enterprise Recruiter & Analytics"]
-        NE["NODE-ENTERPRISE\nRecruiter Talent Mesh & EEOC Audit"]
-    end
-
-    NH -- "CORR-PHX-01: Foundation-to-Placement Sync (gRPC / 8ms)" --> NP
-    NP -- "CORR-PHX-02: Code Evaluation Pipeline (mTLS / 4ms)" --> NC
-    NK -- "CORR-PHX-03: Pitch Defense Pipeline (PQC / 12ms)" --> NJ
-    NP -- "CORR-PHX-04: Multi-Modal Interview Stream (WebSocket / 15ms)" --> NV
-    NP -- "CORR-PHX-05: Whiteboard Architecture Evaluator (HTTPS / 6ms)" --> NW
-    NP -- "CORR-PHX-06: Verified Candidate Telemetry (mTLS / 9ms)" --> NE
-```
-
-### Governed Arena Nodes (8 Core Systems)
-1. **`NODE-HORIZON`**: Horizon Foundation & Entrance World (KCET / DCET / Mentorship)
-2. **`NODE-PLACEMENT`**: Placement Roadmap & Adaptive Practice (Syllabus / PYQs)
-3. **`NODE-CHAOS`**: AST Chaos & Sandbox Test Runner (Isolated Node.js VM)
-4. **`NODE-HACKATHON`**: Hackathon Command & Scraping Center (MLH / Devpost)
-5. **`NODE-JUDGE`**: Adversarial Multi-Round Judge AI (Stress Testing & SAFE Notes)
-6. **`NODE-WHITEBOARD`**: Drag-and-Drop System Design Canvas (QPS / SPOF Evaluation)
-7. **`NODE-VOICECOACH`**: Live Voice Coach & Audio Telemetry (WPM / Prosody Analysis)
-8. **`NODE-ENTERPRISE`**: Recruiter Talent Mesh & EEOC Auditor (Four-Fifths Compliance)
+### 5. Multi-Provider AI Routing & Offline Fallbacks
+Located under `sup-backend/config/aiProvider.js`:
+- **Multi-Provider Dispatcher**: Dispatches tasks to Google Gemini (1.5 Flash), Groq (Llama 3.3 70B / Llama 3.1 8B), OpenAI (GPT-4o-mini), or OpenRouter.
+- **API Key Pool Rotation**: Cycles through comma-separated API keys upon encountering rate limits (HTTP 429).
+- **Procedural Offline Fallbacks**: Automatically serves deterministic, rule-based fallback content when external AI providers are offline or unconfigured.
 
 ---
 
-## 📸 Desktop 4K Visual Showcase
+## Visual Showcase
 
 | Preview | View Name | Module Highlights |
 |---|---|---|
-| ![01 Portal Hero](screenshots/desktop/01_desktop_phoenix_career_portal_hero.png) | **Career Portal Hero** | Dynamic 6-step profile wizard, ATS resume calibrator, and destination world launcher. |
-| ![02 Topology Mesh](screenshots/desktop/02_desktop_arena_relational_topology_mesh.png) | **Arena Topology Mesh** | 5-KPI telemetry strip, 1-click Sever/Restore corridor controls, and real-time latency monitoring. |
-| ![03 Ingestion Studio](screenshots/desktop/03_desktop_enterprise_batch_ingestion_studio.png) | **Batch Ingestion Studio** | Dual-pane RFC 4180 CSV & strict JSON streaming engine, monospace audit log, and universal purge safety zone. |
-| ![04 Horizon World](screenshots/desktop/04_desktop_horizon_career_pathways_world.png) | **Horizon Career Pathways** | Regional entrance exams (KCET/DCET), scholarship predictors, and alumni mentorship connections. |
-| ![05 Placement Studio](screenshots/desktop/05_desktop_placement_mock_interview_studio.png) | **Placement Studio** | Company question archives, structured interview practice, and personalized skill gap remediation. |
-| ![06 Hackathon Command](screenshots/desktop/06_desktop_hackathon_command_center.png) | **Hackathon Command Center** | Real-time sprint telemetry, deadline urgency counters, winning idea generators, and judge defense simulator. |
+| ![01 Portal Hero](screenshots/desktop/01_desktop_hero_portal.png) | **Career Portal Hero** | 6-step profile calibrator wizard and destination vault selector. |
+| ![02 Horizon World](screenshots/desktop/02_desktop_horizon_world_dashboard.png) | **Horizon Career World** | Regional college cutoff explorer, scholarship matcher, and syllabus roadmaps. |
+| ![03 Placement Studio](screenshots/desktop/03_desktop_interview_roadmap_studio.png) | **Placement Studio** | Topic-tagged question archives, roadmap planner, and practice modules. |
+| ![04 System Design Canvas](screenshots/desktop/04_desktop_system_design_canvas.png) | **System Design Canvas** | Interactive distributed architecture graph evaluator with SPOF detection. |
+| ![05 Copilot Studio](screenshots/desktop/05_desktop_copilot_studio.png) | **Copilot Studio** | Automated code analysis, AST complexity profiling, and syntax inspection. |
+| ![06 Hackathon Command](screenshots/desktop/06_desktop_hackathon_command_center.png) | **Hackathon Command Center** | Sprint milestones, idea generation lab, and presentation packager. |
+| ![07 Judge Defense](screenshots/desktop/07_desktop_judge_defense_simulator.png) | **Judge Defense Simulator** | 4-round adversarial Q&A defense practice with persona-based judging. |
+| ![08 Winning Idea Generator](screenshots/desktop/08_desktop_winning_idea_generator.png) | **Idea Generator & RAG Archive** | Historical winning project retrieval and novel hackathon concept generator. |
+| ![09 Topology Mesh](screenshots/desktop/09_desktop_arena_topology_mesh.png) | **Domain Topology Dashboard** | 8-arena relational node status, route latency tracking, and corridor state controls. |
+| ![10 Governance & Ingestion](screenshots/desktop/10_desktop_enterprise_governance.png) | **Data Governance Studio** | RFC 4180 CSV / strict JSON batch ingestion and confirmation-gated purge. |
+| ![11 Recruiter Dashboard](screenshots/desktop/11_desktop_recruiter_dashboard.png) | **Recruiter Talent Directory** | Candidate profile search, skill breakdown, and benchmark evaluation. |
+| ![12 Skill Radar](screenshots/desktop/12_desktop_skill_tree_radar.png) | **Skill Radar & Matrix** | 6-axis competency radar and skill tree progress tracker. |
 
 ---
 
-## ⚡ Enterprise Governance Capabilities
+## Technology Stack
 
-- **Universal Cascading Deletion**: Dropping any arena node via `DELETE /api/v1/topology/nodes/:id` instantly detects, cascades, and eliminates all interconnected corridors to prevent orphaned routes.
-- **Enterprise Batch Ingestion Studio**: Ingests multiline quoted RFC 4180 CSV and strict JSON arrays with automatic property validation.
-- **Universal Fleet Cascade Purge**: High-security destructive zone requiring the exact confirmation phrase (`PURGE-ALL-PHOENIX-ENTITIES`) with 1-click factory restore.
-- **Sub-20ms Telemetry SLA**: Corridor health telemetry, retry circuits, and mTLS cryptographic verification.
+- **Backend**: Node.js, Express 5, MongoDB (Mongoose), Socket.io, Multer, Cheerio, Axios, JWT, bcryptjs
+- **Frontend**:
+  - `phoenix-ui`: Next.js 15, React 19, Tailwind CSS v4
+  - `sup-frontend`: HTML5, CSS3, Vanilla JavaScript (served directly by Express)
+- **AI Integrations**: Google Generative AI (Gemini 1.5 Flash), Groq SDK (Llama 3.3 70B & 8B), OpenAI, OpenRouter
+- **Testing**: Node.js built-in test runner (`node --test`), `mongodb-memory-server`
 
 ---
 
-## 🧪 Verification & Automated Testing
+## Verification & Automated Testing
+
+The project includes unit and integration tests covering the backend API, algorithms, data parsers, and topology service:
 
 ```bash
-# Run the complete test suite
+# Run the complete backend test suite (478 tests)
+npm test
+
+# Run the domain topology mesh test suite (13 tests)
 node --test tests/enterpriseMesh.test.js
 ```
 
-```text
-✔ Project Phoenix Enterprise Arena Topology & Governance Mesh (72.2ms)
-  ✔ 1. initializes with 8 standard governed arena nodes
-  ✔ 2. initializes with 6 high-throughput interoperability corridors
-  ✔ 3. computes accurate 5-KPI mesh telemetry
-  ✔ 4. successfully provisions a new interoperability corridor
-  ✔ 5. prevents duplicate corridor provisioning
-  ✔ 6. rejects corridor provisioning with non-existent arena node
-  ✔ 7. supports 1-click corridor sever and restore lifecycle
-  ✔ 8. drops an individual corridor cleanly
-  ✔ 9. executes Universal Cascading Deletion when dropping an arena node
-  ✔ 10. ingests RFC 4180 multiline quoted CSV payloads correctly
-  ✔ 11. ingests strict JSON batch payloads correctly
-  ✔ 12. requires strict safety phrase for Universal Fleet Cascade Purge
-  ✔ 13. restores factory default topology mesh after purge
+All 491 automated tests pass cleanly with zero failures.
 
-ℹ tests 13, suites 1, pass 13, fail 0
+---
+
+## Quickstart & Setup
+
+### Prerequisites
+- Node.js 18+ installed
+- npm installed
+- MongoDB instance (or rely on in-memory / offline mock modes)
+
+### Installation
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Shashankcodelover/Phoenix-Interview-Prep_and_Hackathon_Guide.git
+cd Phoenix-Interview-Prep_and_Hackathon_Guide
+
+# 2. Install root and backend dependencies
+npm install
+npm --prefix sup-backend install
+
+# 3. Build static frontend assets
+npm run build
+
+# 4. (Optional) Configure environment variables
+cp .env.example .env
+
+# 5. Start the backend application server
+npm start
+```
+
+Once started, access the application:
+- Main Portal: `http://localhost:5000/`
+- Domain Topology Dashboard: `http://localhost:5000/enterprise/mesh.html`
+- Technical Placement OS: `http://localhost:5000/interview-prep/roadmap.html`
+- Hackathon Command Center: `http://localhost:5000/hackathon-agent/command-center.html`
+- Horizon Career Pathways: `http://localhost:5000/horizon/world-dashboard.html`
+
+To run the Next.js React frontend:
+```bash
+npm run dev:frontend
+# Available at http://localhost:3000/
 ```
 
 ---
 
-## 🚀 Quickstart & Setup
-
-```bash
-# 1. Clone repository
-git clone https://github.com/Shashankcodelover/Phoenix-Interview-Prep_and_Hackathon_Guide.git
-cd Phoenix-Interview-Prep_and_Hackathon_Guide
-
-# 2. Install dependencies & build static dist
-npm install
-npm run build
-
-# 3. Launch application server
-npm start
-```
-
-Access the live portal at **`http://localhost:5000/`** and the Enterprise Topology Mesh at **`http://localhost:5000/enterprise/mesh.html`**.
-
-
 ## User Flow Verification
 
-![User Flow](docs/phoenix_chaos_failover_verified.png)
-![User Flow](docs/phoenix_home_verified.png)
-![User Flow](docs/phoenix_singularity_verified.png)
+Verified screenshots of key application workflows:
 
+![Chaos Failover Flow](docs/phoenix_chaos_failover_verified.png)
+![Home Flow](docs/phoenix_home_verified.png)
+![Singularity Flow](docs/phoenix_singularity_verified.png)
