@@ -22,7 +22,7 @@
       width: 120px;
       height: 120px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
       margin: 0 auto 15px auto;
       display: flex;
       align-items: center;
@@ -117,7 +117,7 @@
             </div>
             <div class="log-row">
               <span>XP Level:</span>
-              <strong id="hudLevel" style="color: var(--purple);">Level 1</strong>
+              <strong id="hudLevel" style="color: var(--blue);">Level 1</strong>
             </div>
           </div>
         </div>
@@ -381,7 +381,7 @@
                 <div style="margin-top:12px; border-top:1px solid var(--border-subtle); padding-top:8px;">
                   <span style="font-size:0.75rem; color:var(--text-muted); display:block;">Tech Stack:</span>
                   <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:4px;">
-                    ${p.techStack.map(t => `<span class="badge badge-purple" style="font-size:0.6rem; padding:1px 6px;">${t}</span>`).join('')}
+                    ${p.techStack.map(t => `<span class="badge badge-blue" style="font-size:0.6rem; padding:1px 6px;">${t}</span>`).join('')}
                   </div>
                   ${p.outcome ? `<span class="badge badge-orange" style="font-size:0.65rem; padding:2px 8px; margin-top:10px; display:inline-block;">🏆 ${p.outcome}</span>` : ''}
                 </div>

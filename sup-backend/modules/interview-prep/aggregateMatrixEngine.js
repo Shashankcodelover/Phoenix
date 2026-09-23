@@ -27,7 +27,7 @@ class AggregateMatrixEngine {
       { dimension: 'Data Structures & Algorithms', score: roundScores.dsaRound, status: 'EXCELLENT', color: 'emerald' },
       { dimension: 'Distributed System Design', score: roundScores.systemDesignRound, status: 'STRONG', color: 'sky' },
       { dimension: 'LLD Machine Coding & SOLID', score: roundScores.lldMachineCodingRound, status: 'STRONG', color: 'sky' },
-      { dimension: 'Bar-Raiser & Crisis Behavioral', score: roundScores.behavioralBarRaiserRound, status: 'GOOD', color: 'purple' }
+      { dimension: 'Bar-Raiser & Crisis Behavioral', score: roundScores.behavioralBarRaiserRound, status: 'GOOD', color: 'blue' }
     ];
 
     const recommendation = parseFloat(averageScore) >= 88.0

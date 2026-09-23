@@ -16,7 +16,7 @@
       --accent-emerald: #10b981;
       --accent-rose: #f43f5e;
       --accent-amber: #f59e0b;
-      --accent-purple: #c084fc;
+      --accent-blue: #60a5fa;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
@@ -58,7 +58,7 @@
     .nav-badge {
       background: rgba(168, 85, 247, 0.15);
       border: 1px solid rgba(168, 85, 247, 0.35);
-      color: var(--accent-purple);
+      color: var(--accent-blue);
       font-size: 0.75rem;
       padding: 0.25rem 0.6rem;
       border-radius: 9999px;
@@ -91,7 +91,7 @@
     .header-hero h1 {
       font-size: 2.5rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #c084fc 100%);
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #60a5fa 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 0.5rem;
@@ -125,12 +125,12 @@
       transition: all 0.2s;
     }
     .tab-btn:hover {
-      border-color: var(--accent-purple);
+      border-color: var(--accent-blue);
       color: #fff;
     }
     .tab-btn.active {
       background: linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(192, 132, 252, 0.15) 100%);
-      border-color: var(--accent-purple);
+      border-color: var(--accent-blue);
       color: #fff;
       box-shadow: 0 0 15px rgba(168, 85, 247, 0.25);
     }
@@ -205,7 +205,7 @@
       transition: border-color 0.2s;
     }
     .form-select:focus, .form-input:focus, .form-textarea:focus {
-      border-color: var(--accent-purple);
+      border-color: var(--accent-blue);
       box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
     }
     .form-textarea {
@@ -216,7 +216,7 @@
 
     /* Buttons */
     .btn-action {
-      background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
       color: #fff;
       border: none;
       padding: 0.65rem 1.4rem;
@@ -231,7 +231,7 @@
       transition: all 0.2s;
     }
     .btn-action:hover {
-      background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       transform: translateY(-1px);
       box-shadow: 0 8px 20px -4px rgba(168, 85, 247, 0.4);
     }
@@ -265,7 +265,7 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 2rem;
       font-weight: 800;
-      color: var(--accent-purple);
+      color: var(--accent-blue);
     }
 
     /* Compliance Badges */
@@ -352,7 +352,7 @@
       transition: all 0.2s;
     }
     .story-card:hover {
-      border-color: var(--accent-purple);
+      border-color: var(--accent-blue);
       transform: translateY(-2px);
     }
     .story-head {
@@ -497,7 +497,7 @@
           <div class="panel-title">
             <span>🎯</span> Executive Delivery Scorecard
           </div>
-          <div style="font-size: 0.8rem; color: var(--accent-purple); font-weight: 700;" id="rating-badge">
+          <div style="font-size: 0.8rem; color: var(--accent-blue); font-weight: 700;" id="rating-badge">
             Awaiting Evaluation
           </div>
         </div>
@@ -709,7 +709,7 @@
       body.innerHTML = `
         <p style="margin-bottom: 0.5rem;"><strong style="color: var(--accent-cyan);">[Situation]:</strong> ${escapeHtml(s.situation)}</p>
         <p style="margin-bottom: 0.5rem;"><strong style="color: var(--accent-amber);">[Task]:</strong> ${escapeHtml(s.task)}</p>
-        <p style="margin-bottom: 0.5rem;"><strong style="color: var(--accent-purple);">[Action]:</strong> ${escapeHtml(s.action)}</p>
+        <p style="margin-bottom: 0.5rem;"><strong style="color: var(--accent-blue);">[Action]:</strong> ${escapeHtml(s.action)}</p>
         <p style="margin-bottom: 0.75rem;"><strong style="color: #34d399;">[Result]:</strong> ${escapeHtml(s.result)}</p>
         <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.5rem;">
           <strong style="font-size: 0.8rem; color: #f59e0b;">Injected Power Metrics:</strong>
@@ -744,7 +744,7 @@
             <div class="story-head">
               <div>
                 <div class="story-title">${escapeHtml(story.title)}</div>
-                <div style="font-size: 0.82rem; color: var(--accent-purple); font-weight: 600; margin-top: 0.2rem;">
+                <div style="font-size: 0.82rem; color: var(--accent-blue); font-weight: 600; margin-top: 0.2rem;">
                   🏆 ${escapeHtml(story.principle)}
                 </div>
               </div>
@@ -753,7 +753,7 @@
 
             <div class="story-section"><strong style="color: var(--accent-cyan);">Situation:</strong> ${escapeHtml(story.situation)}</div>
             <div class="story-section"><strong style="color: var(--accent-amber);">Task:</strong> ${escapeHtml(story.task)}</div>
-            <div class="story-section"><strong style="color: var(--accent-purple);">Action:</strong> ${escapeHtml(story.action)}</div>
+            <div class="story-section"><strong style="color: var(--accent-blue);">Action:</strong> ${escapeHtml(story.action)}</div>
             <div class="story-section"><strong style="color: #34d399;">Result:</strong> ${escapeHtml(story.result)}</div>
 
             <div style="margin-top: 0.75rem;">

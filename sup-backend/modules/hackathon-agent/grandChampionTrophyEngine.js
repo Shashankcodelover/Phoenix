@@ -141,7 +141,7 @@ class GrandChampionTrophyEngine {
   <div style="margin-top:12px;display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;font-size:0.85rem;">
     <span>Trophies: <strong style="color:#fbbf24;">${profile.stats.trophiesWon}</strong></span>
     <span>Prizes: <strong style="color:#10b981;">$${profile.stats.cumulativePrizesUsd.toLocaleString('en-US')}</strong></span>
-    <span>Rank: <strong style="color:#c084fc;">${profile.stats.winRate} Win</strong></span>
+    <span>Rank: <strong style="color:#60a5fa;">${profile.stats.winRate} Win</strong></span>
   </div>
 </div>`;
 

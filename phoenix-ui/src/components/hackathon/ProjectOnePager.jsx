@@ -289,7 +289,7 @@ export default function ProjectOnePager({ room }) {
             num="4"
             title="Execution Strategy"
             icon="🏗️"
-            color="purple"
+            color="blue"
             expanded={expandedSections.execution}
             onToggle={() => toggleSection('execution')}
           >
@@ -299,7 +299,7 @@ export default function ProjectOnePager({ room }) {
                   key={idx}
                   className={`p-3.5 rounded-xl border ${
                     step.isAgentTask
-                      ? 'bg-purple-50 dark:bg-purple-950/30 border-purple-500/30'
+                      ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-500/30'
                       : 'bg-slate-50 dark:bg-slate-900/50 border-theme-glass'
                   }`}
                 >
@@ -308,7 +308,7 @@ export default function ProjectOnePager({ room }) {
                       STEP {step.stepNumber}
                     </span>
                     {step.isAgentTask && (
-                      <span className="px-2 py-0.5 rounded-lg bg-purple-500/20 text-purple-600 dark:text-purple-300 text-[10px] font-mono font-bold border border-purple-500/30">
+                      <span className="px-2 py-0.5 rounded-lg bg-blue-500/20 text-blue-600 dark:text-blue-300 text-[10px] font-mono font-bold border border-blue-500/30">
                         🤖 AI AGENT TASK
                       </span>
                     )}
@@ -316,8 +316,8 @@ export default function ProjectOnePager({ room }) {
                   </div>
                   <p className="text-xs text-theme-muted leading-relaxed">{step.description}</p>
                   {step.isAgentTask && step.agentPrompt && (
-                    <div className="mt-2 p-2.5 rounded-lg bg-slate-100 dark:bg-slate-950 border border-purple-500/20 font-mono text-[11px] text-purple-700 dark:text-purple-300 leading-relaxed">
-                      <span className="font-bold text-purple-500">PROMPT →</span> &quot;{step.agentPrompt}&quot;
+                    <div className="mt-2 p-2.5 rounded-lg bg-slate-100 dark:bg-slate-950 border border-blue-500/20 font-mono text-[11px] text-blue-700 dark:text-blue-300 leading-relaxed">
+                      <span className="font-bold text-blue-500">PROMPT →</span> &quot;{step.agentPrompt}&quot;
                     </div>
                   )}
                 </div>
@@ -434,14 +434,14 @@ function OnePagerSection({ num, title, icon, color, expanded, onToggle, children
     rose: 'border-rose-500/30 bg-rose-500/5',
     emerald: 'border-emerald-500/30 bg-emerald-500/5',
     sky: 'border-sky-500/30 bg-sky-500/5',
-    purple: 'border-purple-500/30 bg-purple-500/5',
+    blue: 'border-blue-500/30 bg-blue-500/5',
     amber: 'border-amber-500/30 bg-amber-500/5'
   };
   const headerColorMap = {
     rose: 'text-rose-600 dark:text-rose-400',
     emerald: 'text-emerald-600 dark:text-emerald-400',
     sky: 'text-sky-600 dark:text-sky-400',
-    purple: 'text-purple-600 dark:text-purple-400',
+    blue: 'text-blue-600 dark:text-blue-400',
     amber: 'text-amber-600 dark:text-amber-400'
   };
 

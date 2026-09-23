@@ -130,7 +130,7 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-950 border border-white/10 space-y-2 font-mono">
-                <div className="text-[11px] font-bold text-purple-400 uppercase">
+                <div className="text-[11px] font-bold text-blue-400 uppercase">
                   🎯 Target Personas &amp; Stakeholders
                 </div>
                 <p className="text-slate-300 text-xs leading-relaxed font-sans">
@@ -200,9 +200,9 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
                   <div className="text-2xl font-bold text-sky-400 mt-1">25 / 25</div>
                   <div className="text-[10px] text-slate-500 mt-0.5">Sub-35ms Wasm</div>
                 </div>
-                <div className="p-4 rounded-2xl bg-slate-950 border border-purple-500/30">
+                <div className="p-4 rounded-2xl bg-slate-950 border border-blue-500/30">
                   <div className="text-[10px] text-slate-400 uppercase">Social Impact</div>
-                  <div className="text-2xl font-bold text-purple-400 mt-1">24 / 25</div>
+                  <div className="text-2xl font-bold text-blue-400 mt-1">24 / 25</div>
                   <div className="text-[10px] text-slate-500 mt-0.5">Quantified Friction</div>
                 </div>
                 <div className="p-4 rounded-2xl bg-slate-950 border border-amber-500/30">

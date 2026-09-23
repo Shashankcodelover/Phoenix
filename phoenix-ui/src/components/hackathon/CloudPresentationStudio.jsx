@@ -103,10 +103,10 @@ export default function CloudPresentationStudio({ room }) {
       bullet: 'text-slate-300'
     },
     'dark-neon': {
-      bg: 'bg-purple-950/90',
-      card: 'bg-purple-900/60 border-fuchsia-500/40 text-white',
+      bg: 'bg-blue-950/90',
+      card: 'bg-blue-900/60 border-fuchsia-500/40 text-white',
       title: 'text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-cyan-400',
-      bullet: 'text-purple-200'
+      bullet: 'text-blue-200'
     },
     'emerald-matrix': {
       bg: 'bg-black',

@@ -14,7 +14,7 @@ describe('V24 Quality Focus: Feature 44 — Karnataka Campus Hostel & Commute In
     assert.ok(report.collegeName.includes('R.V. College'));
     assert.strictEqual(report.livingEconomics.campusHostelAnnualFee, '₹1,25,000');
     assert.strictEqual(report.livingEconomics.annualSavingsChoosingHostel, '₹50,000/year');
-    assert.ok(report.nammaMetroTransit.nearestStation.includes('Purple Line'));
+    assert.ok(report.nammaMetroTransit.nearestStation.includes('blue Line'));
     assert.ok(report.campusRulesAndHygiene.curfewInTime.includes('9:30 PM'));
   });
 });

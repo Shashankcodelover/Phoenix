@@ -26,7 +26,7 @@ const JUDGE_PERSONAS = {
     id: 'judge_design',
     name: 'Aurelia Vance (Principal Product Designer)',
     role: 'Spatial UI/UX & Delight Critic',
-    avatarColor: '#a855f7',
+    avatarColor: '#3b82f6',
     weight: 0.20,
     evaluationFocus: 'Micro-interactions, 3D Spatial Holographic Cohesion, Visual Hierarchy, Tactile Feedback'
   },

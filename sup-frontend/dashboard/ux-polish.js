@@ -208,7 +208,7 @@ function skipTour() {
 // --- 3. THEME ACCENT SWITCHER ---
 function toggleThemeAccent(color) {
   const root = document.documentElement;
-  if (color === 'purple') {
+  if (color === 'blue') {
     root.style.setProperty('--cyan', '#9b59b6');
     root.style.setProperty('--gradient-brand', 'linear-gradient(135deg, #9b59b6, #7b2ff7)');
   } else if (color === 'emerald') {

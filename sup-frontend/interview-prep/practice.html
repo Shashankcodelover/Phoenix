@@ -13,8 +13,8 @@
       --bg-card-hover: rgba(30, 41, 59, 0.95);
       --border-glass: rgba(255, 255, 255, 0.08);
 
-      --purple-primary: #8b5cf6;
-      --purple-light: #a78bfa;
+      --blue-primary: #3b82f6;
+      --blue-light: #a78bfa;
       --cyan-primary: #06b6d4;
       --cyan-light: #22d3ee;
       --emerald-primary: #10b981;
@@ -83,7 +83,7 @@
     .brand-logo {
       width: 40px; height: 40px;
       border-radius: 10px;
-      background: linear-gradient(135deg, var(--purple-primary), var(--cyan-primary));
+      background: linear-gradient(135deg, var(--blue-primary), var(--cyan-primary));
       display: flex; align-items: center; justify-content: center;
       font-size: 20px;
       box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
@@ -93,7 +93,7 @@
       font-size: 18px;
       font-weight: 800;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #fff, var(--purple-light));
+      background: linear-gradient(135deg, #fff, var(--blue-light));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -158,16 +158,16 @@
       gap: 8px;
       padding: 8px 16px;
       background: rgba(139, 92, 246, 0.15);
-      border: 1px solid var(--purple-primary);
+      border: 1px solid var(--blue-primary);
       border-radius: var(--radius-sm);
-      color: var(--purple-light);
+      color: var(--blue-light);
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
     }
     .toggle-voice-btn.active {
-      background: var(--purple-primary);
+      background: var(--blue-primary);
       color: #fff;
       box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
     }
@@ -206,7 +206,7 @@
     .avatar-icon {
       width: 48px; height: 48px;
       border-radius: 14px;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      background: linear-gradient(135deg, #3b82f6, #3b82f6);
       display: flex; align-items: center; justify-content: center;
       font-size: 24px;
       box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
@@ -302,7 +302,7 @@
       margin-bottom: 4px;
       color: var(--text-dim);
     }
-    .msg-candidate .msg-sender-tag { text-align: right; color: var(--purple-light); }
+    .msg-candidate .msg-sender-tag { text-align: right; color: var(--blue-light); }
 
     /* Input & Action Panel */
     .response-input-area {
@@ -355,7 +355,7 @@
       align-items: center;
       gap: 8px;
       padding: 8px 20px;
-      background: linear-gradient(135deg, var(--purple-primary), var(--cyan-primary));
+      background: linear-gradient(135deg, var(--blue-primary), var(--cyan-primary));
       border: none;
       border-radius: var(--radius-sm);
       color: #fff;
@@ -715,7 +715,7 @@
               <span id="starScoreText">18 / 25</span>
             </div>
             <div class="meter-track">
-              <div class="meter-fill" id="starMeter" style="width: 72%; background: var(--purple-light);"></div>
+              <div class="meter-fill" id="starMeter" style="width: 72%; background: var(--blue-light);"></div>
             </div>
           </div>
 

@@ -15,7 +15,7 @@
       --accent-emerald: #10b981;
       --accent-rose: #f43f5e;
       --accent-amber: #f59e0b;
-      --accent-purple: #c084fc;
+      --accent-blue: #60a5fa;
       --accent-coral: #fb7185;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
@@ -57,7 +57,7 @@
     .nav-badge {
       background: rgba(192, 132, 252, 0.15);
       border: 1px solid rgba(192, 132, 252, 0.35);
-      color: var(--accent-purple);
+      color: var(--accent-blue);
       font-size: 0.75rem;
       padding: 0.25rem 0.6rem;
       border-radius: 9999px;
@@ -95,7 +95,7 @@
       font-weight: 800;
       letter-spacing: -0.03em;
       margin-bottom: 0.5rem;
-      background: linear-gradient(to right, #f8fafc, var(--accent-purple), var(--accent-cyan));
+      background: linear-gradient(to right, #f8fafc, var(--accent-blue), var(--accent-cyan));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -127,9 +127,9 @@
       transition: all 0.2s;
     }
     .preset-btn:hover, .preset-btn.active {
-      background: var(--accent-purple);
+      background: var(--accent-blue);
       color: #070d18;
-      border-color: var(--accent-purple);
+      border-color: var(--accent-blue);
       font-weight: 700;
       box-shadow: 0 0 15px rgba(192, 132, 252, 0.4);
     }
@@ -263,7 +263,7 @@
       height: 80px;
       border-radius: 50%;
       background: radial-gradient(circle, #1e1b4b 40%, #4c1d95);
-      border: 3px solid var(--accent-purple);
+      border: 3px solid var(--accent-blue);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -507,7 +507,7 @@
           <input type="range" id="slider-pitch" class="range-input" min="0" max="15" value="14" oninput="updateSliderValues()">
         </div>
 
-        <button id="btn-recalc" class="btn-primary" style="width:100%; margin-top:0.5rem; background:linear-gradient(135deg, var(--accent-purple), #7c3aed); color:#fff; border:none; padding:0.75rem; border-radius:8px; font-weight:800; cursor:pointer;" onclick="runEvaluation()">
+        <button id="btn-recalc" class="btn-primary" style="width:100%; margin-top:0.5rem; background:linear-gradient(135deg, var(--accent-blue), #7c3aed); color:#fff; border:none; padding:0.75rem; border-radius:8px; font-weight:800; cursor:pointer;" onclick="runEvaluation()">
           <span>⚡ Recalculate Podium Projections</span>
         </button>
       </div>

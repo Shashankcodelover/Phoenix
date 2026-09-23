@@ -481,7 +481,7 @@
                 <p style="margin-top: 10px; font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">${e.description}</p>
                 <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 0.85rem; font-weight: 600;">
                     <span style="color: var(--orange);">🏆 Prize Pool: ${e.prize}</span>
-                    <a href="${e.hostingLink}" target="_blank" style="color: var(--purple);">🔗 Details Link</a>
+                    <a href="${e.hostingLink}" target="_blank" style="color: var(--blue);">🔗 Details Link</a>
                 </div>
             `;
             container.appendChild(div);
@@ -580,7 +580,7 @@
                   <div style="margin-top:12px; border-top: 1px solid var(--border-subtle); padding-top:10px;">
                     <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">Recommended Peers on Platform:</span>
                     <div style="display:flex; gap: 8px;">
-                      ${data.recommendedUsers.map(u => `<span class="badge badge-purple">${u}</span>`).join('') || '<span style="font-size:0.75rem; color:var(--text-muted);">No matching online peers.</span>'}
+                      ${data.recommendedUsers.map(u => `<span class="badge badge-blue">${u}</span>`).join('') || '<span style="font-size:0.75rem; color:var(--text-muted);">No matching online peers.</span>'}
                     </div>
                   </div>
                 `;
@@ -594,8 +594,8 @@
               <div style="margin-top:12px; border-top: 1px solid var(--border-subtle); padding-top:10px;">
                 <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">Recommended Peers on Platform:</span>
                 <div style="display:flex; gap: 8px;">
-                  <span class="badge badge-purple">Alice Johnson (UI/UX)</span>
-                  <span class="badge badge-purple">Bob Smith (AI/ML)</span>
+                  <span class="badge badge-blue">Alice Johnson (UI/UX)</span>
+                  <span class="badge badge-blue">Bob Smith (AI/ML)</span>
                 </div>
               </div>
             `;

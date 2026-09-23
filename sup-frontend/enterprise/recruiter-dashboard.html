@@ -22,8 +22,8 @@
     }
     .candidate-card:hover {
       transform: translateY(-4px);
-      border-color: var(--purple);
-      box-shadow: var(--shadow-glow-purple);
+      border-color: var(--blue);
+      box-shadow: var(--shadow-glow-blue);
     }
     .candidate-id {
       font-family: 'JetBrains Mono', monospace;
@@ -203,7 +203,7 @@
             <div class="stat-row"><span style="color:var(--text-secondary);">Projects</span><strong>${c.projectCount || 0}</strong></div>
             <div class="stat-row"><span style="color:var(--text-secondary);">Trophies</span><strong>🏆 ${c.trophyCount || 0}</strong></div>
             <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px;">
-              ${(c.skills || []).slice(0, 5).map(s => `<span class="badge badge-purple" style="font-size:0.65rem; padding: 2px 8px;">${s}</span>`).join('')}
+              ${(c.skills || []).slice(0, 5).map(s => `<span class="badge badge-blue" style="font-size:0.65rem; padding: 2px 8px;">${s}</span>`).join('')}
             </div>
             <button class="btn btn-secondary" style="width:100%; margin-top:14px; font-size:0.8rem;" onclick="requestAccess('${c.candidateId}')">📩 Request Full Profile</button>
           </div>
@@ -214,7 +214,7 @@
     function getBadgeClass(rank) {
       const r = (rank || '').toLowerCase();
       if (r === 'phoenix') return 'coral';
-      if (r === 'platinum') return 'purple';
+      if (r === 'platinum') return 'blue';
       if (r === 'gold') return 'orange';
       if (r === 'silver') return 'cyan';
       if (r === 'bronze') return 'green';

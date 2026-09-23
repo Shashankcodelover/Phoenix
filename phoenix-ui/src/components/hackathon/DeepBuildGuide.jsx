@@ -365,12 +365,12 @@ export default function DeepBuildGuide({ room }) {
               {(buildGuide.dataSchema?.models || []).map((model, idx) => (
                 <div key={idx} className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-theme-glass space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-bold text-purple-600 dark:text-purple-400">💾 {model.name}</span>
+                    <span className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400">💾 {model.name}</span>
                     <span className="text-[10px] text-theme-muted font-mono">({model.storage})</span>
                   </div>
                   <div className="space-y-1 font-mono text-[11px]">
                     {(model.fields || []).map((field, fidx) => (
-                      <div key={fidx} className="text-theme-main pl-3 border-l-2 border-purple-500/30">
+                      <div key={fidx} className="text-theme-main pl-3 border-l-2 border-blue-500/30">
                         {field}
                       </div>
                     ))}

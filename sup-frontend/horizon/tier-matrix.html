@@ -15,7 +15,7 @@
       --accent-emerald: #10b981;
       --accent-rose: #f43f5e;
       --accent-amber: #f59e0b;
-      --accent-purple: #c084fc;
+      --accent-blue: #60a5fa;
       --accent-blue: #3b82f6;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
@@ -106,7 +106,7 @@
       font-weight: 800;
       letter-spacing: -0.02em;
       margin-bottom: 0.5rem;
-      background: linear-gradient(to right, #f8fafc, #38bdf8, #c084fc);
+      background: linear-gradient(to right, #f8fafc, #38bdf8, #60a5fa);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -152,7 +152,7 @@
       color: #fff;
     }
     .btn-compare-action {
-      background: linear-gradient(135deg, #0284c7, #9333ea);
+      background: linear-gradient(135deg, #0284c7, #2563eb);
       color: #fff;
       border: none;
       padding: 0.5rem 1.25rem;
@@ -438,7 +438,7 @@
             <div class="inst-tier">${inst.tierCategory}</div>
             
             <div class="accred-row">
-              <span class="accred-tag" style="border-color: var(--accent-purple); color: var(--accent-purple);">NAAC ${inst.naac.split(' ')[0]}</span>
+              <span class="accred-tag" style="border-color: var(--accent-blue); color: var(--accent-blue);">NAAC ${inst.naac.split(' ')[0]}</span>
               <span class="accred-tag" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">${inst.nba.split(' ')[0]} Accredited</span>
             </div>
 
@@ -493,7 +493,7 @@
                 <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">TLR (Teaching)</div>
               </div>
               <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 8px; text-align: center;">
-                <div style="font-family: 'JetBrains Mono'; font-weight: 800; color: var(--accent-purple);">${inst.nirfBreakdown.rpc}</div>
+                <div style="font-family: 'JetBrains Mono'; font-weight: 800; color: var(--accent-blue);">${inst.nirfBreakdown.rpc}</div>
                 <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">RPC (Research)</div>
               </div>
               <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 8px; text-align: center;">

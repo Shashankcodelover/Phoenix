@@ -13,8 +13,8 @@
       --bg-card-hover: rgba(30, 41, 59, 0.95);
       --border-glass: rgba(255, 255, 255, 0.08);
       
-      --purple-primary: #8b5cf6;
-      --purple-light: #a78bfa;
+      --blue-primary: #3b82f6;
+      --blue-light: #a78bfa;
       --cyan-primary: #06b6d4;
       --cyan-light: #22d3ee;
       --emerald-primary: #10b981;
@@ -82,7 +82,7 @@
     .brand-logo {
       width: 38px; height: 38px;
       border-radius: 10px;
-      background: linear-gradient(135deg, var(--cyan-primary), var(--purple-primary));
+      background: linear-gradient(135deg, var(--cyan-primary), var(--blue-primary));
       display: flex; align-items: center; justify-content: center;
       font-size: 18px;
       box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
@@ -352,7 +352,7 @@
 
     .cap-box {
       background: rgba(139, 92, 246, 0.08);
-      border-left: 3px solid var(--purple-primary);
+      border-left: 3px solid var(--blue-primary);
       padding: 12px;
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
       font-size: 12px;
@@ -520,7 +520,7 @@
               <div class="metric-label">Processed RPS</div>
             </div>
             <div class="metric-box">
-              <div class="metric-val" id="valDbLoad" style="color: var(--purple-light);">12%</div>
+              <div class="metric-val" id="valDbLoad" style="color: var(--blue-light);">12%</div>
               <div class="metric-label">Database IOPS</div>
             </div>
           </div>
@@ -622,7 +622,7 @@
 
       p50El.style.color = p50 > 20 ? 'var(--coral-primary)' : 'var(--emerald-light)';
       p99El.style.color = p99 > 50 ? 'var(--coral-primary)' : 'var(--emerald-light)';
-      dbEl.style.color = dbLoad > 75 ? 'var(--coral-primary)' : 'var(--purple-light)';
+      dbEl.style.color = dbLoad > 75 ? 'var(--coral-primary)' : 'var(--blue-light)';
 
       const badge = document.getElementById('systemHealthBadge');
       if (healthStatus === 'optimal') {

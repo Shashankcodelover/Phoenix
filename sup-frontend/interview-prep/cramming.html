@@ -13,8 +13,8 @@
       --bg-card-hover: rgba(30, 41, 59, 0.95);
       --border-glass: rgba(255, 255, 255, 0.08);
 
-      --purple-primary: #8b5cf6;
-      --purple-light: #a78bfa;
+      --blue-primary: #3b82f6;
+      --blue-light: #a78bfa;
       --cyan-primary: #06b6d4;
       --cyan-light: #22d3ee;
       --emerald-primary: #10b981;
@@ -83,7 +83,7 @@
     .brand-logo {
       width: 40px; height: 40px;
       border-radius: 10px;
-      background: linear-gradient(135deg, var(--purple-primary), var(--cyan-primary));
+      background: linear-gradient(135deg, var(--blue-primary), var(--cyan-primary));
       display: flex; align-items: center; justify-content: center;
       font-size: 20px;
       box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
@@ -93,7 +93,7 @@
       font-size: 18px;
       font-weight: 800;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #fff, var(--purple-light));
+      background: linear-gradient(135deg, #fff, var(--blue-light));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -194,7 +194,7 @@
     .section-tab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
     .section-tab-btn.active {
       background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(6, 182, 212, 0.25));
-      border-color: var(--purple-primary);
+      border-color: var(--blue-primary);
       color: #fff;
       box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
     }
@@ -336,7 +336,7 @@
     }
     .mono-cell {
       font-family: 'JetBrains Mono', monospace;
-      color: var(--purple-light);
+      color: var(--blue-light);
       font-weight: 600;
     }
 
@@ -636,7 +636,7 @@
               </div>
             </div>
             <div class="card-face card-back">
-              <span style="font-size: 11px; font-weight: 700; color: var(--purple-light); text-transform: uppercase;">Mathematical Invariant:</span>
+              <span style="font-size: 11px; font-weight: 700; color: var(--blue-light); text-transform: uppercase;">Mathematical Invariant:</span>
               <p style="font-size: 13.5px; color: #f1f5f9; line-height: 1.6; margin-top: 6px;" id="drillAnswer">
                 Bilateral Monotonicity: The array must be monotonic (sorted or strictly non-decreasing). When moving pointer L to the right strictly increases sum, and moving pointer R to the left strictly decreases sum, candidate pairs outside the bounding window can be pruned in O(1) without evaluation.
               </p>

@@ -17,7 +17,7 @@
       --accent-emerald: #10b981;
       --accent-rose: #f43f5e;
       --accent-amber: #f59e0b;
-      --accent-purple: #a855f7;
+      --accent-blue: #3b82f6;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
@@ -69,7 +69,7 @@
 
     .brand-icon {
       font-size: 1.75rem;
-      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -83,7 +83,7 @@
     .brand-subtitle {
       font-size: 0.75rem;
       font-family: 'JetBrains Mono', monospace;
-      color: var(--accent-purple);
+      color: var(--accent-blue);
       text-transform: uppercase;
       letter-spacing: 0.08em;
     }
@@ -149,7 +149,7 @@
       left: 0;
       right: 0;
       height: 3px;
-      background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
     }
 
     .stat-label {
@@ -221,7 +221,7 @@
       padding: 0.2rem 0.5rem;
       border-radius: 4px;
       background: rgba(168, 85, 247, 0.15);
-      color: var(--accent-purple);
+      color: var(--accent-blue);
       border: 1px solid rgba(168, 85, 247, 0.3);
     }
 
@@ -250,7 +250,7 @@
 
     .problem-tab-btn.active {
       background: rgba(168, 85, 247, 0.2);
-      border-color: var(--accent-purple);
+      border-color: var(--accent-blue);
       color: var(--text-main);
       font-weight: 700;
       box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
@@ -300,7 +300,7 @@
     }
 
     .btn-action {
-      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
       color: #ffffff;
       font-weight: 700;
       border: none;
@@ -400,7 +400,7 @@
     .interruption-tier {
       font-size: 0.72rem;
       font-family: 'JetBrains Mono', monospace;
-      color: var(--accent-purple);
+      color: var(--accent-blue);
       font-weight: 700;
       text-transform: uppercase;
       display: flex;
@@ -434,7 +434,7 @@
     .slider {
       flex: 1;
       max-width: 180px;
-      accent-color: var(--accent-purple);
+      accent-color: var(--accent-blue);
     }
   </style>
 </head>
@@ -459,7 +459,7 @@
         <a href="astra-vision-proctor.html">Vision Proctor</a>
         <a href="distributed-chaos-solver.html">Distributed Chaos</a>
         <a href="system-design-sizer.html">Architecture Sizer</a>
-        <a href="coding-pair-sidecar.html" class="active" style="background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(56,189,248,0.2)); color: #c084fc; font-weight: 700;">🎙️ Coding Pair</a>
+        <a href="coding-pair-sidecar.html" class="active" style="background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(56,189,248,0.2)); color: #60a5fa; font-weight: 700;">🎙️ Coding Pair</a>
       </nav>
     </div>
   </header>
@@ -485,7 +485,7 @@
       </div>
       <div class="stat-card">
         <span class="stat-label">Staff Hiring Recommendation</span>
-        <div class="stat-val" id="hudHiringVerdict" style="font-size: 1.15rem; color: var(--accent-purple);">STRONG HIRE</div>
+        <div class="stat-val" id="hudHiringVerdict" style="font-size: 1.15rem; color: var(--accent-blue);">STRONG HIRE</div>
         <span class="stat-sub" id="hudCompositeScore">Composite Score: 78 / 100</span>
       </div>
     </section>
@@ -583,7 +583,7 @@
           <div class="slider-row">
             <div style="color: var(--text-muted);">
               <strong>Speech Cadence (WPM)</strong>
-              <div style="font-size: 0.7rem; font-family: 'JetBrains Mono'; color: var(--accent-purple);" id="cadenceDisplay">135 WPM</div>
+              <div style="font-size: 0.7rem; font-family: 'JetBrains Mono'; color: var(--accent-blue);" id="cadenceDisplay">135 WPM</div>
             </div>
             <input type="range" id="cadenceSlider" min="80" max="220" value="135" class="slider" oninput="updateAcousticSliders()">
           </div>

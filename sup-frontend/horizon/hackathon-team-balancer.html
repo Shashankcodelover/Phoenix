@@ -101,7 +101,7 @@
 
       <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Cognitive Diversity</div>
-        <div class="text-xl font-bold text-purple-300 font-mono-code mt-0.5" id="metricDiversity">0.97 Index</div>
+        <div class="text-xl font-bold text-blue-300 font-mono-code mt-0.5" id="metricDiversity">0.97 Index</div>
         <div class="text-[10px] text-slate-400 font-mono-code mt-1">Zero Skill Redundancy</div>
       </div>
 
@@ -131,7 +131,7 @@
             </div>
             <div class="flex items-center gap-3 text-xs font-mono-code">
               <span class="flex items-center gap-1 text-cyan-400"><span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> Peak</span>
-              <span class="flex items-center gap-1 text-purple-400"><span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Avg</span>
+              <span class="flex items-center gap-1 text-blue-400"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Avg</span>
             </div>
           </div>
 
@@ -152,7 +152,7 @@
             </div>
             <div class="p-2 rounded bg-slate-950 border border-slate-800">
               <div class="text-slate-500 text-[10px]">AI/ML</div>
-              <div class="font-bold text-purple-400 mt-0.5" id="vAi">96</div>
+              <div class="font-bold text-blue-400 mt-0.5" id="vAi">96</div>
             </div>
             <div class="p-2 rounded bg-slate-950 border border-slate-800">
               <div class="text-slate-500 text-[10px]">Web3</div>
@@ -353,7 +353,7 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Draw Average Polygon (Purple)
+      // Draw Average Polygon (blue)
       ctx.beginPath();
       keys.forEach((k, i) => {
         const val = (coverage.average[k] || 30) / 100;
@@ -367,7 +367,7 @@
       ctx.closePath();
       ctx.fillStyle = 'rgba(168, 85, 247, 0.20)';
       ctx.fill();
-      ctx.strokeStyle = '#a855f7';
+      ctx.strokeStyle = '#3b82f6';
       ctx.lineWidth = 1.5;
       ctx.stroke();
     }

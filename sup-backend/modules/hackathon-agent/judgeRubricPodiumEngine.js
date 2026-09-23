@@ -211,7 +211,7 @@ class JudgeRubricPodiumEngine {
       {
         judge: 'Elena Rostova',
         role: 'Managing Partner, Frontier Ventures (Tier-1 Seed VC)',
-        avatarColor: '#c084fc',
+        avatarColor: '#60a5fa',
         verdict: totalScore >= 88 ? 'Term Sheet Candidate' : 'High Product Potential',
         comment: totalScore >= 88
           ? `Their TAM positioning is razor-sharp. Instead of a generic hackathon widget, they engineered a defensible data moat with real institutional switching costs.`

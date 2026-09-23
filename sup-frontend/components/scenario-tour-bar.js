@@ -137,7 +137,7 @@
       emoji: '🌐',
       name: 'Enterprise Topology Mesh',
       badge: 'Governance',
-      badgeClass: 'badge-purple',
+      badgeClass: 'badge-blue',
       description: '8 Engineering Arenas, 6 PQC Interop Corridors, 1-Click Sever/Restore & Sub-20ms SLA Telemetry',
       targetPath: 'enterprise/mesh.html',
       profile: null
@@ -311,7 +311,7 @@
       .badge-cyan { background: rgba(0, 217, 255, 0.2); color: #38bdf8; border: 1px solid rgba(0, 217, 255, 0.4); }
       .badge-indigo { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
       .badge-coral { background: rgba(244, 63, 94, 0.2); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.4); }
-      .badge-purple { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.4); }
+      .badge-blue { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.4); }
       .ptb-actions {
         display: flex;
         align-items: center;

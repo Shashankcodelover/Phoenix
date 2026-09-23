@@ -209,7 +209,7 @@
         <div class="slide-card">
           <span class="slide-num">${i + 1}</span>
           <h3 class="font-space" style="color: var(--cyan); font-size: 1.1rem; margin-bottom: 6px;">${s.title}</h3>
-          <span class="badge badge-purple" style="font-size: 0.7rem; margin-bottom: 10px; display: inline-block;">${s.focus}</span>
+          <span class="badge badge-blue" style="font-size: 0.7rem; margin-bottom: 10px; display: inline-block;">${s.focus}</span>
           <ul style="padding-left: 18px; margin: 0;">
             ${(s.points || []).map(p => `<li style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 4px;">${p}</li>`).join('')}
           </ul>
@@ -221,7 +221,7 @@
       const c = document.getElementById('scriptsContainer');
       c.innerHTML = scripts.map(s => `
         <div class="script-bubble">
-          <strong style="color: var(--purple); font-size: 0.9rem;">🎙️ ${s.speaker}</strong>
+          <strong style="color: var(--blue); font-size: 0.9rem;">🎙️ ${s.speaker}</strong>
           <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px; line-height: 1.6;">"${s.lines}"</p>
         </div>
       `).join('');
