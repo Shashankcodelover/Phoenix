@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Project Phoenix v23.0 — Autonomous Career & Hackathon OS",
+  title: "Project Phoenix v25.0 — Autonomous Career & Hackathon OS",
   description: "Next.js 15 & React 19 Enterprise Career Platform with KCET/DCET Rank Prediction, <300ms Real-Time Voice Coaching, and Discord-like Hackathon Split-Chat Workspaces.",
 };
 

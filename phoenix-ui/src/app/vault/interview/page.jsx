@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import ProfileBanner from '@/components/ProfileBanner';
 import CategoryNav from '@/components/CategoryNav';
@@ -169,29 +170,54 @@ export default function ModularInterviewVaultPage() {
         <ProfileBanner activeVault="interview" />
 
         {/* Vault Header Hero */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-theme-glass text-left">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-theme-glass text-left"
+        >
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="flex items-center gap-2 mb-1.5"
+            >
               <span className="text-2xl">💼</span>
               <span className="text-[11px] font-mono font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-400 border border-indigo-500/35">
                 VAULT 2: PLACEMENT &amp; VOICE AI
               </span>
-            </div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-theme-main tracking-tight font-heading">
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+              className="text-2xl sm:text-4xl font-extrabold text-theme-main tracking-tight font-heading"
+            >
               Technical Interview Mastery Suite
-            </h1>
-            <p className="text-theme-muted text-xs sm:text-sm max-w-3xl mt-1 font-medium leading-relaxed">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.25 }}
+              className="text-theme-muted text-xs sm:text-sm max-w-3xl mt-1 font-medium leading-relaxed"
+            >
               Sub-300ms WebRTC voice coaching, AI Sentinel prober across any technical domain, and high-performance system design engines.
-            </p>
+            </motion.p>
           </div>
 
-
-          <div className="flex items-center gap-2 font-mono text-xs">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="flex items-center gap-2 font-mono text-xs"
+          >
             <span className="px-3 py-1.5 rounded-xl bg-slate-900 border border-indigo-500/30 text-indigo-300 font-bold">
               21 Specialized Engines
             </span>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
+
 
         {/* Sticky Modular Category Navigation Pills */}
         <CategoryNav

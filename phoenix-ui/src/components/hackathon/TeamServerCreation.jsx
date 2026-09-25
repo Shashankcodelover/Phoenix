@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { hackathonApi } from '@/lib/api';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TeamServerCreation({ room, onRoomUpdate }) {
   const [squadName, setSquadName] = useState(room?.squadName || 'Team Phoenix Nexus');
@@ -94,13 +95,21 @@ export default function TeamServerCreation({ room, onRoomUpdate }) {
   };
 
   return (
-    <div className="w-full rounded-2xl bg-slate-900/90 border border-emerald-500/25 p-5 sm:p-7 shadow-xl shadow-black/40 text-left space-y-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full rounded-2xl bg-slate-900/90 border border-emerald-500/25 p-5 sm:p-7 shadow-xl shadow-black/40 text-left space-y-6"
+    >
       
       {/* Friendly Header */}
       <div className="flex items-start gap-3.5 pb-4 border-b border-white/10">
-        <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/35 flex items-center justify-center text-2xl shrink-0">
+        <motion.div 
+          whileHover={{ rotate: -15, scale: 1.1 }}
+          className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/35 flex items-center justify-center text-2xl shrink-0"
+        >
           🎮
-        </div>
+        </motion.div>
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
@@ -125,7 +134,7 @@ export default function TeamServerCreation({ room, onRoomUpdate }) {
             type="text"
             value={squadName}
             onChange={(e) => setSquadName(e.target.value)}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-white/15 text-white focus:border-emerald-400 focus:outline-none"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-white/15 text-white focus:border-emerald-400 focus:outline-none transition-all"
             placeholder="e.g. Team Phoenix Nexus"
           />
         </div>
@@ -142,24 +151,39 @@ export default function TeamServerCreation({ room, onRoomUpdate }) {
               value={inviteLink}
               className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-white/15 text-emerald-300 select-all focus:outline-none truncate"
             />
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               type="button"
               onClick={handleCopy}
               className="px-4 py-2.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shrink-0"
             >
               {copied ? '✓ COPIED' : 'COPY'}
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
 
       {/* Join Notification Alert */}
-      {joinAlert && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-xs font-mono text-emerald-300 animate-bounce flex items-center justify-between">
-          <span>{joinAlert}</span>
-          <span className="text-[10px] uppercase font-bold text-emerald-400">STATE REBALANCED</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {joinAlert && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-xs font-mono text-emerald-300 flex items-center justify-between"
+          >
+            <span>{joinAlert}</span>
+            <motion.span 
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ repeat: Infinity, duration: 1 }}
+              className="text-[10px] uppercase font-bold text-emerald-400"
+            >
+              STATE REBALANCED
+            </motion.span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Dynamic Member Addition Controls */}
       <div className="p-4 rounded-xl bg-slate-950 border border-white/10 space-y-3 font-mono text-xs">
@@ -185,89 +209,106 @@ export default function TeamServerCreation({ room, onRoomUpdate }) {
             value={customName}
             onChange={(e) => setCustomName(e.target.value)}
             placeholder="Custom Name (e.g. Maya Lin)"
-            className="px-3.5 py-2 rounded-lg bg-slate-900 border border-white/15 text-white focus:border-emerald-400 focus:outline-none"
+            className="px-3.5 py-2 rounded-lg bg-slate-900 border border-white/15 text-white focus:border-emerald-400 focus:outline-none transition-all"
           />
           <input
             type="text"
             value={customRole}
             onChange={(e) => setCustomRole(e.target.value)}
             placeholder="Custom Role (e.g. AI/ML Researcher)"
-            className="px-3.5 py-2 rounded-lg bg-slate-900 border border-white/15 text-white focus:border-emerald-400 focus:outline-none"
+            className="px-3.5 py-2 rounded-lg bg-slate-900 border border-white/15 text-white focus:border-emerald-400 focus:outline-none transition-all"
           />
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             type="button"
             onClick={() => handleAddTeammate()}
             disabled={loadingJoin}
-            className="px-4 py-2 rounded-lg font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all"
+            className="px-4 py-2 rounded-lg font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
           >
             ➕ {loadingJoin ? 'Adding...' : 'Add Teammate'}
-          </button>
+          </motion.button>
         </div>
 
         {/* Quick Simulation Presets */}
         <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[11px]">
           <span className="text-slate-400">Quick Simulation Presets:</span>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => handleAddTeammate({ name: 'Alex Rivera', role: 'Frontend & Interaction Specialist', skills: 'Next.js 16, Tailwind, Canvas', avatar: '🎨' })}
-            className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 text-emerald-300 border border-white/10"
+            className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 text-emerald-300 border border-white/10 transition-colors"
           >
             + Alex (Frontend)
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => handleAddTeammate({ name: 'Priya Sharma', role: 'Backend & DB Engineer', skills: 'Express, MongoDB, Embeddings', avatar: '⚙️' })}
-            className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 text-emerald-300 border border-white/10"
+            className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 text-emerald-300 border border-white/10 transition-colors"
           >
             + Priya (Backend)
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => handleAddTeammate({ name: 'Rohan Mehta', role: 'Pitch & Product Lead', skills: 'Devpost, Marp Decks, 180s Pitch', avatar: '🎤' })}
-            className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 text-emerald-300 border border-white/10"
+            className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 text-emerald-300 border border-white/10 transition-colors"
           >
             + Rohan (Pitch)
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => handleAddTeammate({ name: 'David Chen', role: 'DevOps & Cloud Lead', skills: 'Docker, Vercel, CI/CD', avatar: '🚀' })}
-            className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 text-emerald-300 border border-white/10"
+            className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 text-emerald-300 border border-white/10 transition-colors"
           >
             + David (DevOps)
-          </button>
+          </motion.button>
         </div>
       </div>
 
       {/* Dynamic Squad Members Roster Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 font-mono text-xs">
-        {members.map((member, index) => (
-          <div
-            key={member.id || index}
-            className="p-4 rounded-xl bg-slate-950 border border-emerald-500/40 flex items-start gap-3 shadow-md shadow-emerald-500/5 animate-fadeIn"
-          >
-            <div className="w-10 h-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center text-lg shrink-0">
-              {member.avatar || '👨‍💻'}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between">
-                <div className="font-bold text-white text-xs truncate font-sans">
-                  {member.name} {member.isLeader ? '(Leader)' : ''}
+      <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 font-mono text-xs">
+        <AnimatePresence>
+          {members.map((member, index) => (
+            <motion.div
+              layout
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.3 }}
+              key={member.id || index}
+              className="p-4 rounded-xl bg-slate-950 border border-emerald-500/40 flex items-start gap-3 shadow-md shadow-emerald-500/5"
+            >
+              <div className="w-10 h-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center text-lg shrink-0">
+                {member.avatar || '👨‍💻'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <div className="font-bold text-white text-xs truncate font-sans">
+                    {member.name} {member.isLeader ? '(Leader)' : ''}
+                  </div>
+                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 font-bold">
+                    {member.status || 'Online'}
+                  </span>
                 </div>
-                <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 font-bold">
-                  {member.status || 'Online'}
-                </span>
+                <div className="text-[11px] text-emerald-400 font-medium truncate mt-0.5">
+                  {member.role}
+                </div>
+                <div className="text-[10px] text-slate-400 truncate mt-1">
+                  Stack: {member.skills}
+                </div>
               </div>
-              <div className="text-[11px] text-emerald-400 font-medium truncate mt-0.5">
-                {member.role}
-              </div>
-              <div className="text-[10px] text-slate-400 truncate mt-1">
-                Stack: {member.skills}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
 
-    </div>
+    </motion.div>
   );
 }

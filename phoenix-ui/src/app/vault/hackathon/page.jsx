@@ -17,6 +17,7 @@ import HackathonRoundTracker from '@/components/hackathon/HackathonRoundTracker'
 import SubmissionPackager from '@/components/hackathon/SubmissionPackager';
 import HackathonEnginesHub from '@/components/hackathon/HackathonEnginesHub';
 import MultiModelMatrix from '@/components/hackathon/MultiModelMatrix';
+import PostMortemEngine from '@/components/hackathon/PostMortemEngine';
 import { hackathonApi } from '@/lib/api';
 
 export default function HackathonVaultPage() {
@@ -464,49 +465,11 @@ export default function HackathonVaultPage() {
             </div>
           )}
 
-          {/* STEP 13: POST-MORTEM ANALYTICS (Placeholder — uses Engines Hub for now) */}
+          {/* STEP 13: POST-MORTEM ANALYTICS & RETROSPECTIVE */}
           {currentStep === 13 && (
-            <div className="space-y-4">
-              <div className="w-full rounded-3xl bg-theme-card border border-emerald-500/30 p-5 sm:p-7 shadow-xl shadow-black/30 text-left space-y-5">
-                <div className="flex items-start gap-3.5 pb-4 border-b border-theme-glass">
-                  <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-2xl shrink-0">🔬</div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">STEP 13: POST-MORTEM</span>
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-theme-main font-heading">Hackathon Post-Mortem Analytics &amp; Retrospective</h3>
-                    <p className="text-xs text-theme-muted leading-relaxed mt-0.5 font-medium">
-                      Team performance analytics, time allocation breakdown, feature completion rates, and retrospective notes. Coming soon.
-                    </p>
-                  </div>
-                </div>
-                <div className="p-8 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-dashed border-theme-glass text-center space-y-3">
-                  <div className="text-4xl">🔬</div>
-                  <h4 className="text-sm font-bold text-theme-main font-heading">Post-Mortem Engine</h4>
-                  <p className="text-xs text-theme-muted max-w-md mx-auto leading-relaxed">
-                    After your hackathon concludes, this engine will generate a comprehensive retrospective covering time management, feature velocity, team dynamics, and improvement areas for your next competition.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep(12)}
-                  className="px-4 py-2 rounded-xl font-mono text-xs text-theme-subtle hover:text-theme-main"
-                >
-                  ← Back to Submission Packager
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep(14)}
-                  className="px-6 py-3 rounded-xl font-mono font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2"
-                >
-                  <span>NEXT: EXPLORE 22 PRODUCTION ENGINES &amp; MULTI-MODEL MATRIX</span>
-                  <span>➔</span>
-                </button>
-              </div>
-            </div>
+            <PostMortemEngine onNext={() => setCurrentStep(14)} onBack={() => setCurrentStep(12)} />
           )}
+
 
           {/* STEP 14: 22 ENGINES HUB & MULTI-MODEL MATRIX */}
           {currentStep === 14 && (

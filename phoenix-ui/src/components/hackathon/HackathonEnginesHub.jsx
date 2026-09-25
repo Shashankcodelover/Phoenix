@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function HackathonEnginesHub({ room, onSelectStep }) {
   const roomId = room?.roomId || 'ROOM-APEX-1001';
   const problemStatement = room?.lockedProblemStatement || 'NexusAudio: Sub-300ms Multimodal Voice Coaching & CRDT Vector IDE';
 
   const [activeFilter, setActiveFilter] = useState('all');
-  const [selectedEngine, setSelectedEngine] = useState(null);
 
   const engines = [
     {
@@ -217,14 +217,22 @@ export default function HackathonEnginesHub({ room, onSelectStep }) {
     : engines.filter(e => e.cat === activeFilter);
 
   return (
-    <div className="w-full rounded-3xl bg-theme-card border border-emerald-500/30 p-5 sm:p-7 shadow-2xl shadow-black/40 text-left space-y-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full rounded-3xl bg-theme-card border border-emerald-500/30 p-5 sm:p-7 shadow-2xl shadow-black/40 text-left space-y-6"
+    >
       
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4 pb-4 border-b border-theme-glass">
         <div className="flex items-start gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-2xl shrink-0">
+          <motion.div 
+            whileHover={{ scale: 1.1, rotate: 10 }}
+            className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-2xl shrink-0"
+          >
             ⚡
-          </div>
+          </motion.div>
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
@@ -253,7 +261,9 @@ export default function HackathonEnginesHub({ room, onSelectStep }) {
       {/* Category Filter Navigation */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar font-mono text-xs pb-1">
         {categories.map(cat => (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             key={cat}
             type="button"
             onClick={() => setActiveFilter(cat)}
@@ -264,53 +274,61 @@ export default function HackathonEnginesHub({ room, onSelectStep }) {
             }`}
           >
             {cat === 'all' ? '✨ All 22 Engines' : cat}
-          </button>
+          </motion.button>
         ))}
       </div>
 
       {/* Engines Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 font-mono text-xs">
-        {filteredEngines.map((engine) => (
-          <div
-            key={engine.id}
-            onClick={() => {
-              if (onSelectStep && engine.stepNum) {
-                onSelectStep(engine.stepNum);
-              }
-            }}
-            className="p-5 rounded-2xl bg-slate-100/70 dark:bg-slate-950/80 border border-theme-glass hover:border-emerald-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-3 group shadow-sm hover:shadow-md"
-          >
-            <div>
-              <div className="flex items-start justify-between gap-2 mb-2">
-                <span className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold flex items-center justify-center text-xs">
-                  #{engine.id}
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[9px] px-2 py-0.5 rounded bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-500/30 font-bold">
-                    {engine.cat}
+      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 font-mono text-xs">
+        <AnimatePresence>
+          {filteredEngines.map((engine) => (
+            <motion.div
+              layout
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              key={engine.id}
+              onClick={() => {
+                if (onSelectStep && engine.stepNum) {
+                  onSelectStep(engine.stepNum);
+                }
+              }}
+              className="p-5 rounded-2xl bg-slate-100/70 dark:bg-slate-950/80 border border-theme-glass hover:border-emerald-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-3 group shadow-sm hover:shadow-md"
+            >
+              <div>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <span className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold flex items-center justify-center text-xs">
+                    #{engine.id}
                   </span>
-                  <span className="text-[9px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold">
-                    {engine.metric}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[9px] px-2 py-0.5 rounded bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-500/30 font-bold">
+                      {engine.cat}
+                    </span>
+                    <span className="text-[9px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold">
+                      {engine.metric}
+                    </span>
+                  </div>
                 </div>
+
+                <h4 className="text-sm font-bold text-theme-main group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors font-sans leading-snug mb-1.5">
+                  {engine.name}
+                </h4>
+                <p className="text-theme-muted text-xs font-sans leading-relaxed font-medium">
+                  {engine.desc}
+                </p>
               </div>
 
-              <h4 className="text-sm font-bold text-theme-main group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors font-sans leading-snug mb-1.5">
-                {engine.name}
-              </h4>
-              <p className="text-theme-muted text-xs font-sans leading-relaxed font-medium">
-                {engine.desc}
-              </p>
-            </div>
+              <div className="pt-2 border-t border-theme-glass flex items-center justify-between text-[11px] text-emerald-700 dark:text-emerald-300 font-bold">
+                <span>{engine.badge}</span>
+                <span className="group-hover:translate-x-1 transition-transform">LAUNCH ➔</span>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
 
-            <div className="pt-2 border-t border-theme-glass flex items-center justify-between text-[11px] text-emerald-700 dark:text-emerald-300 font-bold">
-              <span>{engine.badge}</span>
-              <span className="group-hover:translate-x-1 transition-transform">LAUNCH ➔</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-    </div>
+    </motion.div>
   );
 }
+

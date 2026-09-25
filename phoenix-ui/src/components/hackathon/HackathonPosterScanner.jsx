@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { hackathonApi } from '@/lib/api';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function HackathonPosterScanner({ room, onUpdatePoster }) {
   const [inputText, setInputText] = useState(
@@ -53,13 +54,21 @@ export default function HackathonPosterScanner({ room, onUpdatePoster }) {
   };
 
   return (
-    <div className="w-full rounded-2xl bg-slate-900/90 border border-emerald-500/25 p-5 sm:p-7 shadow-xl shadow-black/40 text-left space-y-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full rounded-2xl bg-slate-900/90 border border-emerald-500/25 p-5 sm:p-7 shadow-xl shadow-black/40 text-left space-y-6"
+    >
       
       {/* Friendly Header */}
       <div className="flex items-start gap-3.5 pb-4 border-b border-white/10">
-        <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/35 flex items-center justify-center text-2xl shrink-0">
+        <motion.div 
+          whileHover={{ rotate: 15, scale: 1.1 }}
+          className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/35 flex items-center justify-center text-2xl shrink-0"
+        >
           📋
-        </div>
+        </motion.div>
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
@@ -88,105 +97,128 @@ export default function HackathonPosterScanner({ room, onUpdatePoster }) {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder="Paste poster details (e.g. 'SIH 2026 registration starts...')"
-            className="w-full p-3.5 rounded-xl bg-slate-950 border border-white/15 text-white focus:border-emerald-400 focus:outline-none resize-none leading-relaxed"
+            className="w-full p-3.5 rounded-xl bg-slate-950 border border-white/15 text-white focus:border-emerald-400 focus:outline-none resize-none leading-relaxed transition-all"
             required
           />
         </div>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={loading}
-          className="w-full py-3.5 rounded-xl font-mono font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2"
+          className="w-full py-3.5 rounded-xl font-mono font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {loading ? (
-            <span>⚡ Scanning Poster &amp; Synchronizing Room Milestones...</span>
+            <motion.span
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+            >
+              ⚡ Scanning Poster &amp; Synchronizing Room Milestones...
+            </motion.span>
           ) : (
             <span>🚀 SCAN POSTER &amp; BROADCAST DEADLINES TO ROOM {room?.roomId || ''}</span>
           )}
-        </button>
+        </motion.button>
       </form>
 
       {/* Extracted Intelligence Display */}
-      {scanResult && (
-        <div className="p-5 rounded-2xl bg-slate-950 border border-emerald-500/30 space-y-4 animate-fadeIn">
-          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-white/10">
-            <div>
-              <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">
-                SYNCHRONIZED HACKATHON
-              </span>
-              <h4 className="text-base font-bold text-white font-heading">
-                {scanResult.hackathonName}
-              </h4>
-            </div>
-            <a
-              href={scanResult.calendarEvent?.gcalLink || '#'}
-              target="_blank"
-              rel="noreferrer"
-              className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/10 hover:bg-white/15 text-emerald-300 border border-emerald-500/30 transition-all flex items-center gap-1.5"
-            >
-              <span>📅</span> Add PPT Deadline to Google Calendar
-            </a>
-          </div>
-
-          {/* Submission Phases Timeline Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-mono text-xs">
-            <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
-              <div className="text-[10px] text-slate-400 uppercase">Registration Close</div>
-              <div className="text-sm font-bold text-sky-400 mt-1">
-                {typeof scanResult.submissionPhases?.registrationClose === 'string' && scanResult.submissionPhases.registrationClose.includes('T')
-                  ? new Date(scanResult.submissionPhases.registrationClose).toLocaleDateString()
-                  : scanResult.submissionPhases?.registrationClose || '3 Days Left'}
-              </div>
-            </div>
-
-            <div className="p-3 rounded-xl bg-slate-900 border border-emerald-500/25">
-              <div className="text-[10px] text-emerald-400 font-bold uppercase">PPT Submission</div>
-              <div className="text-sm font-bold text-emerald-300 mt-1">
-                {typeof scanResult.submissionPhases?.pptIdeaSubmission === 'string' && scanResult.submissionPhases.pptIdeaSubmission.includes('T')
-                  ? new Date(scanResult.submissionPhases.pptIdeaSubmission).toLocaleDateString()
-                  : scanResult.submissionPhases?.pptIdeaSubmission || '7 Days Left'}
-              </div>
-            </div>
-
-            <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
-              <div className="text-[10px] text-slate-400 uppercase">Sprint Kickoff</div>
-              <div className="text-sm font-bold text-indigo-400 mt-1">
-                {typeof scanResult.submissionPhases?.sprintKickoff === 'string' && scanResult.submissionPhases.sprintKickoff.includes('T')
-                  ? new Date(scanResult.submissionPhases.sprintKickoff).toLocaleDateString()
-                  : scanResult.submissionPhases?.sprintKickoff || '10 Days Left'}
-              </div>
-            </div>
-
-            <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
-              <div className="text-[10px] text-slate-400 uppercase">Final Demo</div>
-              <div className="text-sm font-bold text-rose-400 mt-1">
-                {typeof scanResult.submissionPhases?.finalDemoAndJudging === 'string' && scanResult.submissionPhases.finalDemoAndJudging.includes('T')
-                  ? new Date(scanResult.submissionPhases.finalDemoAndJudging).toLocaleDateString()
-                  : scanResult.submissionPhases?.finalDemoAndJudging || '12 Days Left'}
-              </div>
-            </div>
-          </div>
-
-          {/* Prize Tracks */}
-          <div>
-            <div className="text-[11px] font-mono font-bold text-slate-400 mb-2 uppercase">
-              🎯 Available Prize Tracks ({scanResult.prizeTracks?.length || 0}):
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs">
-              {scanResult.prizeTracks?.map((track, i) => (
-                <div key={i} className="p-2.5 rounded-xl bg-slate-900 border border-white/5 flex items-center justify-between">
-                  <span className="text-slate-200 text-[11px] font-sans truncate">{track.name}</span>
-                  <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-bold shrink-0">
-                    {track.prize}
+      <AnimatePresence>
+        {scanResult && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.4 }}
+            className="overflow-hidden"
+          >
+            <div className="p-5 rounded-2xl bg-slate-950 border border-emerald-500/30 space-y-4 mt-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-white/10">
+                <div>
+                  <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">
+                    SYNCHRONIZED HACKATHON
                   </span>
+                  <h4 className="text-base font-bold text-white font-heading">
+                    {scanResult.hackathonName}
+                  </h4>
                 </div>
-              ))}
+                <motion.a
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  href={scanResult.calendarEvent?.gcalLink || '#'}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/10 hover:bg-white/15 text-emerald-300 border border-emerald-500/30 transition-all flex items-center gap-1.5"
+                >
+                  <span>📅</span> Add PPT Deadline to Google Calendar
+                </motion.a>
+              </div>
+
+              {/* Submission Phases Timeline Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-mono text-xs">
+                <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-slate-900 border border-white/5 transition-all">
+                  <div className="text-[10px] text-slate-400 uppercase">Registration Close</div>
+                  <div className="text-sm font-bold text-sky-400 mt-1">
+                    {typeof scanResult.submissionPhases?.registrationClose === 'string' && scanResult.submissionPhases.registrationClose.includes('T')
+                      ? new Date(scanResult.submissionPhases.registrationClose).toLocaleDateString()
+                      : scanResult.submissionPhases?.registrationClose || '3 Days Left'}
+                  </div>
+                </motion.div>
+
+                <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-slate-900 border border-emerald-500/25 transition-all">
+                  <div className="text-[10px] text-emerald-400 font-bold uppercase">PPT Submission</div>
+                  <div className="text-sm font-bold text-emerald-300 mt-1">
+                    {typeof scanResult.submissionPhases?.pptIdeaSubmission === 'string' && scanResult.submissionPhases.pptIdeaSubmission.includes('T')
+                      ? new Date(scanResult.submissionPhases.pptIdeaSubmission).toLocaleDateString()
+                      : scanResult.submissionPhases?.pptIdeaSubmission || '7 Days Left'}
+                  </div>
+                </motion.div>
+
+                <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-slate-900 border border-white/5 transition-all">
+                  <div className="text-[10px] text-slate-400 uppercase">Sprint Kickoff</div>
+                  <div className="text-sm font-bold text-indigo-400 mt-1">
+                    {typeof scanResult.submissionPhases?.sprintKickoff === 'string' && scanResult.submissionPhases.sprintKickoff.includes('T')
+                      ? new Date(scanResult.submissionPhases.sprintKickoff).toLocaleDateString()
+                      : scanResult.submissionPhases?.sprintKickoff || '10 Days Left'}
+                  </div>
+                </motion.div>
+
+                <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-slate-900 border border-white/5 transition-all">
+                  <div className="text-[10px] text-slate-400 uppercase">Final Demo</div>
+                  <div className="text-sm font-bold text-rose-400 mt-1">
+                    {typeof scanResult.submissionPhases?.finalDemoAndJudging === 'string' && scanResult.submissionPhases.finalDemoAndJudging.includes('T')
+                      ? new Date(scanResult.submissionPhases.finalDemoAndJudging).toLocaleDateString()
+                      : scanResult.submissionPhases?.finalDemoAndJudging || '12 Days Left'}
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Prize Tracks */}
+              <div>
+                <div className="text-[11px] font-mono font-bold text-slate-400 mb-2 uppercase">
+                  🎯 Available Prize Tracks ({scanResult.prizeTracks?.length || 0}):
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs">
+                  {scanResult.prizeTracks?.map((track, i) => (
+                    <motion.div 
+                      whileHover={{ scale: 1.02 }}
+                      key={i} 
+                      className="p-2.5 rounded-xl bg-slate-900 border border-white/5 flex items-center justify-between"
+                    >
+                      <span className="text-slate-200 text-[11px] font-sans truncate">{track.name}</span>
+                      <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-bold shrink-0">
+                        {track.prize}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
             </div>
-          </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        </div>
-      )}
-
-    </div>
+    </motion.div>
   );
 }
