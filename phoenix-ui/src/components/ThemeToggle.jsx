@@ -32,7 +32,7 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={toggleTheme}
-      className="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/5 hover:bg-white/15 border border-white/15 text-slate-200 hover:text-white transition-all flex items-center gap-1.5 shadow-sm"
+      className="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/5 hover:bg-white/15 border border-white/15 text-slate-800 hover:text-slate-900 transition-all flex items-center gap-1.5 shadow-sm"
       title="Toggle Light / Dark Mode"
     >
       <span>{theme === 'dark' ? '☀️ Bright Light Mode' : '🌙 Sleek Dark Mode'}</span>

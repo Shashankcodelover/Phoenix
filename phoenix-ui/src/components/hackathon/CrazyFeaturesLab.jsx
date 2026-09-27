@@ -211,7 +211,7 @@ export default function CrazyFeaturesLab({ room }) {
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-emerald-300">
                 STEP 5: CRAZY FEATURE LAB
               </span>
               <span className="text-xs text-theme-muted font-mono">
@@ -243,8 +243,8 @@ export default function CrazyFeaturesLab({ room }) {
           onClick={() => setFilter('all')}
           className={`px-3 py-1.5 rounded-xl border transition-all ${
             filter === 'all'
-              ? 'bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border-emerald-500 font-bold'
-              : 'bg-slate-100 dark:bg-slate-950 border-theme-glass text-theme-muted hover:text-theme-main'
+              ? 'bg-emerald-500/25 text-emerald-700 text-emerald-300 border-emerald-500 font-bold'
+              : 'bg-slate-100 bg-white border-theme-glass text-theme-muted hover:text-theme-main'
           }`}
         >
           ✨ All Features ({features.length})
@@ -254,8 +254,8 @@ export default function CrazyFeaturesLab({ room }) {
           onClick={() => setFilter('MVP Must-Have')}
           className={`px-3 py-1.5 rounded-xl border transition-all ${
             filter === 'MVP Must-Have'
-              ? 'bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border-emerald-500 font-bold'
-              : 'bg-slate-100 dark:bg-slate-950 border-theme-glass text-theme-muted hover:text-theme-main'
+              ? 'bg-emerald-500/25 text-emerald-700 text-emerald-300 border-emerald-500 font-bold'
+              : 'bg-slate-100 bg-white border-theme-glass text-theme-muted hover:text-theme-main'
           }`}
         >
           🟢 Core MVP Must-Have
@@ -265,8 +265,8 @@ export default function CrazyFeaturesLab({ room }) {
           onClick={() => setFilter('Crazy / Wow Factor')}
           className={`px-3 py-1.5 rounded-xl border transition-all ${
             filter === 'Crazy / Wow Factor'
-              ? 'bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border-emerald-500 font-bold'
-              : 'bg-slate-100 dark:bg-slate-950 border-theme-glass text-theme-muted hover:text-theme-main'
+              ? 'bg-emerald-500/25 text-emerald-700 text-emerald-300 border-emerald-500 font-bold'
+              : 'bg-slate-100 bg-white border-theme-glass text-theme-muted hover:text-theme-main'
           }`}
         >
           🚀 Crazy "Wow Factor"
@@ -283,8 +283,8 @@ export default function CrazyFeaturesLab({ room }) {
               key={feat.id}
               className={`p-4 rounded-2xl border transition-all text-left space-y-2 shadow-sm ${
                 isChecked
-                  ? 'bg-emerald-950/25 dark:bg-emerald-950/40 border-emerald-500/60 shadow-md shadow-emerald-500/10'
-                  : 'bg-slate-100/80 dark:bg-slate-950/70 border-theme-glass hover:border-emerald-500/30'
+                  ? 'bg-emerald-950/25 bg-emerald-950/40 border-emerald-500/60 shadow-md shadow-emerald-500/10'
+                  : 'bg-slate-100/80 bg-white/70 border-theme-glass hover:border-emerald-500/30'
               }`}
             >
               <div className="flex items-start justify-between gap-2">
@@ -293,7 +293,7 @@ export default function CrazyFeaturesLab({ room }) {
                     type="checkbox"
                     checked={isChecked}
                     onChange={() => toggleFeature(feat.id)}
-                    className="mt-0.5 rounded bg-slate-200 dark:bg-slate-900 border-theme-glass text-emerald-500 focus:ring-0 cursor-pointer"
+                    className="mt-0.5 rounded bg-slate-200 bg-slate-50 border-theme-glass text-emerald-500 focus:ring-0 cursor-pointer"
                   />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
@@ -301,7 +301,7 @@ export default function CrazyFeaturesLab({ room }) {
                         {feat.title}
                       </span>
                     </div>
-                    <div className="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono">
+                    <div className="text-[10px] text-emerald-700 text-emerald-400 font-mono">
                       Category: {feat.category}
                     </div>
                   </div>
@@ -309,8 +309,8 @@ export default function CrazyFeaturesLab({ room }) {
 
                 <span className={`text-[9px] px-2 py-0.5 rounded border font-bold uppercase shrink-0 ${
                   feat.type === 'MVP Must-Have'
-                    ? 'bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30'
-                    : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30'
+                    ? 'bg-sky-500/15 text-sky-700 text-sky-300 border-sky-500/30'
+                    : 'bg-emerald-500/15 text-emerald-700 text-emerald-300 border-emerald-500/30'
                 }`}>
                   {feat.type}
                 </span>
@@ -325,14 +325,14 @@ export default function CrazyFeaturesLab({ room }) {
                 <button
                   type="button"
                   onClick={() => setActiveFeatureSpec(feat)}
-                  className="text-sky-600 dark:text-sky-400 hover:underline font-bold flex items-center gap-1"
+                  className="text-sky-600 text-sky-400 hover:underline font-bold flex items-center gap-1"
                 >
                   <span>🔍</span> View Implementation Spec &amp; Code
                 </button>
                 <button
                   type="button"
                   onClick={() => toggleFeature(feat.id)}
-                  className={`font-bold ${isChecked ? 'text-emerald-600 dark:text-emerald-400' : 'text-theme-subtle'}`}
+                  className={`font-bold ${isChecked ? 'text-emerald-600 text-emerald-400' : 'text-theme-subtle'}`}
                 >
                   {isChecked ? '✓ Selected for Room' : '+ Add to Squad'}
                 </button>
@@ -345,14 +345,14 @@ export default function CrazyFeaturesLab({ room }) {
 
       {/* Feature Deep Spec Modal */}
       {activeFeatureSpec && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-          <div className="relative w-full max-w-2xl bg-slate-900 border border-emerald-500/40 rounded-3xl p-6 shadow-2xl space-y-4 text-left font-sans">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/80 backdrop-blur-md animate-fadeIn">
+          <div className="relative w-full max-w-2xl bg-slate-50 border border-emerald-500/40 rounded-3xl p-6 shadow-2xl space-y-4 text-left font-sans">
             <div className="flex items-start justify-between gap-3 pb-3 border-b border-white/10">
               <div>
                 <span className="text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                   {activeFeatureSpec.category} • {activeFeatureSpec.type}
                 </span>
-                <h3 className="text-xl font-bold text-white mt-1 font-heading">
+                <h3 className="text-xl font-bold text-slate-900 mt-1 font-heading">
                   {activeFeatureSpec.title}
                 </h3>
               </div>
@@ -366,21 +366,21 @@ export default function CrazyFeaturesLab({ room }) {
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="p-3.5 rounded-xl bg-slate-950 border border-white/10 font-mono text-slate-300 space-y-1">
+              <div className="p-3.5 rounded-xl bg-white border border-white/10 font-mono text-slate-300 space-y-1">
                 <div className="text-[10px] text-emerald-400 font-bold uppercase">⚡ Technical Stack &amp; Latency:</div>
                 <div>{activeFeatureSpec.deepSpec?.techStack || 'WebAssembly + CRDT Vector Clocks'}</div>
                 <div className="text-sky-300 font-bold mt-1">Latency Target: {activeFeatureSpec.deepSpec?.latency || '< 30ms P99'}</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-950 border border-white/10 text-slate-300 space-y-1">
+              <div className="p-3.5 rounded-xl bg-white border border-white/10 text-slate-300 space-y-1">
                 <div className="text-[10px] text-amber-400 font-bold font-mono uppercase">🏆 Jury Scoring &amp; Competitive Moat:</div>
                 <p className="leading-relaxed">{activeFeatureSpec.deepSpec?.juryImpact || 'Delivers undeniable live technical depth during 3-minute stage demo.'}</p>
               </div>
 
               {activeFeatureSpec.deepSpec?.codeSnippet && (
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-1.5">
+                <div className="p-3.5 rounded-xl bg-white border border-emerald-500/30 space-y-1.5">
                   <div className="text-[10px] text-emerald-400 font-bold font-mono uppercase">💻 Implementation Blueprint / Pseudo-Code:</div>
-                  <pre className="p-3 rounded-lg bg-slate-900 font-mono text-[11px] text-emerald-300 overflow-x-auto border border-white/10">
+                  <pre className="p-3 rounded-lg bg-slate-50 font-mono text-[11px] text-emerald-300 overflow-x-auto border border-white/10">
                     {activeFeatureSpec.deepSpec.codeSnippet}
                   </pre>
                 </div>

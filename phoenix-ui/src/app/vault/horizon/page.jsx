@@ -230,7 +230,7 @@ export default function ModularHorizonVaultPage() {
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <motion.span whileHover={{ rotate: 15, scale: 1.1 }} className="text-2xl inline-block">🌅</motion.span>
-              <span className="text-[11px] font-mono font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-sky-500/15 text-sky-700 dark:text-sky-400 border border-sky-500/35">
+              <span className="text-[11px] font-mono font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-sky-500/15 text-sky-700 text-sky-400 border border-sky-500/35">
                 VAULT 1: HORIZON CAREER &amp; ADMISSIONS OS
               </span>
             </div>
@@ -243,7 +243,7 @@ export default function ModularHorizonVaultPage() {
           </div>
 
           <div className="flex items-center gap-2 font-mono text-xs">
-            <span className="px-3 py-1.5 rounded-xl bg-slate-900 border border-sky-500/30 text-sky-300 font-bold">
+            <span className="px-3 py-1.5 rounded-xl bg-slate-50 border border-sky-500/30 text-sky-300 font-bold">
               22 Specialized Engines
             </span>
           </div>
@@ -272,7 +272,7 @@ export default function ModularHorizonVaultPage() {
             >
               <div className="flex items-center gap-2.5 mb-4">
                 <span className="text-xl">🎓</span>
-                <h2 className="text-lg font-bold text-white font-heading">
+                <h2 className="text-lg font-bold text-slate-900 font-heading">
                   State Rank Matrices &amp; Admission Probability
                 </h2>
               </div>
@@ -296,7 +296,7 @@ export default function ModularHorizonVaultPage() {
                         type="number"
                         value={candidateRank}
                         onChange={(e) => setCandidateRank(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       />
                     </div>
 
@@ -305,7 +305,7 @@ export default function ModularHorizonVaultPage() {
                       <select
                         value={categoryQuota}
                         onChange={(e) => setCategoryQuota(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       >
                         <option value="GM">General Merit (GM)</option>
                         <option value="1G">Category 1 (1G)</option>
@@ -324,7 +324,7 @@ export default function ModularHorizonVaultPage() {
                         type="text"
                         value={preferredBranch}
                         onChange={(e) => setPreferredBranch(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       />
                     </div>
                   </div>
@@ -357,8 +357,8 @@ export default function ModularHorizonVaultPage() {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className="p-4 rounded-2xl bg-slate-950 border border-sky-500/30 space-y-3 mt-4 shadow-lg shadow-sky-500/5">
-                          <div className="flex items-center justify-between text-white font-bold">
+                        <div className="p-4 rounded-2xl bg-white border border-sky-500/30 space-y-3 mt-4 shadow-lg shadow-sky-500/5">
+                          <div className="flex items-center justify-between text-slate-900 font-bold">
                             <span>Normalized Score: {matrixResult.normalizedCompositeScore}</span>
                             <span className="text-sky-400">{matrixResult.estimatedRankBracket} Rank Bracket</span>
                           </div>
@@ -375,10 +375,10 @@ export default function ModularHorizonVaultPage() {
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.1 }}
                                 key={i} 
-                                className="p-2.5 rounded-xl bg-slate-900 border border-white/5 flex items-center justify-between hover:bg-slate-800 transition-colors"
+                                className="p-2.5 rounded-xl bg-slate-50 border border-white/5 flex items-center justify-between hover:bg-slate-800 transition-colors"
                               >
                                 <div>
-                                  <div className="font-bold text-white text-xs font-sans">{c.college}</div>
+                                  <div className="font-bold text-slate-900 text-xs font-sans">{c.college}</div>
                                   <div className="text-[10px] text-slate-400">{c.branch} • Cutoff: #{c.cutoffRankForCategory}</div>
                                 </div>
                                 <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-[10px] font-bold border border-sky-500/20">
@@ -410,7 +410,7 @@ export default function ModularHorizonVaultPage() {
             >
               <div className="flex items-center gap-2.5 mb-4">
                 <span className="text-xl">🏛️</span>
-                <h2 className="text-lg font-bold text-white font-heading">
+                <h2 className="text-lg font-bold text-slate-900 font-heading">
                   College Cutoff Trends &amp; Admission Probability
                 </h2>
               </div>
@@ -434,7 +434,7 @@ export default function ModularHorizonVaultPage() {
                         type="number"
                         value={cutoffRank}
                         onChange={(e) => setCutoffRank(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       />
                     </div>
                     <div>
@@ -442,7 +442,7 @@ export default function ModularHorizonVaultPage() {
                       <select
                         value={targetCollege}
                         onChange={(e) => setTargetCollege(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       >
                         <option>RVCE</option>
                         <option>BMSCE</option>
@@ -460,7 +460,7 @@ export default function ModularHorizonVaultPage() {
                         type="text"
                         value={targetBranch}
                         onChange={(e) => setTargetBranch(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       />
                     </div>
                     <div>
@@ -468,7 +468,7 @@ export default function ModularHorizonVaultPage() {
                       <select
                         value={targetQuota}
                         onChange={(e) => setTargetQuota(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       >
                         <option value="GM">General Merit (GM)</option>
                         <option value="2A">Category 2A</option>
@@ -498,9 +498,9 @@ export default function ModularHorizonVaultPage() {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className="p-4 rounded-2xl bg-slate-950 border border-sky-500/30 space-y-3 mt-3">
+                        <div className="p-4 rounded-2xl bg-white border border-sky-500/30 space-y-3 mt-3">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-white">{cutoffResult.college} — {cutoffResult.branch}</span>
+                            <span className="font-bold text-slate-900">{cutoffResult.college} — {cutoffResult.branch}</span>
                             <span className="px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-300 font-bold border border-sky-500/20 text-[11px]">
                               {cutoffResult.probability}
                             </span>
@@ -512,9 +512,9 @@ export default function ModularHorizonVaultPage() {
                             <div className="space-y-1.5">
                               <div className="text-[10px] uppercase font-bold text-slate-400">Safe Backup Colleges:</div>
                               {cutoffResult.backupColleges.map((c, i) => (
-                                <div key={i} className="p-2 rounded-lg bg-slate-900 border border-white/5 flex justify-between items-center">
+                                <div key={i} className="p-2 rounded-lg bg-slate-50 border border-white/5 flex justify-between items-center">
                                   <div className="text-xs font-sans">
-                                    <span className="text-white font-semibold">{c.college}</span>
+                                    <span className="text-slate-900 font-semibold">{c.college}</span>
                                     <span className="text-slate-400 ml-2">• Cutoff #{c.cutoffRankForCategory}</span>
                                   </div>
                                   <span className="text-emerald-400 text-[10px] font-bold">{c.matchProbability}</span>
@@ -545,7 +545,7 @@ export default function ModularHorizonVaultPage() {
             >
               <div className="flex items-center gap-2.5 mb-4">
                 <span className="text-xl">📋</span>
-                <h2 className="text-lg font-bold text-white font-heading">
+                <h2 className="text-lg font-bold text-slate-900 font-heading">
                   Category Quotas &amp; Article 371(J) Hyderabad-Karnataka Engine
                 </h2>
               </div>
@@ -568,7 +568,7 @@ export default function ModularHorizonVaultPage() {
                       <select
                         value={quotaDistrict}
                         onChange={(e) => setQuotaDistrict(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       >
                         <optgroup label="HK Region (371J Eligible)">
                           <option>Kalaburagi</option>
@@ -592,7 +592,7 @@ export default function ModularHorizonVaultPage() {
                       <select
                         value={quotaCategory}
                         onChange={(e) => setQuotaCategory(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       >
                         <option value="GM">GM</option>
                         <option value="2A">2A</option>
@@ -607,7 +607,7 @@ export default function ModularHorizonVaultPage() {
                         type="number"
                         value={quotaRank}
                         onChange={(e) => setQuotaRank(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       />
                     </div>
                   </div>
@@ -631,9 +631,9 @@ export default function ModularHorizonVaultPage() {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className="p-4 rounded-2xl bg-slate-950 border border-sky-500/30 space-y-3 mt-3">
+                        <div className="p-4 rounded-2xl bg-white border border-sky-500/30 space-y-3 mt-3">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-white">Article 371(J) Eligibility</span>
+                            <span className="font-bold text-slate-900">Article 371(J) Eligibility</span>
                             <span className={`px-3 py-1 rounded-lg font-bold text-[11px] ${quotaResult.eligible371J ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-red-500/20 text-red-300 border border-red-500/30'}`}>
                               {quotaResult.eligible371J ? '✅ ELIGIBLE' : '❌ NOT ELIGIBLE'}
                             </span>
@@ -648,9 +648,9 @@ export default function ModularHorizonVaultPage() {
                             <div className="space-y-1.5">
                               <div className="text-[10px] uppercase font-bold text-slate-400">HK Region Top Colleges:</div>
                               {quotaResult.topColleges.map((c, i) => (
-                                <div key={i} className="p-2 rounded-lg bg-slate-900 border border-white/5 flex justify-between items-center">
+                                <div key={i} className="p-2 rounded-lg bg-slate-50 border border-white/5 flex justify-between items-center">
                                   <div>
-                                    <div className="text-xs font-bold text-white">{c.college}</div>
+                                    <div className="text-xs font-bold text-slate-900">{c.college}</div>
                                     <div className="text-[10px] text-slate-400">{c.branch} • Cutoff #{c.cutoffRankForCategory}</div>
                                   </div>
                                   <span className="text-sky-400 text-[10px] font-bold">{c.matchProbability}</span>
@@ -681,7 +681,7 @@ export default function ModularHorizonVaultPage() {
             >
               <div className="flex items-center gap-2.5 mb-4">
                 <span className="text-xl">💰</span>
-                <h2 className="text-lg font-bold text-white font-heading">
+                <h2 className="text-lg font-bold text-slate-900 font-heading">
                   Management Fees, NRI Quota &amp; Scholarship Eligibility
                 </h2>
               </div>
@@ -705,7 +705,7 @@ export default function ModularHorizonVaultPage() {
                         type="number"
                         value={scholarshipIncome}
                         onChange={(e) => setScholarshipIncome(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       />
                     </div>
                     <div>
@@ -713,7 +713,7 @@ export default function ModularHorizonVaultPage() {
                       <select
                         value={scholarshipCategory}
                         onChange={(e) => setScholarshipCategory(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       >
                         <option value="GM">General Merit (GM)</option>
                         <option value="OBC">OBC</option>
@@ -730,7 +730,7 @@ export default function ModularHorizonVaultPage() {
                         type="text"
                         value={scholarshipCourse}
                         onChange={(e) => setScholarshipCourse(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       />
                     </div>
                   </div>
@@ -754,9 +754,9 @@ export default function ModularHorizonVaultPage() {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className="p-4 rounded-2xl bg-slate-950 border border-sky-500/30 space-y-3 mt-3">
+                        <div className="p-4 rounded-2xl bg-white border border-sky-500/30 space-y-3 mt-3">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-white">Total Estimated Benefit</span>
+                            <span className="font-bold text-slate-900">Total Estimated Benefit</span>
                             <span className="text-emerald-400 font-bold">{scholarshipResult.totalEstimatedBenefit}</span>
                           </div>
                           <div className="space-y-1.5">
@@ -767,10 +767,10 @@ export default function ModularHorizonVaultPage() {
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.08 }}
-                                className={`p-2.5 rounded-xl border flex justify-between items-center ${s.eligible ? 'bg-emerald-950/30 border-emerald-500/20' : 'bg-slate-900 border-white/5 opacity-60'}`}
+                                className={`p-2.5 rounded-xl border flex justify-between items-center ${s.eligible ? 'bg-emerald-950/30 border-emerald-500/20' : 'bg-slate-50 border-white/5 opacity-60'}`}
                               >
                                 <div>
-                                  <div className={`text-xs font-semibold font-sans ${s.eligible ? 'text-white' : 'text-slate-500'}`}>{s.name}</div>
+                                  <div className={`text-xs font-semibold font-sans ${s.eligible ? 'text-slate-900' : 'text-slate-500'}`}>{s.name}</div>
                                   <div className={`text-[10px] ${s.eligible ? 'text-emerald-400' : 'text-slate-500'}`}>{s.amount}</div>
                                 </div>
                                 <span className={`text-[10px] font-bold ${s.eligible ? 'text-emerald-300' : 'text-slate-500'}`}>
@@ -808,7 +808,7 @@ export default function ModularHorizonVaultPage() {
             >
               <div className="flex items-center gap-2.5 mb-4">
                 <span className="text-xl">📐</span>
-                <h2 className="text-lg font-bold text-white font-heading">
+                <h2 className="text-lg font-bold text-slate-900 font-heading">
                   Academic Bridges &amp; VTU CGPA Converter
                 </h2>
               </div>
@@ -833,7 +833,7 @@ export default function ModularHorizonVaultPage() {
                         step="0.01"
                         value={cgpa}
                         onChange={(e) => setCgpa(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       />
                     </div>
                     <div>
@@ -841,7 +841,7 @@ export default function ModularHorizonVaultPage() {
                       <select
                         value={scheme}
                         onChange={(e) => setScheme(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none transition-all"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none transition-all"
                       >
                         <option value="2022 Scheme">2022 / 2026 CBCS Scheme</option>
                         <option value="2018 Scheme">2018 CBCS Scheme</option>
@@ -868,15 +868,15 @@ export default function ModularHorizonVaultPage() {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className="p-4 rounded-2xl bg-slate-950 border border-sky-500/30 space-y-2 mt-3 shadow-lg shadow-sky-500/5">
-                          <div className="flex items-center justify-between text-white font-bold text-sm">
+                        <div className="p-4 rounded-2xl bg-white border border-sky-500/30 space-y-2 mt-3 shadow-lg shadow-sky-500/5">
+                          <div className="flex items-center justify-between text-slate-900 font-bold text-sm">
                             <span>Percentage: <strong className="text-emerald-400 text-base">{vtuResult.percentage}</strong></span>
                             <span className="text-sky-300 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20">{vtuResult.classDivision}</span>
                           </div>
                           <div className="text-slate-400 text-[11px] font-medium">{vtuResult.formula}</div>
                           <div className="p-2.5 rounded-xl bg-sky-950/30 border border-sky-500/20 text-sky-200 text-[11px] flex items-center gap-2">
                             <span className="text-base">🌐</span> 
-                            <span>US 4.0 Equivalent GPA: <strong className="text-white text-xs">{vtuResult.usEquivalentGpa} / 4.0</strong> (WES Compatible)</span>
+                            <span>US 4.0 Equivalent GPA: <strong className="text-slate-900 text-xs">{vtuResult.usEquivalentGpa} / 4.0</strong> (WES Compatible)</span>
                           </div>
                         </div>
                       </motion.div>

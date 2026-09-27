@@ -23,7 +23,7 @@ export default function ProfileBanner({ activeVault = 'interview' }) {
 
   return (
     <>
-      <div className="w-full mb-8 p-3.5 sm:p-4 rounded-2xl bg-slate-900/90 border border-white/10 flex flex-wrap items-center justify-between gap-3 shadow-lg shadow-black/40 text-left">
+      <div className="w-full mb-8 p-3.5 sm:p-4 rounded-2xl bg-slate-50/90 border border-white/10 flex flex-wrap items-center justify-between gap-3 shadow-lg shadow-black/40 text-left">
         
         {/* Left: User Identity + Domain Pill */}
         <div className="flex items-center gap-3">
@@ -35,7 +35,7 @@ export default function ProfileBanner({ activeVault = 'interview' }) {
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-white font-heading">
+              <span className="text-sm font-bold text-slate-900 font-heading">
                 {profile.name || 'Candidate'}
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold">
@@ -77,7 +77,7 @@ export default function ProfileBanner({ activeVault = 'interview' }) {
           <button
             type="button"
             onClick={() => setModalOpen(true)}
-            className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 hover:text-white transition-all flex items-center gap-1.5"
+            className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/5 hover:bg-white/10 border border-white/10 text-slate-800 hover:text-slate-900 transition-all flex items-center gap-1.5"
           >
             <span>⚙️</span> Edit {activeVault.toUpperCase()} Profile
           </button>

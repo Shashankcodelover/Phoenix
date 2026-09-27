@@ -33,7 +33,7 @@
   <!-- Header Navigation -->
   <header class="max-w-7xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
     <div class="flex items-center space-x-4">
-      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 hover:border-cyan-500/50 hover:bg-slate-800 transition text-cyan-400">
+      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-50/80 border border-slate-700/60 hover:border-cyan-500/50 hover:bg-slate-800 transition text-cyan-400">
         <i class="fa-solid fa-arrow-left"></i>
       </a>
       <div>
@@ -43,7 +43,7 @@
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> WEBRTC FULL MESH 3-WAY
           </span>
         </div>
-        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white mt-1 flex items-center gap-2.5">
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 mt-1 flex items-center gap-2.5">
           <span>Astra WebRTC Multi-Peer Mesh</span>
           <span class="text-cyan-400 text-lg font-mono-code">&amp; Remote Proctoring Telemetry</span>
         </h1>
@@ -52,7 +52,7 @@
 
     <!-- Live Telemetry Status Pill -->
     <div class="flex items-center gap-3">
-      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-4 flex items-center gap-3 font-mono-code text-xs">
+      <div class="bg-slate-50/90 border border-slate-700/80 rounded-xl p-2 px-4 flex items-center gap-3 font-mono-code text-xs">
         <div class="flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 feed-pulse"></span>
           <span class="text-slate-300">ICE: <strong class="text-emerald-400">COMPLETED</strong></span>
@@ -61,7 +61,7 @@
         <span class="text-slate-400">Bitrate: <strong class="text-cyan-400" id="headerBitrate">4,216 kbps</strong></span>
       </div>
 
-      <button id="btnRefreshMesh" onclick="fetchMeshStatus()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono-code transition">
+      <button id="btnRefreshMesh" onclick="fetchMeshStatus()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-800 border border-slate-700 text-xs font-mono-code transition">
         <i class="fa-solid fa-rotate"></i>
       </button>
     </div>
@@ -72,31 +72,31 @@
 
     <!-- KPI Metric Cards Bar (RTCP Telemetry) -->
     <section class="grid grid-cols-2 md:grid-cols-5 gap-3">
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Round Trip Time (RTT)</div>
         <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricRTT">14.8 ms</div>
         <div class="text-[10px] text-emerald-500/80 font-mono-code mt-1">Ultra-Low Latency</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Packet Loss Rate</div>
         <div class="text-xl font-bold text-cyan-400 font-mono-code mt-0.5" id="metricLoss">0.02%</div>
         <div class="text-[10px] text-slate-400 font-mono-code mt-1">28 / 142k lost</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Jitter Buffer Delay</div>
-        <div class="text-xl font-bold text-white font-mono-code mt-0.5" id="metricJitter">3.8 ms</div>
+        <div class="text-xl font-bold text-slate-900 font-mono-code mt-0.5" id="metricJitter">3.8 ms</div>
         <div class="text-[10px] text-slate-400 font-mono-code mt-1">Sub-frame stability</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Proctor Integrity Score</div>
         <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricIntegrity">99 / 100</div>
         <div class="text-[10px] text-emerald-500/80 font-mono-code mt-1">Zero Tamper Alerts</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Display Monitors</div>
         <div class="text-xl font-bold text-blue-300 font-mono-code mt-0.5" id="metricDisplays">1 Primary</div>
         <div class="text-[10px] text-slate-400 font-mono-code mt-1">0 Virtual Displays</div>
@@ -107,12 +107,12 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- Left Column: Screen Share Stream 1080p @ 60 FPS -->
-      <section class="lg:col-span-8 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+      <section class="lg:col-span-8 bg-slate-50/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-desktop text-cyan-400"></i>
-              <h2 class="text-base font-bold text-white tracking-wide">Candidate Primary Screen Share</h2>
+              <h2 class="text-base font-bold text-slate-900 tracking-wide">Candidate Primary Screen Share</h2>
             </div>
             <div class="flex items-center gap-2 text-xs font-mono-code">
               <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/60">1080p @ 60 FPS</span>
@@ -128,7 +128,7 @@
             </div>
 
             <!-- Simulated Code Editor Canvas inside stream -->
-            <div class="p-3 bg-slate-950/90 rounded-lg border border-slate-800/90 text-slate-300 space-y-1.5 text-xs">
+            <div class="p-3 bg-white/90 rounded-lg border border-slate-800/90 text-slate-300 space-y-1.5 text-xs">
               <div class="text-slate-500">// Monaco Editor: LeetCode #42 Hard - Trapping Rain Water</div>
               <div class="text-cyan-300">function trapRainWater(height: number[]): number {</div>
               <div class="text-slate-400 pl-4">let left = 0, right = height.length - 1;</div>
@@ -155,11 +155,11 @@
       <section class="lg:col-span-4 space-y-5">
 
         <!-- Proctor Webcam Feed (Face & Gaze) -->
-        <div class="bg-slate-900/80 border border-slate-800/90 rounded-2xl p-4 shadow-xl">
+        <div class="bg-slate-50/80 border border-slate-800/90 rounded-2xl p-4 shadow-xl">
           <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-video text-emerald-400"></i>
-              <h3 class="text-sm font-bold text-white tracking-wide">AI Proctor Telemetry Feed</h3>
+              <h3 class="text-sm font-bold text-slate-900 tracking-wide">AI Proctor Telemetry Feed</h3>
             </div>
             <span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/60">720p VP9</span>
           </div>
@@ -181,11 +181,11 @@
         </div>
 
         <!-- Network Jitter Injection Simulator -->
-        <div class="bg-slate-900/80 border border-slate-800/90 rounded-2xl p-4 shadow-xl">
+        <div class="bg-slate-50/80 border border-slate-800/90 rounded-2xl p-4 shadow-xl">
           <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-sliders text-amber-400"></i>
-              <h3 class="text-sm font-bold text-white tracking-wide">Network Jitter &amp; Chaos Injection</h3>
+              <h3 class="text-sm font-bold text-slate-900 tracking-wide">Network Jitter &amp; Chaos Injection</h3>
             </div>
             <span class="text-[10px] font-mono-code text-slate-400">RTCP Testing</span>
           </div>
@@ -196,10 +196,10 @@
                 <span>Packet Loss:</span>
                 <span id="lossVal" class="text-amber-400 font-bold">0.05%</span>
               </div>
-              <input id="inputLoss" type="range" min="0" max="5" step="0.5" value="0.5" oninput="updateLossDisplay(this.value)" class="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-500">
+              <input id="inputLoss" type="range" min="0" max="5" step="0.5" value="0.5" oninput="updateLossDisplay(this.value)" class="w-full h-1.5 bg-white rounded-lg appearance-none cursor-pointer accent-amber-500">
             </div>
 
-            <button id="btnInjectJitter" onclick="injectJitter()" class="w-full py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold transition flex items-center justify-center gap-2">
+            <button id="btnInjectJitter" onclick="injectJitter()" class="w-full py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-900 font-bold transition flex items-center justify-center gap-2">
               <i class="fa-solid fa-wave-square"></i> INJECT PACKET JITTER
             </button>
           </div>

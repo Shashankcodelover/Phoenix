@@ -37,7 +37,7 @@
   <!-- Header & Navigation -->
   <header class="max-w-7xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
     <div class="flex items-center space-x-4">
-      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 hover:border-cyan-500/50 hover:bg-slate-800 transition text-cyan-400">
+      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-50/80 border border-slate-700/60 hover:border-cyan-500/50 hover:bg-slate-800 transition text-cyan-400">
         <i class="fa-solid fa-arrow-left"></i>
       </a>
       <div>
@@ -47,7 +47,7 @@
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> GALE-SHAPLEY STABLE MATCHER
           </span>
         </div>
-        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white mt-1 flex items-center gap-2.5">
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 mt-1 flex items-center gap-2.5">
           <span>Astra Autonomous Team Formation</span>
           <span class="text-cyan-400 text-lg font-mono-code">&amp; Skill Auto-Balancer</span>
         </h1>
@@ -56,9 +56,9 @@
 
     <!-- Theme & Squad Size Controls -->
     <div class="flex items-center gap-3">
-      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-2">
+      <div class="bg-slate-50/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-2">
         <label class="text-xs text-slate-400 font-mono-code uppercase">Theme</label>
-        <select id="themeSelect" onchange="solveMatching()" class="bg-slate-800 text-white font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-cyan-500">
+        <select id="themeSelect" onchange="solveMatching()" class="bg-slate-800 text-slate-900 font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-cyan-500">
           <option value="ai_agentic" selected>Autonomous AI Agents</option>
           <option value="fintech_quant">Quant HFT &amp; DeFi</option>
           <option value="consumer_spatial">Spatial &amp; 3D Consumer</option>
@@ -66,16 +66,16 @@
         </select>
       </div>
 
-      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-2">
+      <div class="bg-slate-50/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-2">
         <label class="text-xs text-slate-400 font-mono-code uppercase">Size</label>
-        <select id="sizeSelect" onchange="solveMatching()" class="bg-slate-800 text-white font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-cyan-500">
+        <select id="sizeSelect" onchange="solveMatching()" class="bg-slate-800 text-slate-900 font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-cyan-500">
           <option value="4" selected>4 Builders</option>
           <option value="3">3 Builders</option>
           <option value="5">5 Builders</option>
         </select>
       </div>
 
-      <button id="btnSolveMatch" onclick="solveMatching()" class="py-2.5 px-4 rounded-xl font-bold font-mono-code text-sm text-white bg-cyan-600 hover:bg-cyan-500 transition shadow-lg flex items-center gap-2">
+      <button id="btnSolveMatch" onclick="solveMatching()" class="py-2.5 px-4 rounded-xl font-bold font-mono-code text-sm text-slate-900 bg-cyan-600 hover:bg-cyan-500 transition shadow-lg flex items-center gap-2">
         <i class="fa-solid fa-users text-xs"></i>
         <span>EXECUTE MATCH</span>
       </button>
@@ -87,31 +87,31 @@
 
     <!-- KPI Metric Cards Bar -->
     <section class="grid grid-cols-2 md:grid-cols-5 gap-3">
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Team Synergy Score</div>
         <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricSynergy">96 / 100</div>
         <div class="text-[10px] text-emerald-500/80 font-mono-code mt-1">Exceptional Cohesion</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Win Probability</div>
         <div class="text-xl font-bold text-cyan-400 font-mono-code mt-0.5" id="metricWinProb">91%</div>
         <div class="text-[10px] text-cyan-400/80 font-mono-code mt-1">Top-3 Podium Expected</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Cognitive Diversity</div>
         <div class="text-xl font-bold text-blue-300 font-mono-code mt-0.5" id="metricDiversity">0.97 Index</div>
         <div class="text-[10px] text-slate-400 font-mono-code mt-1">Zero Skill Redundancy</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Stability Guarantee</div>
         <div class="text-xl font-bold text-amber-400 font-mono-code mt-0.5" id="metricStability">Stable (Zero Blocking)</div>
         <div class="text-[10px] text-amber-400/80 font-mono-code mt-1">Gale-Shapley Pareto Optimal</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Radar Blindspots</div>
         <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricBlindspots">0 Gaps</div>
         <div class="text-[10px] text-slate-400 font-mono-code mt-1">Full 5-D Vector Coverage</div>
@@ -122,12 +122,12 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- Left Column: 5-D Skill Radar Visualization -->
-      <section class="lg:col-span-5 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+      <section class="lg:col-span-5 bg-slate-50/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-chart-pie text-cyan-400"></i>
-              <h2 class="text-base font-bold text-white tracking-wide">5-D Skill Vector Radar Alignment</h2>
+              <h2 class="text-base font-bold text-slate-900 tracking-wide">5-D Skill Vector Radar Alignment</h2>
             </div>
             <div class="flex items-center gap-3 text-xs font-mono-code">
               <span class="flex items-center gap-1 text-cyan-400"><span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> Peak</span>
@@ -136,29 +136,29 @@
           </div>
 
           <!-- Radar Canvas -->
-          <div class="h-64 w-full bg-slate-950/80 rounded-xl border border-slate-800/80 p-3 relative overflow-hidden flex items-center justify-center">
+          <div class="h-64 w-full bg-white/80 rounded-xl border border-slate-800/80 p-3 relative overflow-hidden flex items-center justify-center">
             <canvas id="radarCanvas" class="w-full h-full"></canvas>
           </div>
 
           <!-- Vector Dimension Table -->
           <div class="grid grid-cols-5 gap-1.5 mt-4 text-center font-mono-code text-xs">
-            <div class="p-2 rounded bg-slate-950 border border-slate-800">
+            <div class="p-2 rounded bg-white border border-slate-800">
               <div class="text-slate-500 text-[10px]">Frontend</div>
               <div class="font-bold text-cyan-400 mt-0.5" id="vFrontend">98</div>
             </div>
-            <div class="p-2 rounded bg-slate-950 border border-slate-800">
+            <div class="p-2 rounded bg-white border border-slate-800">
               <div class="text-slate-500 text-[10px]">Backend</div>
               <div class="font-bold text-emerald-400 mt-0.5" id="vBackend">95</div>
             </div>
-            <div class="p-2 rounded bg-slate-950 border border-slate-800">
+            <div class="p-2 rounded bg-white border border-slate-800">
               <div class="text-slate-500 text-[10px]">AI/ML</div>
               <div class="font-bold text-blue-400 mt-0.5" id="vAi">96</div>
             </div>
-            <div class="p-2 rounded bg-slate-950 border border-slate-800">
+            <div class="p-2 rounded bg-white border border-slate-800">
               <div class="text-slate-500 text-[10px]">Web3</div>
               <div class="font-bold text-amber-400 mt-0.5" id="vWeb3">60</div>
             </div>
-            <div class="p-2 rounded bg-slate-950 border border-slate-800">
+            <div class="p-2 rounded bg-white border border-slate-800">
               <div class="text-slate-500 text-[10px]">Pitch</div>
               <div class="font-bold text-rose-400 mt-0.5" id="vPitch">98</div>
             </div>
@@ -166,17 +166,17 @@
         </div>
 
         <div class="mt-4 pt-3 border-t border-slate-800 text-xs font-mono-code text-slate-400 flex justify-between">
-          <span>Track: <strong class="text-white" id="radarTrackName">Autonomous AI Agents</strong></span>
+          <span>Track: <strong class="text-slate-900" id="radarTrackName">Autonomous AI Agents</strong></span>
           <span class="text-emerald-400">Zero Blocking Guarantee</span>
         </div>
       </section>
 
       <!-- Right Column: Matched Squad Roster Cards -->
-      <section class="lg:col-span-7 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+      <section class="lg:col-span-7 bg-slate-50/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
         <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-id-badge text-emerald-400"></i>
-            <h2 class="text-base font-bold text-white tracking-wide">Optimized Hackathon Squad Roster</h2>
+            <h2 class="text-base font-bold text-slate-900 tracking-wide">Optimized Hackathon Squad Roster</h2>
           </div>
           <span class="px-2 py-0.5 text-xs font-mono-code rounded bg-emerald-950 text-emerald-400 border border-emerald-800/60" id="rosterCountBadge">4 Matched</span>
         </div>
@@ -252,7 +252,7 @@
                 ${b.name.split(' ').map(n=>n[0]).join('')}
               </div>
               <div>
-                <div class="font-bold text-white text-sm">${b.name}</div>
+                <div class="font-bold text-slate-900 text-sm">${b.name}</div>
                 <div class="text-[11px] text-cyan-400 font-mono-code">${b.handle}</div>
               </div>
             </div>
@@ -262,7 +262,7 @@
           </div>
           <div class="text-xs text-slate-300 font-medium">${b.primaryRole}</div>
           <div class="flex items-center justify-between text-[11px] font-mono-code text-slate-400 pt-1 border-t border-slate-800/80">
-            <span>Exp: <strong class="text-slate-200">${b.experienceYears}y</strong></span>
+            <span>Exp: <strong class="text-slate-800">${b.experienceYears}y</strong></span>
             <span>Hacks Won: <strong class="text-amber-400">${b.pastHackathonsWon}🏆</strong></span>
             <span>Fitness: <strong class="text-emerald-400">${b.themeFitness}</strong></span>
           </div>
@@ -272,7 +272,7 @@
       // Render Bench
       const benchContainer = document.getElementById('benchContainer');
       benchContainer.innerHTML = m.unmatchedPool.map(b => `
-        <div class="p-2 rounded bg-slate-950 border border-slate-800 text-center">
+        <div class="p-2 rounded bg-white border border-slate-800 text-center">
           <div class="font-bold text-slate-300 text-[11px]">${b.name}</div>
           <div class="text-[10px] text-slate-500">${b.handle}</div>
         </div>

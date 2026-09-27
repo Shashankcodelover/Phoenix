@@ -99,7 +99,7 @@ export default function TeamServerCreation({ room, onRoomUpdate }) {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full rounded-2xl bg-slate-900/90 border border-emerald-500/25 p-5 sm:p-7 shadow-xl shadow-black/40 text-left space-y-6"
+      className="w-full rounded-2xl bg-slate-50/90 border border-emerald-500/25 p-5 sm:p-7 shadow-xl shadow-black/40 text-left space-y-6"
     >
       
       {/* Friendly Header */}
@@ -117,11 +117,11 @@ export default function TeamServerCreation({ room, onRoomUpdate }) {
             </span>
             <span className="text-xs text-slate-400 font-mono">Dynamic Member Scaling (Room: {roomId})</span>
           </div>
-          <h3 className="text-xl font-bold text-white font-heading">
+          <h3 className="text-xl font-bold text-slate-900 font-heading">
             Create Squad Workspace &amp; Invite Arbitrary Teammates
           </h3>
           <p className="text-xs text-slate-300 leading-relaxed mt-0.5">
-            Every teammate who joins Room <strong className="text-white font-mono">{roomId}</strong> is immediately integrated into the live sprint pipeline. The system dynamically divides the project deliverables across your squad size.
+            Every teammate who joins Room <strong className="text-slate-900 font-mono">{roomId}</strong> is immediately integrated into the live sprint pipeline. The system dynamically divides the project deliverables across your squad size.
           </p>
         </div>
       </div>
@@ -134,7 +134,7 @@ export default function TeamServerCreation({ room, onRoomUpdate }) {
             type="text"
             value={squadName}
             onChange={(e) => setSquadName(e.target.value)}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-white/15 text-white focus:border-emerald-400 focus:outline-none transition-all"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-white/15 text-slate-900 focus:border-emerald-400 focus:outline-none transition-all"
             placeholder="e.g. Team Phoenix Nexus"
           />
         </div>
@@ -149,7 +149,7 @@ export default function TeamServerCreation({ room, onRoomUpdate }) {
               type="text"
               readOnly
               value={inviteLink}
-              className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-white/15 text-emerald-300 select-all focus:outline-none truncate"
+              className="flex-1 px-3.5 py-2.5 rounded-xl bg-white border border-white/15 text-emerald-300 select-all focus:outline-none truncate"
             />
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -186,9 +186,9 @@ export default function TeamServerCreation({ room, onRoomUpdate }) {
       </AnimatePresence>
 
       {/* Dynamic Member Addition Controls */}
-      <div className="p-4 rounded-xl bg-slate-950 border border-white/10 space-y-3 font-mono text-xs">
+      <div className="p-4 rounded-xl bg-white border border-white/10 space-y-3 font-mono text-xs">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="font-bold text-white uppercase">
+          <span className="font-bold text-slate-900 uppercase">
             👥 Add Teammates to Room {roomId} ({memberCount} Active):
           </span>
           {members.length > 1 && (
@@ -209,14 +209,14 @@ export default function TeamServerCreation({ room, onRoomUpdate }) {
             value={customName}
             onChange={(e) => setCustomName(e.target.value)}
             placeholder="Custom Name (e.g. Maya Lin)"
-            className="px-3.5 py-2 rounded-lg bg-slate-900 border border-white/15 text-white focus:border-emerald-400 focus:outline-none transition-all"
+            className="px-3.5 py-2 rounded-lg bg-slate-50 border border-white/15 text-slate-900 focus:border-emerald-400 focus:outline-none transition-all"
           />
           <input
             type="text"
             value={customRole}
             onChange={(e) => setCustomRole(e.target.value)}
             placeholder="Custom Role (e.g. AI/ML Researcher)"
-            className="px-3.5 py-2 rounded-lg bg-slate-900 border border-white/15 text-white focus:border-emerald-400 focus:outline-none transition-all"
+            className="px-3.5 py-2 rounded-lg bg-slate-50 border border-white/15 text-slate-900 focus:border-emerald-400 focus:outline-none transition-all"
           />
           <motion.button
             whileHover={{ scale: 1.02 }}
@@ -283,14 +283,14 @@ export default function TeamServerCreation({ room, onRoomUpdate }) {
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.3 }}
               key={member.id || index}
-              className="p-4 rounded-xl bg-slate-950 border border-emerald-500/40 flex items-start gap-3 shadow-md shadow-emerald-500/5"
+              className="p-4 rounded-xl bg-white border border-emerald-500/40 flex items-start gap-3 shadow-md shadow-emerald-500/5"
             >
-              <div className="w-10 h-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center text-lg shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-slate-50 border border-white/10 flex items-center justify-center text-lg shrink-0">
                 {member.avatar || '👨‍💻'}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <div className="font-bold text-white text-xs truncate font-sans">
+                  <div className="font-bold text-slate-900 text-xs truncate font-sans">
                     {member.name} {member.isLeader ? '(Leader)' : ''}
                   </div>
                   <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 font-bold">

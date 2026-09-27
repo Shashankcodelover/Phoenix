@@ -235,7 +235,7 @@ export default function HackathonEnginesHub({ room, onSelectStep }) {
           </motion.div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-emerald-300">
                 VAULT 3 PRODUCTION ENGINE MATRIX
               </span>
               <span className="text-xs text-theme-muted font-mono">
@@ -252,7 +252,7 @@ export default function HackathonEnginesHub({ room, onSelectStep }) {
         </div>
 
         <div className="flex items-center gap-2 font-mono text-xs">
-          <span className="px-3.5 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-bold">
+          <span className="px-3.5 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 text-emerald-300 font-bold">
             22 Verified Engines Active
           </span>
         </div>
@@ -269,8 +269,8 @@ export default function HackathonEnginesHub({ room, onSelectStep }) {
             onClick={() => setActiveFilter(cat)}
             className={`px-3 py-1.5 rounded-xl border transition-all whitespace-nowrap ${
               activeFilter === cat
-                ? 'bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border-emerald-500 font-bold shadow-sm'
-                : 'bg-slate-100 dark:bg-slate-950 border-theme-glass text-theme-muted hover:text-theme-main'
+                ? 'bg-emerald-500/25 text-emerald-700 text-emerald-300 border-emerald-500 font-bold shadow-sm'
+                : 'bg-slate-100 bg-white border-theme-glass text-theme-muted hover:text-theme-main'
             }`}
           >
             {cat === 'all' ? '✨ All 22 Engines' : cat}
@@ -294,24 +294,24 @@ export default function HackathonEnginesHub({ room, onSelectStep }) {
                   onSelectStep(engine.stepNum);
                 }
               }}
-              className="p-5 rounded-2xl bg-slate-100/70 dark:bg-slate-950/80 border border-theme-glass hover:border-emerald-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-3 group shadow-sm hover:shadow-md"
+              className="p-5 rounded-2xl bg-slate-100/70 bg-white/80 border border-theme-glass hover:border-emerald-500/50 transition-all cursor-pointer flex flex-col justify-between space-y-3 group shadow-sm hover:shadow-md"
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <span className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold flex items-center justify-center text-xs">
+                  <span className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-700 text-emerald-300 font-bold flex items-center justify-center text-xs">
                     #{engine.id}
                   </span>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[9px] px-2 py-0.5 rounded bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-500/30 font-bold">
+                    <span className="text-[9px] px-2 py-0.5 rounded bg-sky-500/15 text-sky-700 text-sky-300 border border-sky-500/30 font-bold">
                       {engine.cat}
                     </span>
-                    <span className="text-[9px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold">
+                    <span className="text-[9px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-emerald-300 font-bold">
                       {engine.metric}
                     </span>
                   </div>
                 </div>
 
-                <h4 className="text-sm font-bold text-theme-main group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors font-sans leading-snug mb-1.5">
+                <h4 className="text-sm font-bold text-theme-main group-hover:text-emerald-600 group-hover:text-emerald-300 transition-colors font-sans leading-snug mb-1.5">
                   {engine.name}
                 </h4>
                 <p className="text-theme-muted text-xs font-sans leading-relaxed font-medium">
@@ -319,7 +319,7 @@ export default function HackathonEnginesHub({ room, onSelectStep }) {
                 </p>
               </div>
 
-              <div className="pt-2 border-t border-theme-glass flex items-center justify-between text-[11px] text-emerald-700 dark:text-emerald-300 font-bold">
+              <div className="pt-2 border-t border-theme-glass flex items-center justify-between text-[11px] text-emerald-700 text-emerald-300 font-bold">
                 <span>{engine.badge}</span>
                 <span className="group-hover:translate-x-1 transition-transform">LAUNCH ➔</span>
               </div>

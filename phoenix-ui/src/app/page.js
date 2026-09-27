@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 
 export default function HomePage() {
   return (
-    <div className="relative min-h-screen flex flex-col selection:bg-[var(--glow-horizon)]/30 selection:text-white">
+    <div className="relative min-h-screen flex flex-col selection:bg-[var(--glow-horizon)]/30 selection:text-slate-900">
       <div className="ambient-radiance" />
       <Navbar />
 

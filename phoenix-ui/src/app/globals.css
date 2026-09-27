@@ -54,7 +54,7 @@ body {
 }
 
 
-[data-theme="dark"] body {
+[data-theme="light"] body {
   background-image: 
     radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);

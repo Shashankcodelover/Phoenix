@@ -3,7 +3,7 @@
 export default function CategoryNav({ categories = [], activeCategory, onSelectCategory, accentColor = 'indigo' }) {
   const getAccentClass = (catId) => {
     const isActive = activeCategory === catId;
-    if (!isActive) return 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border-transparent';
+    if (!isActive) return 'text-slate-400 hover:text-slate-800 hover:bg-white/5 border-transparent';
 
     switch (accentColor) {
       case 'sky':
@@ -17,7 +17,7 @@ export default function CategoryNav({ categories = [], activeCategory, onSelectC
   };
 
   return (
-    <div className="sticky top-18 z-40 mb-8 p-1.5 rounded-2xl bg-slate-950/90 backdrop-blur-xl border border-white/10 shadow-xl shadow-black/50">
+    <div className="sticky top-18 z-40 mb-8 p-1.5 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/10 shadow-xl shadow-black/50">
       <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 px-1 font-mono text-xs">
         <button
           type="button"
@@ -36,7 +36,7 @@ export default function CategoryNav({ categories = [], activeCategory, onSelectC
           >
             <span>{cat.icon}</span>
             <span>{cat.title}</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-white/10 text-white/80 font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-white/10 text-slate-900/80 font-mono">
               {cat.count}
             </span>
           </button>

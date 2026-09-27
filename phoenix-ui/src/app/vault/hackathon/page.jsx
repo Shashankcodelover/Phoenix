@@ -123,7 +123,7 @@ export default function HackathonVaultPage() {
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-2xl">🏆</span>
-              <span className="text-[11px] font-mono font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/35">
+              <span className="text-[11px] font-mono font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 text-emerald-400 border border-emerald-500/35">
                 VAULT 3: HACKATHON OS • NATIONAL HACKATHON WINNING PIPELINE
               </span>
             </div>
@@ -131,16 +131,16 @@ export default function HackathonVaultPage() {
               National Hackathon OS: From Inception to Grand Finale
             </h1>
             <p className="text-theme-muted text-xs sm:text-sm max-w-3xl mt-1 font-medium leading-relaxed">
-              Arbitrary member scaling, mathematical workload division, peak-quality foundation documents, 180s stage pitch scripts, and real-time Discord copilots synchronized to Room <strong className="text-emerald-600 dark:text-emerald-300 font-mono font-bold">{room.roomId}</strong>.
+              Arbitrary member scaling, mathematical workload division, peak-quality foundation documents, 180s stage pitch scripts, and real-time Discord copilots synchronized to Room <strong className="text-emerald-600 text-emerald-300 font-mono font-bold">{room.roomId}</strong>.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-            <span className="px-3.5 py-1.5 rounded-xl bg-slate-100/80 dark:bg-slate-900 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-bold flex items-center gap-1.5 shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
+            <span className="px-3.5 py-1.5 rounded-xl bg-slate-100/80 bg-slate-50 border border-emerald-500/30 text-emerald-700 text-emerald-300 font-bold flex items-center gap-1.5 shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 bg-emerald-400 animate-pulse"></span>
               ROOM: {room.roomId}
             </span>
-            <span className="px-3.5 py-1.5 rounded-xl bg-slate-100/80 dark:bg-slate-900 border border-theme-glass text-theme-main font-semibold shadow-sm">
+            <span className="px-3.5 py-1.5 rounded-xl bg-slate-100/80 bg-slate-50 border border-theme-glass text-theme-main font-semibold shadow-sm">
               👥 {memberCount} Active Teammate{memberCount > 1 ? 's' : ''}
             </span>
           </div>
@@ -162,12 +162,12 @@ export default function HackathonVaultPage() {
                     isActive
                       ? 'bg-emerald-500/25 text-theme-main border-emerald-500 shadow-md shadow-emerald-500/15 font-bold ring-1 ring-emerald-400/50'
                       : isPassed
-                      ? 'bg-slate-100 dark:bg-slate-900/90 text-emerald-700 dark:text-emerald-300 border-theme-glass'
-                      : 'bg-transparent text-theme-subtle border-transparent hover:text-theme-main hover:bg-slate-100/50 dark:hover:bg-white/5'
+                      ? 'bg-slate-100 bg-slate-50/90 text-emerald-700 text-emerald-300 border-theme-glass'
+                      : 'bg-transparent text-theme-subtle border-transparent hover:text-theme-main hover:bg-slate-100/50 hover:bg-white/5'
                   }`}
                 >
                   <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
-                    isActive ? 'bg-emerald-500 text-slate-950 shadow-md' : isPassed ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-slate-200 dark:bg-slate-800 text-theme-subtle'
+                    isActive ? 'bg-emerald-500 text-slate-950 shadow-md' : isPassed ? 'bg-emerald-500/20 text-emerald-700 text-emerald-300' : 'bg-slate-200 bg-slate-800 text-theme-subtle'
                   }`}>
                     {isPassed ? '✓' : s.num}
                   </div>

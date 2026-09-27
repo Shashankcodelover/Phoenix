@@ -112,7 +112,7 @@ MIT License — Built with ❤️ at ${room?.hackathonName || 'National Hackatho
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-emerald-300">
                 STEP 12: SUBMISSION PACKAGER
               </span>
             </div>
@@ -126,7 +126,7 @@ MIT License — Built with ❤️ at ${room?.hackathonName || 'National Hackatho
         </div>
 
         <div className="flex items-center gap-2 font-mono text-xs">
-          <div className="px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-bold">
+          <div className="px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 text-emerald-300 font-bold">
             {completedCount}/{checklist.length} Complete
           </div>
         </div>
@@ -141,7 +141,7 @@ MIT License — Built with ❤️ at ${room?.hackathonName || 'National Hackatho
             onClick={() => setActiveTab(tab.id)}
             className={`px-3.5 py-2 rounded-xl border transition-all font-semibold flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === tab.id
-                ? 'bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border-emerald-500/40 shadow-sm font-bold'
+                ? 'bg-emerald-500/25 text-emerald-700 text-emerald-300 border-emerald-500/40 shadow-sm font-bold'
                 : 'text-theme-muted hover:text-theme-main border-transparent'
             }`}
           >
@@ -154,7 +154,7 @@ MIT License — Built with ❤️ at ${room?.hackathonName || 'National Hackatho
       {activeTab === 'readme' && (
         <div className="space-y-3 animate-fadeIn">
           <div className="flex items-center justify-between">
-            <div className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+            <div className="text-[11px] font-mono font-bold text-emerald-600 text-emerald-400 uppercase">
               📄 AUTO-GENERATED README.md
             </div>
             <button
@@ -165,7 +165,7 @@ MIT License — Built with ❤️ at ${room?.hackathonName || 'National Hackatho
               <span>📥</span> Download README.md
             </button>
           </div>
-          <pre className="p-5 rounded-2xl bg-slate-900 dark:bg-black text-emerald-300 text-xs font-mono overflow-x-auto leading-relaxed border border-white/10 max-h-[500px] overflow-y-auto">
+          <pre className="p-5 rounded-2xl bg-slate-50 bg-white text-emerald-300 text-xs font-mono overflow-x-auto leading-relaxed border border-white/10 max-h-[500px] overflow-y-auto">
             {readmeTemplate}
           </pre>
         </div>
@@ -175,8 +175,8 @@ MIT License — Built with ❤️ at ${room?.hackathonName || 'National Hackatho
       {activeTab === 'devpost' && (
         <div className="space-y-3 animate-fadeIn">
           {Object.entries(devpostFields).map(([key, value]) => (
-            <div key={key} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-theme-glass space-y-1.5">
-              <div className="text-[11px] font-mono font-bold text-sky-600 dark:text-sky-400 uppercase">
+            <div key={key} className="p-4 rounded-2xl bg-slate-50 bg-white border border-theme-glass space-y-1.5">
+              <div className="text-[11px] font-mono font-bold text-sky-600 text-sky-400 uppercase">
                 {key.replace(/([A-Z])/g, ' $1').trim()}
               </div>
               <p className="text-xs text-theme-main leading-relaxed">{value}</p>
@@ -196,10 +196,10 @@ MIT License — Built with ❤️ at ${room?.hackathonName || 'National Hackatho
       {activeTab === 'checklist' && (
         <div className="space-y-2 animate-fadeIn">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+            <div className="text-[11px] font-mono font-bold text-emerald-600 text-emerald-400 uppercase">
               ✅ PRE-SUBMISSION CHECKLIST
             </div>
-            <div className="w-32 h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+            <div className="w-32 h-2 rounded-full bg-slate-200 bg-slate-800 overflow-hidden">
               <div
                 className="h-full bg-emerald-500 rounded-full transition-all"
                 style={{ width: `${(completedCount / checklist.length) * 100}%` }}
@@ -213,14 +213,14 @@ MIT License — Built with ❤️ at ${room?.hackathonName || 'National Hackatho
               onClick={() => toggleCheck(idx)}
               className={`w-full p-3 rounded-xl border text-left flex items-center gap-3 transition-all ${
                 item.done
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
-                  : 'bg-slate-50 dark:bg-slate-950 border-theme-glass text-theme-main hover:border-emerald-500/20'
+                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 text-emerald-300'
+                  : 'bg-slate-50 bg-white border-theme-glass text-theme-main hover:border-emerald-500/20'
               }`}
             >
               <span className={`w-5 h-5 rounded-md border flex items-center justify-center text-[10px] shrink-0 ${
                 item.done
-                  ? 'bg-emerald-500 border-emerald-500 text-white'
-                  : 'border-slate-300 dark:border-slate-700'
+                  ? 'bg-emerald-500 border-emerald-500 text-slate-900'
+                  : 'border-slate-300 border-slate-700'
               }`}>
                 {item.done ? '✓' : ''}
               </span>
@@ -235,7 +235,7 @@ MIT License — Built with ❤️ at ${room?.hackathonName || 'National Hackatho
       {/* TAB: Demo Storyboard */}
       {activeTab === 'demo' && (
         <div className="space-y-3 animate-fadeIn">
-          <div className="text-[11px] font-mono font-bold text-amber-600 dark:text-amber-400 uppercase">
+          <div className="text-[11px] font-mono font-bold text-amber-600 text-amber-400 uppercase">
             🎬 DEMO VIDEO STORYBOARD (2-3 MINUTES)
           </div>
           {[
@@ -246,8 +246,8 @@ MIT License — Built with ❤️ at ${room?.hackathonName || 'National Hackatho
             { time: '2:00 - 2:30', scene: 'Impact & Metrics', desc: `Show quantified results. Compare before vs. after. Highlight the competitive advantage.` },
             { time: '2:30 - 3:00', scene: 'Closing & Call to Action', desc: `Summarize key achievement. Show the team. End with: "We're ${room?.squadName || 'Team Phoenix'}, and this is ${projectName}."` }
           ].map((scene, idx) => (
-            <div key={idx} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-theme-glass flex items-start gap-3">
-              <span className="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-300 text-[10px] font-mono font-bold shrink-0 border border-amber-500/30">
+            <div key={idx} className="p-4 rounded-2xl bg-slate-50 bg-white border border-theme-glass flex items-start gap-3">
+              <span className="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-700 text-amber-300 text-[10px] font-mono font-bold shrink-0 border border-amber-500/30">
                 {scene.time}
               </span>
               <div>

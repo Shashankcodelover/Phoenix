@@ -201,7 +201,7 @@ export default function HackathonJiraPipeline({ room }) {
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-emerald-300">
                 JIRA SPRINT PIPELINE &amp; FILE STRUCTURE OS
               </span>
               <span className="text-xs text-theme-muted font-mono">
@@ -229,14 +229,14 @@ export default function HackathonJiraPipeline({ room }) {
       </div>
 
       {/* Sprint Progress Gauge */}
-      <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-theme-glass flex flex-wrap items-center justify-between gap-4 font-mono text-xs">
+      <div className="p-4 rounded-2xl bg-slate-100 bg-white border border-theme-glass flex flex-wrap items-center justify-between gap-4 font-mono text-xs">
         <div className="flex items-center gap-4 flex-1 min-w-[260px]">
           <div className="flex-1">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-theme-main font-bold">Overall 24h Sprint Progress:</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">{completionPercentage}% Completed</span>
+              <span className="text-emerald-600 text-emerald-400 font-bold">{completionPercentage}% Completed</span>
             </div>
-            <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+            <div className="w-full h-2.5 rounded-full bg-slate-200 bg-slate-800 overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-sky-400 transition-all duration-500 rounded-full"
                 style={{ width: `${completionPercentage}%` }}
@@ -246,8 +246,8 @@ export default function HackathonJiraPipeline({ room }) {
         </div>
 
         <div className="flex items-center gap-4 text-[11px]">
-          <div><span className="text-theme-subtle">Done:</span> <strong className="text-emerald-600 dark:text-emerald-400">{doneCount}</strong></div>
-          <div><span className="text-theme-subtle">In Progress:</span> <strong className="text-amber-600 dark:text-amber-400">{inProgressCount}</strong></div>
+          <div><span className="text-theme-subtle">Done:</span> <strong className="text-emerald-600 text-emerald-400">{doneCount}</strong></div>
+          <div><span className="text-theme-subtle">In Progress:</span> <strong className="text-amber-600 text-amber-400">{inProgressCount}</strong></div>
           <div><span className="text-theme-subtle">Total Tasks:</span> <strong className="text-theme-main">{tasks.length}</strong></div>
         </div>
       </div>
@@ -267,11 +267,11 @@ export default function HackathonJiraPipeline({ room }) {
               className={`flex-1 min-w-[170px] p-3 rounded-2xl border text-left transition-all ${
                 isActive
                   ? 'bg-emerald-500/20 text-theme-main border-emerald-500 shadow-md font-bold ring-1 ring-emerald-400/50'
-                  : 'bg-slate-100 dark:bg-slate-950 border-theme-glass text-theme-muted hover:text-theme-main hover:bg-slate-200/50 dark:hover:bg-white/5'
+                  : 'bg-slate-100 bg-white border-theme-glass text-theme-muted hover:text-theme-main hover:bg-slate-200/50 hover:bg-white/5'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400">{p.badge}</span>
+                <span className="text-[10px] uppercase font-bold text-emerald-600 text-emerald-400">{p.badge}</span>
                 <span className="text-[10px] text-theme-subtle">{phaseDoneCount}/{phaseTaskCount}</span>
               </div>
               <div className="truncate text-xs font-bold font-sans">{p.name}</div>
@@ -293,10 +293,10 @@ export default function HackathonJiraPipeline({ room }) {
               onClick={() => toggleTaskStatus(task.id)}
               className={`p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none ${
                 isDone
-                  ? 'bg-emerald-950/20 dark:bg-emerald-950/30 border-emerald-500/50 opacity-90'
+                  ? 'bg-emerald-950/20 bg-emerald-950/30 border-emerald-500/50 opacity-90'
                   : isInProgress
-                  ? 'bg-amber-950/15 dark:bg-amber-950/25 border-amber-500/40 shadow-sm'
-                  : 'bg-slate-100/70 dark:bg-slate-950/80 border-theme-glass hover:border-emerald-500/30'
+                  ? 'bg-amber-950/15 bg-amber-950/25 border-amber-500/40 shadow-sm'
+                  : 'bg-slate-100/70 bg-white/80 border-theme-glass hover:border-emerald-500/30'
               }`}
             >
               <div className="flex items-start gap-3.5 flex-1 min-w-0">
@@ -305,7 +305,7 @@ export default function HackathonJiraPipeline({ room }) {
                     ? 'bg-emerald-500 text-slate-950'
                     : isInProgress
                     ? 'bg-amber-500 text-slate-950'
-                    : 'bg-slate-300 dark:bg-slate-800 text-slate-400'
+                    : 'bg-slate-300 bg-slate-800 text-slate-400'
                 }`}>
                   {isDone ? '✓' : isInProgress ? '⟳' : '○'}
                 </div>
@@ -317,10 +317,10 @@ export default function HackathonJiraPipeline({ room }) {
                     </span>
                   </div>
 
-                  <div className="text-[11px] text-emerald-700 dark:text-emerald-300 flex flex-wrap items-center gap-2">
+                  <div className="text-[11px] text-emerald-700 text-emerald-300 flex flex-wrap items-center gap-2">
                     <span>👤 <strong>{task.assignee}</strong> (<em>{task.role}</em>)</span>
                     <span>•</span>
-                    <span className="text-sky-600 dark:text-sky-400">📄 Target Files: <code className="bg-slate-200 dark:bg-slate-900 px-1.5 py-0.5 rounded text-[10px]">{task.fileTarget}</code></span>
+                    <span className="text-sky-600 text-sky-400">📄 Target Files: <code className="bg-slate-200 bg-slate-50 px-1.5 py-0.5 rounded text-[10px]">{task.fileTarget}</code></span>
                   </div>
                 </div>
               </div>
@@ -328,8 +328,8 @@ export default function HackathonJiraPipeline({ room }) {
               <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                 <span className={`text-[10px] px-2.5 py-1 rounded-full font-bold uppercase border ${
                   task.priority === 'CRITICAL'
-                    ? 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/30'
-                    : 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30'
+                    ? 'bg-rose-500/15 text-rose-700 text-rose-400 border-rose-500/30'
+                    : 'bg-amber-500/15 text-amber-700 text-amber-400 border-amber-500/30'
                 }`}>
                   {task.priority}
                 </span>
@@ -339,7 +339,7 @@ export default function HackathonJiraPipeline({ room }) {
                     ? 'bg-emerald-500 text-slate-950 font-bold'
                     : isInProgress
                     ? 'bg-amber-500 text-slate-950 font-bold'
-                    : 'bg-slate-200 dark:bg-slate-800 text-theme-subtle'
+                    : 'bg-slate-200 bg-slate-800 text-theme-subtle'
                 }`}>
                   {task.status.replace('_', ' ')}
                 </span>

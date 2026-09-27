@@ -26,8 +26,8 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-2xl bg-slate-950 border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-sky-500/10 text-left overflow-y-auto max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/80 backdrop-blur-md animate-fadeIn">
+      <div className="relative w-full max-w-2xl bg-white border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-sky-500/10 text-left overflow-y-auto max-h-[90vh]">
         
         {/* Modal Header */}
         <div className="flex items-center justify-between pb-5 mb-6 border-b border-white/10">
@@ -36,7 +36,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
               ⚙️
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white font-heading">
+              <h2 className="text-xl font-bold text-slate-900 font-heading">
                 Candidate Apex Profile Blueprint
               </h2>
               <p className="text-xs text-slate-400 font-mono">
@@ -46,21 +46,21 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-white/10 transition-colors"
           >
             ✕
           </button>
         </div>
 
         {/* Domain Switcher Tabs */}
-        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-900/90 border border-white/10 mb-6 font-mono text-xs">
+        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-50/90 border border-white/10 mb-6 font-mono text-xs">
           <button
             type="button"
             onClick={() => setDomain('interview')}
             className={`flex-1 py-2 rounded-xl font-bold transition-all flex items-center justify-center gap-1.5 ${
               domain === 'interview'
                 ? 'bg-indigo-500/25 text-indigo-300 border border-indigo-500/40 shadow-sm'
-                : 'text-slate-400 hover:text-white'
+                : 'text-slate-400 hover:text-slate-900'
             }`}
           >
             💼 Placement &amp; Voice
@@ -71,7 +71,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
             className={`flex-1 py-2 rounded-xl font-bold transition-all flex items-center justify-center gap-1.5 ${
               domain === 'hackathon'
                 ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 shadow-sm'
-                : 'text-slate-400 hover:text-white'
+                : 'text-slate-400 hover:text-slate-900'
             }`}
           >
             🏆 Hackathon OS
@@ -82,7 +82,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
             className={`flex-1 py-2 rounded-xl font-bold transition-all flex items-center justify-center gap-1.5 ${
               domain === 'horizon'
                 ? 'bg-sky-500/25 text-sky-300 border border-sky-500/40 shadow-sm'
-                : 'text-slate-400 hover:text-white'
+                : 'text-slate-400 hover:text-slate-900'
             }`}
           >
             🌅 Horizon Admissions
@@ -100,7 +100,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                 type="text"
                 value={profile.name || ''}
                 onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-sky-400 focus:outline-none font-medium"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-sky-400 focus:outline-none font-medium"
                 required
               />
             </div>
@@ -112,7 +112,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                 type="email"
                 value={profile.email || ''}
                 onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-sky-400 focus:outline-none font-medium"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-sky-400 focus:outline-none font-medium"
                 required
               />
             </div>
@@ -135,7 +135,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                     interviewProfile: { ...profile.interviewProfile, targetRole: e.target.value }
                   })}
                   placeholder="e.g. Senior Distributed Systems / Full-Stack Engineer"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-indigo-400 focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-indigo-400 focus:outline-none"
                 />
               </div>
 
@@ -148,7 +148,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                       ...profile,
                       interviewProfile: { ...profile.interviewProfile, targetCompanyTier: e.target.value }
                     })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-indigo-400 focus:outline-none font-mono text-xs"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-indigo-400 focus:outline-none font-mono text-xs"
                   >
                     <option value="FAANG / Tier-1 Tech (Google, Uber, Stripe)">FAANG / Tier-1 Tech (Google, Uber, Stripe)</option>
                     <option value="Series B+ Fast-Growing Unicorns">Series B+ Fast-Growing Unicorns</option>
@@ -166,7 +166,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                       interviewProfile: { ...profile.interviewProfile, dsaProficiency: e.target.value }
                     })}
                     placeholder="e.g. 350+ Solved, Guardian (2150)"
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-indigo-400 focus:outline-none"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-indigo-400 focus:outline-none"
                   />
                 </div>
               </div>
@@ -181,7 +181,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                     interviewProfile: { ...profile.interviewProfile, systemDesignFocus: e.target.value }
                   })}
                   placeholder="e.g. Distributed Caching, Rate Limiters, WebSockets, CRDTs"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-indigo-400 focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-indigo-400 focus:outline-none"
                 />
               </div>
             </div>
@@ -205,7 +205,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                       hackathonProfile: { ...profile.hackathonProfile, teamName: e.target.value }
                     })}
                     placeholder="e.g. Team Phoenix Apex"
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-emerald-400 focus:outline-none"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-emerald-400 focus:outline-none"
                   />
                 </div>
                 <div>
@@ -216,7 +216,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                       ...profile,
                       hackathonProfile: { ...profile.hackathonProfile, squadRole: e.target.value }
                     })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-emerald-400 focus:outline-none font-mono text-xs"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-emerald-400 focus:outline-none font-mono text-xs"
                   >
                     <option value="Lead Full-Stack & Systems Architect">Lead Full-Stack &amp; Systems Architect</option>
                     <option value="Frontend & Interaction Specialist">Frontend &amp; Interaction Specialist</option>
@@ -236,7 +236,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                     hackathonProfile: { ...profile.hackathonProfile, targetTrack: e.target.value }
                   })}
                   placeholder="e.g. Best Multimodal AI & Real-Time Collaboration Hack"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-emerald-400 focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-emerald-400 focus:outline-none"
                 />
               </div>
 
@@ -250,7 +250,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                     hackathonProfile: { ...profile.hackathonProfile, activeIdea: e.target.value }
                   })}
                   placeholder="e.g. NexusAudio — Sub-300ms Multimodal Voice Coaching & CRDT IDE"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-emerald-400 focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-emerald-400 focus:outline-none"
                 />
               </div>
             </div>
@@ -272,7 +272,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                       ...profile,
                       horizonProfile: { ...profile.horizonProfile, stream: e.target.value }
                     })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-sky-400 focus:outline-none font-mono text-xs"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-sky-400 focus:outline-none font-mono text-xs"
                   >
                     <option value="KCET">KCET (Karnataka CET)</option>
                     <option value="DCET">DCET (Diploma Lateral Entry)</option>
@@ -288,7 +288,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                       ...profile,
                       horizonProfile: { ...profile.horizonProfile, candidateRank: Number(e.target.value) }
                     })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-sky-400 focus:outline-none font-mono"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-sky-400 focus:outline-none font-mono"
                   />
                 </div>
                 <div>
@@ -299,7 +299,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                       ...profile,
                       horizonProfile: { ...profile.horizonProfile, categoryQuota: e.target.value }
                     })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:border-sky-400 focus:outline-none font-mono text-xs"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-white/10 text-slate-900 text-sm focus:border-sky-400 focus:outline-none font-mono text-xs"
                   >
                     <option value="GM">General Merit (GM)</option>
                     <option value="1G">Category 1 (1G)</option>
@@ -323,7 +323,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                       ...profile,
                       horizonProfile: { ...profile.horizonProfile, hyderabadKarnataka371J: e.target.checked }
                     })}
-                    className="rounded bg-slate-900 border-white/20 text-sky-400"
+                    className="rounded bg-slate-50 border-white/20 text-sky-400"
                   />
                   <span>Article 371(J) Hyd-Karnataka Quota</span>
                 </label>
@@ -336,7 +336,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
                       ...profile,
                       horizonProfile: { ...profile.horizonProfile, ruralReservation: e.target.checked }
                     })}
-                    className="rounded bg-slate-900 border-white/20 text-sky-400"
+                    className="rounded bg-slate-50 border-white/20 text-sky-400"
                   />
                   <span>Rural Medium Quota</span>
                 </label>
@@ -360,7 +360,7 @@ export default function DomainProfileModal({ isOpen, onClose, activeDomain = 'in
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl text-xs font-mono text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                className="px-4 py-2 rounded-xl text-xs font-mono text-slate-400 hover:text-slate-900 hover:bg-white/5 transition-colors"
               >
                 Cancel
               </button>

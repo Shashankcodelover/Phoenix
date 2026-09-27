@@ -119,7 +119,7 @@ export default function HackathonRoundTracker({ room, onRoundChange }) {
   };
 
   return (
-    <div className="w-full rounded-2xl bg-slate-900/90 border border-emerald-500/25 p-5 sm:p-7 shadow-xl shadow-black/40 text-left space-y-6">
+    <div className="w-full rounded-2xl bg-slate-50/90 border border-emerald-500/25 p-5 sm:p-7 shadow-xl shadow-black/40 text-left space-y-6">
       
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3 pb-4 border-b border-white/10">
@@ -134,7 +134,7 @@ export default function HackathonRoundTracker({ room, onRoundChange }) {
               </span>
               <span className="text-xs text-slate-400 font-mono">From Inception to Winning Stage</span>
             </div>
-            <h3 className="text-xl font-bold text-white font-heading">
+            <h3 className="text-xl font-bold text-slate-900 font-heading">
               National Hackathon Stage Preparation &amp; Round Directives
             </h3>
             <p className="text-xs text-slate-300 leading-relaxed mt-0.5">
@@ -168,7 +168,7 @@ export default function HackathonRoundTracker({ room, onRoundChange }) {
             className={`p-3.5 rounded-xl border text-left transition-all ${
               activeRound === r.id
                 ? 'bg-emerald-500/25 text-emerald-300 border-emerald-500 font-bold shadow-md shadow-emerald-500/15'
-                : 'bg-slate-950 border-white/10 text-slate-400 hover:text-white hover:bg-white/5'
+                : 'bg-white border-white/10 text-slate-400 hover:text-slate-900 hover:bg-white/5'
             }`}
           >
             <div className="flex items-center justify-between mb-1">
@@ -177,7 +177,7 @@ export default function HackathonRoundTracker({ room, onRoundChange }) {
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               )}
             </div>
-            <div className="font-heading font-bold text-white text-xs truncate">{r.name}</div>
+            <div className="font-heading font-bold text-slate-900 text-xs truncate">{r.name}</div>
             <div className="text-[10px] text-slate-400 truncate mt-0.5">{r.desc}</div>
           </button>
         ))}
@@ -185,32 +185,32 @@ export default function HackathonRoundTracker({ room, onRoundChange }) {
 
       {/* Live Stage Rehearsal Teleprompter Mode */}
       {teleprompterActive && (
-        <div className="p-6 rounded-2xl bg-slate-950 border-2 border-emerald-400 space-y-4 animate-fadeIn shadow-2xl">
+        <div className="p-6 rounded-2xl bg-white border-2 border-emerald-400 space-y-4 animate-fadeIn shadow-2xl">
           <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
             <div>
               <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">
                 STAGE REHEARSAL TELEPROMPTER • TARGET: 135 WPM
               </span>
-              <h4 className="text-base font-bold text-white font-heading">
+              <h4 className="text-base font-bold text-slate-900 font-heading">
                 180-Second Live Pitch Script ({memberCount} Speakers)
               </h4>
             </div>
 
             <div className="flex items-center gap-3 font-mono text-xs">
-              <span className="text-xl font-extrabold text-emerald-300 px-3 py-1 rounded-xl bg-slate-900 border border-emerald-500/40">
+              <span className="text-xl font-extrabold text-emerald-300 px-3 py-1 rounded-xl bg-slate-50 border border-emerald-500/40">
                 ⏱️ {formatTimer(timerSeconds)}
               </span>
               <button
                 type="button"
                 onClick={() => setTimerRunning(!timerRunning)}
-                className="px-3.5 py-1.5 rounded-xl font-bold bg-white/10 hover:bg-white/15 text-slate-200 border border-white/20"
+                className="px-3.5 py-1.5 rounded-xl font-bold bg-white/10 hover:bg-white/15 text-slate-800 border border-white/20"
               >
                 {timerRunning ? '⏸️ Pause' : '▶️ Start Timer'}
               </button>
               <button
                 type="button"
                 onClick={() => { setTimerRunning(false); setTimerSeconds(180); }}
-                className="px-2.5 py-1.5 rounded-xl text-[10px] text-slate-400 hover:text-white"
+                className="px-2.5 py-1.5 rounded-xl text-[10px] text-slate-400 hover:text-slate-900"
               >
                 Reset
               </button>
@@ -220,14 +220,14 @@ export default function HackathonRoundTracker({ room, onRoundChange }) {
           {/* Script Paragraphs */}
           <div className="space-y-4 max-h-[340px] overflow-y-auto pr-2 text-xs font-sans leading-relaxed">
             {roundAssets?.stageScript180s?.sections?.map((sec, i) => (
-              <div key={i} className="p-4 rounded-xl bg-slate-900 border border-white/10 space-y-1">
+              <div key={i} className="p-4 rounded-xl bg-slate-50 border border-white/10 space-y-1">
                 <div className="flex items-center justify-between font-mono text-[11px] text-emerald-400 font-bold mb-1">
                   <span>⏱️ {sec.timestamp} • {sec.phase}</span>
                   <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
                     Speaker: {sec.speaker}
                   </span>
                 </div>
-                <p className="text-slate-200 text-sm italic font-serif">
+                <p className="text-slate-800 text-sm italic font-serif">
                   {sec.script}
                 </p>
               </div>
@@ -239,7 +239,7 @@ export default function HackathonRoundTracker({ room, onRoundChange }) {
       {/* Top Tough Judge Counter-Defense Matrix */}
       <div className="space-y-3 font-mono text-xs pt-2">
         <div className="flex items-center justify-between">
-          <span className="font-bold text-white uppercase text-xs">
+          <span className="font-bold text-slate-900 uppercase text-xs">
             🛡️ Top Judge Objections &amp; Winning Counter-Defenses:
           </span>
           <span className="text-emerald-400 text-[11px]">
@@ -249,7 +249,7 @@ export default function HackathonRoundTracker({ room, onRoundChange }) {
 
         <div className="space-y-3">
           {roundAssets?.judgeCounterDefense?.map((item) => (
-            <div key={item.id} className="p-4 rounded-xl bg-slate-950 border border-white/10 space-y-2">
+            <div key={item.id} className="p-4 rounded-xl bg-white border border-white/10 space-y-2">
               <div className="flex items-start justify-between gap-2">
                 <div className="text-amber-300 font-bold text-xs font-heading">
                   🚨 Judge Question: {item.judgeQuestion}
@@ -258,7 +258,7 @@ export default function HackathonRoundTracker({ room, onRoundChange }) {
                   {item.confidenceScore}% Defense Confidence
                 </span>
               </div>
-              <div className="p-3 rounded-lg bg-slate-900 border border-emerald-500/20 text-slate-200 text-xs font-sans leading-relaxed">
+              <div className="p-3 rounded-lg bg-slate-50 border border-emerald-500/20 text-slate-800 text-xs font-sans leading-relaxed">
                 <strong className="text-emerald-400 font-mono text-[11px] block mb-0.5">✅ SQUAD COUNTER-DEFENSE:</strong>
                 {item.counterDefense}
               </div>

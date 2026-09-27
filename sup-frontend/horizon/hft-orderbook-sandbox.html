@@ -50,7 +50,7 @@
   <!-- Top Navigation & Breadcrumbs -->
   <header class="max-w-7xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
     <div class="flex items-center space-x-4">
-      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 hover:border-cyan-500/50 hover:bg-slate-800 transition text-cyan-400">
+      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-50/80 border border-slate-700/60 hover:border-cyan-500/50 hover:bg-slate-800 transition text-cyan-400">
         <i class="fa-solid fa-arrow-left"></i>
       </a>
       <div>
@@ -60,7 +60,7 @@
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> JANE STREET / CITADEL GRADE LOB
           </span>
         </div>
-        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white mt-1 flex items-center gap-2.5">
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 mt-1 flex items-center gap-2.5">
           <span>Astra Ultra-Low Latency HFT Order Book</span>
           <span class="text-cyan-400 text-lg font-mono-code">&amp; Matching Sandbox</span>
         </h1>
@@ -69,16 +69,16 @@
 
     <!-- Symbol & Live Latency Indicator -->
     <div class="flex items-center gap-3">
-      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-3">
+      <div class="bg-slate-50/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-3">
         <label class="text-xs text-slate-400 font-mono-code uppercase">Pair</label>
-        <select id="symbolSelect" onchange="switchSymbol()" class="bg-slate-800 text-white font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-cyan-500">
+        <select id="symbolSelect" onchange="switchSymbol()" class="bg-slate-800 text-slate-900 font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-cyan-500">
           <option value="NVDA" selected>NVDA / USD</option>
           <option value="GOOGL">GOOGL / USD</option>
           <option value="BTC">BTC / USDT</option>
         </select>
       </div>
 
-      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-4 text-right">
+      <div class="bg-slate-50/90 border border-slate-700/80 rounded-xl p-2 px-4 text-right">
         <div class="text-[10px] uppercase tracking-wider text-slate-400 font-mono-code">Engine P99 Latency</div>
         <div class="text-sm font-bold text-emerald-400 font-mono-code" id="headerP99">284 ns</div>
       </div>
@@ -90,39 +90,39 @@
 
     <!-- KPI Metric Cards Bar -->
     <section class="grid grid-cols-2 md:grid-cols-6 gap-3">
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Mid Price</div>
-        <div class="text-xl font-bold text-white font-mono-code mt-0.5" id="metricMidPrice">$124.5000</div>
+        <div class="text-xl font-bold text-slate-900 font-mono-code mt-0.5" id="metricMidPrice">$124.5000</div>
         <div class="text-[10px] text-slate-400 font-mono-code mt-1 flex items-center gap-1">
           <span>Micro:</span> <span id="metricMicroPrice" class="text-cyan-400 font-semibold">$124.4985</span>
         </div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Spread (L1)</div>
         <div class="text-xl font-bold text-amber-400 font-mono-code mt-0.5" id="metricSpread">$0.1000</div>
         <div class="text-[10px] text-amber-400/80 font-mono-code mt-1" id="metricSpreadBps">8.03 bps</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Best Bid</div>
         <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricBestBid">$124.45</div>
         <div class="text-[10px] text-emerald-500/80 font-mono-code mt-1" id="metricBidDepth">12 levels active</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Best Ask</div>
         <div class="text-xl font-bold text-rose-400 font-mono-code mt-0.5" id="metricBestAsk">$124.55</div>
         <div class="text-[10px] text-rose-500/80 font-mono-code mt-1" id="metricAskDepth">12 levels active</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Order Imbalance</div>
         <div class="text-xl font-bold font-mono-code mt-0.5" id="metricImbalance">+0.1239</div>
         <div class="text-[10px] font-mono-code mt-1 uppercase" id="metricBias">Buy Pressure</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Matching Latency</div>
         <div class="text-xl font-bold text-cyan-400 font-mono-code mt-0.5" id="metricP50">142 ns</div>
         <div class="text-[10px] text-cyan-400/80 font-mono-code mt-1">P50 Engine Tick</div>
@@ -133,23 +133,23 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- Left: Dual-Sided Depth of Market (L2 DOM Ladder) -->
-      <section class="lg:col-span-7 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+      <section class="lg:col-span-7 bg-slate-50/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
             <div class="flex items-center gap-2.5">
               <i class="fa-solid fa-layer-group text-cyan-400"></i>
-              <h2 class="text-lg font-bold text-white tracking-wide">Level 2 Depth of Market (DOM)</h2>
+              <h2 class="text-lg font-bold text-slate-900 tracking-wide">Level 2 Depth of Market (DOM)</h2>
             </div>
             <div class="flex items-center gap-2">
               <span class="text-xs text-slate-400 font-mono-code">Price-Time FIFO Priority</span>
-              <button onclick="fetchSnapshot()" class="p-1.5 px-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 transition">
+              <button onclick="fetchSnapshot()" class="p-1.5 px-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-800 rounded border border-slate-700 transition">
                 <i class="fa-solid fa-arrows-rotate"></i>
               </button>
             </div>
           </div>
 
           <!-- L2 Depth Canvas Visualizer -->
-          <div class="h-32 w-full bg-slate-950/80 rounded-xl border border-slate-800/90 p-2 mb-4 relative overflow-hidden">
+          <div class="h-32 w-full bg-white/80 rounded-xl border border-slate-800/90 p-2 mb-4 relative overflow-hidden">
             <div class="absolute top-2 left-3 text-[10px] font-mono-code text-slate-500 uppercase tracking-wider z-10">Real-Time Depth Profile (Bid / Ask Cumulative)</div>
             <canvas id="depthCanvas" class="w-full h-full"></canvas>
           </div>
@@ -168,7 +168,7 @@
           </div>
 
           <!-- Mid Spread Divider Bar -->
-          <div class="my-2 py-2 px-4 rounded-lg bg-slate-950 border border-slate-800/90 flex items-center justify-between text-xs font-mono-code">
+          <div class="my-2 py-2 px-4 rounded-lg bg-white border border-slate-800/90 flex items-center justify-between text-xs font-mono-code">
             <div class="flex items-center gap-3">
               <span class="text-slate-400">Spread:</span>
               <span id="ladderSpreadText" class="font-bold text-amber-400">$0.1000 (8.03 bps)</span>
@@ -205,21 +205,21 @@
       <section class="lg:col-span-5 space-y-6">
 
         <!-- Order Submission Ticket -->
-        <div class="bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+        <div class="bg-slate-50/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-arrow-right-arrow-left text-cyan-400"></i>
-              <h2 class="text-lg font-bold text-white tracking-wide">Direct Market Order Ticket</h2>
+              <h2 class="text-lg font-bold text-slate-900 tracking-wide">Direct Market Order Ticket</h2>
             </div>
             <span class="px-2 py-0.5 text-[10px] font-mono-code rounded bg-cyan-950 text-cyan-400 border border-cyan-800/50">L3 DMA</span>
           </div>
 
           <!-- Buy / Sell Toggle Tabs -->
-          <div class="grid grid-cols-2 gap-2 mb-4 p-1 bg-slate-950 rounded-xl border border-slate-800">
-            <button id="tabBuy" onclick="setSide('BUY')" class="py-2 rounded-lg font-bold font-mono-code text-sm transition bg-emerald-600 text-white shadow-lg">
+          <div class="grid grid-cols-2 gap-2 mb-4 p-1 bg-white rounded-xl border border-slate-800">
+            <button id="tabBuy" onclick="setSide('BUY')" class="py-2 rounded-lg font-bold font-mono-code text-sm transition bg-emerald-600 text-slate-900 shadow-lg">
               BUY / BID
             </button>
-            <button id="tabSell" onclick="setSide('SELL')" class="py-2 rounded-lg font-bold font-mono-code text-sm transition text-slate-400 hover:text-white">
+            <button id="tabSell" onclick="setSide('SELL')" class="py-2 rounded-lg font-bold font-mono-code text-sm transition text-slate-400 hover:text-slate-900">
               SELL / ASK
             </button>
           </div>
@@ -230,25 +230,25 @@
               <label class="block text-xs text-slate-400 font-mono-code mb-1 uppercase">Order Type</label>
               <div class="grid grid-cols-4 gap-1.5 font-mono-code text-xs">
                 <button onclick="setOrderType('LIMIT')" id="typeLIMIT" class="p-2 rounded bg-cyan-950 text-cyan-300 border border-cyan-700/60 font-semibold">LIMIT</button>
-                <button onclick="setOrderType('MARKET')" id="typeMARKET" class="p-2 rounded bg-slate-800 text-slate-400 border border-slate-700 hover:text-white">MARKET</button>
-                <button onclick="setOrderType('IOC')" id="typeIOC" class="p-2 rounded bg-slate-800 text-slate-400 border border-slate-700 hover:text-white">IOC</button>
-                <button onclick="setOrderType('FOK')" id="typeFOK" class="p-2 rounded bg-slate-800 text-slate-400 border border-slate-700 hover:text-white">FOK</button>
+                <button onclick="setOrderType('MARKET')" id="typeMARKET" class="p-2 rounded bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-900">MARKET</button>
+                <button onclick="setOrderType('IOC')" id="typeIOC" class="p-2 rounded bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-900">IOC</button>
+                <button onclick="setOrderType('FOK')" id="typeFOK" class="p-2 rounded bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-900">FOK</button>
               </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs text-slate-400 font-mono-code mb-1 uppercase">Price ($)</label>
-                <input id="inputPrice" type="number" step="0.05" value="124.50" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono-code focus:outline-none focus:border-cyan-500 font-semibold">
+                <input id="inputPrice" type="number" step="0.05" value="124.50" class="w-full bg-white border border-slate-700 rounded-lg px-3 py-2 text-slate-900 font-mono-code focus:outline-none focus:border-cyan-500 font-semibold">
               </div>
               <div>
                 <label class="block text-xs text-slate-400 font-mono-code mb-1 uppercase">Quantity (Shares)</label>
-                <input id="inputQty" type="number" step="10" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono-code focus:outline-none focus:border-cyan-500 font-semibold">
+                <input id="inputQty" type="number" step="10" value="100" class="w-full bg-white border border-slate-700 rounded-lg px-3 py-2 text-slate-900 font-mono-code focus:outline-none focus:border-cyan-500 font-semibold">
               </div>
             </div>
 
             <!-- Pre-Trade Market Impact Warning -->
-            <div id="impactEstimateBox" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono-code space-y-1">
+            <div id="impactEstimateBox" class="p-3 rounded-xl bg-white border border-slate-800 text-xs font-mono-code space-y-1">
               <div class="flex justify-between text-slate-400">
                 <span>Est. Square-Root Impact:</span>
                 <span id="estImpactBps" class="text-amber-400 font-semibold">2.41 bps</span>
@@ -260,14 +260,14 @@
             </div>
 
             <!-- Submit Button -->
-            <button id="btnSubmitOrder" onclick="submitOrder()" class="w-full py-3 rounded-xl font-bold font-mono-code text-white bg-emerald-600 hover:bg-emerald-500 transition shadow-lg flex items-center justify-center gap-2">
+            <button id="btnSubmitOrder" onclick="submitOrder()" class="w-full py-3 rounded-xl font-bold font-mono-code text-slate-900 bg-emerald-600 hover:bg-emerald-500 transition shadow-lg flex items-center justify-center gap-2">
               <i class="fa-solid fa-paper-plane"></i>
               <span id="btnSubmitText">ROUTE BUY ORDER (LIMIT)</span>
             </button>
           </div>
 
           <!-- Execution Report Feedback -->
-          <div id="execFeedback" class="mt-4 p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono-code hidden">
+          <div id="execFeedback" class="mt-4 p-3 rounded-xl bg-white border border-slate-800 text-xs font-mono-code hidden">
             <div class="flex items-center justify-between text-slate-300 mb-1">
               <span class="font-bold flex items-center gap-1.5" id="execStatusBadge">
                 <i class="fa-solid fa-circle-check text-emerald-400"></i> FILLED
@@ -281,11 +281,11 @@
         </div>
 
         <!-- Burst Traffic Simulator & Quantitative Stress Test -->
-        <div class="bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+        <div class="bg-slate-50/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-gauge-high text-amber-400"></i>
-              <h3 class="text-base font-bold text-white tracking-wide">Algorithmic Burst &amp; Liquidity Shock</h3>
+              <h3 class="text-base font-bold text-slate-900 tracking-wide">Algorithmic Burst &amp; Liquidity Shock</h3>
             </div>
             <span class="px-2 py-0.5 text-[10px] font-mono-code rounded bg-amber-950/80 text-amber-300 border border-amber-800/50">HFT STRESS</span>
           </div>
@@ -293,7 +293,7 @@
             Inject synthetic multi-client orders to simulate quote stuffing, sweep the book, and measure adverse selection slippage.
           </p>
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="injectBurst(15)" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono-code font-semibold flex items-center justify-center gap-1.5 transition">
+            <button onclick="injectBurst(15)" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-800 border border-slate-700 text-xs font-mono-code font-semibold flex items-center justify-center gap-1.5 transition">
               <i class="fa-solid fa-water text-cyan-400"></i> Inject 15 Orders
             </button>
             <button onclick="injectBurst(50)" class="py-2.5 px-3 rounded-xl bg-amber-950/60 hover:bg-amber-900/60 text-amber-200 border border-amber-800/60 text-xs font-mono-code font-semibold flex items-center justify-center gap-1.5 transition">
@@ -321,14 +321,14 @@
       const btnText = document.getElementById('btnSubmitText');
 
       if (side === 'BUY') {
-        tabBuy.className = 'py-2 rounded-lg font-bold font-mono-code text-sm transition bg-emerald-600 text-white shadow-lg';
-        tabSell.className = 'py-2 rounded-lg font-bold font-mono-code text-sm transition text-slate-400 hover:text-white';
-        btnSubmit.className = 'w-full py-3 rounded-xl font-bold font-mono-code text-white bg-emerald-600 hover:bg-emerald-500 transition shadow-lg flex items-center justify-center gap-2';
+        tabBuy.className = 'py-2 rounded-lg font-bold font-mono-code text-sm transition bg-emerald-600 text-slate-900 shadow-lg';
+        tabSell.className = 'py-2 rounded-lg font-bold font-mono-code text-sm transition text-slate-400 hover:text-slate-900';
+        btnSubmit.className = 'w-full py-3 rounded-xl font-bold font-mono-code text-slate-900 bg-emerald-600 hover:bg-emerald-500 transition shadow-lg flex items-center justify-center gap-2';
         btnText.innerText = `ROUTE BUY ORDER (${currentType})`;
       } else {
-        tabSell.className = 'py-2 rounded-lg font-bold font-mono-code text-sm transition bg-rose-600 text-white shadow-lg';
-        tabBuy.className = 'py-2 rounded-lg font-bold font-mono-code text-sm transition text-slate-400 hover:text-white';
-        btnSubmit.className = 'w-full py-3 rounded-xl font-bold font-mono-code text-white bg-rose-600 hover:bg-rose-500 transition shadow-lg flex items-center justify-center gap-2';
+        tabSell.className = 'py-2 rounded-lg font-bold font-mono-code text-sm transition bg-rose-600 text-slate-900 shadow-lg';
+        tabBuy.className = 'py-2 rounded-lg font-bold font-mono-code text-sm transition text-slate-400 hover:text-slate-900';
+        btnSubmit.className = 'w-full py-3 rounded-xl font-bold font-mono-code text-slate-900 bg-rose-600 hover:bg-rose-500 transition shadow-lg flex items-center justify-center gap-2';
         btnText.innerText = `ROUTE SELL ORDER (${currentType})`;
       }
     }
@@ -340,7 +340,7 @@
         if (t === type) {
           el.className = 'p-2 rounded bg-cyan-950 text-cyan-300 border border-cyan-700/60 font-semibold';
         } else {
-          el.className = 'p-2 rounded bg-slate-800 text-slate-400 border border-slate-700 hover:text-white';
+          el.className = 'p-2 rounded bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-900';
         }
       });
       document.getElementById('btnSubmitText').innerText = `ROUTE ${currentSide} ORDER (${currentType})`;
@@ -378,7 +378,7 @@
       const imbEl = document.getElementById('metricImbalance');
       const imb = data.orderImbalance;
       imbEl.innerText = (imb >= 0 ? '+' : '') + imb.toFixed(4);
-      imbEl.className = 'text-xl font-bold font-mono-code mt-0.5 ' + (imb > 0.1 ? 'text-emerald-400' : imb < -0.1 ? 'text-rose-400' : 'text-slate-200');
+      imbEl.className = 'text-xl font-bold font-mono-code mt-0.5 ' + (imb > 0.1 ? 'text-emerald-400' : imb < -0.1 ? 'text-rose-400' : 'text-slate-800');
 
       const biasEl = document.getElementById('metricBias');
       biasEl.innerText = data.imbalanceBias.replace(/_/g, ' ');
@@ -427,9 +427,9 @@
       const tradeStreamContainer = document.getElementById('tradeStreamContainer');
       if (data.recentTrades && data.recentTrades.length > 0) {
         tradeStreamContainer.innerHTML = data.recentTrades.map(t => `
-          <div class="p-1.5 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono-code flex items-center justify-between">
+          <div class="p-1.5 rounded bg-white border border-slate-800 text-[11px] font-mono-code flex items-center justify-between">
             <span class="${t.side === 'BUY' ? 'text-emerald-400' : 'text-rose-400'} font-bold">${t.side}</span>
-            <span class="text-slate-200">$${t.price.toFixed(2)}</span>
+            <span class="text-slate-800">$${t.price.toFixed(2)}</span>
             <span class="text-slate-400">${t.qty} sh</span>
           </div>
         `).join('');

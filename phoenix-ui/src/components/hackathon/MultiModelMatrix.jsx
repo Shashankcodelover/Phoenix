@@ -55,11 +55,11 @@ export default function MultiModelMatrix() {
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-emerald-300">
                 MULTI-MODEL ORCHESTRATION &amp; FREE TIER MATRIX
               </span>
               <span className="text-xs text-theme-muted font-mono">
-                Invariant: <strong className="text-emerald-600 dark:text-emerald-400 font-bold">$0.00 Total Cloud Cost</strong>
+                Invariant: <strong className="text-emerald-600 text-emerald-400 font-bold">$0.00 Total Cloud Cost</strong>
               </span>
             </div>
             <h3 className="text-xl sm:text-2xl font-bold text-theme-main font-heading">
@@ -72,7 +72,7 @@ export default function MultiModelMatrix() {
         </div>
 
         <div className="flex items-center gap-2 font-mono text-xs">
-          <span className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-bold flex items-center gap-1.5 shadow-sm">
+          <span className="px-3.5 py-1.5 rounded-xl bg-slate-100 bg-slate-50 border border-emerald-500/30 text-emerald-700 text-emerald-300 font-bold flex items-center gap-1.5 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             MULTI-KEY FAILOVER: 100% UP
           </span>
@@ -84,11 +84,11 @@ export default function MultiModelMatrix() {
         {models.map((m, idx) => (
           <div
             key={idx}
-            className="p-4 sm:p-5 rounded-2xl bg-slate-100/70 dark:bg-slate-950/80 border border-theme-glass flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm"
+            className="p-4 sm:p-5 rounded-2xl bg-slate-100/70 bg-white/80 border border-theme-glass flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm"
           >
             <div className="space-y-1 flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold uppercase border border-emerald-500/30">
+                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-emerald-300 font-bold uppercase border border-emerald-500/30">
                   {m.role}
                 </span>
                 <span className="font-bold text-theme-main text-xs sm:text-sm font-sans">
@@ -107,11 +107,11 @@ export default function MultiModelMatrix() {
               </div>
               <div>
                 <span className="text-theme-subtle text-[10px] block uppercase">Latency</span>
-                <span className="text-sky-600 dark:text-sky-400 font-bold">{m.latency}</span>
+                <span className="text-sky-600 text-sky-400 font-bold">{m.latency}</span>
               </div>
               <div>
                 <span className="text-theme-subtle text-[10px] block uppercase">Cost</span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold">{m.cost}</span>
+                <span className="text-emerald-600 text-emerald-400 font-bold">{m.cost}</span>
               </div>
             </div>
           </div>

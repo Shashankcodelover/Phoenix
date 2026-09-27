@@ -279,7 +279,7 @@ function generateFallbackBuildGuide({ ideaTitle, ideaDescription, realWorldProbl
                 title: 'Build the main dashboard layout',
                 file: 'src/components/Dashboard.tsx',
                 description: `Create a professional, responsive dashboard that showcases the ${ideaTitle} capabilities with live metric counters, status indicators, and interactive controls.`,
-                codeSnippet: `'use client';\nimport { useState, useEffect } from 'react';\n\nexport default function Dashboard() {\n  const [metrics, setMetrics] = useState({ latency: 0, throughput: 0 });\n  // Connect to core engine and display live metrics\n  return (\n    <div className="min-h-screen bg-slate-950 text-white p-8">\n      <h1 className="text-3xl font-bold">${ideaTitle} Dashboard</h1>\n      {/* Live metric cards */}\n    </div>\n  );\n}`,
+                codeSnippet: `'use client';\nimport { useState, useEffect } from 'react';\n\nexport default function Dashboard() {\n  const [metrics, setMetrics] = useState({ latency: 0, throughput: 0 });\n  // Connect to core engine and display live metrics\n  return (\n    <div className="min-h-screen bg-white text-slate-900 p-8">\n      <h1 className="text-3xl font-bold">${ideaTitle} Dashboard</h1>\n      {/* Live metric cards */}\n    </div>\n  );\n}`,
                 testCriteria: 'Dashboard renders with live data from the core engine. Responsive on mobile and desktop.'
               }
             ]

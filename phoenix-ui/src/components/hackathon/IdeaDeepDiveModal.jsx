@@ -41,17 +41,17 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/80 backdrop-blur-md">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.3 }}
-        className="relative w-full max-w-4xl max-h-[90vh] bg-slate-900 border border-emerald-500/40 rounded-3xl shadow-2xl overflow-hidden flex flex-col text-left"
+        className="relative w-full max-w-4xl max-h-[90vh] bg-slate-50 border border-emerald-500/40 rounded-3xl shadow-2xl overflow-hidden flex flex-col text-left"
       >
         
         {/* Modal Header */}
-        <div className="p-6 border-b border-white/10 flex items-start justify-between gap-4 bg-slate-950/80">
+        <div className="p-6 border-b border-white/10 flex items-start justify-between gap-4 bg-white/80">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono text-[10px] font-bold uppercase border border-emerald-500/30">
@@ -61,7 +61,7 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
                 Feasibility: {idea.feasibilityScore}/100
               </span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-white font-heading">
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 font-heading">
               {idea.title}
             </h3>
             <p className="text-xs text-emerald-300 italic mt-0.5 font-medium">
@@ -74,14 +74,14 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
             whileTap={{ scale: 0.9 }}
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center transition-all font-mono text-sm"
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-slate-900 flex items-center justify-center transition-all font-mono text-sm"
           >
             ✕
           </motion.button>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex items-center gap-2 px-6 pt-3 pb-1 border-b border-white/10 bg-slate-950/50 font-mono text-xs overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-2 px-6 pt-3 pb-1 border-b border-white/10 bg-white/50 font-mono text-xs overflow-x-auto no-scrollbar">
           {[
             { id: 'architecture', label: '🏗️ System Topology', desc: 'Architecture Flow' },
             { id: 'roadmap', label: '⏱️ 24h Build Protocol', desc: 'Hour 0-24 Plan' },
@@ -98,7 +98,7 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
               className={`px-3.5 py-2 rounded-xl transition-all font-semibold flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                  : 'text-slate-400 hover:text-slate-800 hover:bg-white/5'
               }`}
             >
               <span>{tab.label}</span>
@@ -107,7 +107,7 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
         </div>
 
         {/* Modal Body Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 text-xs text-slate-200 font-sans">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 text-xs text-slate-800 font-sans">
           <AnimatePresence mode="wait">
             {/* TAB 1: SYSTEM TOPOLOGY & TECHNICAL MOAT */}
             {activeTab === 'architecture' && (
@@ -119,17 +119,17 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
                 transition={{ duration: 0.2 }}
                 className="space-y-5"
               >
-                <div className="p-4 rounded-2xl bg-slate-950 border border-emerald-500/30 space-y-3">
+                <div className="p-4 rounded-2xl bg-white border border-emerald-500/30 space-y-3">
                   <div className="text-[11px] font-mono font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
                     <span>⚡ END-TO-END DATA FLOW TOPOLOGY</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-900/90 font-mono text-xs text-slate-300 border border-white/10 leading-relaxed">
+                  <div className="p-3 rounded-xl bg-slate-50/90 font-mono text-xs text-slate-300 border border-white/10 leading-relaxed">
                     {blueprint.systemArchitecture}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-2xl bg-slate-950 border border-white/10 space-y-2">
+                  <div className="p-4 rounded-2xl bg-white border border-white/10 space-y-2">
                     <div className="text-[11px] font-mono font-bold text-sky-400 uppercase">
                       🌐 Real-World Pain &amp; Friction
                     </div>
@@ -137,7 +137,7 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
                       {idea.realWorldProblem}
                     </p>
                   </div>
-                  <div className="p-4 rounded-2xl bg-slate-950 border border-white/10 space-y-2">
+                  <div className="p-4 rounded-2xl bg-white border border-white/10 space-y-2">
                     <div className="text-[11px] font-mono font-bold text-emerald-400 uppercase">
                       🔒 Proprietary Technical Moat
                     </div>
@@ -147,7 +147,7 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-950 border border-white/10 space-y-2 font-mono">
+                <div className="p-4 rounded-2xl bg-white border border-white/10 space-y-2 font-mono">
                   <div className="text-[11px] font-bold text-blue-400 uppercase">
                     🎯 Target Personas &amp; Stakeholders
                   </div>
@@ -179,12 +179,12 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
                       key={idx} 
-                      className="p-4 rounded-2xl bg-slate-950 border border-white/10 flex items-start gap-4"
+                      className="p-4 rounded-2xl bg-white border border-white/10 flex items-start gap-4"
                     >
                       <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-bold shrink-0 border border-emerald-500/30">
                         {step.phase}
                       </span>
-                      <div className="text-slate-200 text-xs font-sans leading-relaxed pt-0.5">
+                      <div className="text-slate-800 text-xs font-sans leading-relaxed pt-0.5">
                         {step.goal}
                       </div>
                     </motion.div>
@@ -214,7 +214,7 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.1 }}
                       key={idx} 
-                      className="p-4 rounded-2xl bg-slate-950 border border-white/10 space-y-2"
+                      className="p-4 rounded-2xl bg-white border border-white/10 space-y-2"
                     >
                       <div className="text-rose-300 font-bold text-xs flex items-start gap-2">
                         <span className="font-mono text-rose-400">❓ JURY OBJECTION #{idx + 1}:</span>
@@ -241,30 +241,30 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
                 className="space-y-4 font-mono"
               >
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                  <motion.div whileHover={{ y: -3 }} className="p-4 rounded-2xl bg-slate-950 border border-emerald-500/30">
+                  <motion.div whileHover={{ y: -3 }} className="p-4 rounded-2xl bg-white border border-emerald-500/30">
                     <div className="text-[10px] text-slate-400 uppercase">Innovation</div>
                     <div className="text-2xl font-bold text-emerald-400 mt-1">25 / 25</div>
                     <div className="text-[10px] text-slate-500 mt-0.5">Novel Moat</div>
                   </motion.div>
-                  <motion.div whileHover={{ y: -3 }} className="p-4 rounded-2xl bg-slate-950 border border-sky-500/30">
+                  <motion.div whileHover={{ y: -3 }} className="p-4 rounded-2xl bg-white border border-sky-500/30">
                     <div className="text-[10px] text-slate-400 uppercase">Technical Depth</div>
                     <div className="text-2xl font-bold text-sky-400 mt-1">25 / 25</div>
                     <div className="text-[10px] text-slate-500 mt-0.5">Sub-35ms Wasm</div>
                   </motion.div>
-                  <motion.div whileHover={{ y: -3 }} className="p-4 rounded-2xl bg-slate-950 border border-blue-500/30">
+                  <motion.div whileHover={{ y: -3 }} className="p-4 rounded-2xl bg-white border border-blue-500/30">
                     <div className="text-[10px] text-slate-400 uppercase">Social Impact</div>
                     <div className="text-2xl font-bold text-blue-400 mt-1">24 / 25</div>
                     <div className="text-[10px] text-slate-500 mt-0.5">Quantified Friction</div>
                   </motion.div>
-                  <motion.div whileHover={{ y: -3 }} className="p-4 rounded-2xl bg-slate-950 border border-amber-500/30">
+                  <motion.div whileHover={{ y: -3 }} className="p-4 rounded-2xl bg-white border border-amber-500/30">
                     <div className="text-[10px] text-slate-400 uppercase">Demo Presentation</div>
                     <div className="text-2xl font-bold text-amber-400 mt-1">25 / 25</div>
                     <div className="text-[10px] text-slate-500 mt-0.5">180s Scripted</div>
                   </motion.div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-950 border border-white/10 space-y-2">
-                  <div className="text-xs font-bold text-white">🏆 Benchmark Summary:</div>
+                <div className="p-4 rounded-2xl bg-white border border-white/10 space-y-2">
+                  <div className="text-xs font-bold text-slate-900">🏆 Benchmark Summary:</div>
                   <p className="text-slate-300 text-xs leading-relaxed font-sans">
                     This project architecture scores in the <strong>Top 1%</strong> of national submissions for ETHGlobal, Smart India Hackathon (SIH), and HackMIT due to its zero-cloud invariant, mathematical latency moats, and offline resilience.
                   </p>
@@ -285,7 +285,7 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
                 <div className="text-xs text-slate-300">
                   Recommended project directory structure to scaffold for this exact project:
                 </div>
-                <div className="p-4 rounded-2xl bg-slate-950 border border-white/15 space-y-1.5 text-xs text-emerald-300">
+                <div className="p-4 rounded-2xl bg-white border border-white/15 space-y-1.5 text-xs text-emerald-300">
                   {blueprint.recommendedFileTree?.map((filePath, idx) => (
                     <motion.div 
                       initial={{ opacity: 0, x: -5 }}
@@ -305,13 +305,13 @@ export default function IdeaDeepDiveModal({ idea, onClose, onLockIdea, isLocked 
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 sm:p-6 border-t border-white/10 bg-slate-950/90 flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+        <div className="p-4 sm:p-6 border-t border-white/10 bg-white/90 flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl border border-white/15 text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+            className="px-4 py-2.5 rounded-xl border border-white/15 text-slate-300 hover:text-slate-900 hover:bg-white/5 transition-all"
           >
             ← Back to All Ideas
           </motion.button>

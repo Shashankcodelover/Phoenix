@@ -184,7 +184,7 @@ export default function ModularInterviewVaultPage() {
               className="flex items-center gap-2 mb-1.5"
             >
               <span className="text-2xl">💼</span>
-              <span className="text-[11px] font-mono font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-400 border border-indigo-500/35">
+              <span className="text-[11px] font-mono font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 text-indigo-400 border border-indigo-500/35">
                 VAULT 2: PLACEMENT &amp; VOICE AI
               </span>
             </motion.div>
@@ -212,7 +212,7 @@ export default function ModularInterviewVaultPage() {
             transition={{ duration: 0.4, delay: 0.2 }}
             className="flex items-center gap-2 font-mono text-xs"
           >
-            <span className="px-3 py-1.5 rounded-xl bg-slate-900 border border-indigo-500/30 text-indigo-300 font-bold">
+            <span className="px-3 py-1.5 rounded-xl bg-slate-50 border border-indigo-500/30 text-indigo-300 font-bold">
               21 Specialized Engines
             </span>
           </motion.div>
@@ -234,7 +234,7 @@ export default function ModularInterviewVaultPage() {
           <section className="mb-10 text-left">
             <div className="flex items-center gap-2.5 mb-4">
               <span className="text-xl">🎙️</span>
-              <h2 className="text-lg font-bold text-white font-heading">
+              <h2 className="text-lg font-bold text-slate-900 font-heading">
                 Voice AI Coaching &amp; Live Meeting Sentinel
               </h2>
             </div>
@@ -267,7 +267,7 @@ export default function ModularInterviewVaultPage() {
               accentColor="indigo"
             >
               <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-slate-950/70 border border-white/10 flex flex-col items-center justify-center min-h-[120px]">
+                <div className="p-4 rounded-xl bg-white/70 border border-white/10 flex flex-col items-center justify-center min-h-[120px]">
                   <div className="flex items-center gap-1.5 h-10 mb-2">
                     {[40, 75, 30, 90, 60, 100, 45, 80, 50, 95, 35, 70].map((h, i) => (
                       <div
@@ -283,15 +283,15 @@ export default function ModularInterviewVaultPage() {
                 </div>
 
                 <div className="grid grid-cols-3 gap-3 text-center font-mono">
-                  <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
+                  <div className="p-3 rounded-xl bg-slate-50 border border-white/5">
                     <div className="text-[10px] text-slate-400">Speaking Pace</div>
                     <div className="text-base font-bold text-indigo-400">{speechStats.wpm} WPM</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
+                  <div className="p-3 rounded-xl bg-slate-50 border border-white/5">
                     <div className="text-[10px] text-slate-400">Filler Words</div>
                     <div className="text-base font-bold text-emerald-400">{speechStats.fillerWords} Detected</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-900 border border-white/5">
+                  <div className="p-3 rounded-xl bg-slate-50 border border-white/5">
                     <div className="text-[10px] text-slate-400">Confidence</div>
                     <div className="text-base font-bold text-sky-400">{speechStats.confidence}%</div>
                   </div>
@@ -300,7 +300,7 @@ export default function ModularInterviewVaultPage() {
                 {scorecard && (
                   <div className="p-4 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-xs font-mono space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-white">{scorecard.overallGrade}</span>
+                      <span className="font-bold text-slate-900">{scorecard.overallGrade}</span>
                       <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold">{scorecard.compositePercentile}</span>
                     </div>
                     <p className="text-slate-300">{scorecard.topCoachingDirectives?.[0]}</p>
@@ -313,7 +313,7 @@ export default function ModularInterviewVaultPage() {
                   disabled={loadingVoice}
                   className={`w-full py-2.5 rounded-xl font-mono font-bold text-xs transition-all shadow-lg ${
                     isRecording
-                      ? 'bg-red-500 hover:bg-red-400 text-white shadow-red-500/20'
+                      ? 'bg-red-500 hover:bg-red-400 text-slate-900 shadow-red-500/20'
                       : 'bg-indigo-500 hover:bg-indigo-400 text-slate-950 shadow-indigo-500/20'
                   }`}
                 >
@@ -331,7 +331,7 @@ export default function ModularInterviewVaultPage() {
           <section className="mb-10 text-left">
             <div className="flex items-center gap-2.5 mb-4">
               <span className="text-xl">🏛️</span>
-              <h2 className="text-lg font-bold text-white font-heading">
+              <h2 className="text-lg font-bold text-slate-900 font-heading">
                 System Design &amp; Whiteboard Chaos Simulator
               </h2>
             </div>
@@ -355,7 +355,7 @@ export default function ModularInterviewVaultPage() {
                       type="number"
                       value={rps}
                       onChange={(e) => setRps(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-indigo-400 focus:outline-none"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-indigo-400 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -363,7 +363,7 @@ export default function ModularInterviewVaultPage() {
                     <select
                       value={failedNode}
                       onChange={(e) => setFailedNode(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-indigo-400 focus:outline-none"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-indigo-400 focus:outline-none"
                     >
                       <option value="none">No Failure (Healthy Cluster)</option>
                       <option value="cache">Kill Redis Cache Node</option>
@@ -383,9 +383,9 @@ export default function ModularInterviewVaultPage() {
                 </button>
 
                 {simResult && (
-                  <div className="p-4 rounded-2xl bg-slate-950 border border-indigo-500/30 font-mono text-xs space-y-2">
+                  <div className="p-4 rounded-2xl bg-white border border-indigo-500/30 font-mono text-xs space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-white">Availability: {simResult.availabilitySLA}</span>
+                      <span className="font-bold text-slate-900">Availability: {simResult.availabilitySLA}</span>
                       <span className="text-emerald-400 font-bold">{simResult.simulatedLatencyMs}ms P99 Latency</span>
                     </div>
                     <div className="text-indigo-300 font-bold">{simResult.resilienceRating}</div>
@@ -404,7 +404,7 @@ export default function ModularInterviewVaultPage() {
           <section className="mb-10 text-left">
             <div className="flex items-center gap-2.5 mb-4">
               <span className="text-xl">💰</span>
-              <h2 className="text-lg font-bold text-white font-heading">
+              <h2 className="text-lg font-bold text-slate-900 font-heading">
                 Compensation, Tax Arbitrage &amp; RSU Vesting
               </h2>
             </div>
@@ -428,7 +428,7 @@ export default function ModularInterviewVaultPage() {
                       type="number"
                       value={baseSalary}
                       onChange={(e) => setBaseSalary(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-indigo-400 focus:outline-none"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-indigo-400 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -437,7 +437,7 @@ export default function ModularInterviewVaultPage() {
                       type="number"
                       value={joiningBonus}
                       onChange={(e) => setJoiningBonus(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-indigo-400 focus:outline-none"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-indigo-400 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -452,8 +452,8 @@ export default function ModularInterviewVaultPage() {
                 </button>
 
                 {taxResult && (
-                  <div className="p-4 rounded-2xl bg-slate-950 border border-indigo-500/30 font-mono text-xs space-y-2.5">
-                    <div className="flex items-center justify-between text-white font-bold">
+                  <div className="p-4 rounded-2xl bg-white border border-indigo-500/30 font-mono text-xs space-y-2.5">
+                    <div className="flex items-center justify-between text-slate-900 font-bold">
                       <span>Monthly In-Hand: ₹{taxResult.monthlyTakeHomeINR?.toLocaleString()}</span>
                       <span className="text-emerald-400">Effective Tax: {taxResult.effectiveTaxRatePercentage}%</span>
                     </div>
@@ -477,7 +477,7 @@ export default function ModularInterviewVaultPage() {
           <section className="mb-10 text-left">
             <div className="flex items-center gap-2.5 mb-4">
               <span className="text-xl">📝</span>
-              <h2 className="text-lg font-bold text-white font-heading">
+              <h2 className="text-lg font-bold text-slate-900 font-heading">
                 Behavioral STAR Stories &amp; Crisis Management
               </h2>
             </div>
@@ -500,7 +500,7 @@ export default function ModularInterviewVaultPage() {
                     type="text"
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-indigo-400 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-indigo-400 focus:outline-none"
                   />
                 </div>
 
@@ -510,7 +510,7 @@ export default function ModularInterviewVaultPage() {
                     rows={3}
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
-                    className="w-full p-3 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-indigo-400 focus:outline-none resize-none"
+                    className="w-full p-3 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-indigo-400 focus:outline-none resize-none"
                   />
                 </div>
 
@@ -524,9 +524,9 @@ export default function ModularInterviewVaultPage() {
                 </button>
 
                 {starResult && (
-                  <div className="p-4 rounded-2xl bg-slate-950 border border-indigo-500/30 space-y-2">
+                  <div className="p-4 rounded-2xl bg-white border border-indigo-500/30 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-white">{starResult.rating}</span>
+                      <span className="font-bold text-slate-900">{starResult.rating}</span>
                       <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">Score: {starResult.starScore}/100</span>
                     </div>
                     <p className="text-slate-400 text-[11px]">{starResult.actionableTips?.[0]}</p>
@@ -544,7 +544,7 @@ export default function ModularInterviewVaultPage() {
           <section className="mb-10 text-left">
             <div className="flex items-center gap-2.5 mb-4">
               <span className="text-xl">⚡</span>
-              <h2 className="text-lg font-bold text-white font-heading">
+              <h2 className="text-lg font-bold text-slate-900 font-heading">
                 AST Code Review &amp; Database Optimizer
               </h2>
             </div>
@@ -567,7 +567,7 @@ export default function ModularInterviewVaultPage() {
                     rows={2}
                     value={sqlQuery}
                     onChange={(e) => setSqlQuery(e.target.value)}
-                    className="w-full p-3 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-indigo-400 focus:outline-none resize-none font-mono"
+                    className="w-full p-3 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-indigo-400 focus:outline-none resize-none font-mono"
                   />
                 </div>
 
@@ -581,12 +581,12 @@ export default function ModularInterviewVaultPage() {
                 </button>
 
                 {sqlResult && (
-                  <div className="p-4 rounded-2xl bg-slate-950 border border-indigo-500/30 space-y-2">
+                  <div className="p-4 rounded-2xl bg-white border border-indigo-500/30 space-y-2">
                     <div className="flex items-center justify-between text-emerald-400 font-bold">
                       <span>{sqlResult.speedup}</span>
                       <span>{sqlResult.estimatedLatency}</span>
                     </div>
-                    <div className="p-2.5 rounded-xl bg-slate-900 border border-white/10 text-sky-300 select-all">
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-white/10 text-sky-300 select-all">
                       <code>{sqlResult.recommendedIndex}</code>
                     </div>
                     <p className="text-slate-400 text-[11px]">{sqlResult.executionPlan}</p>

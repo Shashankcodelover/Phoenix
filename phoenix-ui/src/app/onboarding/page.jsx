@@ -66,10 +66,10 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 selection:bg-sky-500/30 selection:text-sky-200">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col items-center justify-center p-4 selection:bg-sky-500/30 selection:text-sky-200">
       <div className="ambient-radiance" />
 
-      <div className="w-full max-w-2xl bg-slate-900/90 border border-white/15 rounded-3xl p-6 sm:p-10 shadow-2xl shadow-sky-500/10 text-left relative z-10">
+      <div className="w-full max-w-2xl bg-slate-50/90 border border-white/15 rounded-3xl p-6 sm:p-10 shadow-2xl shadow-sky-500/10 text-left relative z-10">
         
         {/* Step Indicator */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10 font-mono text-xs">
@@ -78,7 +78,7 @@ export default function OnboardingPage() {
               🔥
             </span>
             <div>
-              <div className="font-bold text-white">PHOENIX ONBOARDING</div>
+              <div className="font-bold text-slate-900">PHOENIX ONBOARDING</div>
               <div className="text-[10px] text-slate-400">Zero Cross-Domain Data Pollution</div>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default function OnboardingPage() {
         {step === 1 && (
           <div className="space-y-6 animate-fadeIn">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-heading">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading">
                 What is your primary goal right now?
               </h1>
               <p className="text-slate-400 text-xs sm:text-sm mt-1">
@@ -107,12 +107,12 @@ export default function OnboardingPage() {
                 className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                   selectedDomain === 'interview'
                     ? 'bg-indigo-950/50 border-indigo-500 shadow-lg shadow-indigo-500/15'
-                    : 'bg-slate-950/60 border-white/10 hover:border-white/20'
+                    : 'bg-white/60 border-white/10 hover:border-white/20'
                 }`}
               >
                 <div>
                   <div className="text-3xl mb-3">💼</div>
-                  <h3 className="font-bold text-white text-base mb-1 font-heading">Placement &amp; Voice AI</h3>
+                  <h3 className="font-bold text-slate-900 text-base mb-1 font-heading">Placement &amp; Voice AI</h3>
                   <p className="text-slate-400 text-xs leading-relaxed">
                     FAANG mock voice interviews, live AI Sentinel prober, and system design whiteboards.
                   </p>
@@ -128,12 +128,12 @@ export default function OnboardingPage() {
                 className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                   selectedDomain === 'hackathon'
                     ? 'bg-emerald-950/50 border-emerald-500 shadow-lg shadow-emerald-500/15'
-                    : 'bg-slate-950/60 border-white/10 hover:border-white/20'
+                    : 'bg-white/60 border-white/10 hover:border-white/20'
                 }`}
               >
                 <div>
                   <div className="text-3xl mb-3">🏆</div>
-                  <h3 className="font-bold text-white text-base mb-1 font-heading">Hackathon OS</h3>
+                  <h3 className="font-bold text-slate-900 text-base mb-1 font-heading">Hackathon OS</h3>
                   <p className="text-slate-400 text-xs leading-relaxed">
                     Discord-style squad chat, split role copilots, 180s stage teleprompter, and Devpost submission.
                   </p>
@@ -149,12 +149,12 @@ export default function OnboardingPage() {
                 className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                   selectedDomain === 'horizon'
                     ? 'bg-sky-950/50 border-sky-500 shadow-lg shadow-sky-500/15'
-                    : 'bg-slate-950/60 border-white/10 hover:border-white/20'
+                    : 'bg-white/60 border-white/10 hover:border-white/20'
                 }`}
               >
                 <div>
                   <div className="text-3xl mb-3">🌅</div>
-                  <h3 className="font-bold text-white text-base mb-1 font-heading">Horizon Admissions</h3>
+                  <h3 className="font-bold text-slate-900 text-base mb-1 font-heading">Horizon Admissions</h3>
                   <p className="text-slate-400 text-xs leading-relaxed">
                     Karnataka KEA KCET/DCET state rank matrices, category quotas, and VTU CGPA converters.
                   </p>
@@ -181,7 +181,7 @@ export default function OnboardingPage() {
         {step === 2 && (
           <form onSubmit={handleComplete} className="space-y-5 animate-fadeIn">
             <div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-white font-heading">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 font-heading">
                 Customize your {selectedDomain.toUpperCase()} profile
               </h1>
               <p className="text-slate-400 text-xs font-mono">
@@ -197,7 +197,7 @@ export default function OnboardingPage() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none"
                   required
                 />
               </div>
@@ -207,7 +207,7 @@ export default function OnboardingPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none"
                   required
                 />
               </div>
@@ -223,7 +223,7 @@ export default function OnboardingPage() {
                     type="text"
                     value={targetRole}
                     onChange={(e) => setTargetRole(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-indigo-400 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-indigo-400 focus:outline-none"
                   />
                 </div>
                 <div>
@@ -232,7 +232,7 @@ export default function OnboardingPage() {
                     type="text"
                     value={techStack}
                     onChange={(e) => setTechStack(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-indigo-400 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-indigo-400 focus:outline-none"
                   />
                 </div>
               </div>
@@ -248,7 +248,7 @@ export default function OnboardingPage() {
                       type="text"
                       value={teamName}
                       onChange={(e) => setTeamName(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-emerald-400 focus:outline-none"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-emerald-400 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -256,7 +256,7 @@ export default function OnboardingPage() {
                     <select
                       value={squadRole}
                       onChange={(e) => setSquadRole(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-emerald-400 focus:outline-none"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-emerald-400 focus:outline-none"
                     >
                       <option value="Lead Full-Stack & Systems Architect">Lead Full-Stack &amp; Systems Architect</option>
                       <option value="Frontend Specialist">Frontend Specialist</option>
@@ -278,7 +278,7 @@ export default function OnboardingPage() {
                       type="number"
                       value={candidateRank}
                       onChange={(e) => setCandidateRank(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -286,7 +286,7 @@ export default function OnboardingPage() {
                     <select
                       value={categoryQuota}
                       onChange={(e) => setCategoryQuota(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:border-sky-400 focus:outline-none"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-white/10 text-slate-900 focus:border-sky-400 focus:outline-none"
                     >
                       <option value="GM">General Merit (GM)</option>
                       <option value="2A">Category 2A (2A)</option>
@@ -305,7 +305,7 @@ export default function OnboardingPage() {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="px-4 py-2 rounded-xl font-mono text-xs text-slate-400 hover:text-white"
+                className="px-4 py-2 rounded-xl font-mono text-xs text-slate-400 hover:text-slate-900"
               >
                 ← Back
               </button>

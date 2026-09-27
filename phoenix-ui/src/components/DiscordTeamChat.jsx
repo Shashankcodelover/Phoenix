@@ -179,17 +179,17 @@ export default function DiscordTeamChat({ room }) {
     <div className="w-full rounded-3xl bg-theme-card border border-emerald-500/30 overflow-hidden shadow-2xl shadow-black/40 flex flex-col md:flex-row min-h-[600px] text-left">
       
       {/* Left Discord Sidebar */}
-      <div className="w-full md:w-64 bg-slate-100 dark:bg-slate-950/95 border-r border-theme-glass p-3.5 flex flex-col justify-between shrink-0 text-left">
+      <div className="w-full md:w-64 bg-slate-100 bg-white/95 border-r border-theme-glass p-3.5 flex flex-col justify-between shrink-0 text-left">
         <div>
           <div className="flex items-center gap-2 px-2 py-2 mb-3 border-b border-theme-glass">
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold text-base">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-700 text-emerald-300 flex items-center justify-center font-bold text-base">
               🏆
             </div>
             <div className="min-w-0">
               <div className="font-heading font-bold text-sm text-theme-main truncate">
                 {squadName}
               </div>
-              <div className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold truncate">
+              <div className="text-[10px] font-mono text-emerald-600 text-emerald-400 font-bold truncate">
                 Room: {roomId} ({memberCount} Members)
               </div>
             </div>
@@ -208,8 +208,8 @@ export default function DiscordTeamChat({ room }) {
                   onClick={() => setActiveChannel(c.id)}
                   className={`w-full text-left px-3 py-2 rounded-xl transition-all flex items-center justify-between ${
                     activeChannel === c.id
-                      ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-500/40 shadow-sm'
-                      : 'text-theme-muted hover:text-theme-main hover:bg-slate-200/50 dark:hover:bg-white/5'
+                      ? 'bg-emerald-500/20 text-emerald-700 text-emerald-300 font-bold border border-emerald-500/40 shadow-sm'
+                      : 'text-theme-muted hover:text-theme-main hover:bg-slate-200/50 hover:bg-white/5'
                   }`}
                 >
                   <span className="truncate">{c.name}</span>
@@ -220,9 +220,9 @@ export default function DiscordTeamChat({ room }) {
 
           {/* Dynamic Split-Role AI Channels for All N Members */}
           <div>
-            <div className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 px-2 mb-1.5 flex items-center justify-between">
+            <div className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-600 text-emerald-400 px-2 mb-1.5 flex items-center justify-between">
               <span>Split Role Copilots</span>
-              <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold">
+              <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-700 text-emerald-300 font-bold">
                 {splitChannels.length} ACTIVE
               </span>
             </div>
@@ -234,12 +234,12 @@ export default function DiscordTeamChat({ room }) {
                   onClick={() => setActiveChannel(c.id)}
                   className={`w-full text-left px-3 py-2 rounded-xl transition-all flex items-center justify-between ${
                     activeChannel === c.id
-                      ? 'bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-500/40 shadow-sm'
-                      : 'text-theme-muted hover:text-theme-main hover:bg-slate-200/50 dark:hover:bg-white/5'
+                      ? 'bg-emerald-500/25 text-emerald-700 text-emerald-300 font-bold border border-emerald-500/40 shadow-sm'
+                      : 'text-theme-muted hover:text-theme-main hover:bg-slate-200/50 hover:bg-white/5'
                   }`}
                 >
                   <span className="truncate">{c.name}</span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 bg-emerald-400 animate-pulse"></span>
                 </button>
               ))}
             </div>
@@ -257,16 +257,16 @@ export default function DiscordTeamChat({ room }) {
       </div>
 
       {/* Main Chat Feed Area */}
-      <div className="flex-1 flex flex-col justify-between bg-slate-50 dark:bg-slate-900/90 text-left">
+      <div className="flex-1 flex flex-col justify-between bg-slate-50 bg-slate-50/90 text-left">
         
         {/* Channel Banner Header */}
-        <div className="px-5 py-3.5 border-b border-theme-glass bg-slate-100/90 dark:bg-slate-950/80 flex items-center justify-between gap-3 font-mono">
+        <div className="px-5 py-3.5 border-b border-theme-glass bg-slate-100/90 bg-white/80 flex items-center justify-between gap-3 font-mono">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <span className="font-bold text-sm text-theme-main truncate">
                 {currentChannelObj.name}
               </span>
-              <span className="text-[10px] px-2 py-0.2 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 uppercase font-bold">
+              <span className="text-[10px] px-2 py-0.2 rounded bg-emerald-500/15 text-emerald-700 text-emerald-300 border border-emerald-500/30 uppercase font-bold">
                 {currentChannelObj.type === 'split' ? 'INDIVIDUAL PRIVATE COPILOT' : 'UNIVERSAL SQUAD'}
               </span>
               {currentChannelObj.activeMember && (
@@ -292,17 +292,17 @@ export default function DiscordTeamChat({ room }) {
                 key={msg.id}
                 className={`p-4 rounded-2xl border transition-all text-xs space-y-1.5 ${
                   isMe
-                    ? 'bg-emerald-950/20 dark:bg-emerald-950/40 border-emerald-500/40 ml-4'
+                    ? 'bg-emerald-950/20 bg-emerald-950/40 border-emerald-500/40 ml-4'
                     : isCoach
-                    ? 'bg-slate-100 dark:bg-slate-950/90 border-theme-glass mr-4'
-                    : 'bg-slate-100/70 dark:bg-slate-900 border-theme-glass'
+                    ? 'bg-slate-100 bg-white/90 border-theme-glass mr-4'
+                    : 'bg-slate-100/70 bg-slate-50 border-theme-glass'
                 }`}
               >
                 <div className="flex items-center justify-between font-mono text-[11px]">
                   <div className="flex items-center gap-2">
                     <span className="text-base">{msg.avatar || '💬'}</span>
                     <strong className="text-theme-main font-bold">{msg.sender}</strong>
-                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-slate-200 dark:bg-white/10 text-theme-subtle uppercase">
+                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-slate-200 bg-white/10 text-theme-subtle uppercase">
                       {msg.role}
                     </span>
                   </div>
@@ -317,7 +317,7 @@ export default function DiscordTeamChat({ room }) {
           })}
 
           {loadingAi && (
-            <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 font-mono text-xs text-emerald-700 dark:text-emerald-300 flex items-center gap-2 animate-pulse">
+            <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 font-mono text-xs text-emerald-700 text-emerald-300 flex items-center gap-2 animate-pulse">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
               <span>{aiStatusStep || `Generating Senior Copilot guidance for ${currentChannelObj.name}...`}</span>
             </div>
@@ -325,13 +325,13 @@ export default function DiscordTeamChat({ room }) {
         </div>
 
         {/* Message Input Box */}
-        <form onSubmit={handleSendMessage} className="p-4 border-t border-theme-glass bg-slate-100 dark:bg-slate-950/80 flex items-center gap-2">
+        <form onSubmit={handleSendMessage} className="p-4 border-t border-theme-glass bg-slate-100 bg-white/80 flex items-center gap-2">
           <input
             type="text"
             value={inputMsg}
             onChange={(e) => setInputMsg(e.target.value)}
             placeholder={`Message ${currentChannelObj.name} (Ask for code scaffolds, file structure, or sprint guide)...`}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-theme-glass text-theme-main text-xs focus:border-emerald-500 focus:outline-none placeholder:text-slate-400 font-mono"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 bg-slate-50 border border-theme-glass text-theme-main text-xs focus:border-emerald-500 focus:outline-none placeholder:text-slate-400 font-mono"
           />
           <button
             type="submit"

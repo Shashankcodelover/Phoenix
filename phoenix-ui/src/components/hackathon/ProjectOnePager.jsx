@@ -122,7 +122,7 @@ export default function ProjectOnePager({ room }) {
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-emerald-300">
                 STEP 8: PROJECT ONE-PAGER
               </span>
               <span className="text-xs text-theme-muted font-mono">
@@ -144,7 +144,7 @@ export default function ProjectOnePager({ room }) {
             <button
               type="button"
               onClick={handleExportMarkdown}
-              className="px-3.5 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-700 dark:text-sky-300 border border-sky-500/30 font-bold transition-all flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-700 text-sky-300 border border-sky-500/30 font-bold transition-all flex items-center gap-1.5"
             >
               <span>📄</span> Export Markdown
             </button>
@@ -162,11 +162,11 @@ export default function ProjectOnePager({ room }) {
       </div>
 
       {/* Locked Idea Context Banner */}
-      <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-emerald-500/25 space-y-1.5">
-        <div className="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+      <div className="p-4 rounded-2xl bg-slate-100 bg-white border border-emerald-500/25 space-y-1.5">
+        <div className="text-[11px] font-mono font-bold text-emerald-700 text-emerald-400 uppercase tracking-wider flex items-center gap-2">
           <span>🔒 LOCKED PROBLEM STATEMENT</span>
           {isLiveAi && (
-            <span className="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-600 dark:text-sky-300 text-[10px] border border-sky-500/30 normal-case">
+            <span className="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-600 text-sky-300 text-[10px] border border-sky-500/30 normal-case">
               ✨ Live AI Generated
             </span>
           )}
@@ -175,7 +175,7 @@ export default function ProjectOnePager({ room }) {
           {problemStatement || 'No idea locked yet — go to Step 3 to select an idea.'}
         </p>
         {lockedIdea?.tagline && (
-          <p className="text-xs text-emerald-600 dark:text-emerald-300 italic font-medium">
+          <p className="text-xs text-emerald-600 text-emerald-300 italic font-medium">
             &quot;{lockedIdea.tagline}&quot;
           </p>
         )}
@@ -183,7 +183,7 @@ export default function ProjectOnePager({ room }) {
 
       {/* Loading Animation */}
       {loading && (
-        <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-theme-glass space-y-3 animate-pulse">
+        <div className="p-5 rounded-2xl bg-slate-100 bg-white border border-theme-glass space-y-3 animate-pulse">
           <div className="text-xs font-mono text-theme-muted font-bold uppercase">
             🔬 DEEP RESEARCH & GENERATION IN PROGRESS...
           </div>
@@ -193,16 +193,16 @@ export default function ProjectOnePager({ room }) {
                 key={idx}
                 className={`flex items-center gap-2 text-xs font-mono transition-all duration-300 ${
                   idx <= generationStep
-                    ? 'text-emerald-600 dark:text-emerald-300 font-bold'
+                    ? 'text-emerald-600 text-emerald-300 font-bold'
                     : 'text-theme-subtle'
                 }`}
               >
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] shrink-0 ${
                   idx < generationStep
-                    ? 'bg-emerald-500 text-white'
+                    ? 'bg-emerald-500 text-slate-900'
                     : idx === generationStep
-                    ? 'bg-emerald-500/30 text-emerald-600 dark:text-emerald-300 animate-pulse'
-                    : 'bg-slate-200 dark:bg-slate-800 text-theme-subtle'
+                    ? 'bg-emerald-500/30 text-emerald-600 text-emerald-300 animate-pulse'
+                    : 'bg-slate-200 bg-slate-800 text-theme-subtle'
                 }`}>
                   {idx < generationStep ? '✓' : idx + 1}
                 </span>
@@ -256,7 +256,7 @@ export default function ProjectOnePager({ room }) {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <div className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+                <div className="text-[11px] font-mono font-bold text-emerald-600 text-emerald-400 uppercase">
                   ✅ IN SCOPE
                 </div>
                 <ul className="space-y-1.5">
@@ -269,7 +269,7 @@ export default function ProjectOnePager({ room }) {
                 </ul>
               </div>
               <div className="space-y-2">
-                <div className="text-[11px] font-mono font-bold text-rose-600 dark:text-rose-400 uppercase">
+                <div className="text-[11px] font-mono font-bold text-rose-600 text-rose-400 uppercase">
                   ❌ NO-GOS (OUT OF SCOPE)
                 </div>
                 <ul className="space-y-1.5">
@@ -299,16 +299,16 @@ export default function ProjectOnePager({ room }) {
                   key={idx}
                   className={`p-3.5 rounded-xl border ${
                     step.isAgentTask
-                      ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-500/30'
-                      : 'bg-slate-50 dark:bg-slate-900/50 border-theme-glass'
+                      ? 'bg-blue-50 bg-blue-950/30 border-blue-500/30'
+                      : 'bg-slate-50 bg-slate-50/50 border-theme-glass'
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="px-2 py-0.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-theme-main text-[10px] font-mono font-bold">
+                    <span className="px-2 py-0.5 rounded-lg bg-slate-200 bg-slate-800 text-theme-main text-[10px] font-mono font-bold">
                       STEP {step.stepNumber}
                     </span>
                     {step.isAgentTask && (
-                      <span className="px-2 py-0.5 rounded-lg bg-blue-500/20 text-blue-600 dark:text-blue-300 text-[10px] font-mono font-bold border border-blue-500/30">
+                      <span className="px-2 py-0.5 rounded-lg bg-blue-500/20 text-blue-600 text-blue-300 text-[10px] font-mono font-bold border border-blue-500/30">
                         🤖 AI AGENT TASK
                       </span>
                     )}
@@ -316,7 +316,7 @@ export default function ProjectOnePager({ room }) {
                   </div>
                   <p className="text-xs text-theme-muted leading-relaxed">{step.description}</p>
                   {step.isAgentTask && step.agentPrompt && (
-                    <div className="mt-2 p-2.5 rounded-lg bg-slate-100 dark:bg-slate-950 border border-blue-500/20 font-mono text-[11px] text-blue-700 dark:text-blue-300 leading-relaxed">
+                    <div className="mt-2 p-2.5 rounded-lg bg-slate-100 bg-white border border-blue-500/20 font-mono text-[11px] text-blue-700 text-blue-300 leading-relaxed">
                       <span className="font-bold text-blue-500">PROMPT →</span> &quot;{step.agentPrompt}&quot;
                     </div>
                   )}
@@ -335,15 +335,15 @@ export default function ProjectOnePager({ room }) {
             onToggle={() => toggleSection('timeline')}
           >
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-600 dark:text-amber-400">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-600 text-amber-400">
                 <span>⏰</span>
                 <span>TOTAL: {onePager.timelineAndAppetite?.totalDuration || '24 hours'}</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {(onePager.timelineAndAppetite?.phases || []).map((phase, idx) => (
-                  <div key={idx} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-theme-glass">
+                  <div key={idx} className="p-3 rounded-xl bg-slate-50 bg-slate-50/50 border border-theme-glass">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-300 text-[10px] font-mono font-bold">
+                      <span className="px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-700 text-amber-300 text-[10px] font-mono font-bold">
                         {phase.duration}
                       </span>
                     </div>
@@ -353,7 +353,7 @@ export default function ProjectOnePager({ room }) {
                 ))}
               </div>
               {onePager.timelineAndAppetite?.hardConstraint && (
-                <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-500/30 text-xs font-bold text-amber-700 dark:text-amber-300 italic">
+                <div className="p-2.5 rounded-xl bg-amber-50 bg-amber-950/20 border border-amber-500/30 text-xs font-bold text-amber-700 text-amber-300 italic">
                   ⚠️ {onePager.timelineAndAppetite.hardConstraint}
                 </div>
               )}
@@ -372,7 +372,7 @@ export default function ProjectOnePager({ room }) {
             <ul className="space-y-2">
               {(onePager.successMetrics || []).map((metric, idx) => (
                 <li key={idx} className="flex items-start gap-2.5 text-xs text-theme-main">
-                  <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                  <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-600 text-emerald-300 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                     {idx + 1}
                   </span>
                   <span className="leading-relaxed">{metric}</span>
@@ -392,13 +392,13 @@ export default function ProjectOnePager({ room }) {
           >
             <div className="space-y-3">
               {(onePager.risksAndRabbitHoles || []).map((item, idx) => (
-                <div key={idx} className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 border border-rose-500/20 space-y-1.5">
-                  <div className="flex items-start gap-2 text-xs font-bold text-rose-700 dark:text-rose-300">
+                <div key={idx} className="p-3.5 rounded-xl bg-rose-50 bg-rose-950/20 border border-rose-500/20 space-y-1.5">
+                  <div className="flex items-start gap-2 text-xs font-bold text-rose-700 text-rose-300">
                     <span className="shrink-0">⚠️</span>
                     <span>{item.risk}</span>
                   </div>
                   <div className="text-[11px] text-theme-muted pl-5 border-l-2 border-emerald-500/40">
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400">→ Mitigation: </span>
+                    <span className="font-bold text-emerald-600 text-emerald-400">→ Mitigation: </span>
                     {item.mitigation}
                   </div>
                 </div>
@@ -411,7 +411,7 @@ export default function ProjectOnePager({ room }) {
 
       {/* Empty State */}
       {!onePager && !loading && (
-        <div className="p-8 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-dashed border-theme-glass text-center space-y-3">
+        <div className="p-8 rounded-2xl bg-slate-50 bg-white border border-dashed border-theme-glass text-center space-y-3">
           <div className="text-4xl">📝</div>
           <h4 className="text-sm font-bold text-theme-main font-heading">
             Generate Your Project One-Pager
@@ -438,11 +438,11 @@ function OnePagerSection({ num, title, icon, color, expanded, onToggle, children
     amber: 'border-amber-500/30 bg-amber-500/5'
   };
   const headerColorMap = {
-    rose: 'text-rose-600 dark:text-rose-400',
-    emerald: 'text-emerald-600 dark:text-emerald-400',
-    sky: 'text-sky-600 dark:text-sky-400',
-    blue: 'text-blue-600 dark:text-blue-400',
-    amber: 'text-amber-600 dark:text-amber-400'
+    rose: 'text-rose-600 text-rose-400',
+    emerald: 'text-emerald-600 text-emerald-400',
+    sky: 'text-sky-600 text-sky-400',
+    blue: 'text-blue-600 text-blue-400',
+    amber: 'text-amber-600 text-amber-400'
   };
 
   return (

@@ -137,7 +137,7 @@ export default function SixDocumentsViewer({ room }) {
   };
 
   return (
-    <div className="w-full rounded-2xl bg-slate-900/95 border border-emerald-500/30 p-5 sm:p-7 shadow-xl shadow-black/40 text-left space-y-6">
+    <div className="w-full rounded-2xl bg-slate-50/95 border border-emerald-500/30 p-5 sm:p-7 shadow-xl shadow-black/40 text-left space-y-6">
       
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3 pb-4 border-b border-white/15">
@@ -151,13 +151,13 @@ export default function SixDocumentsViewer({ room }) {
                 STEP 4: 6 FOUNDATION DOCS
               </span>
               <span className="text-xs text-slate-300 font-mono">
-                Room: <strong className="text-white">{roomId}</strong> ({memberCount} Active Member{memberCount > 1 ? 's' : ''})
+                Room: <strong className="text-slate-900">{roomId}</strong> ({memberCount} Active Member{memberCount > 1 ? 's' : ''})
               </span>
             </div>
-            <h3 className="text-xl font-bold text-white font-heading">
+            <h3 className="text-xl font-bold text-slate-900 font-heading">
               Foundation Documents for "{problemStatement}"
             </h3>
-            <p className="text-xs text-slate-200 leading-relaxed mt-0.5">
+            <p className="text-xs text-slate-800 leading-relaxed mt-0.5">
               These documents are mathematically synchronized to the <strong className="text-emerald-400 font-bold">{memberCount} teammate(s)</strong> currently in Room {roomId}. As more teammates join, task allocations adapt automatically.
             </p>
           </div>
@@ -192,11 +192,11 @@ export default function SixDocumentsViewer({ room }) {
               className={`p-3 rounded-xl border text-left transition-all ${
                 activeDocIndex === idx
                   ? 'bg-emerald-500/25 text-emerald-200 border-emerald-400 font-bold shadow-md shadow-emerald-500/20 ring-1 ring-emerald-400/50'
-                  : 'bg-slate-950/80 border-white/15 text-slate-300 hover:text-white hover:bg-white/10'
+                  : 'bg-white/80 border-white/15 text-slate-300 hover:text-slate-900 hover:bg-white/10'
               }`}
             >
               <div className="text-[10px] text-slate-400 font-bold">DOC #{doc.number}</div>
-              <div className="truncate font-sans font-semibold mt-0.5 text-white">{doc.title.split(' ')[1] || doc.title}</div>
+              <div className="truncate font-sans font-semibold mt-0.5 text-slate-900">{doc.title.split(' ')[1] || doc.title}</div>
               <div className="text-[9px] text-emerald-400 truncate mt-0.5 font-bold">{doc.category?.split(' ')[0]}</div>
             </button>
           ))}
@@ -205,7 +205,7 @@ export default function SixDocumentsViewer({ room }) {
 
       {/* Active Document Body Card */}
       {currentDoc && (
-        <div className="p-6 rounded-2xl bg-slate-950 border border-emerald-500/35 space-y-4 animate-fadeIn shadow-2xl">
+        <div className="p-6 rounded-2xl bg-white border border-emerald-500/35 space-y-4 animate-fadeIn shadow-2xl">
           <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-white/15">
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -213,10 +213,10 @@ export default function SixDocumentsViewer({ room }) {
                   DOC #{currentDoc.number} • {currentDoc.category}
                 </span>
                 <span className="text-[11px] font-mono text-slate-300">
-                  Lead Owner: <strong className="text-white">{currentDoc.leadOwner || members[0]?.name}</strong>
+                  Lead Owner: <strong className="text-slate-900">{currentDoc.leadOwner || members[0]?.name}</strong>
                 </span>
               </div>
-              <h4 className="text-lg font-bold text-white font-heading">
+              <h4 className="text-lg font-bold text-slate-900 font-heading">
                 {currentDoc.title}
               </h4>
             </div>
@@ -226,7 +226,7 @@ export default function SixDocumentsViewer({ room }) {
           </div>
 
           {/* Executive Summary */}
-          <div className="p-4 rounded-xl bg-slate-900 border border-white/15 text-xs text-slate-100 leading-relaxed font-sans shadow-inner">
+          <div className="p-4 rounded-xl bg-slate-50 border border-white/15 text-xs text-slate-100 leading-relaxed font-sans shadow-inner">
             <strong className="text-emerald-400 font-mono text-[11px] block mb-1">
               📖 EXECUTIVE SUMMARY (FOR ROOM {roomId}):
             </strong>
@@ -240,7 +240,7 @@ export default function SixDocumentsViewer({ room }) {
             </div>
             <div className="space-y-2 font-mono text-xs">
               {currentDoc.keyPoints?.map((pt, i) => (
-                <div key={i} className="p-3.5 rounded-xl bg-slate-900/90 border border-white/10 flex items-start gap-2.5 shadow-sm">
+                <div key={i} className="p-3.5 rounded-xl bg-slate-50/90 border border-white/10 flex items-start gap-2.5 shadow-sm">
                   <span className="text-emerald-400 font-bold shrink-0">✓</span>
                   <span className="text-slate-100 text-xs font-sans leading-relaxed">{pt}</span>
                 </div>

@@ -37,7 +37,7 @@ export default function FeatureCard({
   return (
     <div
       id={`feature-${id}`}
-      className={`glass-card p-5 sm:p-6 transition-all bg-slate-900/80 border ${getBorderHover()} mb-6 text-left`}
+      className={`glass-card p-5 sm:p-6 transition-all bg-slate-50/80 border ${getBorderHover()} mb-6 text-left`}
     >
       {/* Header Bar */}
       <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
@@ -48,7 +48,7 @@ export default function FeatureCard({
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-1">
               {featureNumber && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white/80 font-bold">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-slate-900/80 font-bold">
                   ENG #{featureNumber}
                 </span>
               )}
@@ -56,7 +56,7 @@ export default function FeatureCard({
                 {badge}
               </span>
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-white font-heading">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 font-heading">
               {title}
             </h3>
           </div>
@@ -66,7 +66,7 @@ export default function FeatureCard({
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-all flex items-center gap-1.5 shrink-0"
+          className="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-slate-900 transition-all flex items-center gap-1.5 shrink-0"
         >
           <span>{isExpanded ? 'Collapse Engine' : 'Explore Engine'}</span>
           <span>{isExpanded ? '▲' : '▼'}</span>
@@ -74,10 +74,10 @@ export default function FeatureCard({
       </div>
 
       {/* Real-World & Algorithm Concept Box (Always visible as a helpful 2-line summary) */}
-      <div className="p-3.5 rounded-xl bg-slate-950/70 border border-white/5 mb-4 text-xs leading-relaxed space-y-1.5 font-normal">
+      <div className="p-3.5 rounded-xl bg-white/70 border border-white/5 mb-4 text-xs leading-relaxed space-y-1.5 font-normal">
         {realWorldScenario && (
           <div className="text-slate-300">
-            <strong className="text-white font-semibold font-mono">🌐 Real-World: </strong>
+            <strong className="text-slate-900 font-semibold font-mono">🌐 Real-World: </strong>
             {realWorldScenario}
           </div>
         )}

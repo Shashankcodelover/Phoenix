@@ -32,7 +32,7 @@
   <!-- Header & Navigation -->
   <header class="max-w-7xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
     <div class="flex items-center space-x-4">
-      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 hover:border-blue-500/50 hover:bg-slate-800 transition text-blue-400">
+      <a href="/horizon/career-command-center.html" class="p-2.5 rounded-xl bg-slate-50/80 border border-slate-700/60 hover:border-blue-500/50 hover:bg-slate-800 transition text-blue-400">
         <i class="fa-solid fa-arrow-left"></i>
       </a>
       <div>
@@ -42,7 +42,7 @@
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> QUANTCONNECT / BLACK-LITTERMAN GRADE
           </span>
         </div>
-        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white mt-1 flex items-center gap-2.5">
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 mt-1 flex items-center gap-2.5">
           <span>Astra Quant Strategy Backtester</span>
           <span class="text-blue-400 text-lg font-mono-code">&amp; Monte Carlo Risk Engine</span>
         </h1>
@@ -51,16 +51,16 @@
 
     <!-- Strategy Preset Selector -->
     <div class="flex items-center gap-3">
-      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-3">
+      <div class="bg-slate-50/90 border border-slate-700/80 rounded-xl p-2 px-3 flex items-center gap-3">
         <label class="text-xs text-slate-400 font-mono-code uppercase">Strategy</label>
-        <select id="strategySelect" onchange="loadStrategy()" class="bg-slate-800 text-white font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-blue-500">
+        <select id="strategySelect" onchange="loadStrategy()" class="bg-slate-800 text-slate-900 font-mono-code text-sm font-semibold rounded px-2 py-1 border border-slate-700 focus:outline-none focus:border-blue-500">
           <option value="alpha_sentinel" selected>Alpha Sentinel (Tech L/S)</option>
           <option value="macro_titan">Macro Titan (Risk Parity)</option>
           <option value="tech_titan_pure">Mag-4 Alpha Compounder</option>
         </select>
       </div>
 
-      <button id="btnRunBacktest" onclick="runBacktest()" class="py-2.5 px-4 rounded-xl font-bold font-mono-code text-sm text-white bg-blue-600 hover:bg-blue-500 transition shadow-lg flex items-center gap-2">
+      <button id="btnRunBacktest" onclick="runBacktest()" class="py-2.5 px-4 rounded-xl font-bold font-mono-code text-sm text-slate-900 bg-blue-600 hover:bg-blue-500 transition shadow-lg flex items-center gap-2">
         <i class="fa-solid fa-play text-xs"></i>
         <span>EXECUTE BACKTEST</span>
       </button>
@@ -72,37 +72,37 @@
 
     <!-- KPI Metric Cards Bar (Quant Metrics) -->
     <section class="grid grid-cols-2 md:grid-cols-6 gap-3">
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Annualized Return</div>
         <div class="text-xl font-bold text-emerald-400 font-mono-code mt-0.5" id="metricAnnReturn">+28.4%</div>
         <div class="text-[10px] font-mono-code mt-1 text-cyan-400" id="metricAlpha">+16.4% Alpha vs SPY</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Sharpe Ratio (Rf=4.2%)</div>
-        <div class="text-xl font-bold text-white font-mono-code mt-0.5" id="metricSharpe">1.84</div>
+        <div class="text-xl font-bold text-slate-900 font-mono-code mt-0.5" id="metricSharpe">1.84</div>
         <div class="text-[10px] text-emerald-400 font-mono-code mt-1">Excellent Risk-Adjusted</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Sortino Ratio</div>
         <div class="text-xl font-bold text-cyan-400 font-mono-code mt-0.5" id="metricSortino">2.91</div>
         <div class="text-[10px] text-slate-400 font-mono-code mt-1">Downside Shield</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Max Drawdown (MDD)</div>
         <div class="text-xl font-bold text-rose-400 font-mono-code mt-0.5" id="metricMDD">-12.8%</div>
         <div class="text-[10px] font-mono-code mt-1 text-slate-400" id="metricCalmar">Calmar: 2.22</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Daily VaR 95% / 99%</div>
         <div class="text-xl font-bold text-amber-400 font-mono-code mt-0.5" id="metricVaR">-1.42% / -2.18%</div>
         <div class="text-[10px] text-amber-300/80 font-mono-code mt-1" id="metricCVaR">CVaR (ES): -2.54%</div>
       </div>
 
-      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+      <div class="bg-slate-50/80 border border-slate-800 rounded-xl p-3.5">
         <div class="text-[11px] text-slate-400 uppercase tracking-wider font-mono-code">Win Rate / Profit Factor</div>
         <div class="text-xl font-bold text-blue-300 font-mono-code mt-0.5" id="metricWinRate">58.4%</div>
         <div class="text-[10px] text-blue-400/80 font-mono-code mt-1" id="metricProfitFactor">Profit Factor: 2.14</div>
@@ -113,32 +113,32 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- Equity Growth Curve Canvas -->
-      <section class="lg:col-span-8 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+      <section class="lg:col-span-8 bg-slate-50/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
         <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-chart-line text-blue-400"></i>
-            <h2 class="text-base font-bold text-white tracking-wide">Cumulative Portfolio Wealth Trajectory vs Benchmark SPY</h2>
+            <h2 class="text-base font-bold text-slate-900 tracking-wide">Cumulative Portfolio Wealth Trajectory vs Benchmark SPY</h2>
           </div>
           <div class="flex items-center gap-4 text-xs font-mono-code">
             <span class="flex items-center gap-1.5 text-blue-400"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Strategy</span>
             <span class="flex items-center gap-1.5 text-slate-400"><span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> Benchmark (SPY)</span>
           </div>
         </div>
-        <div class="h-64 w-full bg-slate-950/80 rounded-xl border border-slate-800/80 p-3 relative overflow-hidden">
+        <div class="h-64 w-full bg-white/80 rounded-xl border border-slate-800/80 p-3 relative overflow-hidden">
           <canvas id="equityCanvas" class="w-full h-full"></canvas>
         </div>
       </section>
 
       <!-- Drawdown Underwater Chart -->
-      <section class="lg:col-span-4 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+      <section class="lg:col-span-4 bg-slate-50/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
         <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-water text-rose-400"></i>
-            <h2 class="text-base font-bold text-white tracking-wide">Underwater Drawdown (%)</h2>
+            <h2 class="text-base font-bold text-slate-900 tracking-wide">Underwater Drawdown (%)</h2>
           </div>
           <span class="text-xs font-mono-code text-slate-400">Peak Decline</span>
         </div>
-        <div class="h-64 w-full bg-slate-950/80 rounded-xl border border-slate-800/80 p-3 relative overflow-hidden">
+        <div class="h-64 w-full bg-white/80 rounded-xl border border-slate-800/80 p-3 relative overflow-hidden">
           <canvas id="drawdownCanvas" class="w-full h-full"></canvas>
         </div>
       </section>
@@ -149,16 +149,16 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- Monte Carlo 300-Path Fan Simulation -->
-      <section class="lg:col-span-8 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
+      <section class="lg:col-span-8 bg-slate-50/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl">
         <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-dice text-blue-400"></i>
             <div>
-              <h2 class="text-base font-bold text-white tracking-wide">Monte Carlo Geometric Brownian Motion (GBM)</h2>
+              <h2 class="text-base font-bold text-slate-900 tracking-wide">Monte Carlo Geometric Brownian Motion (GBM)</h2>
               <p class="text-xs text-slate-400">300 Stochastic Forward Paths (1-Year Horizon / 252 Days)</p>
             </div>
           </div>
-          <div class="flex items-center gap-3 text-xs font-mono-code bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+          <div class="flex items-center gap-3 text-xs font-mono-code bg-white px-3 py-1.5 rounded-lg border border-slate-800">
             <span class="text-slate-400">P(Loss):</span>
             <span id="metricProbLoss" class="text-rose-400 font-bold">4.2%</span>
             <span class="text-slate-500">|</span>
@@ -167,29 +167,29 @@
           </div>
         </div>
 
-        <div class="h-64 w-full bg-slate-950/80 rounded-xl border border-slate-800/80 p-3 relative overflow-hidden">
+        <div class="h-64 w-full bg-white/80 rounded-xl border border-slate-800/80 p-3 relative overflow-hidden">
           <canvas id="monteCarloCanvas" class="w-full h-full"></canvas>
         </div>
 
         <!-- Percentile Breakdown Table -->
         <div class="grid grid-cols-5 gap-2 mt-4 text-center font-mono-code text-xs">
-          <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+          <div class="p-2 rounded-lg bg-white border border-slate-800">
             <div class="text-slate-500 text-[10px] uppercase">5th %ile (Bear)</div>
             <div class="font-bold text-rose-400 mt-0.5" id="mcP5">$86,400</div>
           </div>
-          <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+          <div class="p-2 rounded-lg bg-white border border-slate-800">
             <div class="text-slate-500 text-[10px] uppercase">25th %ile</div>
             <div class="font-bold text-amber-400 mt-0.5" id="mcP25">$109,200</div>
           </div>
-          <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+          <div class="p-2 rounded-lg bg-white border border-slate-800">
             <div class="text-slate-500 text-[10px] uppercase">50th %ile (Median)</div>
             <div class="font-bold text-blue-400 mt-0.5" id="mcP50">$127,450</div>
           </div>
-          <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+          <div class="p-2 rounded-lg bg-white border border-slate-800">
             <div class="text-slate-500 text-[10px] uppercase">75th %ile</div>
             <div class="font-bold text-emerald-400 mt-0.5" id="mcP75">$148,900</div>
           </div>
-          <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+          <div class="p-2 rounded-lg bg-white border border-slate-800">
             <div class="text-slate-500 text-[10px] uppercase">95th %ile (Bull)</div>
             <div class="font-bold text-emerald-300 mt-0.5" id="mcP95">$184,200</div>
           </div>
@@ -197,12 +197,12 @@
       </section>
 
       <!-- Asset Allocation Weights Configurator -->
-      <section class="lg:col-span-4 bg-slate-900/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+      <section class="lg:col-span-4 bg-slate-50/80 border border-slate-800/90 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-sliders text-cyan-400"></i>
-              <h3 class="text-base font-bold text-white tracking-wide">Portfolio Asset Weights</h3>
+              <h3 class="text-base font-bold text-slate-900 tracking-wide">Portfolio Asset Weights</h3>
             </div>
             <span class="text-xs font-mono-code text-cyan-400" id="totalWeightIndicator">100% Total</span>
           </div>
@@ -217,7 +217,7 @@
         </div>
 
         <div class="pt-4 border-t border-slate-800 mt-4">
-          <button onclick="runBacktest()" class="w-full py-2.5 rounded-xl font-bold font-mono-code text-xs text-white bg-blue-600 hover:bg-blue-500 transition shadow flex items-center justify-center gap-2">
+          <button onclick="runBacktest()" class="w-full py-2.5 rounded-xl font-bold font-mono-code text-xs text-slate-900 bg-blue-600 hover:bg-blue-500 transition shadow flex items-center justify-center gap-2">
             <i class="fa-solid fa-calculator"></i> RECOMPUTE ALL METRICS
           </button>
         </div>
@@ -273,7 +273,7 @@
             </div>
             <input type="range" min="0" max="100" step="5" value="${val}"
               oninput="updateWeight('${sym}', this.value)"
-              class="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-blue-500">
+              class="w-full h-1.5 bg-white rounded-lg appearance-none cursor-pointer accent-blue-500">
           </div>
         `;
       }).join('');

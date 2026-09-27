@@ -97,20 +97,20 @@ export default function CloudPresentationStudio({ room }) {
   // Theme Styles
   const themeStyles = {
     'cyber-slate': {
-      bg: 'bg-slate-950',
-      card: 'bg-slate-900 border-sky-500/30 text-white',
+      bg: 'bg-white',
+      card: 'bg-slate-50 border-sky-500/30 text-slate-900',
       title: 'text-sky-400',
       bullet: 'text-slate-300'
     },
     'dark-neon': {
       bg: 'bg-blue-950/90',
-      card: 'bg-blue-900/60 border-fuchsia-500/40 text-white',
+      card: 'bg-blue-900/60 border-fuchsia-500/40 text-slate-900',
       title: 'text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-cyan-400',
       bullet: 'text-blue-200'
     },
     'emerald-matrix': {
-      bg: 'bg-black',
-      card: 'bg-zinc-950 border-emerald-500/50 text-emerald-300 font-mono',
+      bg: 'bg-white',
+      card: 'bg-white border-emerald-500/50 text-emerald-300 font-mono',
       title: 'text-emerald-400',
       bullet: 'text-emerald-200/90'
     },
@@ -203,7 +203,7 @@ export default function CloudPresentationStudio({ room }) {
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-emerald-300">
                 CLOUD-GRADE PRESENTATION &amp; PPT STUDIO
               </span>
               <span className="text-xs text-theme-muted font-mono">
@@ -224,7 +224,7 @@ export default function CloudPresentationStudio({ room }) {
           <button
             type="button"
             onClick={handleExportMarp}
-            className="px-3.5 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-700 dark:text-sky-300 border border-sky-500/30 font-bold transition-all flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-700 text-sky-300 border border-sky-500/30 font-bold transition-all flex items-center gap-1.5"
           >
             <span>📄</span> Export Marp Markdown
           </button>
@@ -254,8 +254,8 @@ export default function CloudPresentationStudio({ room }) {
               onClick={() => setActiveTheme(t.id)}
               className={`px-3 py-1.5 rounded-xl border transition-all ${
                 activeTheme === t.id
-                  ? 'bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border-emerald-500 font-bold shadow-sm'
-                  : 'bg-slate-100 dark:bg-slate-950 border-theme-glass text-theme-muted hover:text-theme-main'
+                  ? 'bg-emerald-500/25 text-emerald-700 text-emerald-300 border-emerald-500 font-bold shadow-sm'
+                  : 'bg-slate-100 bg-white border-theme-glass text-theme-muted hover:text-theme-main'
               }`}
             >
               {t.label}
@@ -273,7 +273,7 @@ export default function CloudPresentationStudio({ room }) {
               className={`w-9 h-9 rounded-xl font-bold flex items-center justify-center transition-all ${
                 currentSlideIndex === idx
                   ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20 ring-2 ring-emerald-400'
-                  : 'bg-slate-100 dark:bg-slate-950 border border-theme-glass text-theme-muted hover:text-theme-main'
+                  : 'bg-slate-100 bg-white border border-theme-glass text-theme-muted hover:text-theme-main'
               }`}
             >
               {s.num}
@@ -288,7 +288,7 @@ export default function CloudPresentationStudio({ room }) {
         {/* Slide Header */}
         <div>
           <div className="flex items-center justify-between gap-3 mb-3">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-500 dark:text-emerald-400 flex items-center gap-2">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-500 text-emerald-400 flex items-center gap-2">
               <span>SLIDE {currentSlide.num} / 05</span>
               <span>•</span>
               <span>{currentSlide.type}</span>
@@ -330,9 +330,9 @@ export default function CloudPresentationStudio({ room }) {
       </div>
 
       {/* Slide Speaker Notes & Rehearsal Directive */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-theme-glass space-y-2 text-left">
+      <div className="p-4 sm:p-5 rounded-2xl bg-slate-100 bg-white border border-theme-glass space-y-2 text-left">
         <div className="flex items-center justify-between font-mono text-xs">
-          <span className="text-amber-600 dark:text-amber-300 font-bold flex items-center gap-1.5">
+          <span className="text-amber-600 text-amber-300 font-bold flex items-center gap-1.5">
             <span>🎙️</span> SPEAKER TALKING POINTS &amp; 180s STAGE DIRECTIVE:
           </span>
           <span className="text-theme-subtle text-[10px]">Target WPM: 135 WPM</span>

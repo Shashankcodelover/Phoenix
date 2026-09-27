@@ -143,11 +143,11 @@ export default function DeepBuildGuide({ room }) {
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-emerald-300">
                 STEP 9: DEEP BUILD GUIDE
               </span>
               {isLiveAi && (
-                <span className="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-600 dark:text-sky-300 text-[10px] font-mono font-bold border border-sky-500/30">
+                <span className="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-600 text-sky-300 text-[10px] font-mono font-bold border border-sky-500/30">
                   ✨ AI-Generated
                 </span>
               )}
@@ -167,7 +167,7 @@ export default function DeepBuildGuide({ room }) {
             <button
               type="button"
               onClick={handleExportMarkdown}
-              className="px-3.5 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-700 dark:text-sky-300 border border-sky-500/30 font-bold transition-all flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-700 text-sky-300 border border-sky-500/30 font-bold transition-all flex items-center gap-1.5"
             >
               <span>📄</span> Export Markdown
             </button>
@@ -186,7 +186,7 @@ export default function DeepBuildGuide({ room }) {
 
       {/* Loading Animation */}
       {loading && (
-        <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-theme-glass space-y-3 animate-pulse">
+        <div className="p-5 rounded-2xl bg-slate-100 bg-white border border-theme-glass space-y-3 animate-pulse">
           <div className="text-xs font-mono text-theme-muted font-bold uppercase">
             🔬 DEEP ARCHITECTURAL ANALYSIS IN PROGRESS...
           </div>
@@ -196,16 +196,16 @@ export default function DeepBuildGuide({ room }) {
                 key={idx}
                 className={`flex items-center gap-2 text-xs font-mono transition-all duration-300 ${
                   idx <= generationStep
-                    ? 'text-emerald-600 dark:text-emerald-300 font-bold'
+                    ? 'text-emerald-600 text-emerald-300 font-bold'
                     : 'text-theme-subtle'
                 }`}
               >
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] shrink-0 ${
                   idx < generationStep
-                    ? 'bg-emerald-500 text-white'
+                    ? 'bg-emerald-500 text-slate-900'
                     : idx === generationStep
-                    ? 'bg-emerald-500/30 text-emerald-600 dark:text-emerald-300 animate-pulse'
-                    : 'bg-slate-200 dark:bg-slate-800 text-theme-subtle'
+                    ? 'bg-emerald-500/30 text-emerald-600 text-emerald-300 animate-pulse'
+                    : 'bg-slate-200 bg-slate-800 text-theme-subtle'
                 }`}>
                   {idx < generationStep ? '✓' : idx + 1}
                 </span>
@@ -229,8 +229,8 @@ export default function DeepBuildGuide({ room }) {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-3.5 py-2 rounded-xl border transition-all font-semibold flex items-center gap-1.5 whitespace-nowrap ${
                   activeTab === tab.id
-                    ? 'bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border-emerald-500/40 shadow-sm font-bold'
-                    : 'text-theme-muted hover:text-theme-main hover:bg-slate-100/50 dark:hover:bg-white/5 border-transparent'
+                    ? 'bg-emerald-500/25 text-emerald-700 text-emerald-300 border-emerald-500/40 shadow-sm font-bold'
+                    : 'text-theme-muted hover:text-theme-main hover:bg-slate-100/50 hover:bg-white/5 border-transparent'
                 }`}
               >
                 <span>{tab.label}</span>
@@ -246,10 +246,10 @@ export default function DeepBuildGuide({ room }) {
                   <button
                     type="button"
                     onClick={() => togglePhase(phase.phaseNumber)}
-                    className="w-full p-4 flex items-center justify-between gap-3 text-left bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all"
+                    className="w-full p-4 flex items-center justify-between gap-3 text-left bg-slate-50 bg-slate-50/50 hover:bg-slate-100 hover:bg-slate-50 transition-all"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-mono font-bold border border-emerald-500/30">
+                      <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-700 text-emerald-300 text-xs font-mono font-bold border border-emerald-500/30">
                         {phase.duration}
                       </span>
                       <div>
@@ -265,23 +265,23 @@ export default function DeepBuildGuide({ room }) {
                   {expandedPhases[phase.phaseNumber] && (
                     <div className="p-4 space-y-3 border-t border-theme-glass animate-fadeIn">
                       {(phase.tasks || []).map((task, tidx) => (
-                        <div key={tidx} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-theme-glass space-y-2.5">
+                        <div key={tidx} className="p-4 rounded-xl bg-slate-50 bg-white border border-theme-glass space-y-2.5">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-700 dark:text-sky-300 text-[10px] font-mono font-bold">
+                            <span className="px-2 py-0.5 rounded-lg bg-sky-500/20 text-sky-700 text-sky-300 text-[10px] font-mono font-bold">
                               {task.taskId}
                             </span>
                             <span className="text-xs font-bold text-theme-main">{task.title}</span>
                           </div>
                           <div className="text-[11px] font-mono text-theme-muted flex items-center gap-1.5">
-                            <span>📄</span> <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{task.file}</span>
+                            <span>📄</span> <span className="text-emerald-600 text-emerald-400 font-semibold">{task.file}</span>
                           </div>
                           <p className="text-xs text-theme-main leading-relaxed">{task.description}</p>
                           {task.codeSnippet && (
-                            <pre className="p-3 rounded-xl bg-slate-900 dark:bg-black text-emerald-300 text-[11px] font-mono overflow-x-auto leading-relaxed border border-white/10">
+                            <pre className="p-3 rounded-xl bg-slate-50 bg-white text-emerald-300 text-[11px] font-mono overflow-x-auto leading-relaxed border border-white/10">
                               {task.codeSnippet}
                             </pre>
                           )}
-                          <div className="text-[11px] text-amber-600 dark:text-amber-400 font-mono flex items-start gap-1.5">
+                          <div className="text-[11px] text-amber-600 text-amber-400 font-mono flex items-start gap-1.5">
                             <span className="shrink-0">✓</span>
                             <span><strong>Verify:</strong> {task.testCriteria}</span>
                           </div>
@@ -297,22 +297,22 @@ export default function DeepBuildGuide({ room }) {
           {/* TAB: File Structure */}
           {activeTab === 'structure' && (
             <div className="space-y-3 animate-fadeIn">
-              <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-theme-glass space-y-2">
-                <div className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+              <div className="p-4 rounded-2xl bg-slate-100 bg-white border border-theme-glass space-y-2">
+                <div className="text-[11px] font-mono font-bold text-emerald-600 text-emerald-400 uppercase">
                   📁 PROJECT FILE TREE
                 </div>
                 <div className="space-y-1.5 font-mono text-xs">
                   {(buildGuide.folderStructure || []).map((f, idx) => (
-                    <div key={idx} className="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-white/5 transition-all">
+                    <div key={idx} className="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-200/50 hover:bg-white/5 transition-all">
                       <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 ${
                         f.priority === 'P0'
-                          ? 'bg-rose-500/20 text-rose-600 dark:text-rose-400'
-                          : 'bg-slate-200 dark:bg-slate-800 text-theme-muted'
+                          ? 'bg-rose-500/20 text-rose-600 text-rose-400'
+                          : 'bg-slate-200 bg-slate-800 text-theme-muted'
                       }`}>
                         {f.priority}
                       </span>
                       <div className="min-w-0">
-                        <div className="text-emerald-600 dark:text-emerald-400 font-semibold truncate">{f.path}</div>
+                        <div className="text-emerald-600 text-emerald-400 font-semibold truncate">{f.path}</div>
                         <div className="text-theme-muted text-[10px] mt-0.5">{f.purpose}</div>
                       </div>
                     </div>
@@ -321,12 +321,12 @@ export default function DeepBuildGuide({ room }) {
               </div>
 
               {/* Environment Setup */}
-              <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-theme-glass space-y-3">
-                <div className="text-[11px] font-mono font-bold text-sky-600 dark:text-sky-400 uppercase">
+              <div className="p-4 rounded-2xl bg-slate-100 bg-white border border-theme-glass space-y-3">
+                <div className="text-[11px] font-mono font-bold text-sky-600 text-sky-400 uppercase">
                   ⚡ SETUP COMMANDS
                 </div>
                 {(buildGuide.environmentSetup?.installCommands || []).map((cmd, idx) => (
-                  <div key={idx} className="p-2.5 rounded-xl bg-slate-900 dark:bg-black border border-white/10">
+                  <div key={idx} className="p-2.5 rounded-xl bg-slate-50 bg-white border border-white/10">
                     <code className="text-[11px] text-emerald-300 font-mono block">{cmd.command}</code>
                     <div className="text-[10px] text-slate-500 mt-1"># {cmd.purpose}</div>
                   </div>
@@ -339,14 +339,14 @@ export default function DeepBuildGuide({ room }) {
           {activeTab === 'api' && (
             <div className="space-y-3 animate-fadeIn">
               {(buildGuide.apiSpecification || []).map((api, idx) => (
-                <div key={idx} className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-theme-glass space-y-2">
+                <div key={idx} className="p-4 rounded-2xl bg-slate-100 bg-white border border-theme-glass space-y-2">
                   <div className="flex items-center gap-2">
                     <span className={`px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold ${
                       api.method === 'GET'
-                        ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                        ? 'bg-emerald-500/20 text-emerald-700 text-emerald-300'
                         : api.method === 'POST'
-                        ? 'bg-sky-500/20 text-sky-700 dark:text-sky-300'
-                        : 'bg-amber-500/20 text-amber-700 dark:text-amber-300'
+                        ? 'bg-sky-500/20 text-sky-700 text-sky-300'
+                        : 'bg-amber-500/20 text-amber-700 text-amber-300'
                     }`}>
                       {api.method}
                     </span>
@@ -363,9 +363,9 @@ export default function DeepBuildGuide({ room }) {
             <div className="space-y-3 animate-fadeIn">
               <p className="text-xs text-theme-muted font-mono">{buildGuide.dataSchema?.description}</p>
               {(buildGuide.dataSchema?.models || []).map((model, idx) => (
-                <div key={idx} className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-theme-glass space-y-2">
+                <div key={idx} className="p-4 rounded-2xl bg-slate-100 bg-white border border-theme-glass space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400">💾 {model.name}</span>
+                    <span className="text-xs font-mono font-bold text-blue-600 text-blue-400">💾 {model.name}</span>
                     <span className="text-[10px] text-theme-muted font-mono">({model.storage})</span>
                   </div>
                   <div className="space-y-1 font-mono text-[11px]">
@@ -383,24 +383,24 @@ export default function DeepBuildGuide({ room }) {
           {/* TAB: Testing */}
           {activeTab === 'testing' && (
             <div className="space-y-4 animate-fadeIn">
-              <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-theme-glass space-y-2">
-                <div className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase">🧪 UNIT TESTS</div>
+              <div className="p-4 rounded-2xl bg-slate-100 bg-white border border-theme-glass space-y-2">
+                <div className="text-[11px] font-mono font-bold text-emerald-600 text-emerald-400 uppercase">🧪 UNIT TESTS</div>
                 {(buildGuide.testingStrategy?.unitTests || []).map((t, idx) => (
                   <div key={idx} className="flex items-start gap-2 text-xs text-theme-main">
                     <span className="text-emerald-500 shrink-0">✦</span> <span>{t}</span>
                   </div>
                 ))}
               </div>
-              <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-theme-glass space-y-2">
-                <div className="text-[11px] font-mono font-bold text-sky-600 dark:text-sky-400 uppercase">🔗 INTEGRATION TESTS</div>
+              <div className="p-4 rounded-2xl bg-slate-100 bg-white border border-theme-glass space-y-2">
+                <div className="text-[11px] font-mono font-bold text-sky-600 text-sky-400 uppercase">🔗 INTEGRATION TESTS</div>
                 {(buildGuide.testingStrategy?.integrationTests || []).map((t, idx) => (
                   <div key={idx} className="flex items-start gap-2 text-xs text-theme-main">
                     <span className="text-sky-500 shrink-0">✦</span> <span>{t}</span>
                   </div>
                 ))}
               </div>
-              <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-theme-glass space-y-2">
-                <div className="text-[11px] font-mono font-bold text-amber-600 dark:text-amber-400 uppercase">🎤 DEMO VALIDATION</div>
+              <div className="p-4 rounded-2xl bg-slate-100 bg-white border border-theme-glass space-y-2">
+                <div className="text-[11px] font-mono font-bold text-amber-600 text-amber-400 uppercase">🎤 DEMO VALIDATION</div>
                 {(buildGuide.testingStrategy?.demoValidation || []).map((t, idx) => (
                   <div key={idx} className="flex items-start gap-2 text-xs text-theme-main">
                     <span className="text-amber-500 shrink-0">✦</span> <span>{t}</span>
@@ -413,19 +413,19 @@ export default function DeepBuildGuide({ room }) {
           {/* TAB: Deployment */}
           {activeTab === 'deploy' && (
             <div className="space-y-4 animate-fadeIn">
-              <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-emerald-500/30 space-y-3">
+              <div className="p-4 rounded-2xl bg-slate-100 bg-white border border-emerald-500/30 space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+                  <div className="text-[11px] font-mono font-bold text-emerald-600 text-emerald-400 uppercase">
                     🚀 DEPLOYMENT PLATFORM
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-mono font-bold">
+                  <span className="px-2.5 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-700 text-emerald-300 text-xs font-mono font-bold">
                     {buildGuide.deploymentGuide?.platform || 'Vercel'}
                   </span>
                 </div>
                 <div className="space-y-2">
                   {(buildGuide.deploymentGuide?.steps || []).map((step, idx) => (
                     <div key={idx} className="flex items-start gap-2.5 text-xs text-theme-main">
-                      <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                      <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-600 text-emerald-300 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                         {idx + 1}
                       </span>
                       <span className="leading-relaxed">{step}</span>
@@ -433,7 +433,7 @@ export default function DeepBuildGuide({ room }) {
                   ))}
                 </div>
                 {buildGuide.deploymentGuide?.demoUrl && (
-                  <div className="p-2.5 rounded-xl bg-slate-900 dark:bg-black border border-white/10 font-mono text-xs text-emerald-300">
+                  <div className="p-2.5 rounded-xl bg-slate-50 bg-white border border-white/10 font-mono text-xs text-emerald-300">
                     🌐 Expected URL: {buildGuide.deploymentGuide.demoUrl}
                   </div>
                 )}
@@ -441,12 +441,12 @@ export default function DeepBuildGuide({ room }) {
 
               {/* Critical Warnings */}
               {buildGuide.criticalWarnings?.length > 0 && (
-                <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/20 border border-rose-500/30 space-y-2">
-                  <div className="text-[11px] font-mono font-bold text-rose-600 dark:text-rose-400 uppercase">
+                <div className="p-4 rounded-2xl bg-rose-50 bg-rose-950/20 border border-rose-500/30 space-y-2">
+                  <div className="text-[11px] font-mono font-bold text-rose-600 text-rose-400 uppercase">
                     ⚠️ CRITICAL WARNINGS
                   </div>
                   {buildGuide.criticalWarnings.map((w, idx) => (
-                    <div key={idx} className="flex items-start gap-2 text-xs text-rose-700 dark:text-rose-300">
+                    <div key={idx} className="flex items-start gap-2 text-xs text-rose-700 text-rose-300">
                       <span className="shrink-0">⚠️</span>
                       <span className="leading-relaxed">{w}</span>
                     </div>
@@ -461,7 +461,7 @@ export default function DeepBuildGuide({ room }) {
 
       {/* Empty State */}
       {!buildGuide && !loading && (
-        <div className="p-8 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-dashed border-theme-glass text-center space-y-3">
+        <div className="p-8 rounded-2xl bg-slate-50 bg-white border border-dashed border-theme-glass text-center space-y-3">
           <div className="text-4xl">🏗️</div>
           <h4 className="text-sm font-bold text-theme-main font-heading">
             Generate Your Deep Build Guide

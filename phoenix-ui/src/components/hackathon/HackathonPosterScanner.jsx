@@ -58,7 +58,7 @@ export default function HackathonPosterScanner({ room, onUpdatePoster }) {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full rounded-2xl bg-slate-900/90 border border-emerald-500/25 p-5 sm:p-7 shadow-xl shadow-black/40 text-left space-y-6"
+      className="w-full rounded-2xl bg-slate-50/90 border border-emerald-500/25 p-5 sm:p-7 shadow-xl shadow-black/40 text-left space-y-6"
     >
       
       {/* Friendly Header */}
@@ -76,7 +76,7 @@ export default function HackathonPosterScanner({ room, onUpdatePoster }) {
             </span>
             <span className="text-xs text-slate-400 font-mono">Syncs with Room: {room?.roomId || 'APEX-LIVE'}</span>
           </div>
-          <h3 className="text-xl font-bold text-white font-heading">
+          <h3 className="text-xl font-bold text-slate-900 font-heading">
             Drop Hackathon Poster, Instagram Post, or Website Text
           </h3>
           <p className="text-xs text-slate-300 leading-relaxed mt-0.5">
@@ -97,7 +97,7 @@ export default function HackathonPosterScanner({ room, onUpdatePoster }) {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder="Paste poster details (e.g. 'SIH 2026 registration starts...')"
-            className="w-full p-3.5 rounded-xl bg-slate-950 border border-white/15 text-white focus:border-emerald-400 focus:outline-none resize-none leading-relaxed transition-all"
+            className="w-full p-3.5 rounded-xl bg-white border border-white/15 text-slate-900 focus:border-emerald-400 focus:outline-none resize-none leading-relaxed transition-all"
             required
           />
         </div>
@@ -132,13 +132,13 @@ export default function HackathonPosterScanner({ room, onUpdatePoster }) {
             transition={{ duration: 0.4 }}
             className="overflow-hidden"
           >
-            <div className="p-5 rounded-2xl bg-slate-950 border border-emerald-500/30 space-y-4 mt-2">
+            <div className="p-5 rounded-2xl bg-white border border-emerald-500/30 space-y-4 mt-2">
               <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-white/10">
                 <div>
                   <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">
                     SYNCHRONIZED HACKATHON
                   </span>
-                  <h4 className="text-base font-bold text-white font-heading">
+                  <h4 className="text-base font-bold text-slate-900 font-heading">
                     {scanResult.hackathonName}
                   </h4>
                 </div>
@@ -156,7 +156,7 @@ export default function HackathonPosterScanner({ room, onUpdatePoster }) {
 
               {/* Submission Phases Timeline Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-mono text-xs">
-                <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-slate-900 border border-white/5 transition-all">
+                <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-slate-50 border border-white/5 transition-all">
                   <div className="text-[10px] text-slate-400 uppercase">Registration Close</div>
                   <div className="text-sm font-bold text-sky-400 mt-1">
                     {typeof scanResult.submissionPhases?.registrationClose === 'string' && scanResult.submissionPhases.registrationClose.includes('T')
@@ -165,7 +165,7 @@ export default function HackathonPosterScanner({ room, onUpdatePoster }) {
                   </div>
                 </motion.div>
 
-                <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-slate-900 border border-emerald-500/25 transition-all">
+                <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-slate-50 border border-emerald-500/25 transition-all">
                   <div className="text-[10px] text-emerald-400 font-bold uppercase">PPT Submission</div>
                   <div className="text-sm font-bold text-emerald-300 mt-1">
                     {typeof scanResult.submissionPhases?.pptIdeaSubmission === 'string' && scanResult.submissionPhases.pptIdeaSubmission.includes('T')
@@ -174,7 +174,7 @@ export default function HackathonPosterScanner({ room, onUpdatePoster }) {
                   </div>
                 </motion.div>
 
-                <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-slate-900 border border-white/5 transition-all">
+                <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-slate-50 border border-white/5 transition-all">
                   <div className="text-[10px] text-slate-400 uppercase">Sprint Kickoff</div>
                   <div className="text-sm font-bold text-indigo-400 mt-1">
                     {typeof scanResult.submissionPhases?.sprintKickoff === 'string' && scanResult.submissionPhases.sprintKickoff.includes('T')
@@ -183,7 +183,7 @@ export default function HackathonPosterScanner({ room, onUpdatePoster }) {
                   </div>
                 </motion.div>
 
-                <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-slate-900 border border-white/5 transition-all">
+                <motion.div whileHover={{ y: -3 }} className="p-3 rounded-xl bg-slate-50 border border-white/5 transition-all">
                   <div className="text-[10px] text-slate-400 uppercase">Final Demo</div>
                   <div className="text-sm font-bold text-rose-400 mt-1">
                     {typeof scanResult.submissionPhases?.finalDemoAndJudging === 'string' && scanResult.submissionPhases.finalDemoAndJudging.includes('T')
@@ -203,9 +203,9 @@ export default function HackathonPosterScanner({ room, onUpdatePoster }) {
                     <motion.div 
                       whileHover={{ scale: 1.02 }}
                       key={i} 
-                      className="p-2.5 rounded-xl bg-slate-900 border border-white/5 flex items-center justify-between"
+                      className="p-2.5 rounded-xl bg-slate-50 border border-white/5 flex items-center justify-between"
                     >
-                      <span className="text-slate-200 text-[11px] font-sans truncate">{track.name}</span>
+                      <span className="text-slate-800 text-[11px] font-sans truncate">{track.name}</span>
                       <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-bold shrink-0">
                         {track.prize}
                       </span>

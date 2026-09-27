@@ -41,7 +41,7 @@ function ScoreBar({ value, max = 10, color = 'bg-emerald-500' }) {
   const pct = Math.round((value / max) * 100);
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+      <div className="flex-1 h-2 rounded-full bg-slate-200 bg-slate-800 overflow-hidden">
         <motion.div
           className={`h-full rounded-full ${color}`}
           initial={{ width: 0 }}
@@ -57,7 +57,7 @@ function ScoreBar({ value, max = 10, color = 'bg-emerald-500' }) {
 function HoursBar({ hours, maxHours, color }) {
   const pct = Math.round((hours / maxHours) * 100);
   return (
-    <div className="flex-1 h-3 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+    <div className="flex-1 h-3 rounded-full bg-slate-200 bg-slate-800 overflow-hidden">
       <motion.div
         className={`h-full rounded-full ${color}`}
         initial={{ width: 0 }}
@@ -162,8 +162,8 @@ export default function PostMortemEngine({ onNext, onBack }) {
           <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-2xl shrink-0">🔬</div>
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-1">
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">STEP 13: POST-MORTEM</span>
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-500/20 text-slate-500 dark:text-slate-400">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-emerald-300">STEP 13: POST-MORTEM</span>
+              <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-500/20 text-slate-500 text-slate-400">
                 {totalHours}h tracked · {shippedFeatures} features shipped
               </span>
             </div>
@@ -187,7 +187,7 @@ export default function PostMortemEngine({ onNext, onBack }) {
                 className={`w-8 h-8 rounded-lg font-mono text-xs font-bold transition-all ${
                   overallScore >= n
                     ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/30'
-                    : 'bg-slate-100 dark:bg-slate-800 text-theme-muted hover:bg-slate-200 dark:hover:bg-slate-700'
+                    : 'bg-slate-100 bg-slate-800 text-theme-muted hover:bg-slate-200 hover:bg-slate-700'
                 }`}
               >
                 {n}
@@ -222,7 +222,7 @@ export default function PostMortemEngine({ onNext, onBack }) {
                     max="48"
                     value={phase.hours}
                     onChange={(e) => updatePhaseHours(phase.id, e.target.value)}
-                    className="w-10 text-center text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 border border-theme-glass rounded-lg px-1 py-0.5 text-theme-main focus:ring-1 focus:ring-emerald-500 outline-none"
+                    className="w-10 text-center text-xs font-mono font-bold bg-slate-100 bg-slate-800 border border-theme-glass rounded-lg px-1 py-0.5 text-theme-main focus:ring-1 focus:ring-emerald-500 outline-none"
                   />
                   <span className="text-xs text-theme-muted">h</span>
                   <span className="text-xs font-mono text-theme-muted w-8 text-right">
@@ -245,7 +245,7 @@ export default function PostMortemEngine({ onNext, onBack }) {
           <div className="overflow-x-auto rounded-2xl border border-theme-glass">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-theme-glass bg-slate-50 dark:bg-slate-900/50">
+                <tr className="border-b border-theme-glass bg-slate-50 bg-slate-50/50">
                   <th className="text-left px-3 py-2 font-mono text-theme-muted">Feature</th>
                   <th className="px-3 py-2 font-mono text-theme-muted">Planned</th>
                   <th className="px-3 py-2 font-mono text-theme-muted">Shipped</th>
@@ -259,18 +259,18 @@ export default function PostMortemEngine({ onNext, onBack }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 + i * 0.05 }}
-                    className="border-b border-theme-glass last:border-0 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors"
+                    className="border-b border-theme-glass last:border-0 hover:bg-slate-50 hover:bg-slate-50/30 transition-colors"
                   >
                     <td className="px-3 py-2 font-medium text-theme-main">{f.name}</td>
                     <td className="px-3 py-2 text-center">
-                      <span className={`px-1.5 py-0.5 rounded font-mono ${f.planned ? 'bg-sky-500/15 text-sky-600 dark:text-sky-400' : 'bg-slate-500/15 text-slate-500'}`}>
+                      <span className={`px-1.5 py-0.5 rounded font-mono ${f.planned ? 'bg-sky-500/15 text-sky-600 text-sky-400' : 'bg-slate-500/15 text-slate-500'}`}>
                         {f.planned ? 'Yes' : 'Bonus'}
                       </span>
                     </td>
                     <td className="px-3 py-2 text-center">
                       <button
                         onClick={() => toggleFeatureShipped(f.id)}
-                        className={`px-2 py-0.5 rounded font-mono font-bold transition-all ${f.shipped ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/30' : 'bg-red-500/15 text-red-500 hover:bg-red-500/25'}`}
+                        className={`px-2 py-0.5 rounded font-mono font-bold transition-all ${f.shipped ? 'bg-emerald-500/20 text-emerald-600 text-emerald-400 hover:bg-emerald-500/30' : 'bg-red-500/15 text-red-500 hover:bg-red-500/25'}`}
                       >
                         {f.shipped ? '✓ Done' : '✗ Cut'}
                       </button>
@@ -283,7 +283,7 @@ export default function PostMortemEngine({ onNext, onBack }) {
                           max="100"
                           value={f.quality}
                           onChange={(e) => updateFeatureQuality(f.id, e.target.value)}
-                          className="w-14 text-center text-xs font-mono bg-slate-100 dark:bg-slate-800 border border-theme-glass rounded px-1 py-0.5 text-theme-main outline-none focus:ring-1 focus:ring-emerald-500"
+                          className="w-14 text-center text-xs font-mono bg-slate-100 bg-slate-800 border border-theme-glass rounded px-1 py-0.5 text-theme-main outline-none focus:ring-1 focus:ring-emerald-500"
                         />
                       ) : (
                         <span className="text-theme-muted">—</span>
@@ -319,7 +319,7 @@ export default function PostMortemEngine({ onNext, onBack }) {
                     max="10"
                     value={t.score}
                     onChange={(e) => updateTeamScore(t.id, e.target.value)}
-                    className="w-10 text-center text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 border border-theme-glass rounded px-1 text-theme-main outline-none focus:ring-1 focus:ring-amber-500"
+                    className="w-10 text-center text-xs font-mono font-bold bg-slate-100 bg-slate-800 border border-theme-glass rounded px-1 text-theme-main outline-none focus:ring-1 focus:ring-amber-500"
                   />
                 </div>
                 <ScoreBar
@@ -338,9 +338,9 @@ export default function PostMortemEngine({ onNext, onBack }) {
           </h4>
           <div className="grid sm:grid-cols-3 gap-3">
             {[
-              { key: 'www', label: '✅ What Went Well', placeholder: 'Strong ideation, fast MVP turnaround, solid team synergy...', border: 'border-emerald-500/30', badge: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' },
-              { key: 'di', label: '🔁 Delta / Improvements', placeholder: 'Time management on backend, earlier testing, clearer role assignments...', border: 'border-amber-500/30', badge: 'bg-amber-500/15 text-amber-600 dark:text-amber-400' },
-              { key: 'ai', label: '🎯 Action Items', placeholder: '1. Set hard deadlines per feature\n2. Prototype before building\n3. Practice pitch twice minimum...', border: 'border-sky-500/30', badge: 'bg-sky-500/15 text-sky-600 dark:text-sky-400' },
+              { key: 'www', label: '✅ What Went Well', placeholder: 'Strong ideation, fast MVP turnaround, solid team synergy...', border: 'border-emerald-500/30', badge: 'bg-emerald-500/15 text-emerald-600 text-emerald-400' },
+              { key: 'di', label: '🔁 Delta / Improvements', placeholder: 'Time management on backend, earlier testing, clearer role assignments...', border: 'border-amber-500/30', badge: 'bg-amber-500/15 text-amber-600 text-amber-400' },
+              { key: 'ai', label: '🎯 Action Items', placeholder: '1. Set hard deadlines per feature\n2. Prototype before building\n3. Practice pitch twice minimum...', border: 'border-sky-500/30', badge: 'bg-sky-500/15 text-sky-600 text-sky-400' },
             ].map((col, i) => (
               <motion.div
                 key={col.key}
@@ -370,7 +370,7 @@ export default function PostMortemEngine({ onNext, onBack }) {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             onClick={handleExport}
-            className="px-6 py-2.5 rounded-xl font-mono font-bold text-xs bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-emerald-500/30 transition-all flex items-center gap-2 shadow-lg shadow-black/20"
+            className="px-6 py-2.5 rounded-xl font-mono font-bold text-xs bg-slate-50 hover:bg-slate-800 text-emerald-400 border border-emerald-500/30 transition-all flex items-center gap-2 shadow-lg shadow-black/20"
           >
             <span>📦</span>
             <AnimatePresence mode="wait">
