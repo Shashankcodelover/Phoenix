@@ -8,15 +8,15 @@
 }
 
 :root {
-    --primary-color: #667eea;
-    --secondary-color: #764ba2;
-    --accent-color: #f093fb;
-    --dark-bg: #0f0f1e;
-    --light-bg: #1a1a2e;
-    --card-bg: #16213e;
-    --text-primary: #ffffff;
-    --text-secondary: #b0b0b0;
-    --border-color: #2a2a3e;
+    --primary-color: #3b82f6;
+    --secondary-color: #6366f1;
+    --accent-color: #8b5cf6;
+    --dark-bg: #f8fafc;
+    --light-bg: #ffffff;
+    --card-bg: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --border-color: #e2e8f0;
     --success-color: #10b981;
     --danger-color: #ef4444;
     --transition: all 0.3s ease;
@@ -34,7 +34,7 @@ Body {
    Navigation Bar
    ==================================== */
 .navbar {
-    background: rgba(15, 15, 30, 0.95);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     padding: 1rem 2rem;
     display: flex;
@@ -152,7 +152,7 @@ Body {
    Cards & Grid
    ==================================== */
 .card {
-    background: rgba(22, 33, 62, 0.8);
+    background: rgba(255, 255, 255, 0.8);
     border: 1px solid var(--border-color);
     border-radius: 1rem;
     padding: 2rem;
